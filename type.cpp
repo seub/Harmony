@@ -20,3 +20,9 @@ std::ostream & operator<<(std::ostream &out, const word & w)
     }
     return out;
 }
+
+std::ostream & operator<<(std::ostream &out, const complex & z)
+{
+    out << real(z) << " + " << imag(z) << "i";
+    return out;
+}

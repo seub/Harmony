@@ -20,7 +20,7 @@ void H3point::getHalfSpaceCoordinates(double & x, double & y, double & z) const
 
     x = (2.0*X / s);
     y = (2.0*Y / s);
-    z = ((2.0*Z - 2.0) / s) + 1.0;
+    z = ((1.0 - X*X - Y*Y - Z*Z) / s);
     return;
 }
 
@@ -54,7 +54,12 @@ void H3point::getHermitianCoordinates(SL2Cmatrix & A) const
 
 void H3point::setBallCoordinates(double x, double y, double z)
 {
-    assert(x*x + y*y + z*z < 1.0);
+    double s = x*x + y*y + z*z;
+    if (1.0 - s <= ERROR)
+    {
+        std::cout << "WARNING in H3point::setBallCoordinates : norm(x,y,z) >= 1 (norm(x,y,z) = " << s << ")" << std::endl;
+        //throw(0);
+    }
     X = x;
     Y = y;
     Z = z;
@@ -63,7 +68,11 @@ void H3point::setBallCoordinates(double x, double y, double z)
 
 void H3point::setHalfSpaceCoordinates(double x, double y, double z)
 {
-    assert(z>0.0);
+    if (z <= ERROR)
+    {
+        std::cout << "WARNING in H3point::setHalfSpaceCoordinates : z<=0 (z = " << z << ")" << std::endl;
+        //throw(0);
+    }
     double s = x*x + y*y + (z + 1.0)*(z + 1.0);
     X = (2.0*x / s);
     Y = (2.0*y / s);
@@ -72,7 +81,17 @@ void H3point::setHalfSpaceCoordinates(double x, double y, double z)
 
 void H3point::setHyperboloidCoordinates(double x0, double x1, double x2, double x3)
 {
-    assert(x0 > 0.0 && x1*x1 + x2*x2 + x3*x3 == x0*x0 - 1.0);
+    if (x0 <= ERROR)
+    {
+        std::cout << "WARNING in H3point::setHyperboloidCoordinates : x0<=0 (x0 = " << x0 << ")" << std::endl;
+        //throw(0);
+    }
+    double q = x1*x1 + x2*x2 + x3*x3 - x0*x0;
+    if (std::abs(q + 1.0) > ERROR)
+    {
+        std::cout << "WARNING in H3point::setHyperboloidCoordinates : q(x) + 1 != 0 (q(x) + 1 = " << q+1 << ")" << std::endl;
+        //throw(0);
+    }
     X = x1 / (x0 + 1.0);
     Y = x2 / (x0 + 1.0);
     Z = x3 / (x0 + 1.0);
@@ -81,8 +100,13 @@ void H3point::setHyperboloidCoordinates(double x0, double x1, double x2, double 
 
 void H3point::setKleinCoordinates(double x, double y, double z)
 {
-    assert(x*x + y*y + z*z < 1.0);
-    double s = 1.0 + sqrt(1.0 - x*x - y*y - z*z);
+    double d = x*x + y*y + z*z;
+    if (1.0 - d <= ERROR)
+    {
+        std::cout << "WARNING in H3point::setKleinCoordinates : norm(x,y,z) >= 1 (norm(x,y,z) = " << d << ")" << std::endl;
+        //throw(0);
+    }
+    double s = 1.0 + sqrt(1.0 - d);
     X = (x / s);
     Y = (y / s);
     Z = (z / s);
@@ -91,7 +115,11 @@ void H3point::setKleinCoordinates(double x, double y, double z)
 
 void H3point::setHermitianCoordinates(const SL2Cmatrix &A)
 {
-    assert(A.adjoint() == A);
+    if (!(A.adjoint() == A))
+    {
+        std::cout << "WARNING in H3point::setHermitianCoordinates : A.adjoint != A" << std::endl;
+        //throw(0);
+    }
     complex a,b,c,d;
     A.getCoefficients(a,b,c,d);
     double x0,x1,x2,x3;
@@ -111,6 +139,6 @@ double H3distance(const H3point & x, const H3point & w)
 
 std::ostream & operator<<(std::ostream & out, const H3point & p)
 {
-    out << "( " << p.X << ", " << p.Y << "; " << p.Z << " )";
+    out << "( " << p.X << ", " << p.Y << ", " << p.Z << " )";
     return out;
 }
