@@ -131,9 +131,16 @@ void H3point::setHermitianCoordinates(const SL2Cmatrix &A)
     return;
 }
 
-double H3distance(const H3point & x, const H3point & w)
+double H3distance(const H3point & p1, const H3point & p2)
 {
-    return 0;
+    double X1,Y1,Z1,X2,Y2,Z2,r1,r2,s;
+    p1.getBallCoordinates(X1,Y1,Z1);
+    p2.getBallCoordinates(X2,Y2,Z2);
+    r1 = X1*X1 + Y1*Y1 + Z1*Z1;
+    r2 = X2*X2 + Y2*Y2 + Z2*Z2;
+    s = 2.0 * (((X1-X2)*(X1-X2) + (Y1-Y2)*(Y1-Y2) + (Z1-Z2)*(Z1-Z2)) / ((1 - r1)*(1 - r2)));
+
+    return acosh(1.0 + s);
 }
 
 

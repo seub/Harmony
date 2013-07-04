@@ -30,6 +30,6 @@ private:
 
 };
 
-double H3distance(const H3point & x, const H3point & w);
+double H3distance(const H3point & p1, const H3point & p2);
 
 #endif // H3POINT_H
