@@ -6,10 +6,10 @@ SL2Cmatrix::SL2Cmatrix()
 
 SL2Cmatrix::SL2Cmatrix(const complex &a, const complex &b, const complex &c, const complex &d) : a(a), b(b), c(c), d(d)
 {
-    if (det() != 1.0)
+    if (norm(det() - complex(1.0,0.0)) > ERROR)
     {
-        std::cout << "Warning : the determinant is not 1 (it is equal to" << det() <<")" << std::endl;
-        throw(0);
+        std::cout << "WARNING in SL2Cmatrix::SL2Cmatrix: the determinant is not 1 (it is equal to " << det() <<" )" << std::endl;
+        //throw(0);
     }
 }
 
@@ -109,7 +109,12 @@ CP1point operator *(const SL2Cmatrix & A, const CP1point & z)
 
 bool operator ==(const SL2Cmatrix & A1, const SL2Cmatrix & A2)
 {
-    return A1.a == A2.a && A1.b == A2.b && A1.c == A2.c && A1.d == A2.d;
+    bool test =
+            std::abs(A1.a - A2.a) < ERROR &&
+            std::abs(A1.b - A2.b) < ERROR &&
+            std::abs(A1.c - A2.c) < ERROR &&
+            std::abs(A1.d - A2.d) < ERROR;
+    return test;
 }
 
 
