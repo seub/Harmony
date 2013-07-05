@@ -12,14 +12,13 @@
 #define I complex(0.0, 1.0)
 
 typedef std::string generatorName;
-typedef std::pair<generatorName, int> letter;
+typedef int generatorIndex;
+typedef std::pair<generatorIndex, int> letter;
 typedef std::vector<letter> word;
 
 typedef std::complex<double> complex;
 
 
-std::ostream & operator<<(std::ostream &out, const letter & l);
-std::ostream & operator<<(std::ostream &out, const word & w);
 std::ostream & operator<<(std::ostream &out, const complex & z);
 
 

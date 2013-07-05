@@ -57,22 +57,22 @@ DiscreteGroup::DiscreteGroup(const TopologicalSurface &S)
     int k;
     for (k=0;k<genus;k++)
     {
-        l.first = gen[2*k];
+        l.first = 2*k;
         l.second = 1;
         relation.push_back(l);
-        l.first = gen[2*k+1];
+        l.first = 2*k+1;
         l.second = 1;
         relation.push_back(l);
-        l.first = gen[2*k];
+        l.first = 2*k;
         l.second = -1;
         relation.push_back(l);
-        l.first = gen[2*k+1];
+        l.first = 2*k+1;
         l.second = -1;
         relation.push_back(l);
     }
     for (k=2*genus;k<2*genus+numberOfPunctures;k++)
     {
-        l.first = gen[k];
+        l.first = k;
         l.second = 1;
         relation.push_back(l);
         (cusps[k-2*genus]).clear();
@@ -107,12 +107,39 @@ std::ostream & operator<<(std::ostream &out, const DiscreteGroup & Gamma)
     }
     out << " | ";
     std::vector<word> relations = Gamma.relations;
-    out << relations[0];
+    out << Gamma.getWordString(relations[0]);
     for(unsigned int i=1; i<relations.size(); i++)
     {
-        out << ", " << relations[i];
+        out << ", " << Gamma.getWordString(relations[i]);
     }
     out << " >" << std::endl;
 
     return out;
 }
+
+
+std::string DiscreteGroup::getLetterString(const letter & l) const
+{
+    std::string res;
+    res = generators[l.first];
+    if (l.second!=1)
+    {
+        std::stringstream ss;
+        ss << l.second;
+        res.append("^").append(ss.str());
+    }
+    return res;
+}
+
+
+std::string DiscreteGroup::getWordString(const word & w) const
+{
+    std::string res;
+    unsigned int i;
+    for(i=0;i<w.size();i++)
+    {
+        res.append(getLetterString(w[i])).append(" ");
+    }
+    return res;
+}
+
