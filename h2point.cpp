@@ -19,7 +19,7 @@ void H2point::setUpperHalfPlaneCoordiante(complex z)
     this->z = z;
 }
 
-void H2point::setDiskCoordiante(complex z)
+void H2point::setDiskCoordinate(complex z)
 {
     this->z = (-I*(z + I)/(z - I));
 }

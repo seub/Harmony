@@ -12,7 +12,7 @@ public:
     complex getDiskCoordinate() const;
 
     void setUpperHalfPlaneCoordiante(complex z);
-    void setDiskCoordiante(complex z);
+    void setDiskCoordinate(complex z);
 
 private:
     complex z;

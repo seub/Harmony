@@ -4,7 +4,8 @@
 #
 #-------------------------------------------------
 
-QT       += core
+QT       += core \
+    widgets
 
 QT       -= gui
 
@@ -24,7 +25,9 @@ SOURCES += main.cpp \
     cp1point.cpp \
     h3point.cpp \
     h2point.cpp \
-    sl2rmatrix.cpp
+    sl2rmatrix.cpp \
+    h2canvas.cpp \
+    canvas.cpp
 
 HEADERS += \
     types.h \
@@ -35,4 +38,6 @@ HEADERS += \
     cp1point.h \
     h3point.h \
     h2point.h \
-    sl2rmatrix.h
+    sl2rmatrix.h \
+    h2canvas.h \
+    canvas.h
