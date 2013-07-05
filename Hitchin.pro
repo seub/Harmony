@@ -22,7 +22,9 @@ SOURCES += main.cpp \
     grouprepresentation.cpp \
     sl2cmatrix.cpp \
     cp1point.cpp \
-    h3point.cpp
+    h3point.cpp \
+    h2point.cpp \
+    sl2rmatrix.cpp
 
 HEADERS += \
     types.h \
@@ -31,4 +33,6 @@ HEADERS += \
     grouprepresentation.h \
     sl2cmatrix.h \
     cp1point.h \
-    h3point.h
+    h3point.h \
+    h2point.h \
+    sl2rmatrix.h
