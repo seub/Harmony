@@ -19,14 +19,15 @@ int main(int argc, char *argv[])
     DiscreteGroup Gamma(S);
     //std::cout << Gamma << std::endl;
 
-    SL2Cmatrix A(exp(.5),complex(3.0,10.0),0.0,exp(-.5));
+    SL2Cmatrix A(2.0*exp(.5),2.5,.4,exp(-.5));
 
     H3point p1,p2;
-    p1.setBallCoordinates(0.0,0.0,0.0);
-    p2.setBallCoordinates(.5,0.0,0.0);
+    p1.setHalfSpaceCoordinates(23.0,0.0,2.45);
+    p2.setHalfSpaceCoordinates(-13.1,0.0,.14);
 
-    std::cout << H3distance(p1,p2) << std::endl;
-    std::cout << H3distance(A*p1,A*p2) << std::endl;
+    double x,y,z;
+    (A*A*A*A*A*p2).getHalfSpaceCoordinates(x,y,z);
+    std::cout << "( " << x << ", " << y << ", " << z << " )" << std::endl;
 
     return a.exec();
 }

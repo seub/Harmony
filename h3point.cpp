@@ -16,10 +16,11 @@ void H3point::getBallCoordinates(double & x, double & y, double & z) const
 
 void H3point::getHalfSpaceCoordinates(double & x, double & y, double & z) const
 {
-    double s = X*X + Y*Y + (Z-1.0)*(Z-1.0);
+    //std::cout << "Entering H3point::getHalfSpaceCoordinates" << std::endl;
+    double s = X*X + (Y+1.0)*(Y+1.0) + Z*Z;
 
     x = (2.0*X / s);
-    y = (2.0*Y / s);
+    y = (2.0*Z / s);
     z = ((1.0 - X*X - Y*Y - Z*Z) / s);
     return;
 }
@@ -75,8 +76,8 @@ void H3point::setHalfSpaceCoordinates(double x, double y, double z)
     }
     double s = x*x + y*y + (z + 1.0)*(z + 1.0);
     X = (2.0*x / s);
-    Y = (2.0*y / s);
-    Z = ((2.0*z - 2.0) / s) + 1.0;
+    Z = -(2.0*y / s);
+    Y = ((x*x + y*y + z*z - 1.0) / s);
 }
 
 void H3point::setHyperboloidCoordinates(double x0, double x1, double x2, double x3)

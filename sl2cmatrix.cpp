@@ -8,7 +8,7 @@ SL2Cmatrix::SL2Cmatrix(const complex &a, const complex &b, const complex &c, con
 {
     if (norm(det() - complex(1.0,0.0)) > ERROR)
     {
-        std::cout << "WARNING in SL2Cmatrix::SL2Cmatrix: the determinant is not 1 (it is equal to " << det() <<" )" << std::endl;
+        //std::cout << "WARNING in SL2Cmatrix::SL2Cmatrix: the determinant is not 1 (it is equal to " << det() <<" )" << std::endl;
         //throw(0);
     }
 }
@@ -90,11 +90,12 @@ SL2Cmatrix SL2Cmatrix::conjugate() const
 
 SL2Cmatrix SL2Cmatrix::adjoint() const
 {
-    return transpose().conjugate();
+    return this->transpose().conjugate();
 }
 
 SL2Cmatrix operator *(const SL2Cmatrix & A1, const SL2Cmatrix & A2)
 {
+
     return SL2Cmatrix(
                 A1.a*A2.a + A1.b*A2.c,
                 A1.a*A2.b + A1.b*A2.d,
@@ -123,7 +124,16 @@ H3point operator *(const SL2Cmatrix & A, const H3point & p)
     SL2Cmatrix X;
     H3point q;
     p.getHermitianCoordinates(X);
-    q.setHermitianCoordinates(A*X*A.adjoint());
+
+    SL2Cmatrix M1 = A*X;
+    SL2Cmatrix M2 = A.adjoint();
+    SL2Cmatrix M3 = M1*M2;
+    std::cout << (M1.det()) << std::endl;
+    std::cout << (M2.det()) << std::endl;
+    std::cout << (M3.det()) << std::endl;
+
+    q.setHermitianCoordinates(M3);
+
     return q;
 }
 
