@@ -15,10 +15,16 @@ public:
     std::vector<generatorName> getGenerators() const;
     std::vector<word> getRelations() const;
 
+    std::string getWordString(const word & w) const;
+    std::string getLetterString(const letter & l) const;
+
 private:
     std::vector<generatorName> generators;
     std::vector<word> relations;
     std::vector<word> cusps;
 };
+
+
+
 
 #endif // DISCRETEGROUP_H
