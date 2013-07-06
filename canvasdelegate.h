@@ -11,6 +11,7 @@ class QPen;
 
 class H2Point;
 class Canvas;
+class Circle;
 
 class CanvasDelegate
 {
@@ -21,10 +22,12 @@ public:
     QImage * getImage() const;
 
 
-    void drawPoint(const complex &z, const QColor &color = QColor("black"));
-    void drawSegment(const complex &endpoint1, const complex &endpoint2, const QColor &color = QColor("black"));
-    void drawCircle(const complex &center, double radius, const QColor &color = QColor("black"));
-    void drawArc(const complex &center, double radius, double angle1, double angle2, const QColor &color = QColor("black"));
+    void drawPoint(const complex &z, const QColor &color = "black");
+    void drawSegment(const complex &endpoint1, const complex &endpoint2, const QColor &color = "black");
+    void drawCircle(const complex &center, double radius, const QColor &color = "black");
+    void drawCircle(const Circle &C, const QColor &color = "black");
+    void drawArc(const complex &center, double radius, double angle1, double angle2, const QColor &color = "black");
+    void drawArc(const Circle &C, double angle1, double angle2, const QColor &color = "black");
 
 protected:
     Canvas *canvas;

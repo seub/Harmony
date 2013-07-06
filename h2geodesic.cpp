@@ -26,7 +26,6 @@ H2Geodesic::H2Geodesic(const H2Point & p1, const H2Point & p2)
     PlanarLine L(p1Klein,p2Klein);
     Circle C(0.0,1.0);
     intersectCircleAndLine(C,L,z1,z2);
-    return;
 }
 
 void H2Geodesic::getEndpointsInDiskModel(complex &z1, complex &z2) const

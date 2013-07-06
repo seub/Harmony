@@ -9,6 +9,7 @@
 #include "canvasdelegate.h"
 #include "h2point.h"
 #include "h2canvasdelegate.h"
+#include "h2geodesic.h"
 
 int main(int argc, char *argv[])
 {    
@@ -22,14 +23,23 @@ int main(int argc, char *argv[])
     H2CanvasDelegate * delegate = new H2CanvasDelegate(canvas);
     canvas->setDelegate(delegate);
 
-    delegate->drawPoint(0.0, QColor("red"));
-    delegate->drawSegment(-1.0, 1.0+1.0*I);
     delegate->drawCircle(0, 1, QColor("blue"));
-    delegate->drawArc(0, 1, -M_PI/2, 3*M_PI/4, QColor("green"));
 
-    H2Point p;
-    p.setDiskCoordinate(0.5);
-    delegate->drawH2Point(p, "orange");
+    H2Point p1, p2, p3;
+    p1.setDiskCoordinate(0.3*I);
+    p2.setDiskCoordinate(-.8*I);
+    p3.setDiskCoordinate(.5);
+
+    H2Geodesic L1(p1, p2), L2(p1, p3), L3(p2, p3);
+    delegate->drawH2Geodesic(L1);
+    delegate->drawH2Geodesic(L2);
+    delegate->drawH2Geodesic(L3);
+
+
+    delegate->drawH2Point(p1, "red");
+    delegate->drawH2Point(p2, "red");
+    delegate->drawH2Point(p3, "red");
+
 
     canvas->show();
 

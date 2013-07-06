@@ -66,7 +66,7 @@ bool intersectCircles(Circle &C1, Circle &C2, complex & out1, complex & out2)
 bool intersectCircleAndLine(Circle &C, PlanarLine &L, complex &out1, complex &out2)
 {
     complex center, point, direction;
-    double radius, s,c1,c2,d1,d2,p1,p2;
+    double radius, c1,c2,d1,d2,p1,p2;
     C.getCenterAndRadius(center,radius);
     L.getPointAndDirection(point,direction);
     c1 = real(center);
@@ -75,14 +75,20 @@ bool intersectCircleAndLine(Circle &C, PlanarLine &L, complex &out1, complex &ou
     p2 = imag(point);
     d1 = real(direction);
     d2 = imag(direction);
-    double disc = (4*((d1*(p1 - c1)) + (d2*(p2 - c2)))*((d1*(p1 - c1)) + (d2*(p2 - c2)))) -
-            4*(d1*d1 + d2*d2)*((p1 -  c1)*(p1 - c1) + (p2 - c2)*(p2 - c2));
-    if (disc < 0.0)
+
+    double a = d1*d1 + d2*d2;
+    double b = d1*(p1 - c1) + d2*(p2 - c2);
+    double c = (p1 -  c1)*(p1 - c1) + (p2 - c2)*(p2 - c2) - radius*radius;
+
+    double Delta = b*b - a*c;
+    if (Delta < 0.0)
     {
+        std::cout <<  "Jonah you fuck up" << std::endl;
         return false;
     }
-    s = ( -2*((d1*(p1 - c1)) + (d2*(p2 - c2))) + sqrt(disc)) / ( 2*(d1*d1 + d2*d2) );
-    out1 = point + s*direction;
-    out2 = point - s*direction;
+    double s1 = (-b - sqrt(Delta)) / a;
+    double s2 = (-b + sqrt(Delta)) / a;
+    out1 = point + s1*direction;
+    out2 = point + s2*direction;
     return true;
 }
