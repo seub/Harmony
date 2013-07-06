@@ -6,28 +6,34 @@ Circle::Circle()
 
 Circle::Circle(complex center, double radius): center(center), radius(radius)
 {
-
 }
 
 Circle::Circle(const complex & p1, const complex & p2, const complex & p3)
 {
     PlanarLine l12 = PlanarLine(p1,p2);
-    if (l12.isIn(p3))
+    if (l12.contains(p3))
     {
         std::cout << "Error in Circle::Circle(const complex & p1, const complex & p2, const complex & p3) : Points are collinear" << std::endl;
         throw(0);
     }
     PlanarLine perpindicularBisector1, perpindicularBisector2;
-    perpindicularBisector1.setValuesForPerpindicularBisector(p1,p2);
-    perpindicularBisector2.setValuesForPerpindicularBisector(p2,p3);
+    perpindicularBisector1.setPerpendicularBisector(p1,p2);
+    perpindicularBisector2.setPerpendicularBisector(p2,p3);
     intersectionPlanarLines(perpindicularBisector1,perpindicularBisector2,center);
     radius = abs(center - p1);
 }
 
-void Circle::getCenterAndRadius(complex & center0, double & radius0) const
+void Circle::getCenterAndRadius(complex & center, double & radius) const
 {
-    center0 = center;
-    radius0 = radius;
+    center = this->center;
+    radius = this->radius;
+    return;
+}
+
+void Circle::setCenterAndRadius(complex &center, double &radius)
+{
+    this->center = center;
+    this->radius = radius;
     return;
 }
 
@@ -36,7 +42,7 @@ complex Circle::pointAtAngle(double angle) const
     return center + radius*exp(angle*I);
 }
 
-bool Circle::isIn(const complex & z) const
+bool Circle::contains(const complex & z) const
 {
     return (norm(center - z) == radius*radius);
 }

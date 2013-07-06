@@ -11,9 +11,10 @@ public:
     Circle(complex center, double radius);
     Circle(const complex & p1, const complex & p2, const complex & p3);
 
-    void getCenterAndRadius(complex & center, double &radius) const;
+    void getCenterAndRadius(complex & center, double & radius) const;
+    void setCenterAndRadius(complex & center, double & radius);
 
-    bool isIn(const complex & z) const;
+    bool contains(const complex & z) const;
     complex pointAtAngle(double angle) const;
 
 

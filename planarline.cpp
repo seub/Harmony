@@ -8,43 +8,34 @@ PlanarLine::PlanarLine(const complex & p1, const complex & p2)
 {
     if (p1 == p2)
     {
-        std::cout << "You fucked up!" << std::endl;
+        std::cout << "Planar Line won't draw a line from a point to itself!" << std::endl;
         throw(0);
     }
     point = p1;
     direction = p1 - p2;
 }
 
-complex PlanarLine::getPoint()
-{
-    return point;
-}
 
-complex PlanarLine::getDirection()
+void PlanarLine::getPointAndDirection(complex & point, complex & direction) const
 {
-    return direction;
-}
-
-void PlanarLine::getPointAndDirection(complex & point0, complex & direction0) const
-{
-    point0 = point;
-    direction0 = direction;
+    point = this->point;
+    direction = this->direction;
     return;
 }
 
-void PlanarLine::setPointAndDirection(complex & point0, complex & direction0)
+void PlanarLine::setPointAndDirection(complex & point, complex & direction)
 {
-    if (direction0 == 0.0)
+    if (direction == 0.0)
     {
         std::cout << "PlanarLine::setPointAndDirection may not assign direction 0" << std::endl;
         throw(0);
     }
-    point = point0;
-    direction = direction0;
+    this->point = point;
+    this->direction = direction;
     return;
 }
 
-void PlanarLine::setValuesForPerpindicularBisector(const complex &z1, const complex &z2)
+void PlanarLine::setPerpendicularBisector(const complex &z1, const complex &z2)
 {
     if  (z1 == z2)
     {
@@ -56,7 +47,7 @@ void PlanarLine::setValuesForPerpindicularBisector(const complex &z1, const comp
     return;
 }
 
-bool PlanarLine::isIn(const complex & z) const
+bool PlanarLine::contains(const complex & z) const
 {
     return (imag((z - point) / direction) == 0);
 }
@@ -66,7 +57,7 @@ bool intersectionPlanarLines(const PlanarLine & l1, const PlanarLine & l2, compl
     complex p1, p2, d1, d2;
     l1.getPointAndDirection(p1,d1);
     l2.getPointAndDirection(p2,d2);
-    if (imag(d1 / d2) == 0.0 && !l2.isIn(p1))
+    if (imag(d1 / d2) == 0.0 && !l2.contains(p1))
     {
         return false;
     }

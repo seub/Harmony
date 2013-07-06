@@ -8,14 +8,11 @@ public:
     PlanarLine();
     PlanarLine(const complex & p1, const complex & p2);
 
-    complex getPoint();
-    complex getDirection();
+    void getPointAndDirection(complex & point, complex & direction) const;
+    void setPointAndDirection(complex & point, complex & direction);
+    void setPerpendicularBisector(const complex & z1, const complex & z2);
 
-    void getPointAndDirection(complex & point0, complex & direction0) const;
-    void setPointAndDirection(complex & point0, complex & direction0);
-    void setValuesForPerpindicularBisector(const complex & z1, const complex & z2);
-
-    bool isIn(const complex & z) const;
+    bool contains(const complex & z) const;
 
 private:
     complex point;

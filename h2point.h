@@ -10,9 +10,11 @@ public:
 
     complex getUpperHalfPlaneCoordinate() const;
     complex getDiskCoordinate() const;
+    complex getKleinCoordinate() const;
 
     void setUpperHalfPlaneCoordiante(complex z);
     void setDiskCoordinate(complex z);
+
 
 private:
     complex z;

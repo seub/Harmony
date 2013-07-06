@@ -14,6 +14,12 @@ complex H2Point::getDiskCoordinate() const
     return (I*(z - I)/(z + I));
 }
 
+complex H2Point::getKleinCoordinate() const
+{
+    complex z = getDiskCoordinate();
+    return 2.0*z / (1.0 + norm(z));
+}
+
 void H2Point::setUpperHalfPlaneCoordiante(complex z)
 {
     this->z = z;
