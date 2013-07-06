@@ -8,7 +8,7 @@ std::ostream & operator<<(std::ostream &out, const complex & z)
 }
 
 
-int int_round(double x)
+int intRound(double x)
 {
     return (x < 0) ? int(x - 0.5) : int(x + 0.5);
 }

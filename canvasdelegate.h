@@ -3,10 +3,11 @@
 
 #include "types.h"
 
+#include <QColor>
+
 class QImage;
 class QPainter;
 class QPen;
-class QColor;
 
 class H2Point;
 class Canvas;
@@ -14,13 +15,16 @@ class Canvas;
 class CanvasDelegate
 {
 public:
-    CanvasDelegate(Canvas *canvas = 0);
+    CanvasDelegate(Canvas *canvas);
     ~CanvasDelegate();
 
     QImage * getImage() const;
 
 
-    void drawPoint(const complex &z, const QColor &color);
+    void drawPoint(const complex &z, const QColor &color = QColor("black"));
+    void drawSegment(const complex &endpoint1, const complex &endpoint2, const QColor &color = QColor("black"));
+    void drawCircle(const complex &center, double radius, const QColor &color = QColor("black"));
+    void drawArc(const complex &center, double radius, double angle1, double angle2, const QColor &color = QColor("black"));
 
 protected:
     Canvas *canvas;
