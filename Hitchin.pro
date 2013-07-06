@@ -29,10 +29,11 @@ SOURCES += main.cpp \
     h2canvas.cpp \
     canvas.cpp \
     h2geodesic.cpp \
-    linesinc.cpp \
     canvas.cpp \
     canvasdelegate.cpp \
-    h2canvasdelegate.cpp
+    h2canvasdelegate.cpp \
+    planarline.cpp \
+    circle.cpp
 
 HEADERS += \
     types.h \
@@ -47,7 +48,8 @@ HEADERS += \
     h2canvas.h \
     canvas.h \
     h2geodesic.h \
-    linesinc.h
+    planarline.h \
+    circle.h
     canvas.h \
     canvasdelegate.h \
     h2canvasdelegate.h

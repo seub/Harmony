@@ -8,14 +8,14 @@ class H2Geodesic
 public:
     H2Geodesic();
     H2Geodesic(const double & angle1, const double & angle2);
-    H2Geodesic(const H2point & p1, const H2point & p2);
+    H2Geodesic(const H2Point & p1, const H2Point & p2);
 
-    bool isIn(const H2point & p) const;
+    bool isIn(const H2Point & p) const;
 
 private:
     double angle1, angle2;
 };
 
-bool intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2point & p);
+bool intersectH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2Point & p);
 
 #endif // H2GEODESIC_H
