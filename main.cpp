@@ -4,28 +4,29 @@
 
 
 #include "types.h"
-#include "topologicalsurface.h"
-#include "discretegroup.h"
-#include "sl2cmatrix.h"
-#include "cp1point.h"
+
 #include "canvas.h"
+#include "canvasdelegate.h"
 
 int main(int argc, char *argv[])
 {    
     std::cout << std::endl;
     QApplication a(argc, argv);
 
-    TopologicalSurface S(0,4);
-    DiscreteGroup Gamma(S);
-    std::cout << Gamma << std::endl;
 
 
-//    Canvas *canvastest = new Canvas;
-//    canvastest->show();
+    Canvas * canvas = new Canvas;
 
-    Canvas *canvastest = new Canvas;
-    canvastest->show();
+    std::cout << "alice" << std::endl;
 
+    CanvasDelegate * delegate = new CanvasDelegate(canvas);
+    canvas->setDelegate(delegate);
+
+    delegate->drawPoint(0.0, QColor("red"));
+    canvas->show();
+
+
+    std::cout << "bob" << std::endl;
     std::cout << std::endl;
     return a.exec();
 }
