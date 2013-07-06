@@ -9,6 +9,8 @@
 
 CanvasDelegate::CanvasDelegate(Canvas *canvas) : canvas(canvas)
 {
+    //std::cout << "Entering CanvasDelegate::CanvasDelegate" << std::endl;
+
     pen = new QPen;
 
     sizeX = canvas->width();
@@ -23,6 +25,7 @@ CanvasDelegate::CanvasDelegate(Canvas *canvas) : canvas(canvas)
 
     reset();
 
+    //std::cout << "Leaving CanvasDelegate::CanvasDelegate" << std::endl;
 }
 
 CanvasDelegate::~CanvasDelegate()
@@ -39,8 +42,8 @@ QImage * CanvasDelegate::getImage() const
 
 void CanvasDelegate::rescale(int sizeX, int sizeY)
 {
-    originX = int_round(originX*sizeX/(this->sizeX*1.0) + shiftX*scaleX);
-    originY = int_round(originY*sizeY/(this->sizeY*1.0) + shiftY*scaleY);
+    originX = intRound(originX*sizeX/(this->sizeX*1.0) + shiftX*scaleX);
+    originY = intRound(originY*sizeY/(this->sizeY*1.0) + shiftY*scaleY);
     this->sizeX = sizeX;
     this->sizeY = sizeY;
     scaleX = zoom*sizeX/(xmax - xmin);
@@ -52,8 +55,8 @@ void CanvasDelegate::reset()
 {
     scaleX = sizeX/2.2;
     scaleY = sizeY/2.2;
-    originX = int_round(sizeX/2.0);
-    originY = int_round(sizeY/2.0);
+    originX = intRound(sizeX/2.0);
+    originY = intRound(sizeY/2.0);
     shiftX = 0.0;
     shiftY = 0.0;
     zoom = 1.0;
@@ -62,8 +65,8 @@ void CanvasDelegate::reset()
 
 void CanvasDelegate::ComplexToPixelCoordinates(int &xout, int &yout, complex z) const
 {
-    xout = int_round(real(z)*scaleX + originX);
-    yout = int_round(-imag(z)*scaleY + originY);
+    xout = intRound(real(z)*scaleX + originX);
+    yout = intRound(-imag(z)*scaleY + originY);
     return;
 }
 
@@ -78,9 +81,51 @@ void CanvasDelegate::drawPoint(const complex &z, const QColor &color)
 {
     int x, y;
     ComplexToPixelCoordinates(x, y, z);
-    pen->setWidth(5);
+    pen->setWidth(2);
     pen->setColor(color);
     painter->setPen(*pen);
     painter->drawPoint(x,y);
+    return;
+}
+
+void CanvasDelegate::drawSegment(const complex &endpoint1, const complex &endpoint2, const QColor &color)
+{
+    int x1, y1, x2, y2;
+    ComplexToPixelCoordinates(x1, y1, endpoint1);
+    ComplexToPixelCoordinates(x2, y2, endpoint2);
+    pen->setWidth(1);
+    pen->setColor(color);
+    painter->setPen(*pen);
+    painter->drawLine(x1, y1, x2, y2);
+    return;
+}
+
+void CanvasDelegate::drawCircle(const complex &center, double radius, const QColor &color)
+{
+    int x1, y1, x2, y2;
+    complex firstCorner = center + radius*(-1.0 + 1.0*I);
+    complex secondCorner = center + radius*(1.0 - 1.0*I);
+    ComplexToPixelCoordinates(x1, y1, firstCorner);
+    ComplexToPixelCoordinates(x2, y2, secondCorner);
+    pen->setColor(color);
+    pen->setWidth(1);
+    painter->setPen(*pen);
+    painter->drawEllipse(x1, y1, x2 - x1, y2 - y1);
+    return;
+}
+
+void CanvasDelegate::drawArc(const complex &center, double radius, double angle1, double angle2, const QColor &color)
+{
+    int x1, y1, x2, y2;
+    complex firstCorner = center + radius*(-1.0 + 1.0*I);
+    complex secondCorner = center + radius*(1.0 - 1.0*I);
+    ComplexToPixelCoordinates(x1, y1, firstCorner);
+    ComplexToPixelCoordinates(x2, y2, secondCorner);
+    pen->setColor(color);
+    pen->setWidth(3);
+    painter->setPen(*pen);
+    double QtAngle1 = intRound(angle1*16*360/(2*M_PI));
+    double QtSpan = intRound((angle2 - angle1)*16*360/(2*M_PI));
+    painter->drawArc(x1, y1, x2 - x1, y2 - y1, QtAngle1, QtSpan);
     return;
 }

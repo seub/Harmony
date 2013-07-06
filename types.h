@@ -22,6 +22,6 @@ typedef std::complex<double> complex;
 std::ostream & operator<<(std::ostream &out, const complex & z);
 
 
-int int_round(double x);
+int intRound(double x);
 
 #endif // TYPES_H
