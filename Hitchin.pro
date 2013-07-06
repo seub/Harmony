@@ -26,16 +26,13 @@ SOURCES += main.cpp \
     h3point.cpp \
     h2point.cpp \
     sl2rmatrix.cpp \
-<<<<<<< HEAD
     h2canvas.cpp \
     canvas.cpp \
     h2geodesic.cpp \
-    linesinc.cpp
-=======
+    linesinc.cpp \
     canvas.cpp \
     canvasdelegate.cpp \
     h2canvasdelegate.cpp
->>>>>>> 9360e600facec53dd44e2fc4db72ca9b2d20f9d2
 
 HEADERS += \
     types.h \
@@ -47,13 +44,10 @@ HEADERS += \
     h3point.h \
     h2point.h \
     sl2rmatrix.h \
-<<<<<<< HEAD
     h2canvas.h \
     canvas.h \
     h2geodesic.h \
     linesinc.h
-=======
     canvas.h \
     canvasdelegate.h \
     h2canvasdelegate.h
->>>>>>> 9360e600facec53dd44e2fc4db72ca9b2d20f9d2
