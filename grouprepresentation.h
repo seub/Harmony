@@ -1,5 +1,5 @@
-#ifndef SURFACEGROUPREPRESENTATION_H
-#define SURFACEGROUPREPRESENTATION_H
+#ifndef GROUPREPRESENTATION_H
+#define GROUPREPRESENTATION_H
 
 #include "types.h"
 #include "discretegroup.h"
@@ -12,19 +12,19 @@ public:
 
     GroupRepresentation();
     GroupRepresentation(DiscreteGroup* Gamma);
-    GroupRepresentation(DiscreteGroup* Gamma, std::vector<SL2Cmatrix> listOfMatrices);
+    GroupRepresentation(DiscreteGroup* Gamma, std::vector<SL2CMatrix> listOfMatrices);
 
 
     bool checkRelations() const;
-    SL2Cmatrix evaluateRepresentation(const word & w) const;
+    SL2CMatrix evaluateRepresentation(const word & w) const;
 
-    GroupRepresentation conj(const SL2Cmatrix & A);
+    GroupRepresentation conj(const SL2CMatrix & A);
 
     GroupRepresentation conjugate() const;
 
 private:
     DiscreteGroup* Gamma;
-    std::vector<SL2Cmatrix> listOfMatrices;
+    std::vector<SL2CMatrix> listOfMatrices;
 };
 
-#endif // SURFACEGROUPREPRESENTATION_H
+#endif // GROUPREPRESENTATION_H

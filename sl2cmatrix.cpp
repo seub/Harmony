@@ -1,10 +1,10 @@
 #include "sl2cmatrix.h"
 
-SL2Cmatrix::SL2Cmatrix()
+SL2CMatrix::SL2CMatrix()
 {
 }
 
-SL2Cmatrix::SL2Cmatrix(const complex &a, const complex &b, const complex &c, const complex &d) : a(a), b(b), c(c), d(d)
+SL2CMatrix::SL2CMatrix(const complex &a, const complex &b, const complex &c, const complex &d) : a(a), b(b), c(c), d(d)
 {
     if (norm(det() - complex(1.0,0.0)) > ERROR)
     {
@@ -14,7 +14,7 @@ SL2Cmatrix::SL2Cmatrix(const complex &a, const complex &b, const complex &c, con
 }
 
 
-void SL2Cmatrix::getCoefficients(complex & a1, complex & a2, complex & a3, complex & a4) const
+void SL2CMatrix::getCoefficients(complex & a1, complex & a2, complex & a3, complex & a4) const
 {
     a1 = a;
     a2 = b;
@@ -24,17 +24,17 @@ void SL2Cmatrix::getCoefficients(complex & a1, complex & a2, complex & a3, compl
 }
 
 
-complex SL2Cmatrix::det() const
+complex SL2CMatrix::det() const
 {
     return a*d - b*c;
 }
 
-complex SL2Cmatrix::trace() const
+complex SL2CMatrix::trace() const
 {
     return a + d;
 }
 
-void SL2Cmatrix::eigenvalues(complex & lambda1, complex & lambda2) const
+void SL2CMatrix::eigenvalues(complex & lambda1, complex & lambda2) const
 {
     complex t = trace();
     complex delta = sqrt(t*t - 4.0);
@@ -44,7 +44,7 @@ void SL2Cmatrix::eigenvalues(complex & lambda1, complex & lambda2) const
     return;
 }
 
-void SL2Cmatrix::fixedPoints(complex & z1, complex & z2) const
+void SL2CMatrix::fixedPoints(complex & z1, complex & z2) const
 {
     complex delta = sqrt(trace()*trace() - 4.0);
     z1 = (a - d + delta) / (2.0*c);
@@ -52,63 +52,63 @@ void SL2Cmatrix::fixedPoints(complex & z1, complex & z2) const
 }
 
 
-bool SL2Cmatrix::isReal() const
+bool SL2CMatrix::isReal() const
 {
     return imag(a)==0 && imag(b)==0 && imag(c)==0 && imag(d)==0;
 }
 
-bool SL2Cmatrix::isParabolic() const
+bool SL2CMatrix::isParabolic() const
 {
     return trace()*trace() == 4.0;
 }
 
-bool SL2Cmatrix::isElliptic() const
+bool SL2CMatrix::isElliptic() const
 {
     return imag(trace())==0 && std::abs(real(trace())) < 2.0;
 }
 
-bool SL2Cmatrix::isLoxodromic() const
+bool SL2CMatrix::isLoxodromic() const
 {
     return imag(trace()) != 0 || std::norm(trace()) > 4.0;
 }
 
 
-SL2Cmatrix SL2Cmatrix::inverse() const
+SL2CMatrix SL2CMatrix::inverse() const
 {
-    return SL2Cmatrix(d,-b,-c,a);
+    return SL2CMatrix(d,-b,-c,a);
 }
 
-SL2Cmatrix SL2Cmatrix::transpose() const
+SL2CMatrix SL2CMatrix::transpose() const
 {
-    return SL2Cmatrix(a,c,b,d);
+    return SL2CMatrix(a,c,b,d);
 }
 
-SL2Cmatrix SL2Cmatrix::conjugate() const
+SL2CMatrix SL2CMatrix::conjugate() const
 {
-    return SL2Cmatrix(conj(a),conj(b),conj(c),conj(d));
+    return SL2CMatrix(conj(a),conj(b),conj(c),conj(d));
 }
 
-SL2Cmatrix SL2Cmatrix::adjoint() const
+SL2CMatrix SL2CMatrix::adjoint() const
 {
     return this->transpose().conjugate();
 }
 
-SL2Cmatrix operator *(const SL2Cmatrix & A1, const SL2Cmatrix & A2)
+SL2CMatrix operator *(const SL2CMatrix & A1, const SL2CMatrix & A2)
 {
 
-    return SL2Cmatrix(
+    return SL2CMatrix(
                 A1.a*A2.a + A1.b*A2.c,
                 A1.a*A2.b + A1.b*A2.d,
                 A1.c*A2.a + A1.d*A2.c,
                 A1.c*A2.b + A1.d*A2.d);
 }
 
-CP1point operator *(const SL2Cmatrix & A, const CP1point & z)
+CP1Point operator *(const SL2CMatrix & A, const CP1Point & z)
 {
-    return CP1point(A.a*z.z1+A.b*z.z2,A.c*z.z1+A.d*z.z2);
+    return CP1Point(A.a*z.z1+A.b*z.z2,A.c*z.z1+A.d*z.z2);
 }
 
-bool operator ==(const SL2Cmatrix & A1, const SL2Cmatrix & A2)
+bool operator ==(const SL2CMatrix & A1, const SL2CMatrix & A2)
 {
     bool test =
             std::abs(A1.a - A2.a) < ERROR &&
@@ -119,17 +119,17 @@ bool operator ==(const SL2Cmatrix & A1, const SL2Cmatrix & A2)
 }
 
 
-H3point operator *(const SL2Cmatrix & A, const H3point & p)
+H3Point operator *(const SL2CMatrix & A, const H3Point & p)
 {
-    SL2Cmatrix X;
-    H3point q;
+    SL2CMatrix X;
+    H3Point q;
     p.getHermitianCoordinates(X);
     q.setHermitianCoordinates(A*X*(A.adjoint()));
 
     return q;
 }
 
-std::ostream & operator<<(std::ostream & out, const SL2Cmatrix & A)
+std::ostream & operator<<(std::ostream & out, const SL2CMatrix & A)
 {
     out << "[ " << A.a << ", " << A.b << "; " << A.c << ", " << A.d << " ]";
     return out;
