@@ -8,7 +8,7 @@ class Circle
 {
 public:
     Circle();
-    Circle(complex center, dobule radius);
+    Circle(complex center, double radius);
     Circle(const complex & p1, const complex & p2, const complex & p3);
 
     bool isIn(const complex & z) const;

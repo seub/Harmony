@@ -16,6 +16,8 @@ private:
     double angle1, angle2;
 };
 
-bool intersectH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2Point & p);
+//bool intersectH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2Point & p);
+//bool intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2Point & p);
+
 
 #endif // H2GEODESIC_H

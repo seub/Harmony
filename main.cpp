@@ -19,18 +19,13 @@ int main(int argc, char *argv[])
     DiscreteGroup Gamma(S);
     std::cout << Gamma << std::endl;
 
-    std::vector<SL2Cmatrix> list(4);
-    list[1] = SL2Cmatrix(1.0,0.0,0.0,1.0);
 
 //    Canvas *canvastest = new Canvas;
 //    canvastest->show();
 
-<<<<<<< HEAD
-=======
     Canvas *canvastest = new Canvas;
     canvastest->show();
 
     std::cout << std::endl;
->>>>>>> 9360e600facec53dd44e2fc4db72ca9b2d20f9d2
     return a.exec();
 }
