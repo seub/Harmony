@@ -27,7 +27,9 @@ SOURCES += main.cpp \
     h2point.cpp \
     sl2rmatrix.cpp \
     h2canvas.cpp \
-    canvas.cpp
+    canvas.cpp \
+    h2geodesic.cpp \
+    linesinc.cpp
 
 HEADERS += \
     types.h \
@@ -40,4 +42,6 @@ HEADERS += \
     h2point.h \
     sl2rmatrix.h \
     h2canvas.h \
-    canvas.h
+    canvas.h \
+    h2geodesic.h \
+    linesinc.h
