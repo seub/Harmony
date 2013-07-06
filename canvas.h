@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-class H2Canvas;
+class CanvasDelegate;
 class Canvas : public QWidget
 {
     Q_OBJECT
@@ -16,7 +16,7 @@ public slots:
 
 private:
     void paintEvent(QPaintEvent *event);
-    H2Canvas * hypPlan;
+    CanvasDelegate * delegate;
 };
 
 #endif // CANVAS_H

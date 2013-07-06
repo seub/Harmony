@@ -11,10 +11,9 @@
 #include "canvas.h"
 
 int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-
+{    
     std::cout << std::endl;
+    QApplication a(argc, argv);
 
     TopologicalSurface S(2,3);
     DiscreteGroup Gamma(S);
@@ -23,5 +22,7 @@ int main(int argc, char *argv[])
 
     Canvas *canvastest = new Canvas;
     canvastest->show();
+
+    std::cout << std::endl;
     return a.exec();
 }

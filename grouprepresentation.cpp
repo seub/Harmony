@@ -8,7 +8,7 @@ GroupRepresentation::GroupRepresentation(DiscreteGroup *Gamma) : Gamma(Gamma)
 {
 }
 
-GroupRepresentation::GroupRepresentation(DiscreteGroup *Gamma, std::vector<SL2Cmatrix> listOfMatrices) : Gamma(Gamma), listOfMatrices(listOfMatrices)
+GroupRepresentation::GroupRepresentation(DiscreteGroup *Gamma, std::vector<SL2CMatrix> listOfMatrices) : Gamma(Gamma), listOfMatrices(listOfMatrices)
 {
     if(listOfMatrices.size() != (Gamma -> getGenerators()).size())
     {
@@ -19,7 +19,7 @@ GroupRepresentation::GroupRepresentation(DiscreteGroup *Gamma, std::vector<SL2Cm
 bool GroupRepresentation::checkRelations() const
 {
     std::vector<word> relations = Gamma -> getRelations();
-    SL2Cmatrix identity(complex(1.0,0.0),complex(0.0,0.0),complex(0.0,0.0),complex(1.0,0.0));
+    SL2CMatrix identity(complex(1.0,0.0),complex(0.0,0.0),complex(0.0,0.0),complex(1.0,0.0));
     for (unsigned int i=0;i<relations.size();i++)
     {
 
@@ -31,9 +31,9 @@ bool GroupRepresentation::checkRelations() const
     return true;
 }
 
-SL2Cmatrix GroupRepresentation::evaluateRepresentation(const word & w) const
+SL2CMatrix GroupRepresentation::evaluateRepresentation(const word & w) const
 {
-    SL2Cmatrix store(complex(1.0,0.0),complex(0.0,0.0),complex(0.0,0.0),complex(1.0,0.0));
+    SL2CMatrix store(complex(1.0,0.0),complex(0.0,0.0),complex(0.0,0.0),complex(1.0,0.0));
     for (unsigned int j=0;j<w.size();j++)
     {
         if(w[j].second == 1)
@@ -52,9 +52,9 @@ SL2Cmatrix GroupRepresentation::evaluateRepresentation(const word & w) const
     return store;
 }
 
-GroupRepresentation GroupRepresentation::conj(const SL2Cmatrix & A)
+GroupRepresentation GroupRepresentation::conj(const SL2CMatrix & A)
 {
-    std::vector<SL2Cmatrix> list(listOfMatrices.size());
+    std::vector<SL2CMatrix> list(listOfMatrices.size());
     for (unsigned int i=0;i<=listOfMatrices.size();i++)
     {
         list[i] = A*listOfMatrices[i]*A.inverse();
@@ -66,7 +66,7 @@ GroupRepresentation GroupRepresentation::conj(const SL2Cmatrix & A)
 
 GroupRepresentation GroupRepresentation::conjugate() const
 {
-    std::vector<SL2Cmatrix> list(listOfMatrices.size());
+    std::vector<SL2CMatrix> list(listOfMatrices.size());
     for (unsigned int i=0;i<=listOfMatrices.size();i++)
     {
         list[i] = listOfMatrices[i].conjugate();

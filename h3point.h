@@ -3,26 +3,26 @@
 #include "types.h"
 
 
-class SL2Cmatrix;
+class SL2CMatrix;
 
-class H3point
+class H3Point
 {
-    friend std::ostream & operator<<(std::ostream & out, const H3point & p);
+    friend std::ostream & operator<<(std::ostream & out, const H3Point & p);
 
 public:
-    H3point();
+    H3Point();
 
     void getBallCoordinates(double & x, double & y, double & z) const;
     void getHalfSpaceCoordinates(double & x, double & y, double & z) const;
     void getHyperboloidCoordinates(double & x0, double & x1, double & x2, double & x3) const;
     void getKleinCoordinates(double & x, double & y, double & z) const;
-    void getHermitianCoordinates(SL2Cmatrix & A) const;
+    void getHermitianCoordinates(SL2CMatrix & A) const;
 
     void setBallCoordinates(double x, double y, double z);
     void setHalfSpaceCoordinates(double x, double y, double z);
     void setHyperboloidCoordinates(double x0, double x1, double x2, double x3);
     void setKleinCoordinates(double x, double y, double z);
-    void setHermitianCoordinates(const SL2Cmatrix & A);
+    void setHermitianCoordinates(const SL2CMatrix & A);
 
 
 private:
@@ -30,6 +30,6 @@ private:
 
 };
 
-double H3distance(const H3point & p1, const H3point & p2);
+double H3distance(const H3Point & p1, const H3Point & p2);
 
 #endif // H3POINT_H

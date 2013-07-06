@@ -3,10 +3,10 @@
 
 #include "types.h"
 
-class H2point
+class H2Point
 {
 public:
-    H2point();
+    H2Point();
 
     complex getUpperHalfPlaneCoordinate() const;
     complex getDiskCoordinate() const;

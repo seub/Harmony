@@ -5,17 +5,17 @@
 #include "cp1point.h"
 #include "h3point.h"
 
-class SL2Cmatrix
+class SL2CMatrix
 {
-    friend SL2Cmatrix operator *(const SL2Cmatrix & A1, const SL2Cmatrix & A2);
-    friend CP1point operator *(const SL2Cmatrix & A, const CP1point & z);
-    friend std::ostream & operator<<(std::ostream & out, const SL2Cmatrix & A);
-    friend H3point operator *(const SL2Cmatrix & A, const H3point & p);
-    friend bool operator ==(const SL2Cmatrix & A1, const SL2Cmatrix & A2);
+    friend SL2CMatrix operator *(const SL2CMatrix & A1, const SL2CMatrix & A2);
+    friend CP1Point operator *(const SL2CMatrix & A, const CP1Point & z);
+    friend std::ostream & operator<<(std::ostream & out, const SL2CMatrix & A);
+    friend H3Point operator *(const SL2CMatrix & A, const H3Point & p);
+    friend bool operator ==(const SL2CMatrix & A1, const SL2CMatrix & A2);
 
 public:
-    SL2Cmatrix();
-    SL2Cmatrix(const complex & a, const complex & b, const complex & c, const complex & d);
+    SL2CMatrix();
+    SL2CMatrix(const complex & a, const complex & b, const complex & c, const complex & d);
 
     void getCoefficients(complex & a1, complex & a2, complex & a3, complex & a4) const;
 
@@ -27,10 +27,10 @@ public:
     bool isParabolic() const;
     bool isElliptic() const;
     bool isLoxodromic() const;
-    SL2Cmatrix inverse() const;
-    SL2Cmatrix transpose() const;
-    SL2Cmatrix conjugate() const;
-    SL2Cmatrix adjoint() const;
+    SL2CMatrix inverse() const;
+    SL2CMatrix transpose() const;
+    SL2CMatrix conjugate() const;
+    SL2CMatrix adjoint() const;
 
 private:
     complex a, b, c, d;

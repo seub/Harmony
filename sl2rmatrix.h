@@ -5,15 +5,15 @@
 #include "h2point.h"
 #include "sl2cmatrix.h"
 
-class SL2Rmatrix
+class SL2RMatrix
 {
-    friend H2point operator*(const SL2Rmatrix &A, const H2point &p);
+    friend H2Point operator*(const SL2RMatrix &A, const H2Point &p);
 
 public:
-    SL2Rmatrix();
-    SL2Rmatrix(double a, double b, double c, double d);
+    SL2RMatrix();
+    SL2RMatrix(double a, double b, double c, double d);
 
-    SL2Cmatrix complexCast() const;
+    SL2CMatrix complexCast() const;
     void getCoefficients(double &a, double &b, double &c, double &d) const;
 
 

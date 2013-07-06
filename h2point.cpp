@@ -1,25 +1,25 @@
 #include "h2point.h"
 
-H2point::H2point()
+H2Point::H2Point()
 {
 }
 
-complex H2point::getUpperHalfPlaneCoordinate() const
+complex H2Point::getUpperHalfPlaneCoordinate() const
 {
     return z;
 }
 
-complex H2point::getDiskCoordinate() const
+complex H2Point::getDiskCoordinate() const
 {
     return (I*(z - I)/(z + I));
 }
 
-void H2point::setUpperHalfPlaneCoordiante(complex z)
+void H2Point::setUpperHalfPlaneCoordiante(complex z)
 {
     this->z = z;
 }
 
-void H2point::setDiskCoordinate(complex z)
+void H2Point::setDiskCoordinate(complex z)
 {
     this->z = (-I*(z + I)/(z - I));
 }

@@ -3,18 +3,18 @@
 #include "types.h"
 
 
-class SL2Cmatrix;
+class SL2CMatrix;
 
-class CP1point
+class CP1Point
 {
-    friend bool operator==(const CP1point &p1, const CP1point &p2);
-    friend std::ostream & operator<<(std::ostream & out, const CP1point &p);
-    friend CP1point operator *(const SL2Cmatrix & A, const CP1point & z);
+    friend bool operator==(const CP1Point &p1, const CP1Point &p2);
+    friend std::ostream & operator<<(std::ostream & out, const CP1Point &p);
+    friend CP1Point operator *(const SL2CMatrix & A, const CP1Point & z);
 
 public:
-    CP1point();
-    CP1point(const complex & z);
-    CP1point(const complex & z1, const complex &z2);
+    CP1Point();
+    CP1Point(const complex & z);
+    CP1Point(const complex & z1, const complex &z2);
 
     bool isInfinity() const;
 

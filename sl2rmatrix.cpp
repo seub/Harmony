@@ -1,15 +1,15 @@
 #include "sl2rmatrix.h"
 
-SL2Rmatrix::SL2Rmatrix()
+SL2RMatrix::SL2RMatrix()
 {
 }
 
 
-SL2Rmatrix::SL2Rmatrix(double a, double b, double c, double d) : a(a), b(b), c(c), d(d)
+SL2RMatrix::SL2RMatrix(double a, double b, double c, double d) : a(a), b(b), c(c), d(d)
 {
 }
 
-void SL2Rmatrix::getCoefficients(double &a, double &b, double &c, double &d) const
+void SL2RMatrix::getCoefficients(double &a, double &b, double &c, double &d) const
 {
     a = this->a;
     b = this->b;
@@ -18,19 +18,19 @@ void SL2Rmatrix::getCoefficients(double &a, double &b, double &c, double &d) con
     return;
 }
 
-SL2Cmatrix SL2Rmatrix::complexCast() const
+SL2CMatrix SL2RMatrix::complexCast() const
 {
-    return SL2Cmatrix(a, b, c, d);
+    return SL2CMatrix(a, b, c, d);
 }
 
 
-H2point operator*(const SL2Rmatrix &A, const H2point &p)
+H2Point operator*(const SL2RMatrix &A, const H2Point &p)
 {
     complex z = p.getUpperHalfPlaneCoordinate();
     double a, b, c, d;
     A.getCoefficients(a, b, c, d);
     complex Z = (a*z + b)/(c*z + d);
-    H2point res;
+    H2Point res;
     res.setUpperHalfPlaneCoordiante(Z);
     return res;
 }

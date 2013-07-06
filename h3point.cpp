@@ -1,12 +1,12 @@
 #include "h3point.h"
 #include "sl2cmatrix.h"
 
-H3point::H3point()
+H3Point::H3Point()
 {    
 }
 
 
-void H3point::getBallCoordinates(double & x, double & y, double & z) const
+void H3Point::getBallCoordinates(double & x, double & y, double & z) const
 {
     x = X;
     y = Y;
@@ -14,7 +14,7 @@ void H3point::getBallCoordinates(double & x, double & y, double & z) const
     return;
 }
 
-void H3point::getHalfSpaceCoordinates(double & x, double & y, double & z) const
+void H3Point::getHalfSpaceCoordinates(double & x, double & y, double & z) const
 {
     //std::cout << "Entering H3point::getHalfSpaceCoordinates" << std::endl;
     double s = X*X + (Y+1.0)*(Y+1.0) + Z*Z;
@@ -25,7 +25,7 @@ void H3point::getHalfSpaceCoordinates(double & x, double & y, double & z) const
     return;
 }
 
-void H3point::getHyperboloidCoordinates(double & x0, double & x1, double & x2, double & x3) const
+void H3Point::getHyperboloidCoordinates(double & x0, double & x1, double & x2, double & x3) const
 {
     double s = 1 - X*X - Y*Y - Z*Z;
     x0 = (2 / s) - 1;
@@ -35,7 +35,7 @@ void H3point::getHyperboloidCoordinates(double & x0, double & x1, double & x2, d
     return;
 }
 
-void H3point::getKleinCoordinates(double & x, double & y, double & z) const
+void H3Point::getKleinCoordinates(double & x, double & y, double & z) const
 {
     double s = 1 + X*X + Y*Y + Z*Z;
     x = (2.0*X / s);
@@ -44,16 +44,16 @@ void H3point::getKleinCoordinates(double & x, double & y, double & z) const
     return;
 }
 
-void H3point::getHermitianCoordinates(SL2Cmatrix & A) const
+void H3Point::getHermitianCoordinates(SL2CMatrix & A) const
 {
     double x0,x1,x2,x3;
     getHyperboloidCoordinates(x0,x1,x2,x3);
-    A = SL2Cmatrix(complex(x0+x1,0.0),complex(x2,x3),complex(x2,-x3),complex(x0-x1,0.0));
+    A = SL2CMatrix(complex(x0+x1,0.0),complex(x2,x3),complex(x2,-x3),complex(x0-x1,0.0));
     return;
 }
 
 
-void H3point::setBallCoordinates(double x, double y, double z)
+void H3Point::setBallCoordinates(double x, double y, double z)
 {
     double s = x*x + y*y + z*z;
     if (1.0 - s <= ERROR)
@@ -67,7 +67,7 @@ void H3point::setBallCoordinates(double x, double y, double z)
     return;
 }
 
-void H3point::setHalfSpaceCoordinates(double x, double y, double z)
+void H3Point::setHalfSpaceCoordinates(double x, double y, double z)
 {
     if (z <= ERROR)
     {
@@ -80,7 +80,7 @@ void H3point::setHalfSpaceCoordinates(double x, double y, double z)
     Y = ((x*x + y*y + z*z - 1.0) / s);
 }
 
-void H3point::setHyperboloidCoordinates(double x0, double x1, double x2, double x3)
+void H3Point::setHyperboloidCoordinates(double x0, double x1, double x2, double x3)
 {
     if (x0 <= ERROR)
     {
@@ -99,7 +99,7 @@ void H3point::setHyperboloidCoordinates(double x0, double x1, double x2, double 
     return;
 }
 
-void H3point::setKleinCoordinates(double x, double y, double z)
+void H3Point::setKleinCoordinates(double x, double y, double z)
 {
     double d = x*x + y*y + z*z;
     if (1.0 - d <= ERROR)
@@ -114,7 +114,7 @@ void H3point::setKleinCoordinates(double x, double y, double z)
     return;
 }
 
-void H3point::setHermitianCoordinates(const SL2Cmatrix &A)
+void H3Point::setHermitianCoordinates(const SL2CMatrix &A)
 {
     if (!(A.adjoint() == A))
     {
@@ -132,7 +132,7 @@ void H3point::setHermitianCoordinates(const SL2Cmatrix &A)
     return;
 }
 
-double H3distance(const H3point & p1, const H3point & p2)
+double H3distance(const H3Point & p1, const H3Point & p2)
 {
     double X1,Y1,Z1,X2,Y2,Z2,r1,r2,s;
     p1.getBallCoordinates(X1,Y1,Z1);
@@ -145,7 +145,7 @@ double H3distance(const H3point & p1, const H3point & p2)
 }
 
 
-std::ostream & operator<<(std::ostream & out, const H3point & p)
+std::ostream & operator<<(std::ostream & out, const H3Point & p)
 {
     out << "( " << p.X << ", " << p.Y << ", " << p.Z << " )";
     return out;

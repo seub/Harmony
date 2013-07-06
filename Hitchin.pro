@@ -26,8 +26,9 @@ SOURCES += main.cpp \
     h3point.cpp \
     h2point.cpp \
     sl2rmatrix.cpp \
-    h2canvas.cpp \
-    canvas.cpp
+    canvas.cpp \
+    canvasdelegate.cpp \
+    h2canvasdelegate.cpp
 
 HEADERS += \
     types.h \
@@ -39,5 +40,6 @@ HEADERS += \
     h3point.h \
     h2point.h \
     sl2rmatrix.h \
-    h2canvas.h \
-    canvas.h
+    canvas.h \
+    canvasdelegate.h \
+    h2canvasdelegate.h
