@@ -52,7 +52,7 @@ bool H2Geodesic::getCircleAndAnglesInDiskModel(Circle &outC, double &outAngle1, 
     return true;
 }
 
-bool H2Geodesic::contains(const H2Point &p) const
+bool H2Geodesic::contains(const H2Point & p) const
 {
     if (isCircleInDiskModel())
     {

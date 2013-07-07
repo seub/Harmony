@@ -30,7 +30,8 @@ SOURCES += main.cpp \
     canvasdelegate.cpp \
     h2canvasdelegate.cpp \
     planarline.cpp \
-    circle.cpp
+    circle.cpp \
+    h2polygon.cpp
 
 HEADERS += \
     types.h \
@@ -47,4 +48,5 @@ HEADERS += \
     canvasdelegate.h \
     h2canvasdelegate.h \
     planarline.h \
-    circle.h
+    circle.h \
+    h2polygon.h

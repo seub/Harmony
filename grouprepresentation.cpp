@@ -25,6 +25,7 @@ bool GroupRepresentation::checkRelations() const
 
         if(!(evaluateRepresentation(relations[i]) == identity))
         {
+            std::cout << "Hey, you fucked up, moron!" << std::endl;
             return false;
         }
     }
@@ -43,10 +44,6 @@ SL2CMatrix GroupRepresentation::evaluateRepresentation(const word & w) const
         else if (w[j].second == -1)
         {
             store = store*listOfMatrices[w[j].first].inverse();
-        }
-        else
-        {
-            std::cout << "Hey, you fucked up, moron!" << std::endl;
         }
     }
     return store;
