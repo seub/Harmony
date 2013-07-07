@@ -14,12 +14,6 @@ SL2CMatrix::SL2CMatrix(const complex &a, const complex &b, const complex &c, con
     }
 }
 
-SL2CMatrix::SL2CMatrix(const CP1Point &z1in, const CP1Point &z2in, const CP1Point &z3in,
-                       const CP1Point &z1out, const CP1Point &z2out, const CP1Point &z3out)
-{
-
-}
-
 void SL2CMatrix::getCoefficients(complex & a, complex & b, complex & c, complex & d) const
 {
     a = this->a;
@@ -59,33 +53,12 @@ void SL2CMatrix::eigenvalues(complex & lambda1, complex & lambda2) const
     return;
 }
 
-void SL2CMatrix::fixedPoints(complex & z1, complex & z2) const
-{
-    complex delta = sqrt(trace()*trace() - 4.0);
-    z1 = (a - d + delta) / (2.0*c);
-    z2 = (a - d - delta) / (2.0*c);
-}
-
 
 bool SL2CMatrix::isReal() const
 {
     return std::abs(imag(a))<ERROR && std::abs(imag(b))<ERROR && std::abs(imag(c))<ERROR && std::abs(imag(d))<ERROR;
 }
 
-bool SL2CMatrix::isParabolic() const
-{
-    return trace()*trace() == 4.0;
-}
-
-bool SL2CMatrix::isElliptic() const
-{
-    return imag(trace())==0 && std::abs(real(trace())) < 2.0;
-}
-
-bool SL2CMatrix::isLoxodromic() const
-{
-    return imag(trace()) != 0 || std::norm(trace()) > 4.0;
-}
 
 
 SL2CMatrix SL2CMatrix::inverse() const
@@ -143,17 +116,6 @@ bool operator ==(const SL2CMatrix & A1, const SL2CMatrix & A2)
             std::abs(A1.c - A2.c) < ERROR &&
             std::abs(A1.d - A2.d) < ERROR;
     return test;
-}
-
-
-H3Point operator *(const SL2CMatrix & A, const H3Point & p)
-{
-    SL2CMatrix X;
-    H3Point q;
-    p.getHermitianCoordinates(X);
-    q.setHermitianCoordinates(A*X*(A.adjoint()));
-
-    return q;
 }
 
 std::ostream & operator<<(std::ostream & out, const SL2CMatrix & A)

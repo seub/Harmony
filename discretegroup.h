@@ -15,8 +15,8 @@ public:
     std::vector<generatorName> getGenerators() const;
     std::vector<word> getRelations() const;
 
-    std::string getWordString(const word & w) const;
-    std::string getLetterString(const letter & l) const;
+    std::string getWordAsString(const word & w) const;
+    std::string getLetterAsString(const letter & l) const;
     bool isClosedSurfaceGroup() const;
 
 private:
@@ -26,7 +26,7 @@ private:
     bool closedSurfaceGroup;
 };
 
-
+DiscreteGroup AmalgamateOverCommonGenerator(const DiscreteGroup & Gamma1, const DiscreteGroup & Gamma2);
 
 
 #endif // DISCRETEGROUP_H

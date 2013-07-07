@@ -114,10 +114,10 @@ std::ostream & operator<<(std::ostream &out, const DiscreteGroup & Gamma)
     }
     out << " | ";
     std::vector<word> relations = Gamma.relations;
-    out << Gamma.getWordString(relations[0]);
+    out << Gamma.getWordAsString(relations[0]);
     for(unsigned int i=1; i<relations.size(); i++)
     {
-        out << ", " << Gamma.getWordString(relations[i]);
+        out << ", " << Gamma.getWordAsString(relations[i]);
     }
     out << " >" << std::endl;
 
@@ -125,7 +125,7 @@ std::ostream & operator<<(std::ostream &out, const DiscreteGroup & Gamma)
 }
 
 
-std::string DiscreteGroup::getLetterString(const letter & l) const
+std::string DiscreteGroup::getLetterAsString(const letter & l) const
 {
     std::string res;
     res = generators[l.first];
@@ -139,13 +139,13 @@ std::string DiscreteGroup::getLetterString(const letter & l) const
 }
 
 
-std::string DiscreteGroup::getWordString(const word & w) const
+std::string DiscreteGroup::getWordAsString(const word & w) const
 {
     std::string res;
     unsigned int i;
     for(i=0;i<w.size();i++)
     {
-        res.append(getLetterString(w[i])).append(" ");
+        res.append(getLetterAsString(w[i])).append(" ");
     }
     return res;
 }

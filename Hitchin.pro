@@ -32,7 +32,8 @@ SOURCES += main.cpp \
     planarline.cpp \
     circle.cpp \
     h2polygon.cpp \
-    h2isometry.cpp
+    h2isometry.cpp \
+    h3isometry.cpp
 
 HEADERS += \
     types.h \
@@ -51,7 +52,8 @@ HEADERS += \
     planarline.h \
     circle.h \
     h2polygon.h \
-    h2isometry.h
+    h2isometry.h \
+    h3isometry.h
 
 OTHER_FILES += \
     TODO.txt

@@ -16,7 +16,7 @@ public:
     CP1Point(const complex & z);
     CP1Point(const complex & z1, const complex &z2);
 
-    complex getCCoordinate() const;
+    complex getComplexCoordinate() const;
     bool isInfinity() const;
 
 private:

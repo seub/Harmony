@@ -8,6 +8,10 @@ SL2RMatrix::SL2RMatrix()
 
 SL2RMatrix::SL2RMatrix(double a, double b, double c, double d) : a(a), b(b), c(c), d(d)
 {
+    if (det() != 1.0)
+    {
+        std::cout << "WARNING in SL2RMatrix::SL2RMatrix: determinant is not 1 (it is " << det() << ")" << std::endl;
+    }
 }
 
 void SL2RMatrix::getCoefficients(double &a, double &b, double &c, double &d) const
@@ -17,6 +21,11 @@ void SL2RMatrix::getCoefficients(double &a, double &b, double &c, double &d) con
     c = this->c;
     d = this->d;
     return;
+}
+
+double SL2RMatrix::det() const
+{
+    return a*d - b*c;
 }
 
 SL2CMatrix SL2RMatrix::complexCast() const
@@ -48,4 +57,25 @@ H2Point operator*(const SL2RMatrix &A, const H2Point &p)
     H2Point res;
     res.setUpperHalfPlaneCoordiante(Z);
     return res;
+}
+
+H2Polygon operator*(const SL2RMatrix &A, const H2Polygon &P)
+{
+    H2Polygon res;
+    std::vector<H2Point> vertices = P.getVertices();
+    for(unsigned int i=0; i<vertices.size(); i++)
+    {
+        res.addVertex(A*vertices[i]);
+    }
+    return res;
+}
+
+SL2RMatrix operator *(const SL2RMatrix & A1, const SL2RMatrix & A2)
+{
+
+    return SL2RMatrix(
+                A1.a*A2.a + A1.b*A2.c,
+                A1.a*A2.b + A1.b*A2.d,
+                A1.c*A2.a + A1.d*A2.c,
+                A1.c*A2.b + A1.d*A2.d);
 }

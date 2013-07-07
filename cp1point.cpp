@@ -19,14 +19,17 @@ bool CP1Point::isInfinity() const
     return z2 == 0.0;
 }
 
-complex CP1Point::getCCoordinate() const
+complex CP1Point::getComplexCoordinate() const
 {
     if (!isInfinity())
     {
         return z1 / z2;
     }
-    else std::cout << "Infinity is not in C" << std::endl;
-    throw(0);
+    else
+    {
+        std::cout << "Infinity is not in C" << std::endl;
+        throw(0);
+    }
 }
 
 bool operator==(const CP1Point & p1, const CP1Point & p2)

@@ -7,6 +7,7 @@
 #include "circle.h"
 #include "planarline.h"
 #include "h2polygon.h"
+#include "sl2rmatrix.h"
 
 H2CanvasDelegate::H2CanvasDelegate(Canvas *canvas) : CanvasDelegate(canvas)
 {
@@ -63,7 +64,8 @@ void H2CanvasDelegate::drawH2Polygon(const H2Polygon &P, const QColor &color, in
     int sizePoly = P.getNumberOfVertices();
     for (int i=0; i<sizePoly ; i++)
     {
-        drawH2GeodesicArc(P.getSide(i),color,width);
+        drawH2GeodesicArc(P.getSide(i),color,width);        
+        drawH2Point(P.getVertex(i));
     }
     return;
 }
@@ -99,10 +101,8 @@ void H2CanvasDelegate::drawExample()
     P.addVertex(p5);
     drawH2Polygon(P,"red");
 
-    drawH2Point(p1);
-    drawH2Point(p2);
-    drawH2Point(p3);
-    drawH2Point(p4);
-    drawH2Point(p5);
+    SL2RMatrix A(0.5, 0.2, 5, 4);
+    drawH2Polygon(A*P, "blue");
+    drawH2Polygon(A.inverse()*P, "green");
     return;
 }
