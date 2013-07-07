@@ -22,12 +22,12 @@ public:
     QImage * getImage() const;
 
 
-    void drawPoint(const complex &z, const QColor &color = "black");
-    void drawSegment(const complex &endpoint1, const complex &endpoint2, const QColor &color = "black");
-    void drawCircle(const complex &center, double radius, const QColor &color = "black");
-    void drawCircle(const Circle &C, const QColor &color = "black");
-    void drawArc(const complex &center, double radius, double angle1, double angle2, const QColor &color = "black");
-    void drawArc(const Circle &C, double angle1, double angle2, const QColor &color = "black");
+    void drawPoint(const complex &z, const QColor &color = "black", int width = 4);
+    void drawSegment(const complex &endpoint1, const complex &endpoint2, const QColor &color = "black", int width = 1);
+    void drawCircle(const complex &center, double radius, const QColor &color = "black", int width = 1);
+    void drawCircle(const Circle &C, const QColor &color = "black", int width = 1);
+    void drawArc(const complex &center, double radius, double angle1, double angle2, const QColor &color = "black", int width = 1);
+    void drawArc(const Circle &C, double angle1, double angle2, const QColor &color = "black", int width = 1);
 
 protected:
     Canvas *canvas;
@@ -48,7 +48,7 @@ protected:
     complex PixelToComplexCoordinates(int x, int y) const;
     void ComplexToPixelCoordinates(int & xout, int & yout, complex z) const;
 
-    virtual void paintEvent() {}
+    //virtual void paintEvent() {}
 
 
 };

@@ -30,6 +30,16 @@ void Circle::getCenterAndRadius(complex & center, double & radius) const
     return;
 }
 
+complex Circle::getCenter() const
+{
+    return center;
+}
+
+double Circle::getRadius() const
+{
+    return radius;
+}
+
 void Circle::setCenterAndRadius(complex &center, double &radius)
 {
     this->center = center;

@@ -78,30 +78,30 @@ complex CanvasDelegate::PixelToComplexCoordinates(int x, int y) const
     return complex(a,b);
 }
 
-void CanvasDelegate::drawPoint(const complex &z, const QColor &color)
+void CanvasDelegate::drawPoint(const complex &z, const QColor &color, int width)
 {
     int x, y;
     ComplexToPixelCoordinates(x, y, z);
-    pen->setWidth(4);
+    pen->setWidth(width);
     pen->setColor(color);
     painter->setPen(*pen);
     painter->drawPoint(x,y);
     return;
 }
 
-void CanvasDelegate::drawSegment(const complex &endpoint1, const complex &endpoint2, const QColor &color)
+void CanvasDelegate::drawSegment(const complex &endpoint1, const complex &endpoint2, const QColor &color, int width)
 {
     int x1, y1, x2, y2;
     ComplexToPixelCoordinates(x1, y1, endpoint1);
     ComplexToPixelCoordinates(x2, y2, endpoint2);
-    pen->setWidth(1);
+    pen->setWidth(width);
     pen->setColor(color);
     painter->setPen(*pen);
     painter->drawLine(x1, y1, x2, y2);
     return;
 }
 
-void CanvasDelegate::drawCircle(const complex &center, double radius, const QColor &color)
+void CanvasDelegate::drawCircle(const complex &center, double radius, const QColor &color, int width)
 {
     int x1, y1, x2, y2;
     complex firstCorner = center + radius*(-1.0 + 1.0*I);
@@ -109,22 +109,22 @@ void CanvasDelegate::drawCircle(const complex &center, double radius, const QCol
     ComplexToPixelCoordinates(x1, y1, firstCorner);
     ComplexToPixelCoordinates(x2, y2, secondCorner);
     pen->setColor(color);
-    pen->setWidth(1);
+    pen->setWidth(width);
     painter->setPen(*pen);
     painter->drawEllipse(x1, y1, x2 - x1, y2 - y1);
     return;
 }
 
-void CanvasDelegate::drawCircle(const Circle &C, const QColor &color)
+void CanvasDelegate::drawCircle(const Circle &C, const QColor &color, int width)
 {
     complex center;
     double radius;
     C.getCenterAndRadius(center, radius);
-    drawCircle(center, radius, color);
+    drawCircle(center, radius, color, width);
     return;
 }
 
-void CanvasDelegate::drawArc(const complex &center, double radius, double angle1, double angle2, const QColor &color)
+void CanvasDelegate::drawArc(const complex &center, double radius, double angle1, double angle2, const QColor &color, int width)
 {
     int x1, y1, x2, y2;
     complex firstCorner = center + radius*(-1.0 + 1.0*I);
@@ -132,7 +132,7 @@ void CanvasDelegate::drawArc(const complex &center, double radius, double angle1
     ComplexToPixelCoordinates(x1, y1, firstCorner);
     ComplexToPixelCoordinates(x2, y2, secondCorner);
     pen->setColor(color);
-    pen->setWidth(1);
+    pen->setWidth(width);
     painter->setPen(*pen);
     double QtAngle1 = intRound(angle1*16*360/(2*M_PI));
     double QtSpan = intRound((angle2 - angle1)*16*360/(2*M_PI));
@@ -140,12 +140,12 @@ void CanvasDelegate::drawArc(const complex &center, double radius, double angle1
     return;
 }
 
-void CanvasDelegate::drawArc(const Circle &C, double angle1, double angle2, const QColor &color)
+void CanvasDelegate::drawArc(const Circle &C, double angle1, double angle2, const QColor &color, int width)
 {
     //std::cout << "Entering CanvasDelegate::drawArc" << std::endl;
     complex center;
     double radius;
     C.getCenterAndRadius(center, radius);
-    drawArc(center, radius, angle1, angle2, color);
+    drawArc(center, radius, angle1, angle2, color, width);
     return;
 }
