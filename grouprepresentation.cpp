@@ -1,14 +1,14 @@
 #include "grouprepresentation.h"
 
-GroupRepresentation::GroupRepresentation()
+template<typename T> GroupRepresentation<T>::GroupRepresentation()
 {
 }
 
-GroupRepresentation::GroupRepresentation(DiscreteGroup *Gamma) : Gamma(Gamma)
+template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *Gamma) : Gamma(Gamma)
 {
 }
 
-GroupRepresentation::GroupRepresentation(DiscreteGroup *Gamma, std::vector<SL2CMatrix> listOfMatrices) : Gamma(Gamma), listOfMatrices(listOfMatrices)
+template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *Gamma, std::vector<T> listOfMatrices) : Gamma(Gamma), listOfMatrices(listOfMatrices)
 {
     if(listOfMatrices.size() != (Gamma -> getGenerators()).size())
     {
@@ -16,10 +16,10 @@ GroupRepresentation::GroupRepresentation(DiscreteGroup *Gamma, std::vector<SL2CM
     }
 }
 
-bool GroupRepresentation::checkRelations() const
+template<typename T> bool GroupRepresentation<T>::checkRelations() const
 {
     std::vector<word> relations = Gamma -> getRelations();
-    SL2CMatrix identity(complex(1.0,0.0),complex(0.0,0.0),complex(0.0,0.0),complex(1.0,0.0));
+    T identity(complex(1.0,0.0),complex(0.0,0.0),complex(0.0,0.0),complex(1.0,0.0));
     for (unsigned int i=0;i<relations.size();i++)
     {
 
@@ -31,9 +31,9 @@ bool GroupRepresentation::checkRelations() const
     return true;
 }
 
-SL2CMatrix GroupRepresentation::evaluateRepresentation(const word & w) const
+template<typename T> T GroupRepresentation<T>::evaluateRepresentation(const word & w) const
 {
-    SL2CMatrix store(complex(1.0,0.0),complex(0.0,0.0),complex(0.0,0.0),complex(1.0,0.0));
+    T store(1.0,0.0,0.0,0.0);
     for (unsigned int j=0;j<w.size();j++)
     {
         if(w[j].second == 1)
@@ -52,25 +52,32 @@ SL2CMatrix GroupRepresentation::evaluateRepresentation(const word & w) const
     return store;
 }
 
-GroupRepresentation GroupRepresentation::conj(const SL2CMatrix & A)
+template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conj(const T & A)
 {
-    std::vector<SL2CMatrix> list(listOfMatrices.size());
+    std::vector<T> list(listOfMatrices.size());
     for (unsigned int i=0;i<=listOfMatrices.size();i++)
     {
         list[i] = A*listOfMatrices[i]*A.inverse();
     }
-    GroupRepresentation r(Gamma,list);
+    GroupRepresentation<T> r(Gamma,list);
     return r;
 
 }
 
-GroupRepresentation GroupRepresentation::conjugate() const
+template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conjugate() const
 {
-    std::vector<SL2CMatrix> list(listOfMatrices.size());
+    std::vector<T> list(listOfMatrices.size());
     for (unsigned int i=0;i<=listOfMatrices.size();i++)
     {
         list[i] = listOfMatrices[i].conjugate();
     }
-    GroupRepresentation r(Gamma,list);
+    GroupRepresentation<T> r(Gamma,list);
     return r;
+}
+
+H2Polygon FuchsianRepresentation::generatePolygon(const H2Point &basePoint) const
+{
+    H2Polygon res;
+    return res;
+
 }

@@ -4,27 +4,32 @@
 #include "types.h"
 #include "discretegroup.h"
 #include "sl2cmatrix.h"
+#include "sl2rmatrix.h"
 
-class GroupRepresentation
+
+
+template <typename T> class GroupRepresentation
 {    
 
 public:
 
     GroupRepresentation();
     GroupRepresentation(DiscreteGroup* Gamma);
-    GroupRepresentation(DiscreteGroup* Gamma, std::vector<SL2CMatrix> listOfMatrices);
+    GroupRepresentation(DiscreteGroup* Gamma, std::vector<T> listOfMatrices);
 
 
     bool checkRelations() const;
-    SL2CMatrix evaluateRepresentation(const word & w) const;
+    T evaluateRepresentation(const word & w) const;
 
-    GroupRepresentation conj(const SL2CMatrix & A);
+    GroupRepresentation<T> conj(const T & A);
+    GroupRepresentation<T> conjugate() const;
 
-    GroupRepresentation conjugate() const;
+    //Specialization to GroupRepresentation<SL2RMatrix> (i.e. FuchsianRepresentation)
+    H2Polygon generatePolygon(const H2Point & basePoint) const;
 
 private:
     DiscreteGroup* Gamma;
-    std::vector<SL2CMatrix> listOfMatrices;
+    std::vector<T> listOfMatrices;
 };
 
 #endif // GROUPREPRESENTATION_H

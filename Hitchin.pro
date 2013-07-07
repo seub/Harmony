@@ -48,3 +48,6 @@ HEADERS += \
     h2canvasdelegate.h \
     planarline.h \
     circle.h
+
+OTHER_FILES += \
+    TODO.txt

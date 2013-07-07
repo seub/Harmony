@@ -2,6 +2,7 @@
 
 SL2CMatrix::SL2CMatrix()
 {
+    setIdentity();
 }
 
 SL2CMatrix::SL2CMatrix(const complex &a, const complex &b, const complex &c, const complex &d) : a(a), b(b), c(c), d(d)
@@ -14,12 +15,21 @@ SL2CMatrix::SL2CMatrix(const complex &a, const complex &b, const complex &c, con
 }
 
 
-void SL2CMatrix::getCoefficients(complex & a1, complex & a2, complex & a3, complex & a4) const
+void SL2CMatrix::getCoefficients(complex & a, complex & b, complex & c, complex & d) const
 {
-    a1 = a;
-    a2 = b;
-    a3 = c;
-    a4 = d;
+    a = this->a;
+    b = this->b;
+    c = this->c;
+    d = this->d;
+    return;
+}
+
+void SL2CMatrix::setIdentity()
+{
+    a = 1.0;
+    b = 0.0;
+    c = 0.0;
+    d = 1.0;
     return;
 }
 

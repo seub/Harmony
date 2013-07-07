@@ -18,6 +18,7 @@ public:
     SL2CMatrix(const complex & a, const complex & b, const complex & c, const complex & d);
 
     void getCoefficients(complex & a1, complex & a2, complex & a3, complex & a4) const;
+    void setIdentity();
 
     complex det() const;
     complex trace() const;

@@ -1,0 +1,4 @@
+Think about ERROR:
+-size
+-rel error
+-needed at all?
