@@ -72,9 +72,16 @@ template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conjugate() 
     return r;
 }
 
-H2Polygon FuchsianRepresentation::generatePolygon(const H2Point &basePoint) const
+template <> H2Polygon RealRepresentation::generatePolygon(const H2Point &basePoint) const
 {
     H2Polygon res;
+    H2Point point = basePoint;
+    res.addVertex(point);
+    for (unsigned int i=0; i<listOfMatrices.size(); i++)
+    {
+        point = listOfMatrices[i]*point;
+        res.addVertex(point);
+    }
     return res;
 
 }

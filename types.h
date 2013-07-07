@@ -21,7 +21,7 @@ typedef std::vector<letter> word;
 
 typedef std::complex<double> complex;
 
-typedef GroupRepresentation<SL2RMatrix> FuchsianRepresentation;
+typedef GroupRepresentation<SL2RMatrix> RealRepresentation;
 
 
 std::ostream & operator<<(std::ostream &out, const complex & z);
