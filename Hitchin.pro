@@ -48,5 +48,12 @@ HEADERS += \
     canvasdelegate.h \
     h2canvasdelegate.h \
     planarline.h \
+<<<<<<< HEAD
     circle.h \
     h2polygon.h
+=======
+    circle.h
+
+OTHER_FILES += \
+    TODO.txt
+>>>>>>> 98e7dada8137d2220253da1edac42265c07ed2b5

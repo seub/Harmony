@@ -2,6 +2,7 @@
 
 SL2RMatrix::SL2RMatrix()
 {
+    setIdentity();
 }
 
 
@@ -22,6 +23,16 @@ SL2CMatrix SL2RMatrix::complexCast() const
 {
     return SL2CMatrix(a, b, c, d);
 }
+
+void SL2RMatrix::setIdentity()
+{
+    a = 1.0;
+    b = 0.0;
+    c = 0.0;
+    d = 1.0;
+    return;
+}
+
 
 
 H2Point operator*(const SL2RMatrix &A, const H2Point &p)
