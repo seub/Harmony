@@ -14,6 +14,11 @@ SL2CMatrix::SL2CMatrix(const complex &a, const complex &b, const complex &c, con
     }
 }
 
+SL2CMatrix::SL2CMatrix(const CP1Point &z1in, const CP1Point &z2in, const CP1Point &z3in,
+                       const CP1Point &z1out, const CP1Point &z2out, const CP1Point &z3out)
+{
+
+}
 
 void SL2CMatrix::getCoefficients(complex & a, complex & b, complex & c, complex & d) const
 {
@@ -64,7 +69,7 @@ void SL2CMatrix::fixedPoints(complex & z1, complex & z2) const
 
 bool SL2CMatrix::isReal() const
 {
-    return imag(a)==0 && imag(b)==0 && imag(c)==0 && imag(d)==0;
+    return std::abs(imag(a))<ERROR && std::abs(imag(b))<ERROR && std::abs(imag(c))<ERROR && std::abs(imag(d))<ERROR;
 }
 
 bool SL2CMatrix::isParabolic() const
@@ -102,6 +107,18 @@ SL2CMatrix SL2CMatrix::adjoint() const
 {
     return this->transpose().conjugate();
 }
+
+SL2RMatrix SL2CMatrix::getRealPart() const
+{
+    if(isReal())
+    {
+        SL2RMatrix out(real(a),real(b),real(c),real(d));
+        return out;
+    }
+    else std::cout << "That's not a real matrix." << std::endl;
+    throw(0);
+}
+
 
 SL2CMatrix operator *(const SL2CMatrix & A1, const SL2CMatrix & A2)
 {

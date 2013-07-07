@@ -4,6 +4,7 @@
 #include "types.h"
 #include "cp1point.h"
 #include "h3point.h"
+#include "sl2rmatrix.h"
 
 class SL2CMatrix
 {
@@ -16,6 +17,9 @@ class SL2CMatrix
 public:
     SL2CMatrix();
     SL2CMatrix(const complex & a, const complex & b, const complex & c, const complex & d);
+    SL2CMatrix(const CP1Point & z1in,const CP1Point & z2in,const CP1Point & z3in,
+               const CP1Point & z1out,const CP1Point & z2out,const CP1Point & z3out);
+
 
     void getCoefficients(complex & a1, complex & a2, complex & a3, complex & a4) const;
     void setIdentity();
@@ -32,6 +36,9 @@ public:
     SL2CMatrix transpose() const;
     SL2CMatrix conjugate() const;
     SL2CMatrix adjoint() const;
+
+
+    SL2RMatrix getRealPart() const;
 
 private:
     complex a, b, c, d;

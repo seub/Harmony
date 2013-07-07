@@ -31,7 +31,8 @@ SOURCES += main.cpp \
     h2canvasdelegate.cpp \
     planarline.cpp \
     circle.cpp \
-    h2polygon.cpp
+    h2polygon.cpp \
+    h2isometry.cpp
 
 HEADERS += \
     types.h \
@@ -49,7 +50,8 @@ HEADERS += \
     h2canvasdelegate.h \
     planarline.h \
     circle.h \
-    h2polygon.h
+    h2polygon.h \
+    h2isometry.h
 
 OTHER_FILES += \
     TODO.txt

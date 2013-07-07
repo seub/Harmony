@@ -19,6 +19,16 @@ bool CP1Point::isInfinity() const
     return z2 == 0.0;
 }
 
+complex CP1Point::getCCoordinate() const
+{
+    if (!isInfinity())
+    {
+        return z1 / z2;
+    }
+    else std::cout << "Infinity is not in C" << std::endl;
+    throw(0);
+}
+
 bool operator==(const CP1Point & p1, const CP1Point & p2)
 {
     complex test = p1.z1*p2.z2 - p1.z2*p2.z1;
