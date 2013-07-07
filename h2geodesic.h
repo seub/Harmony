@@ -43,7 +43,7 @@ public:
     H2GeodesicArc(const H2Point & p1, const H2Point & p2);
 
     H2Geodesic getGeodesic() const;
-    bool isCircleArcInDisModel() const;
+    bool isCircleArcInDiskModel() const;
     bool getCircleAndAnglesInDiskModel(Circle & outC, double & outAngle1, double & outAngle2) const;
     void getEndpointsInDiskModel(complex &output1, complex &output2) const;
 

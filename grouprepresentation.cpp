@@ -75,13 +75,33 @@ template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conjugate() 
 template <> H2Polygon RealRepresentation::generatePolygon(const H2Point &basePoint) const
 {
     H2Polygon res;
-    H2Point point = basePoint;
-    res.addVertex(point);
-    for (unsigned int i=0; i<listOfMatrices.size(); i++)
+    if (Gamma->isClosedSurfaceGroup())
     {
-        point = listOfMatrices[i]*point;
+        H2Point point = basePoint;
         res.addVertex(point);
+        int genus = listOfMatrices.size()/2;
+        for (int i=0; i<genus; i++)
+        {
+            point = listOfMatrices[2*i]*point;
+            res.addVertex(point);
+            point = listOfMatrices[2*i + 1]*point;
+            res.addVertex(point);
+            point = listOfMatrices[2*i].inverse()*point;
+            res.addVertex(point);
+            point = listOfMatrices[2*i + 1].inverse()*point;
+            res.addVertex(point);
+        }
+        res.removeLastVertex();
+    }
+    else
+    {
+        std::cout << "WARNING in RealRepresentation::generatePolygon: not a closed surface group representation" << std::endl;
     }
     return res;
+}
 
+template <> void RealRepresentation::setFenchelNielsenCoordinates(const std::vector<double> & lengthParameters,
+                                                                  const std::vector<double> & twistParameters)
+{
+    return;
 }

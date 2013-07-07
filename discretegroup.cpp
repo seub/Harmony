@@ -2,6 +2,7 @@
 
 DiscreteGroup::DiscreteGroup()
 {
+    closedSurfaceGroup = false;
 }
 
 DiscreteGroup::DiscreteGroup(const TopologicalSurface &S)
@@ -81,6 +82,8 @@ DiscreteGroup::DiscreteGroup(const TopologicalSurface &S)
     relationsList.push_back(relation);
 
     relations = relationsList;
+
+    closedSurfaceGroup = (numberOfPunctures == 0);
 }
 
 
@@ -89,6 +92,10 @@ std::vector<generatorName> DiscreteGroup::getGenerators() const
     return generators;
 }
 
+bool DiscreteGroup::isClosedSurfaceGroup() const
+{
+    return closedSurfaceGroup;
+}
 
 std::vector<word> DiscreteGroup::getRelations() const
 {

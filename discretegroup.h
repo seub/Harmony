@@ -17,11 +17,13 @@ public:
 
     std::string getWordString(const word & w) const;
     std::string getLetterString(const letter & l) const;
+    bool isClosedSurfaceGroup() const;
 
 private:
     std::vector<generatorName> generators;
     std::vector<word> relations;
     std::vector<word> cusps;
+    bool closedSurfaceGroup;
 };
 
 

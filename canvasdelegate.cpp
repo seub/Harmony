@@ -124,7 +124,7 @@ void CanvasDelegate::drawCircle(const Circle &C, const QColor &color, int width)
     return;
 }
 
-void CanvasDelegate::drawArc(const complex &center, double radius, double angle1, double angle2, const QColor &color, int width)
+void CanvasDelegate::drawArcCounterClockwise(const complex &center, double radius, double angle1, double angle2, const QColor &color, int width)
 {
     int x1, y1, x2, y2;
     complex firstCorner = center + radius*(-1.0 + 1.0*I);
@@ -134,18 +134,43 @@ void CanvasDelegate::drawArc(const complex &center, double radius, double angle1
     pen->setColor(color);
     pen->setWidth(width);
     painter->setPen(*pen);
-    double QtAngle1 = intRound(angle1*16*360/(2*M_PI));
-    double QtSpan = intRound((angle2 - angle1)*16*360/(2*M_PI));
+    double QtAngle1 = intRound(mod2Pi(angle1)*16*360/(2*M_PI));
+    double QtSpan = intRound(mod2Pi(angle2 - angle1)*16*360/(2*M_PI));
     painter->drawArc(x1, y1, x2 - x1, y2 - y1, QtAngle1, QtSpan);
     return;
 }
 
-void CanvasDelegate::drawArc(const Circle &C, double angle1, double angle2, const QColor &color, int width)
+void CanvasDelegate::drawSmallerArc(const complex &center, double radius, double angle1,
+                                    double angle2, const QColor &color, int width)
+{
+    double d = angle2 - angle1;
+    d = mod2Pi(d);
+    if (d>M_PI)
+    {
+        drawArcCounterClockwise(center, radius, angle2, angle1, color, width);
+    }
+    else
+    {
+        drawArcCounterClockwise(center, radius, angle1, angle2, color, width);
+    }
+    return;
+}
+
+void CanvasDelegate::drawSmallerArc(const Circle &C, double angle1, double angle2, const QColor &color, int width)
+{
+    complex center;
+    double radius;
+    C.getCenterAndRadius(center, radius);
+    drawSmallerArc(center, radius, angle1, angle2, color, width);
+    return;
+}
+
+void CanvasDelegate::drawArcCounterClockwise(const Circle &C, double angle1, double angle2, const QColor &color, int width)
 {
     //std::cout << "Entering CanvasDelegate::drawArc" << std::endl;
     complex center;
     double radius;
     C.getCenterAndRadius(center, radius);
-    drawArc(center, radius, angle1, angle2, color, width);
+    drawArcCounterClockwise(center, radius, angle1, angle2, color, width);
     return;
 }

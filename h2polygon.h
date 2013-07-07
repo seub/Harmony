@@ -11,6 +11,7 @@ class H2Polygon
 public:
     H2Polygon();
     void addVertex(const H2Point & p);
+    void removeLastVertex();
 
     int getNumberOfVertices() const;
     H2Point getVertex(int index) const;

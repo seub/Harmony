@@ -44,11 +44,8 @@ bool H2Geodesic::getCircleAndAnglesInDiskModel(Circle &outC, double &outAngle1, 
     double radius;
     complex center;
     outC.getCenterAndRadius(center,radius);
-    double a1,a2;
-    a1 = arg(z1 - center);
-    a2 = arg(z2 - center);
-    outAngle1 = std::min(a1,a2);
-    outAngle2 = std::max(a1,a2);
+    outAngle1 = arg(z1 - center);
+    outAngle2 = arg(z2 - center);
     return true;
 }
 
@@ -70,7 +67,7 @@ bool H2Geodesic::contains(const H2Point & p) const
 
 bool H2Geodesic::isCircleInDiskModel() const
 {
-    return (imag(z1 / z2) != 0.0);
+    return (std::abs(imag(z1 / z2)) > ERROR);
 }
 
 bool H2Geodesic::getCircleInDiskModel(Circle &output) const
@@ -203,7 +200,7 @@ H2Geodesic H2GeodesicArc::getGeodesic() const
     return H2Geodesic(p1, p2);
 }
 
-bool H2GeodesicArc::isCircleArcInDisModel() const
+bool H2GeodesicArc::isCircleArcInDiskModel() const
 {
     return H2Geodesic(p1, p2).isCircleInDiskModel();
 }
@@ -214,11 +211,8 @@ bool H2GeodesicArc::getCircleAndAnglesInDiskModel(Circle &outC, double &outAngle
     if (L.isCircleInDiskModel())
     {
         L.getCircleInDiskModel(outC);
-        double a1,a2;
-        a1 = arg(p1.getDiskCoordinate() - outC.getCenter());
-        a2 = arg(p2.getDiskCoordinate() - outC.getCenter());
-        outAngle1 = std::min(a1,a2);
-        outAngle2 = std::max(a1,a2);
+        outAngle1 = arg(p1.getDiskCoordinate() - outC.getCenter());
+        outAngle2 = arg(p2.getDiskCoordinate() - outC.getCenter());
         return true;
     }
     else

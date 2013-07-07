@@ -33,6 +33,10 @@ void SL2RMatrix::setIdentity()
     return;
 }
 
+SL2RMatrix SL2RMatrix::inverse() const
+{
+    return SL2RMatrix(d,-b,-c,a);
+}
 
 
 H2Point operator*(const SL2RMatrix &A, const H2Point &p)

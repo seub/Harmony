@@ -14,6 +14,12 @@ void H2Polygon::addVertex(const H2Point &p)
     return;
 }
 
+void H2Polygon::removeLastVertex()
+{
+    vertices.pop_back();
+    return;
+}
+
 int H2Polygon::getNumberOfVertices() const
 {
     return vertices.size();
@@ -43,16 +49,19 @@ std::vector<complex> H2Polygon::getVerticesInDiskModel() const
 H2GeodesicArc H2Polygon::getSide(int index) const
 {
     int sizeList = getNumberOfVertices();
-    if(index <= sizeList - 2)
+    if(index < sizeList - 1)
     {
-        return H2GeodesicArc(vertices[index],vertices[index+1]);
+        return H2GeodesicArc(vertices[index],vertices[index + 1]);
     }
     else if(index == sizeList - 1)
     {
         return H2GeodesicArc(vertices[index],vertices[0]);
     }
-    else std::cout << "Whoa this polygon doesn't have that many sides!" << std::endl;
-    throw(0);
+    else
+    {
+        std::cout << "Whoa this polygon doesn't have that many sides!" << std::endl;
+        throw(0);
+    }
 }
 
 std::vector<H2GeodesicArc> H2Polygon::getSides() const

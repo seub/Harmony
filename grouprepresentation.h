@@ -26,6 +26,7 @@ public:
 
     //Specialization to GroupRepresentation<SL2RMatrix> (i.e. FuchsianRepresentation)
     H2Polygon generatePolygon(const H2Point & basePoint) const;
+    void setFenchelNielsenCoordinates(const std::vector<double> & lengthParameters, const std::vector<double> & twistParameters);
 
 private:
     DiscreteGroup* Gamma;

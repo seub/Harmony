@@ -26,8 +26,12 @@ public:
     void drawSegment(const complex &endpoint1, const complex &endpoint2, const QColor &color = "black", int width = 1);
     void drawCircle(const complex &center, double radius, const QColor &color = "black", int width = 1);
     void drawCircle(const Circle &C, const QColor &color = "black", int width = 1);
-    void drawArc(const complex &center, double radius, double angle1, double angle2, const QColor &color = "black", int width = 1);
-    void drawArc(const Circle &C, double angle1, double angle2, const QColor &color = "black", int width = 1);
+    void drawArcCounterClockwise(const complex &center, double radius, double angleStart, double angleEnd, const QColor &color = "black", int width = 1);
+    void drawSmallerArc(const complex &center, double radius, double angle1, double angle2,
+                        const QColor &color = "black", int width = 1);
+    void drawSmallerArc(const Circle &C, double angle1, double angle2,
+                        const QColor &color = "black", int width = 1);
+    void drawArcCounterClockwise(const Circle &C, double angle1, double angle2, const QColor &color = "black", int width = 1);
 
 protected:
     Canvas *canvas;

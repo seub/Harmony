@@ -16,6 +16,7 @@ public:
     SL2CMatrix complexCast() const;
     void getCoefficients(double &a, double &b, double &c, double &d) const;
     void setIdentity();
+    SL2RMatrix inverse() const;
 
 private:
     double a, b, c, d;

@@ -28,5 +28,6 @@ std::ostream & operator<<(std::ostream &out, const complex & z);
 
 
 int intRound(double x);
+double mod2Pi(double t);
 
 #endif // TYPES_H
