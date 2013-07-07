@@ -13,14 +13,13 @@ public:
     void addVertex(const H2Point & p);
 
     int getNumberOfVertices() const;
+    H2Point getVertex(int index) const;
     std::vector<H2Point> getVertices() const;
     std::vector<complex> getVerticesInDiskModel() const;
-    H2Point getVertex(int index) const;
 
+    H2GeodesicArc getSide(int index) const;
     std::vector<H2GeodesicArc> getSides() const;
     std::vector<H2Geodesic> getCompletedSides() const;
-    H2GeodesicArc getSide(int index) const;
-
 
 private:
     std::vector<H2Point> vertices;

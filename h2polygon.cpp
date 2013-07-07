@@ -4,6 +4,8 @@
 
 H2Polygon::H2Polygon()
 {
+    vertices.clear();
+    vertices.reserve(12);
 }
 
 void H2Polygon::addVertex(const H2Point &p)
@@ -64,7 +66,16 @@ std::vector<H2GeodesicArc> H2Polygon::getSides() const
     return arcList;
 }
 
-
+std::vector<H2Geodesic> H2Polygon::getCompletedSides() const
+{
+    int sizeList = getNumberOfVertices();
+    std::vector<H2Geodesic> arcList(sizeList);
+    for(int j=0;j<=sizeList - 1;j++)
+    {
+        arcList[j] = getSide(j).getGeodesic();
+    }
+    return arcList;
+}
 
 
 

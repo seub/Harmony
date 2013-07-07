@@ -41,7 +41,6 @@ void H2CanvasDelegate::drawH2Geodesic(const H2Geodesic &L, const QColor &color, 
 
 void H2CanvasDelegate::drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color, int width)
 {
-    pen->setWidth(2);
     if (L.isCircleArcInDisModel())
     {
         Circle C;
@@ -57,6 +56,12 @@ void H2CanvasDelegate::drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &c
     }
     return;
 }
+
+void H2CanvasDelegate::drawH2Polygon(const H2Polygon &P, const QColor &color, int width)
+{
+
+}
+
 
 void H2CanvasDelegate::drawExample()
 {
