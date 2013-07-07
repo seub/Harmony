@@ -5,7 +5,7 @@
 #include "discretegroup.h"
 #include "sl2cmatrix.h"
 #include "sl2rmatrix.h"
-
+#include "h2polygon.h"
 
 
 template <typename T> class GroupRepresentation
