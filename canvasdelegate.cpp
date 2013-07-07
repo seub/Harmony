@@ -7,6 +7,7 @@
 
 #include "canvas.h"
 #include "circle.h"
+#include "tools.h"
 
 CanvasDelegate::CanvasDelegate(Canvas *canvas) : canvas(canvas)
 {

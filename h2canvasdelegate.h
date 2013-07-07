@@ -1,6 +1,7 @@
 #ifndef H2CANVASDELEGATE_H
 #define H2CANVASDELEGATE_H
 
+#include "types.h"
 #include "canvasdelegate.h"
 
 

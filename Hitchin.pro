@@ -16,7 +16,6 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    type.cpp \
     discretegroup.cpp \
     topologicalsurface.cpp \
     grouprepresentation.cpp \
@@ -33,10 +32,10 @@ SOURCES += main.cpp \
     circle.cpp \
     h2polygon.cpp \
     h2isometry.cpp \
-    h3isometry.cpp
+    h3isometry.cpp \
+    tools.cpp
 
 HEADERS += \
-    types.h \
     discretegroup.h \
     topologicalsurface.h \
     grouprepresentation.h \
@@ -53,7 +52,9 @@ HEADERS += \
     circle.h \
     h2polygon.h \
     h2isometry.h \
-    h3isometry.h
+    h3isometry.h \
+    tools.h \
+    types.h
 
 OTHER_FILES += \
     TODO.txt

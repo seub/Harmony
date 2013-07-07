@@ -11,7 +11,7 @@
 #define ERROR 0.0000000001
 #define I complex(0.0, 1.0)
 
-class SL2RMatrix;
+
 template <typename T> class GroupRepresentation;
 
 typedef std::string generatorName;
@@ -21,13 +21,7 @@ typedef std::vector<letter> word;
 
 typedef std::complex<double> complex;
 
+class SL2RMatrix;
 typedef GroupRepresentation<SL2RMatrix> RealRepresentation;
-
-
-std::ostream & operator<<(std::ostream &out, const complex & z);
-
-
-int intRound(double x);
-double mod2Pi(double t);
 
 #endif // TYPES_H
