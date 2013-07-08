@@ -33,7 +33,8 @@ SOURCES += main.cpp \
     h2polygon.cpp \
     h2isometry.cpp \
     h3isometry.cpp \
-    tools.cpp
+    tools.cpp \
+    h2idealpoint.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -54,7 +55,8 @@ HEADERS += \
     h2isometry.h \
     h3isometry.h \
     tools.h \
-    types.h
+    types.h \
+    h2idealpoint.h
 
 OTHER_FILES += \
     TODO.txt

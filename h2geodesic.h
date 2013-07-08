@@ -22,9 +22,11 @@ public:
     bool getLineInDiskModel(PlanarLine & output) const;
     bool getCircleAndAnglesInDiskModel(Circle & outC, double & outAngle1, double & outAngle2) const;
     bool contains(const H2Point & p) const;
+    complex closestPointToOriginInDiskModel() const;
 
 private:
     complex z1, z2;
+
 };
 
 bool doIntersect(const H2Geodesic & L1, const H2Geodesic & L2);

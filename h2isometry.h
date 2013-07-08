@@ -10,8 +10,8 @@ class H2Isometry
 {
     friend H2Isometry operator *(const H2Isometry & f1, const H2Isometry & f2);
     friend H2Point operator *(const H2Isometry & f, const H2Point & p);
-    friend H2Polygon operator*(const H2Isometry &f, const H2Polygon &P);
-    friend H2Geodesic operator*(const H2Isometry & f, const H2Geodesic & L);
+    friend H2Polygon operator *(const H2Isometry &f, const H2Polygon &P);
+    friend H2Geodesic operator *(const H2Isometry & f, const H2Geodesic & L);
 
 public:
     H2Isometry();
@@ -26,7 +26,9 @@ public:
 
     void setByMappingGeodesic(const H2Geodesic & L1, const H2Geodesic & L2);
 
-    void setByNormalizing2Isometries(const H2Isometry & f1, const H2Isometry & f2);
+    void setByMappingEndpointsToPlusOrMinusI(const H2Geodesic & L);
+    void setByFixingPlusMinusI(const complex & pointMappedToOne);
+    void setByNormalizingPair(const H2Isometry & f1, const H2Isometry & f2);
 
     void setDiskCoordinates(const complex & u, const complex & a);
 
@@ -40,6 +42,8 @@ public:
     H2Isometry inverse() const;
     double traceSquared() const;
     double translationLength() const;
+
+    complex hitComplexNumberInDiskModel(const complex & z) const;
 
 
 private:
