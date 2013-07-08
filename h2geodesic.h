@@ -17,7 +17,6 @@ public:
 
     void getEndpointsInDiskModel(complex & z1, complex & z2) const;
 
-
     bool isCircleInDiskModel() const;
     bool getCircleInDiskModel(Circle & output) const;
     bool getLineInDiskModel(PlanarLine & output) const;
@@ -28,12 +27,11 @@ private:
     complex z1, z2;
 };
 
+bool doIntersect(const H2Geodesic & L1, const H2Geodesic & L2);
 bool intersectionH2Geodesics(const H2Geodesic & L1, const H2Geodesic & L2, H2Point & p);
-
-
-
-
-
+bool commonPerpendicular(const H2Geodesic &  L1, const H2Geodesic & L2, H2Geodesic &output);
+bool commonEndpointInDiskModel(const H2Geodesic & L1, const H2Geodesic & L2, complex & z);
+bool commonEndpoint(const H2Geodesic & L1, const H2Geodesic & L2);
 
 
 class H2GeodesicArc

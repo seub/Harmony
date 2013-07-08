@@ -4,7 +4,8 @@
 #include "types.h"
 #include "cp1point.h"
 #include "h3point.h"
-#include "sl2rmatrix.h"
+
+class SL2RMatrix;
 
 class SL2CMatrix
 {
@@ -33,7 +34,7 @@ public:
     SL2CMatrix adjoint() const;
 
 
-    SL2RMatrix getRealPart() const;
+    void getRealPart(SL2RMatrix &output) const;
 
 private:
     complex a, b, c, d;

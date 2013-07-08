@@ -1,4 +1,5 @@
 #include "grouprepresentation.h"
+#include "h2isometry.h"
 
 template<typename T> GroupRepresentation<T>::GroupRepresentation()
 {
@@ -72,7 +73,7 @@ template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conjugate() 
     return r;
 }
 
-template <> H2Polygon RealRepresentation::generatePolygon(const H2Point &basePoint) const
+template <> H2Polygon IsomH2Representation::generatePolygon(const H2Point &basePoint) const
 {
     H2Polygon res;
     if (Gamma->isClosedSurfaceGroup())
@@ -100,7 +101,7 @@ template <> H2Polygon RealRepresentation::generatePolygon(const H2Point &basePoi
     return res;
 }
 
-template <> void RealRepresentation::setFenchelNielsenCoordinates(const std::vector<double> & lengthParameters,
+template <> void IsomH2Representation::setFenchelNielsenCoordinates(const std::vector<double> & lengthParameters,
                                                                   const std::vector<double> & twistParameters)
 {
     return;

@@ -47,29 +47,6 @@ SL2RMatrix SL2RMatrix::inverse() const
     return SL2RMatrix(d,-b,-c,a);
 }
 
-
-H2Point operator*(const SL2RMatrix &A, const H2Point &p)
-{
-    complex z = p.getUpperHalfPlaneCoordinate();
-    double a, b, c, d;
-    A.getCoefficients(a, b, c, d);
-    complex Z = (a*z + b)/(c*z + d);
-    H2Point res;
-    res.setUpperHalfPlaneCoordiante(Z);
-    return res;
-}
-
-H2Polygon operator*(const SL2RMatrix &A, const H2Polygon &P)
-{
-    H2Polygon res;
-    std::vector<H2Point> vertices = P.getVertices();
-    for(unsigned int i=0; i<vertices.size(); i++)
-    {
-        res.addVertex(A*vertices[i]);
-    }
-    return res;
-}
-
 SL2RMatrix operator *(const SL2RMatrix & A1, const SL2RMatrix & A2)
 {
 
