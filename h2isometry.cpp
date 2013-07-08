@@ -231,7 +231,6 @@ void H2Isometry::setByNormalizingPair(const H2Isometry &f1, const H2Isometry &f2
 
     *this = fSecond*fFirst;
     return;
-
 }
 
 complex H2Isometry::hitComplexNumberInDiskModel(const complex &z) const
