@@ -8,12 +8,16 @@ class DiscreteGroup
 {
     friend std::ostream & operator<<(std::ostream &out, const DiscreteGroup & Gamma);
 
+
 public:
     DiscreteGroup();
+    DiscreteGroup(const std::vector<generatorName> & generators, const std::vector<word> &relations);
     DiscreteGroup(const TopologicalSurface & S);
 
     std::vector<generatorName> getGenerators() const;
     std::vector<word> getRelations() const;
+    std::vector<word> getCusps() const;
+    int numberOfCusps() const;
 
     std::string getWordAsString(const word & w) const;
     std::string getLetterAsString(const letter & l) const;
@@ -26,7 +30,8 @@ private:
     bool closedSurfaceGroup;
 };
 
-DiscreteGroup AmalgamateOverCommonGenerator(const DiscreteGroup & Gamma1, const DiscreteGroup & Gamma2);
-
+bool findUniqueCommonGenerator(const DiscreteGroup & Gamma1, const DiscreteGroup & Gamma2, generatorName &outputName,
+                               int & outputIndex1, int & outputIndex2);
+DiscreteGroup amalgamateOverCommonGenerator(const DiscreteGroup & Gamma1, const DiscreteGroup & Gamma2);
 
 #endif // DISCRETEGROUP_H

@@ -1,8 +1,16 @@
 #include "discretegroup.h"
+#include "tools.h"
 
 DiscreteGroup::DiscreteGroup()
 {
     closedSurfaceGroup = false;
+}
+
+DiscreteGroup::DiscreteGroup(const std::vector<generatorName> &generators, const std::vector<word> &relations)
+{
+    closedSurfaceGroup = false;
+    this->generators = generators;
+    this->relations = relations;
 }
 
 DiscreteGroup::DiscreteGroup(const TopologicalSurface &S)
@@ -102,6 +110,16 @@ std::vector<word> DiscreteGroup::getRelations() const
     return relations;
 }
 
+std::vector<word> DiscreteGroup::getCusps() const
+{
+    return cusps;
+}
+
+int DiscreteGroup::numberOfCusps() const
+{
+    return cusps.size();
+}
+
 
 std::ostream & operator<<(std::ostream &out, const DiscreteGroup & Gamma)
 {
@@ -148,5 +166,114 @@ std::string DiscreteGroup::getWordAsString(const word & w) const
         res.append(getLetterAsString(w[i])).append(" ");
     }
     return res;
+}
+
+
+bool findUniqueCommonGenerator(const DiscreteGroup &Gamma1, const DiscreteGroup &Gamma2, generatorName & outputName,
+                               int &outputIndex1, int &outputIndex2)
+{
+    std::vector<generatorName> generators1 = Gamma1.getGenerators();
+    std::vector<generatorName> generators2 = Gamma2.getGenerators();
+
+    std::vector<std::pair <int, int> > CommonElementsIndices = CommonElements(generators1, generators2);
+
+    if (containsDuplicates(generators1) || containsDuplicates(generators2))
+    {
+        std::cout << "WARNING in findUniqueCommonGenerator: group generators contains duplicates!" << std::endl;
+        return false;
+    }
+    else if (CommonElementsIndices.size() == 0)
+    {
+        std::cout << "WARNING in findUniqueCommonGenerator: no common generator!" << std::endl;
+        return false;
+    }
+    else if (CommonElementsIndices.size() > 1)
+    {
+        std::cout << "WARNING in findUniqueCommonGenerator: several common generators!" << std::endl;
+        return false;
+    }
+    else
+    {
+        outputIndex1 = CommonElementsIndices[0].first;
+        outputIndex2 = CommonElementsIndices[0].second;
+        outputName = generators2[outputIndex2];
+        return true;
+    }
+}
+
+DiscreteGroup amalgamateOverCommonGenerator(const DiscreteGroup &Gamma1, const DiscreteGroup &Gamma2)
+{
+    int i1, j1;
+    generatorName CommonGenerator;
+    std::vector<generatorName> outputGenerators;
+    std::vector<word> outputRelations;
+
+    if (Gamma1.numberOfCusps() != 0 || Gamma2.numberOfCusps() != 0)
+    {
+        std::cout << "ERROR in AmalgamateOverCommonGenerator: I don't handle cusps for the moment" << std::endl;
+    }
+    else if(findUniqueCommonGenerator(Gamma1, Gamma2, CommonGenerator, i1, j1))
+    {
+        std::vector<generatorName> generators1 = Gamma1.getGenerators();
+        std::vector<generatorName> generators2 = Gamma2.getGenerators();
+        std::vector<word> relations1 = Gamma1.getRelations();
+        std::vector<word> relations2 = Gamma2.getRelations();
+
+        int i, j;
+        for (i=0; i< (int) generators1.size(); i++)
+        {
+            if (i != i1)
+            {
+                outputGenerators.push_back(generators1[i]);
+            }
+        }
+        for (j=0; j< (int) generators2.size(); j++)
+        {
+            if (j != j1)
+            {
+                outputGenerators.push_back(generators2[j]);
+            }
+        }
+        outputGenerators.push_back(CommonGenerator);
+
+        word w;
+        for (i=0; i< (int) relations1.size(); i++)
+        {
+            w = relations1[i];
+            for (j=0; j< (int)w.size(); j++)
+            {
+                if (w[j].first == i1)
+                {
+                    w[j].first = generators1.size() + generators2.size() - 2;
+                }
+                else if(w[j].first > i1)
+                {
+                    w[j].first--;
+                }
+            }
+            outputRelations.push_back(w);
+        }
+        for (i=0; i< (int) relations2.size(); i++)
+        {
+            w = relations2[i];
+            for (j=0; j< (int) w.size(); j++)
+            {
+                if (w[j].first == j1)
+                {
+                    w[j].first = generators1.size() + generators2.size() - 2;
+                }
+                else if(w[j].first < j1)
+                {
+                    w[j].first += generators1.size() - 1;
+                }
+                else
+                {
+                    w[j].first += generators1.size() -2;
+                }
+            }
+            outputRelations.push_back(w);
+        }
+    }
+    return DiscreteGroup(outputGenerators, outputRelations);
 }
 

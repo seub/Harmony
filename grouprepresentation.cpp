@@ -25,7 +25,7 @@ template<typename T> bool GroupRepresentation<T>::checkRelations() const
 
         if(!(evaluateRepresentation(relations[i]) == identity))
         {
-            std::cout << "Hey, you fucked up, moron!" << std::endl;
+            std::cout << "WARNING in GroupRepresentation<T>::checkRelations(): failed" << std::endl;
             return false;
         }
     }
