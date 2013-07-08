@@ -152,7 +152,7 @@ bool H2Isometry::axis(H2Geodesic & L) const
         fixedPointsInDiskModel(C1,C2);
         c1 = C1.getComplexCoordinate();
         c2 = C2.getComplexCoordinate();
-        if(norm(c2 - a) < norm(c1 - a))
+        if(norm(1.0 - conj(a)*c2) < norm(1.0 - conj(a)*c1))
         {
             L = H2Geodesic(c2,c1);
             return true;
@@ -202,7 +202,48 @@ H2Geodesic operator*(const H2Isometry &f, const H2Geodesic &L)
     return H2Geodesic(w1,w2);
 }
 
-void H2Isometry::setByNormalizing2Isometries(const H2Isometry &f1, const H2Isometry &f2)
+void H2Isometry::setByMappingEndpointsToPlusOrMinusI(const H2Geodesic &L)
 {
+    complex a1,a2;
+    L.getEndpointsInDiskModel(a1,a2);
+    a = L.closestPointToOriginInDiskModel();
+    u = I*((conj(a)*(a1 + a2) - 2.0)/(a1 - a2));
+    return;
+}
+
+void H2Isometry::setByFixingPlusMinusI(const complex & pointMappedToOne)
+{
+    u = 1.0;
+    a = -(1.0 - pointMappedToOne)/(1.0 + pointMappedToOne);
+    return;
+}
+
+void H2Isometry::setByNormalizingPair(const H2Isometry &f1, const H2Isometry &f2)
+{
+    H2Isometry fFirst,fSecond;
+    H2Geodesic L1,L2;
+    f1.axis(L1);
+    f2.axis(L2);
+    fFirst.setByMappingEndpointsToPlusOrMinusI(L1);
+    complex b1,b2;
+    L2.getEndpointsInDiskModel(b1,b2);
+    fSecond.setByFixingPlusMinusI(fFirst.hitComplexNumberInDiskModel(b1));
+
+    *this = fSecond*fFirst;
+    return;
 
 }
+
+complex H2Isometry::hitComplexNumberInDiskModel(const complex &z) const
+{
+    return u*(z - a)/(1.0 - conj(a)*z);
+}
+
+
+
+
+
+
+
+
+

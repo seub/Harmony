@@ -186,6 +186,14 @@ bool intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2Poi
     }
 }
 
+complex H2Geodesic::closestPointToOriginInDiskModel() const
+{
+    if (z1 == -z2)
+    {
+        return 0.0;
+    }
+    return ((z1*z2)/(z1 + z2))*(2.0 - abs(z1 - z2));
+}
 
 bool commonPerpendicular(const H2Geodesic &L1, const H2Geodesic &L2, H2Geodesic &output)
 {
