@@ -55,6 +55,15 @@ double H2Isometry::translationLength() const
     return 2.0*acosh( cosh(angle) / sqrt(1.0 - norm(alpha)) );
 }
 */
+
+H2Geodesic H2Isometry::axis() const
+{
+    complex delta = sqrt((u - 1.0)*(u - 1.0) - 4.0*norm(a)*u);
+    complex z1 = (1.0 - u - delta)/(2.0*conj(a));
+    complex z2 = (1.0 - u + delta)/(2.0*conj(a));
+    return H2Geodesic(z1, z2);
+}
+
 H2Isometry H2Isometry::inverse() const
 {
     H2Isometry fOut;
