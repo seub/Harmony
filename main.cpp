@@ -46,11 +46,11 @@ int main(int argc, char *argv[])
     DiscreteGroup Gamma = amalgamateOverCommonGenerator(Gamma1, Gamma2);
     std::cout << Gamma << std::endl;
 
-    /*Canvas * canvas = new Canvas;
+    Canvas * canvas = new Canvas;
     H2CanvasDelegate * delegate = new H2CanvasDelegate(canvas);
     canvas->setDelegate(delegate);
     delegate->drawExample();
-    canvas->show();*/
+    canvas->show();
 
 
 

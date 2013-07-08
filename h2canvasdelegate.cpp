@@ -81,8 +81,8 @@ void H2CanvasDelegate::drawExample()
     p6.setDiskCoordinate(-.4);
     p5.setDiskCoordinate(.3+.5*I);
 
-/*    H2Geodesic L1(p1, p2), L2(p2, p3), L3(p3, p4), L4(p4, p1);
-    drawH2Geodesic(L1, "blue");
+    H2Geodesic L1(p1, p2), L2(p2, p3), L3(p3, p4), L4(p4, p1);
+/*    drawH2Geodesic(L1, "blue");
     drawH2Geodesic(L2, "blue");
     drawH2Geodesic(L3, "blue");
     drawH2Geodesic(L4, "blue");
@@ -93,7 +93,7 @@ void H2CanvasDelegate::drawExample()
     drawH2GeodesicArc(A3, "red");
     drawH2GeodesicArc(A4, "red");*/
 
-    H2Polygon P;
+/*    H2Polygon P;
     P.addVertex(p1);
     P.addVertex(p2);
     P.addVertex(p3);
@@ -103,6 +103,13 @@ void H2CanvasDelegate::drawExample()
 
     SL2RMatrix A(0.5, 0.2, 5, 4);
     drawH2Polygon(A*P, "blue");
-    drawH2Polygon(A.inverse()*P, "green");
+    drawH2Polygon(A.inverse()*P, "green");*/
+
+    H2Geodesic perp;
+    commonPerpendicular(L1,L3,perp);
+    drawH2Geodesic(L1);
+    drawH2Geodesic(L3);
+    drawH2Geodesic(perp,"blue");
+
     return;
 }

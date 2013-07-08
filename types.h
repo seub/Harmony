@@ -21,7 +21,7 @@ typedef std::vector<letter> word;
 
 typedef std::complex<double> complex;
 
-class SL2RMatrix;
-typedef GroupRepresentation<SL2RMatrix> RealRepresentation;
+class H2Isometry;
+typedef GroupRepresentation<H2Isometry> IsomH2Representation;
 
 #endif // TYPES_H

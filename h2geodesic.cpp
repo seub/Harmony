@@ -74,8 +74,8 @@ bool H2Geodesic::getCircleInDiskModel(Circle &output) const
 {
     if (isCircleInDiskModel())
     {
-        complex center = ((z1 + z2) / abs(z1 + z2))*(2.0/sqrt(4.0 - norm(z1 - z2)));
-        double radius = abs(center)*abs(z1 - z2) / 2.0;
+        complex center = 2.0*(z1*z2)/(z1 + z2);
+        double radius = abs(z1 - z2)/abs(z1 + z2);
         output.setCenterAndRadius(center,radius);
         return true;
     }
@@ -101,7 +101,10 @@ bool H2Geodesic::getLineInDiskModel(PlanarLine &output) const
 bool intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2Point & p)
 {
     complex p1,p2;
-
+    if (!doIntersect(l1,l2))
+    {
+        return false;
+    }
     if (l1.isCircleInDiskModel())
     {
         Circle C1;
@@ -183,6 +186,68 @@ bool intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2Poi
     }
 }
 
+
+bool commonPerpendicular(const H2Geodesic &L1, const H2Geodesic &L2, H2Geodesic &output)
+{
+    H2Point p;
+    if (intersectionH2Geodesics(L1,L2,p) || commonEndpoint(L1,L2))
+    {
+        return false;
+    }
+    complex a1,a2,b1,b2,s1,p1,s2,p2,S,P,delta,c1,c2;
+    L1.getEndpointsInDiskModel(a1,a2);
+    L2.getEndpointsInDiskModel(b1,b2);
+    s1 = a1 + a2;
+    s2 = b1 + b2;
+    p1 = a1*a2;
+    p2 = b1*b2;
+    S = 2.0*(p1 - p2)/(s1 - s2);
+    P = (s1*p2 - s2*p1)/(s2 - s1);
+    delta = sqrt(S*S - 4.0*P);
+    c1 = (S - delta)/2.0;
+    c2 = (S + delta)/2.0;
+    output = H2Geodesic(c1,c2);
+    return true;
+}
+
+bool commonEndpointInDiskModel(const H2Geodesic &L1, const H2Geodesic &L2, complex &z)
+{
+    complex z1,z2,w1,w2;
+    L1.getEndpointsInDiskModel(z1,z2);
+    L2.getEndpointsInDiskModel(w1,w2);
+    if (z1 == w1 || z1 == w2)
+    {
+        z = z1;
+        return true;
+    }
+    if (z2 == w1 || z2 == w2)
+    {
+        z = z2;
+        return true;
+    }
+    return false;
+}
+
+bool commonEndpoint(const H2Geodesic & L1, const H2Geodesic & L2)
+{
+    complex z1,z2,w1,w2;
+    L1.getEndpointsInDiskModel(z1,z2);
+    L2.getEndpointsInDiskModel(w1,w2);
+    if (z1 == w1 || z1 == w2 || z2 == w1 || z2 == w2)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool doIntersect(const H2Geodesic &L1, const H2Geodesic &L2)
+{
+    complex a1,a2,b1,b2;
+    L1.getEndpointsInDiskModel(a1,a2);
+    L2.getEndpointsInDiskModel(b1,b2);
+    complex crossRatio = ((b2 - a1) / (b2 - a2))*((b1 - a2)/(b1 - a1));
+    return (real(crossRatio) < 0.0);
+}
 
 
 
