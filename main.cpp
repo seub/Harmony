@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 {
     std::cout << std::endl;
     QApplication a(argc, argv);
-    H3canvasDelegate windows(20, 0,"Test");
+    H3canvasDelegate windows(60, 0,"Test");
     windows.show();
 
 /*    DiscreteGroup Gamma;

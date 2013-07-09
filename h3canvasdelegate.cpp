@@ -19,6 +19,9 @@ H3canvasDelegate::H3canvasDelegate(int framesPerSecond, QWidget *parent, char *n
         connect(t_Timer, SIGNAL(timeout()), this, SLOT(timeOutSlot()));
         t_Timer->start( timerInterval );
     }
+    mousePosition[0] = 3;
+    mousePosition[1] = 2;
+    mousePosition[2] = -4;
 }
 
 H3canvasDelegate::~H3canvasDelegate()
@@ -87,16 +90,13 @@ void H3canvasDelegate::mouseGLCoordinates(QMouseEvent *mouseevent, GLdouble *pos
     //glGetDoublev( GL_MODELVIEW_MATRIX, modelview);
     glGetDoublev(GL_PROJECTION_MATRIX, projection);
     glGetIntegerv(GL_VIEWPORT, viewport);
-    gluUnProject(mouseevent->x(),this->height()- mouseevent->y(),0.2f,modelviewsave,projection,viewport,pos,pos +1,pos + 2);
-    /*pos[0] = mouseevent->x();
-    pos[2] = this->height()-mouseevent->y();
-    pos[1] = 0.1f;*/
+    gluUnProject(mouseevent->x(),viewport[3]- mouseevent->y(),0.1f,modelviewsave,projection,viewport,pos,pos +1,pos + 2);
+
 }
 
 void H3canvasDelegate::mousePressEvent(QMouseEvent * mouseevent)
 {
     isClicked = true;
-
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glGetDoublev( GL_MODELVIEW_MATRIX, modelviewsave);
@@ -110,9 +110,11 @@ void H3canvasDelegate::mouseReleaseEvent(QMouseEvent * /*mouseevent*/)
 {
     isClicked = false;
     glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
     glLoadMatrixd(modelviewsave);
     glRotated(angle, normalvect[0],normalvect[1],normalvect[2]);
     glPushMatrix();
+
 }
 
 void H3canvasDelegate::mouseMoveEvent(QMouseEvent * mouseevent)
@@ -136,7 +138,7 @@ void H3canvasDelegate::mouseMoveEvent(QMouseEvent * mouseevent)
                                + normalvect[1]*normalvect[1]
                                + normalvect[2]*normalvect[2]);
 
-        angle = 180*asin(norNorm/(curNorm*posNorm))/M_PI;
+        angle = 180*asin(norNorm/(curNorm*posNorm))/M_PI*100;
         std::cout << angle << " " << posNorm << " " << curNorm << " " << norNorm << std::endl;
     }
 }
@@ -177,13 +179,10 @@ void H3canvasDelegate::printAxis(double length)
     glBegin(GL_LINES);
         glColor3f(1.0f, 0.0f, 0.0f);
         glVertex2d(0,0);glVertex2d(length,0);
-        glVertex2d(0,0);glVertex3d(mousePosition[0],mousePosition[1],mousePosition[2]);
         glColor3f(0.0f, 1.0f, 0.0f);
         glVertex2d(0,0);glVertex2d(0,length);
-        glVertex2d(0,0);glVertex3d(currentPosition[0],currentPosition[1],currentPosition[2]);
         glColor3f(0.0f, 0.0f, 1.0f);
         glVertex2d(0,0);glVertex3d(0,0,length);
-        glVertex2d(0,0);glVertex3d(normalvect[0],normalvect[1],normalvect[2]);
     glEnd();
 }
 
@@ -235,9 +234,20 @@ void H3canvasDelegate::paintGL()
     glLoadIdentity();
     if(isClicked)
     {
+        glPopMatrix();
         glLoadMatrixd(modelviewsave);
+        //glPushMatrix();
+        //glPopMatrix();
+        /*glBegin(GL_LINES);
+            glColor3f(1.0f, 0.0f, 1.0f);
+            double x = mousePosition[0],y = mousePosition[1],z = mousePosition[2];
+            glVertex2d(0,0);glVertex3d(x,y,z);
+            glColor3f(1.0f, 1.0f, 0.0f);
+            glVertex2d(0,0);glVertex3d(currentPosition[0],currentPosition[1],currentPosition[2]);
+            glColor3f(1.0f, 0.0f, 1.0f);
+            glVertex2d(0,0);glVertex3d(normalvect[0],normalvect[1],normalvect[2]);
+        glEnd();*/
         glRotated(angle, normalvect[0],normalvect[1],normalvect[2]);
-        glPushMatrix();
     }
     else
     {
