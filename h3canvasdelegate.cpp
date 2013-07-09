@@ -171,6 +171,7 @@ void H3canvasDelegate::resizeGL(int width, int height)
     gluLookAt(3.0f,3.0f,6.0f,0.0f,0.0f,0.0f,0.0f,0.0f,1.0f);
     glPushMatrix();
 }
+
 void H3canvasDelegate::printAxis(double length)
 {
     glBegin(GL_LINES);

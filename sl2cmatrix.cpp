@@ -1,4 +1,5 @@
 #include "sl2cmatrix.h"
+#include "sl2rmatrix.h"
 
 SL2CMatrix::SL2CMatrix()
 {
@@ -81,12 +82,12 @@ SL2CMatrix SL2CMatrix::adjoint() const
     return this->transpose().conjugate();
 }
 
-SL2RMatrix SL2CMatrix::getRealPart() const
+void SL2CMatrix::getRealPart(SL2RMatrix & output) const
 {
     if(isReal())
     {
-        SL2RMatrix out(real(a),real(b),real(c),real(d));
-        return out;
+        output = SL2RMatrix(real(a),real(b),real(c),real(d));
+        return;
     }
     else std::cout << "That's not a real matrix." << std::endl;
     throw(0);

@@ -5,6 +5,8 @@
 
 class H2Point
 {
+    friend std::ostream & operator<<(std::ostream & out, const H2Point &p);
+
 public:
     H2Point();
 
@@ -12,12 +14,16 @@ public:
     complex getDiskCoordinate() const;
     complex getKleinCoordinate() const;
 
-    void setUpperHalfPlaneCoordiante(complex z);
+    void setUpperHalfPlaneCoordinate(complex z);
     void setDiskCoordinate(complex z);
 
 
 private:
     complex z;
 };
+
+double H2distance(const H2Point & p1, const H2Point & p2);
+
+
 
 #endif // H2POINT_H

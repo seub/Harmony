@@ -34,7 +34,8 @@ SOURCES += main.cpp \
     h2isometry.cpp \
     h3isometry.cpp \
     tools.cpp \
-    h3canvasdelegate.cpp
+    h3canvasdelegate.cpp\
+    h2idealpoint.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -56,7 +57,8 @@ HEADERS += \
     h3isometry.h \
     tools.h \
     types.h \
-    h3canvasdelegate.h
+    h3canvasdelegate.h\
+    h2idealpoint.h
 
 OTHER_FILES += \
     TODO.txt

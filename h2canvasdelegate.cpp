@@ -8,6 +8,7 @@
 #include "planarline.h"
 #include "h2polygon.h"
 #include "sl2rmatrix.h"
+#include "h2isometry.h"
 
 H2CanvasDelegate::H2CanvasDelegate(Canvas *canvas) : CanvasDelegate(canvas)
 {
@@ -81,8 +82,8 @@ void H2CanvasDelegate::drawExample()
     p6.setDiskCoordinate(-.4);
     p5.setDiskCoordinate(.3+.5*I);
 
-/*    H2Geodesic L1(p1, p2), L2(p2, p3), L3(p3, p4), L4(p4, p1);
-    drawH2Geodesic(L1, "blue");
+    H2Geodesic L1(p2,p1), L2(p2, p3), L3(p3, p4), L4(p4, p1);
+/*    drawH2Geodesic(L1, "blue");
     drawH2Geodesic(L2, "blue");
     drawH2Geodesic(L3, "blue");
     drawH2Geodesic(L4, "blue");
@@ -91,7 +92,7 @@ void H2CanvasDelegate::drawExample()
     drawH2GeodesicArc(A1, "red");
     drawH2GeodesicArc(A2, "red");
     drawH2GeodesicArc(A3, "red");
-    drawH2GeodesicArc(A4, "red");*/
+    drawH2GeodesicArc(A4, "red");
 
     H2Polygon P;
     P.addVertex(p1);
@@ -104,5 +105,39 @@ void H2CanvasDelegate::drawExample()
     SL2RMatrix A(0.5, 0.2, 5, 4);
     drawH2Polygon(A*P, "blue");
     drawH2Polygon(A.inverse()*P, "green");
+*/
+    H2Isometry f1,f2,f;
+    f1.setTranslationAxisAndLength(L1.swapOrientation(),2.0);
+    f2.setTranslationAxisAndLength(L3,3.0);
+    f.setByNormalizingPairWithRepulsivePointAtOne(f1,f2);
+    H2Geodesic emptyL;
+    f1.axis(emptyL);
+    drawH2Geodesic(emptyL);
+    f2.axis(emptyL);
+    drawH2Geodesic(emptyL);
+    H2Isometry f1new,f2new;
+    f1new = f*f1*f.inverse();
+    f2new = f*f2*f.inverse();
+    f1new.axis(emptyL);
+    drawH2Geodesic(emptyL,"blue");
+    f2new.axis(emptyL);
+    drawH2Geodesic(emptyL,"blue");
+
+
+    H2Point p0;
+    p0.setDiskCoordinate(.4*I);
+    drawH2Point(p0,"black",8);
+    H2Isometry F;
+    F.setByNormalizingPairWithChosenNearestPointToAxis(f1,f2,imag(p0.getDiskCoordinate()));
+    f1new = F*f1*F.inverse();
+    f2new = F*f2*F.inverse();
+    f1new.axis(emptyL);
+    drawH2Geodesic(emptyL,"red");
+    f2new.axis(emptyL);
+    drawH2Geodesic(emptyL,"red");
+    H2Geodesic perp;
+    commonPerpendicular(emptyL,H2Geodesic(-I,I),perp);
+    drawH2Geodesic(perp,"green");
+
     return;
 }

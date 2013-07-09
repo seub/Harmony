@@ -7,6 +7,7 @@
 #include <sstream>
 #include <complex>
 #include <cassert>
+#include <algorithm>
 
 #define ERROR 0.0000000001
 #define I complex(0.0, 1.0)
@@ -21,7 +22,7 @@ typedef std::vector<letter> word;
 
 typedef std::complex<double> complex;
 
-class SL2RMatrix;
-typedef GroupRepresentation<SL2RMatrix> RealRepresentation;
+class H2Isometry;
+typedef GroupRepresentation<H2Isometry> IsomH2Representation;
 
 #endif // TYPES_H

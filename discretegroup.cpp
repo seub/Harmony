@@ -277,3 +277,50 @@ DiscreteGroup amalgamateOverCommonGenerator(const DiscreteGroup &Gamma1, const D
     return DiscreteGroup(outputGenerators, outputRelations);
 }
 
+void DiscreteGroup::reset()
+{
+    generators.clear();
+    relations.clear();
+    cusps.clear();
+    closedSurfaceGroup = false;
+}
+
+void DiscreteGroup::setPairOfPants(generatorName c1, generatorName c2, generatorName c3)
+{
+    reset();
+    generators.push_back(c1);
+    generators.push_back(c2);
+    generators.push_back(c3);
+    word w;
+    w.push_back(letter(0, 1));
+    w.push_back(letter(1, 1));
+    w.push_back(letter(2, 1));
+    relations.push_back(w);
+    return;
+}
+
+void DiscreteGroup::rotateGenerators(int shift)
+{
+    int antishift = generators.size() - shift;
+    rotate(generators.begin(), generators.begin() + antishift, generators.end());
+
+    /*for (unsigned int i=0; i<relations.size(); i++)
+    {
+        rotateWord(relations[i], shift);
+    }
+    for(unsigned int j=0; j<cusps.size(); j++)
+    {
+        rotateWord(cusps[j], shift);
+    }*/
+    return;
+}
+
+void DiscreteGroup::rotateWord(word &w, int shift)
+{
+    int n = generators.size();
+    for (unsigned int i=0; i<w.size(); i++)
+    {
+        w[i].first = (w[i].first + shift) % n;
+    }
+    return;
+}
