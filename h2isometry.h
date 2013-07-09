@@ -35,7 +35,7 @@ public:
     void setByFixingPlusMinusI(const complex & pointMappedToOne);
     void setByFixingPlusMinusIWithChosenPoints(const double pointIn, const double pointOut);
     void setByNormalizingPairWithRepulsivePointAtOne(const H2Isometry & f1, const H2Isometry & f2);
-    void setByNormalizingPairWithChosenNearestPointToAxis(const H2Isometry & f1, const H2Isometry & f2, const complex & P);
+    void setByNormalizingPairWithChosenNearestPointToAxis(const H2Isometry & f1, const H2Isometry & f2, const double P);
 
     void setDiskCoordinates(const complex & u, const complex & a);
 

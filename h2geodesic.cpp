@@ -118,22 +118,16 @@ bool intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2Poi
         {
             Circle C2;
             l2.getCircleInDiskModel(C2);
-            if (intersectCircles(C1,C2,p1,p2))
+            intersectCircles(C1,C2,p1,p2);
+            if (abs(p1) > abs(p2))
             {
-                if (abs(p1) > abs(p2))
-                {
-                    p.setDiskCoordinate(p2);
-                }
-                else
-                {
-                    p.setDiskCoordinate(p1);
-                }
-                return true;
+                p.setDiskCoordinate(p2);
             }
             else
             {
-                return false;
+                p.setDiskCoordinate(p1);
             }
+            return true;
         }
         else
         {
@@ -209,6 +203,7 @@ bool H2Geodesic::closestPoints(const H2Geodesic &L1, const H2Geodesic &L2, H2Poi
         return false;
     } else if (!commonPerpendicular(L1,L2,Lperp))
     {
+
         intersectionH2Geodesics(L1,L2,q);
         p2 = q;
         p1 = q;

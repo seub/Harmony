@@ -251,14 +251,14 @@ complex H2Isometry::hitComplexNumberInDiskModel(const complex &z) const
 void H2Isometry::setByFixingPlusMinusIWithChosenPoints(const double pointIn, const double pointOut)
 {
     complex p1, p2;
-    p1 = I*pointIn;
-    p2 = I*pointOut;
+    p1 = pointIn;
+    p2 = pointOut;
     u = 1;
     a = I*(p1 - p2)/(1.0 - p1*p2);
     return;
 }
 
-void H2Isometry::setByNormalizingPairWithChosenNearestPointToAxis(const H2Isometry &f1, const H2Isometry &f2, const complex & P)
+void H2Isometry::setByNormalizingPairWithChosenNearestPointToAxis(const H2Isometry &f1, const H2Isometry &f2, const double P)
 {
     H2Isometry fFirst,fSecond;
     H2Geodesic L1,L2;
@@ -268,10 +268,8 @@ void H2Isometry::setByNormalizingPairWithChosenNearestPointToAxis(const H2Isomet
     fFirst.setByMappingEndpointsToPlusOrMinusI(L1.swapOrientation());
     (fFirst*f2*fFirst.inverse()).axis(L2);
     H2Geodesic::closestPoints(L2,L,pUseless,pUseful);
-    std::cout << pUseful << ", " << pUseless << std::endl;
-    fSecond.setByFixingPlusMinusIWithChosenPoints(imag(pUseful.getDiskCoordinate()),imag(P));
+    fSecond.setByFixingPlusMinusIWithChosenPoints(imag(pUseful.getDiskCoordinate()),P);
     *this = fSecond*fFirst;
-//  *this = fFirst;
     return;
 
 }

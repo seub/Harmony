@@ -128,7 +128,7 @@ void H2CanvasDelegate::drawExample()
     p0.setDiskCoordinate(.4*I);
     drawH2Point(p0,"black",8);
     H2Isometry F;
-    F.setByNormalizingPairWithChosenNearestPointToAxis(f1,f2,p0.getDiskCoordinate());
+    F.setByNormalizingPairWithChosenNearestPointToAxis(f1,f2,imag(p0.getDiskCoordinate()));
     f1new = F*f1*F.inverse();
     f2new = F*f2*F.inverse();
     f1new.axis(emptyL);
