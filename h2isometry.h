@@ -28,11 +28,14 @@ public:
 
     void setByMappingEndpointsToPlusOrMinusI(const H2Geodesic & L);
     void setByFixingPlusMinusI(const complex & pointMappedToOne);
-    void setByFixingPlusMinusIWithChosenPoints(const complex & pointIn, const complex & pointOut);
+    void setByFixingPlusMinusIWithChosenPoints(const double pointIn, const double pointOut);
     void setByNormalizingPairWithRepulsivePointAtOne(const H2Isometry & f1, const H2Isometry & f2);
     void setByNormalizingPairWithChosenNearestPointToAxis(const H2Isometry & f1, const H2Isometry & f2, const complex & P);
 
     void setDiskCoordinates(const complex & u, const complex & a);
+
+    void setSU11Matrix(const SL2CMatrix & A);
+    void setSL2Rmatrix(const SL2RMatrix & A);
 
     bool isHyperbolic() const;
     bool isElliptic() const;

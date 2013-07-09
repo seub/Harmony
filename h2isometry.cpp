@@ -42,7 +42,8 @@ void H2Isometry::setByMappingBoundaryAndInteriorPoints(const complex &boundaryPo
 /*void H2Isometry::setByMappingGeodesic(const H2Geodesic &L1, const H2Geodesic &L2)
 {
     H2Point p1,p2;
-    complex a1,a2,b1,b2;
+    p1.setDiskCoordinate(L1.closestPointToOriginInDiskModel());
+    p2.setDiskCoordinate(L2.closestPointToOriginInDiskModel());
     L1.getEndpointsInDiskModel(a1,a2);
     L2.getEndpointsInDiskModel(b1,b2);
     if (intersectionH2Geodesics(L1,L2,p1))
@@ -92,6 +93,24 @@ SL2RMatrix H2Isometry::getSL2RMatrix() const
     SL2RMatrix output;
     out.getRealPart(output);
     return output;
+}
+
+void H2Isometry::setSU11Matrix(const SL2CMatrix &A)
+{
+    complex alpha,alphaBar,beta,betaBar;
+    A.getCoefficients(alpha,alphaBar,beta,betaBar);
+    u = alpha / alphaBar;
+    a = -beta / alpha;
+    return;
+}
+
+void H2Isometry::setSL2Rmatrix(const SL2RMatrix &A)
+{
+    double Aa,Ab,Ac,Ad;
+    A.getCoefficients(Aa,Ab,Ac,Ad);
+    u = (Aa + Ad + I*(Ab - Ac))/(Aa + Ad - I*(Ab - Ac));
+    a = -(Ab + Ac + I*(Aa - Ad))/(Aa + Ad + I*(Ab - Ac));
+    return;
 }
 
 bool H2Isometry::isElliptic() const
@@ -238,14 +257,17 @@ complex H2Isometry::hitComplexNumberInDiskModel(const complex &z) const
     return u*(z - a)/(1.0 - conj(a)*z);
 }
 
-void H2Isometry::setByFixingPlusMinusIWithChosenPoints(const complex &pointIn, const complex &pointOut)
+void H2Isometry::setByFixingPlusMinusIWithChosenPoints(const double pointIn, const double pointOut)
 {
+    complex p1, p2;
+    p1 = I*pointIn;
+    p2 = I*pointOut;
     u = 1;
-    a = I*(pointIn - pointOut)/(1.0 - pointIn*pointOut);
+    a = I*(p1 - p2)/(1.0 - p1*p2);
     return;
 }
 
-void H2Isometry::setByNormalizingPairWithChosenNearestPointToAxis(const H2Isometry &f1, const H2Isometry &f2, const complex &P)
+void H2Isometry::setByNormalizingPairWithChosenNearestPointToAxis(const H2Isometry &f1, const H2Isometry &f2, const complex & P)
 {
     H2Isometry fFirst,fSecond;
     H2Geodesic L1,L2;
@@ -255,7 +277,7 @@ void H2Isometry::setByNormalizingPairWithChosenNearestPointToAxis(const H2Isomet
     fFirst.setByMappingEndpointsToPlusOrMinusI(L1.swapOrientation());
     (fFirst*f2*fFirst.inverse()).axis(L2);
     H2Geodesic::closestPoints(L2,L,pUseless,pUseful);
-    fSecond.setByFixingPlusMinusIWithChosenPoints(pUseful.getDiskCoordinate(),P);
+    fSecond.setByFixingPlusMinusIWithChosenPoints(imag(pUseful.getDiskCoordinate()),imag(P));
     *this = fSecond*fFirst;
     return;
 

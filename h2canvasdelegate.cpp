@@ -8,6 +8,7 @@
 #include "planarline.h"
 #include "h2polygon.h"
 #include "sl2rmatrix.h"
+#include "h2isometry.h"
 
 H2CanvasDelegate::H2CanvasDelegate(Canvas *canvas) : CanvasDelegate(canvas)
 {
@@ -91,9 +92,9 @@ void H2CanvasDelegate::drawExample()
     drawH2GeodesicArc(A1, "red");
     drawH2GeodesicArc(A2, "red");
     drawH2GeodesicArc(A3, "red");
-    drawH2GeodesicArc(A4, "red");*/
+    drawH2GeodesicArc(A4, "red");
 
-/*    H2Polygon P;
+    H2Polygon P;
     P.addVertex(p1);
     P.addVertex(p2);
     P.addVertex(p3);
@@ -103,13 +104,22 @@ void H2CanvasDelegate::drawExample()
 
     SL2RMatrix A(0.5, 0.2, 5, 4);
     drawH2Polygon(A*P, "blue");
-    drawH2Polygon(A.inverse()*P, "green");*/
+    drawH2Polygon(A.inverse()*P, "green");
 
+    H2Isometry f1,f2;
+    f1.setByMappingGeodesic(L1,L2);
+    f2.setByMappingGeodesic(L2,L3);
     H2Geodesic perp;
     commonPerpendicular(L1,L3,perp);
     drawH2Geodesic(L1);
     drawH2Geodesic(L3);
     drawH2Geodesic(perp,"blue");
+    H2Geodesic f1axis,f2axis;
+    f1.axis(f1axis);
+    f2.axis(f2axis);
+    drawH2Geodesic(f1axis,"red");
+
+    H2Isometry f;*/
 
     return;
 }

@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
     QApplication a(argc, argv);
 
-    std::vector<generatorName> generators;
+/*    std::vector<generatorName> generators;
     generators.push_back("a");
     generators.push_back("b");
     generators.push_back("c");
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
     DiscreteGroup Gamma = amalgamateOverCommonGenerator(Gamma1, Gamma2);
     std::cout << Gamma << std::endl;
-
+*/
     Canvas * canvas = new Canvas;
     H2CanvasDelegate * delegate = new H2CanvasDelegate(canvas);
     canvas->setDelegate(delegate);
