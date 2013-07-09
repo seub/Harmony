@@ -5,6 +5,8 @@
 
 class H2Point
 {
+    friend std::ostream & operator<<(std::ostream & out, const H2Point &p);
+
 public:
     H2Point();
 

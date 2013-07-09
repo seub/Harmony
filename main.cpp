@@ -75,14 +75,14 @@ int main(int argc, char *argv[])
     w.push_back(letter(2,1));
     C = rho.evaluateRepresentation(w);
     std::cout << "translation length(C) = " << C.translationLength() << std::endl;
-*/
+
     double l=-1.4;
     SL2RMatrix M(exp(.5*l),0.0,0.0,exp(-.5*l));
     H2Isometry f;
     f.setSL2Rmatrix(M);
 
     std::cout << "translation length(f) = " << f.translationLength() << std::endl;
-
+*/
     std::cout << std::endl;
     return a.exec();
 }

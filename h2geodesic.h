@@ -9,6 +9,7 @@ class PlanarLine;
 
 class H2Geodesic
 {    
+    friend std::ostream & operator<<(std::ostream & out, const H2Geodesic & L);
 public:
 
     H2Geodesic();
