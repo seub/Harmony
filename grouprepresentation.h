@@ -12,9 +12,9 @@
 
 template <typename T> class GroupRepresentation
 {    
+    template<typename T1> friend std::ostream & operator<<(std::ostream & out, const GroupRepresentation<T1> & rho);
 
 public:
-    GroupRepresentation();
     GroupRepresentation(DiscreteGroup* Gamma);
     GroupRepresentation(DiscreteGroup* Gamma, std::vector<T> listOfMatrices);
 
@@ -35,7 +35,7 @@ public:
     void rotateGenerators(int shift);
 
 
-private:
+//private:
     DiscreteGroup* Gamma;
     std::vector<T> listOfMatrices;
 };
