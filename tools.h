@@ -9,8 +9,10 @@ std::ostream & operator<<(std::ostream &out, const complex & z);
 int intRound(double x);
 double mod2Pi(double t);
 
+
+
 std::vector<int> findStringInList(const std::string &s, const std::vector<std::string> & list);
 bool containsDuplicates(const std::vector<std::string> & list);
-std::vector< std::pair<int, int> > CommonElements(const std::vector<std::string> & list1, const std::vector<std::string> & list2);
+bool haveCommonElements(const std::vector<std::string> & list1, const std::vector<std::string> & list2);
 
 #endif // TOOLS_H

@@ -169,50 +169,56 @@ std::string DiscreteGroup::getWordAsString(const word & w) const
 }
 
 
-bool findUniqueCommonGenerator(const DiscreteGroup &Gamma1, const DiscreteGroup &Gamma2, generatorName & outputName,
-                               int &outputIndex1, int &outputIndex2)
+bool DiscreteGroup::checkCompatibilityForAmalgamation(const DiscreteGroup &Gamma1, const DiscreteGroup &Gamma2)
 {
     std::vector<generatorName> generators1 = Gamma1.getGenerators();
     std::vector<generatorName> generators2 = Gamma2.getGenerators();
 
-    std::vector<std::pair <int, int> > CommonElementsIndices = CommonElements(generators1, generators2);
-
     if (containsDuplicates(generators1) || containsDuplicates(generators2))
     {
-        std::cout << "WARNING in findUniqueCommonGenerator: group generators contains duplicates!" << std::endl;
+        std::cout << "WARNING in DiscreteGroup::checkCompatibilityForAmalgamation: group generators contains duplicates!" << std::endl;
         return false;
     }
-    else if (CommonElementsIndices.size() == 0)
+    if (haveCommonElements(generators1, generators2))
     {
-        std::cout << "WARNING in findUniqueCommonGenerator: no common generator!" << std::endl;
+        std::cout << "WARNING in DiscreteGroup::checkCompatibilityForAmalgamation: common generator names!" << std::endl;
         return false;
     }
-    else if (CommonElementsIndices.size() > 1)
+    if (Gamma1.numberOfCusps() != 0 || Gamma2.numberOfCusps() != 0)
     {
-        std::cout << "WARNING in findUniqueCommonGenerator: several common generators!" << std::endl;
+        std::cout << "WARNING in DiscreteGroup::checkCompatibilityForAmalgamation: I don't handle cusps (for the moment)!" << std::endl;
         return false;
     }
-    else
-    {
-        outputIndex1 = CommonElementsIndices[0].first;
-        outputIndex2 = CommonElementsIndices[0].second;
-        outputName = generators2[outputIndex2];
-        return true;
-    }
+    return true;
 }
 
-DiscreteGroup amalgamateOverCommonGenerator(const DiscreteGroup &Gamma1, const DiscreteGroup &Gamma2)
+bool DiscreteGroup::findGeneratorIndex(int &outputIndex, const generatorName &a) const
 {
+    for (unsigned int i=0; i<generators.size(); i++)
+    {
+        if (generators[i]==a)
+        {
+            outputIndex = i;
+            return true;
+        }
+    }
+    return false;
+}
+
+DiscreteGroup DiscreteGroup::amalgamateOverInverse(const DiscreteGroup &Gamma1, const generatorName a1,
+                                                   const DiscreteGroup &Gamma2, const generatorName &a1inverse)
+{
+    DiscreteGroup::checkCompatibilityForAmalgamation(Gamma1, Gamma2);
     int i1, j1;
-    generatorName CommonGenerator;
+    if (!Gamma1.findGeneratorIndex(i1, a1) || !Gamma2.findGeneratorIndex(j1, a1inverse))
+    {
+        std::cout << "WARNING in DiscreteGroup::amalgamateOverInverse: generator is not in the group!" << std::endl;
+    }
+
     std::vector<generatorName> outputGenerators;
     std::vector<word> outputRelations;
 
-    if (Gamma1.numberOfCusps() != 0 || Gamma2.numberOfCusps() != 0)
-    {
-        std::cout << "ERROR in AmalgamateOverCommonGenerator: I don't handle cusps for the moment" << std::endl;
-    }
-    else if(findUniqueCommonGenerator(Gamma1, Gamma2, CommonGenerator, i1, j1))
+    if(checkCompatibilityForAmalgamation(Gamma1, Gamma2))
     {
         std::vector<generatorName> generators1 = Gamma1.getGenerators();
         std::vector<generatorName> generators2 = Gamma2.getGenerators();
@@ -234,13 +240,13 @@ DiscreteGroup amalgamateOverCommonGenerator(const DiscreteGroup &Gamma1, const D
                 outputGenerators.push_back(generators2[j]);
             }
         }
-        outputGenerators.push_back(CommonGenerator);
+        outputGenerators.push_back(a1);
 
         word w;
         for (i=0; i< (int) relations1.size(); i++)
         {
             w = relations1[i];
-            for (j=0; j< (int)w.size(); j++)
+            for (j=0; j< (int) w.size(); j++)
             {
                 if (w[j].first == i1)
                 {
@@ -261,6 +267,7 @@ DiscreteGroup amalgamateOverCommonGenerator(const DiscreteGroup &Gamma1, const D
                 if (w[j].first == j1)
                 {
                     w[j].first = generators1.size() + generators2.size() - 2;
+                    w[j].second = - w[j].second;
                 }
                 else if(w[j].first < j1)
                 {
@@ -274,6 +281,7 @@ DiscreteGroup amalgamateOverCommonGenerator(const DiscreteGroup &Gamma1, const D
             outputRelations.push_back(w);
         }
     }
+
     return DiscreteGroup(outputGenerators, outputRelations);
 }
 

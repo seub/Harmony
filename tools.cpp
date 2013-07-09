@@ -57,9 +57,8 @@ bool containsDuplicates(const std::vector<std::string> &list)
 }
 
 
-std::vector< std::pair<int, int> > CommonElements(const std::vector<std::string> & list1, const std::vector<std::string> & list2)
+bool haveCommonElements(const std::vector<std::string> & list1, const std::vector<std::string> & list2)
 {
-    std::vector< std::pair<int, int> > outputPairsOfIndices;
     unsigned int i,j, N1 = list1.size(), N2 = list2.size();
     for (i=0; i<N1; i++)
     {
@@ -67,9 +66,9 @@ std::vector< std::pair<int, int> > CommonElements(const std::vector<std::string>
         {
             if (list1[i] == list2[j])
             {
-                outputPairsOfIndices.push_back(std::pair<int,int>(i, j));
+                return true;
             }
         }
     }
-    return outputPairsOfIndices;
+    return false;
 }

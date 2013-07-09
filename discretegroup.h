@@ -26,6 +26,9 @@ public:
     void setPairOfPants(generatorName c1, generatorName c2, generatorName c3);
     void rotateGenerators(int shift);
 
+    static DiscreteGroup amalgamateOverInverse(const DiscreteGroup & Gamma1,
+                                                const generatorName a1, const DiscreteGroup & Gamma2, const generatorName &a1inverse);
+
 private:
     std::vector<generatorName> generators;
     std::vector<word> relations;
@@ -34,10 +37,9 @@ private:
 
     void reset();
     void rotateWord(word & w, int shift);
+    static bool checkCompatibilityForAmalgamation(const DiscreteGroup & Gamma1, const DiscreteGroup & Gamma2);
+    bool findGeneratorIndex(int & outputIndex, const generatorName &a) const;
 };
 
-bool findUniqueCommonGenerator(const DiscreteGroup & Gamma1, const DiscreteGroup & Gamma2, generatorName &outputName,
-                               int & outputIndex1, int & outputIndex2);
-DiscreteGroup amalgamateOverCommonGenerator(const DiscreteGroup & Gamma1, const DiscreteGroup & Gamma2);
 
 #endif // DISCRETEGROUP_H

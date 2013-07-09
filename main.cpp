@@ -22,6 +22,13 @@ int main(int argc, char *argv[])
     rho.setNormalizedPairOfPantsRepresentation("a", "b", "c", 7.0, 3.0, 11.0, "c");
     std::cout << rho << std::endl;
 
+
+    DiscreteGroup Gamma1, Gamma2;
+    Gamma1.setPairOfPants("a", "b", "c");
+    Gamma2.setPairOfPants("d", "e", "f");
+    DiscreteGroup Gamma3 = DiscreteGroup::amalgamateOverInverse(Gamma1, "b", Gamma2, "f");
+    std::cout << Gamma3 << std::endl;
+
     std::cout << std::endl;
 
     return a.exec();
