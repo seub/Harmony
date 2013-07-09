@@ -66,7 +66,8 @@ template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conj(const T
 template<typename T> void GroupRepresentation<T>::rotateGenerators(int shift)
 {
     Gamma->rotateGenerators(shift);
-    rotate(listOfMatrices.begin(), listOfMatrices.begin()+shift, listOfMatrices.end());
+    int antishift = listOfMatrices.size() - shift;
+    rotate(listOfMatrices.begin(), listOfMatrices.begin()+ antishift, listOfMatrices.end());
 
     return;
 }
@@ -117,7 +118,7 @@ template <> void IsomH2Representation::setFenchelNielsenCoordinates(const std::v
 }
 
 
-template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
+template <> void IsomH2Representation:: setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
                                                                               double length1, double length2, double length3, generatorName normalized)
 {
     if (length1 < 0 || length2 < 0 || length3 < 0)
@@ -170,13 +171,13 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
     else if (normalized == c1)
     {
         setNormalizedPairOfPantsRepresentation(c2, c3, c1, length2, length3, length1, c1);
-        rotateGenerators(2);
+        rotateGenerators(1);
         return;
     }
     else if (normalized == c2)
     {
         setNormalizedPairOfPantsRepresentation(c3, c1, c2, length3, length1, length2, c2);
-        rotateGenerators(1);
+        rotateGenerators(2);
         return;
     }
     else

@@ -285,7 +285,7 @@ std::ostream & operator<<(std::ostream & out, const H2Isometry &f)
     {
         H2Geodesic axis;
         f.axis(axis);
-        out << "Hyperbolic isometry, with axis " << axis << " and translation length " << f.translationLength() << std::endl;
+        out << "Hyperbolic isometry with axis " << axis << " and translation length " << f.translationLength() << std::endl;
     }
     if (f.isParabolic())
     {
@@ -293,7 +293,7 @@ std::ostream & operator<<(std::ostream & out, const H2Isometry &f)
         complex z1,z2;
         f.fixedPointsInDiskModel(Z1,Z2);
         z1 = Z1.getComplexCoordinate();
-        out << "Parabolic isometry, with fixed point " << z1 << std::endl;
+        out << "Parabolic isometry with fixed point " << z1 << std::endl;
     }
     if (f.isElliptic())
     {
@@ -302,9 +302,9 @@ std::ostream & operator<<(std::ostream & out, const H2Isometry &f)
         f.fixedPointsInDiskModel(Z1,Z2);
         z1 = Z1.getComplexCoordinate();
         z2 = Z2.getComplexCoordinate();
-        out << "Elliptic isometry, with fixed points z1= " << z1 << "and z2= " << z2 << std::endl;
+        out << "Elliptic isometry with fixed points z1= " << z1 << "and z2= " << z2 << std::endl;
     }
-    out << "{u= " << f.u << ", a= " << f.a << "}";
+    //out << "{u= " << f.u << ", a= " << f.a << "}";
     return out;
 }
 
