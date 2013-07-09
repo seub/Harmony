@@ -24,6 +24,7 @@ public:
     bool isClosedSurfaceGroup() const;
 
     void setPairOfPants(generatorName c1, generatorName c2, generatorName c3);
+    void rotateGenerators(int shift);
 
 private:
     std::vector<generatorName> generators;
@@ -32,6 +33,7 @@ private:
     bool closedSurfaceGroup;
 
     void reset();
+    void rotateWord(word & w, int shift);
 };
 
 bool findUniqueCommonGenerator(const DiscreteGroup & Gamma1, const DiscreteGroup & Gamma2, generatorName &outputName,
