@@ -5,20 +5,6 @@ template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *
 {
 }
 
-template<typename T1> std::ostream & operator<<(std::ostream & out, const GroupRepresentation<T1> & rho)
-{
-    std::vector<generatorName> generators = rho.Gamma->getGenerators();
-    out << std::endl;
-    out << "Group representation from the discrete group:" << std::endl;
-    out << rho.Gamma << std::endl;
-    out << "Images of the generators:" << std::endl;
-    for (unsigned int i=0; i<generators.size(); i++)
-    {
-        out << generators[i] << " -> " << rho.listOfMatrices[i] << std::endl;
-    }
-    out << std::endl;
-    return out;
-}
 
 template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *Gamma, std::vector<T> listOfMatrices) : Gamma(Gamma), listOfMatrices(listOfMatrices)
 {

@@ -12,7 +12,7 @@
 
 template <typename T> class GroupRepresentation
 {    
-    template<typename T1> friend std::ostream & operator<<(std::ostream & out, const GroupRepresentation<T1> & rho);
+    template<typename T2> friend std::ostream & operator<<(std::ostream & out, const GroupRepresentation<T2> & rho);
 
 public:
     GroupRepresentation(DiscreteGroup* Gamma);
@@ -39,5 +39,20 @@ public:
     DiscreteGroup* Gamma;
     std::vector<T> listOfMatrices;
 };
+
+template<typename T> std::ostream & operator<<(std::ostream & out, const GroupRepresentation<T> & rho)
+{
+    std::vector<generatorName> generators = rho.Gamma->getGenerators();
+    out << std::endl;
+    out << "Group representation from the discrete group:" << std::endl;
+    out << *rho.Gamma;
+    out << "Images of the generators:" << std::endl;
+    for (unsigned int i=0; i<generators.size(); i++)
+    {
+        out << generators[i] << " -> " << rho.listOfMatrices[i] << std::endl;
+    }
+    out << std::endl;
+    return out;
+}
 
 #endif // GROUPREPRESENTATION_H
