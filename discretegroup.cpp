@@ -277,3 +277,24 @@ DiscreteGroup amalgamateOverCommonGenerator(const DiscreteGroup &Gamma1, const D
     return DiscreteGroup(outputGenerators, outputRelations);
 }
 
+void DiscreteGroup::reset()
+{
+    generators.clear();
+    relations.clear();
+    cusps.clear();
+    closedSurfaceGroup = false;
+}
+
+void DiscreteGroup::setPairOfPants(generatorName c1, generatorName c2, generatorName c3)
+{
+    reset();
+    generators.push_back(c1);
+    generators.push_back(c2);
+    generators.push_back(c3);
+    word w;
+    w.push_back(letter(0, 1));
+    w.push_back(letter(1, 1));
+    w.push_back(letter(2, 1));
+    relations.push_back(w);
+    return;
+}

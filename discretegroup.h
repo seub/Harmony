@@ -23,11 +23,15 @@ public:
     std::string getLetterAsString(const letter & l) const;
     bool isClosedSurfaceGroup() const;
 
+    void setPairOfPants(generatorName c1, generatorName c2, generatorName c3);
+
 private:
     std::vector<generatorName> generators;
     std::vector<word> relations;
     std::vector<word> cusps;
     bool closedSurfaceGroup;
+
+    void reset();
 };
 
 bool findUniqueCommonGenerator(const DiscreteGroup & Gamma1, const DiscreteGroup & Gamma2, generatorName &outputName,

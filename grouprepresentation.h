@@ -21,6 +21,7 @@ public:
     bool checkRelations() const;
     T evaluateRepresentation(const word & w) const;
 
+
     GroupRepresentation<T> conj(const T & A);
     GroupRepresentation<T> conjugate() const;
 
