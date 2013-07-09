@@ -21,6 +21,8 @@ public:
     void drawH2Polygon(const H2Polygon & P, const QColor & color = "black", int width = 2);
 
     void drawExample();
+    void drawGeneratorsOfIsomH2Representation(const IsomH2Representation & rho, const QColor & color = "black", int width = 2);
+
 private:
 };
 
