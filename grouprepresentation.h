@@ -6,12 +6,15 @@
 #include "sl2cmatrix.h"
 #include "sl2rmatrix.h"
 #include "h2polygon.h"
+#include "h2isometry.h"
+#include "h3isometry.h"
 
 
 template <typename T> class GroupRepresentation
 {    
 
 public:
+    GroupRepresentation();
     GroupRepresentation(DiscreteGroup* Gamma);
     GroupRepresentation(DiscreteGroup* Gamma, std::vector<T> listOfMatrices);
 
@@ -21,7 +24,8 @@ public:
 
 
     GroupRepresentation<T> conj(const T & A);
-    GroupRepresentation<T> conjugate() const;
+    // Specialization to GroupRepresentation<SL2CMatrix>
+    GroupRepresentation<SL2CMatrix> conjugate() const;
 
     //Specialization to GroupRepresentation<H2ISometry> (i.e. IsomH2Representation)
     H2Polygon generatePolygon(const H2Point & basePoint) const;

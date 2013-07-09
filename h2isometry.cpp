@@ -7,6 +7,12 @@ H2Isometry::H2Isometry()
 {
 }
 
+void H2Isometry::setIdentity()
+{
+    u = 1.0;
+    a = 0.0;
+    return;
+}
 
 void H2Isometry::getDiskCoordinates(complex &u, complex &a) const
 {
@@ -256,6 +262,10 @@ void H2Isometry::setByNormalizingPairWithChosenNearestPointToAxis(const H2Isomet
 
 }
 
+bool operator ==(const H2Isometry & f1, const H2Isometry & f2)
+{
+    return (f1.u == f2.u && f1.a == f2.a);
+}
 
 
 

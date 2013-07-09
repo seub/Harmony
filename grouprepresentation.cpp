@@ -1,5 +1,10 @@
 #include "grouprepresentation.h"
-#include "h2isometry.h"
+
+
+template<typename T> GroupRepresentation<T>::GroupRepresentation()
+{
+   Gamma = new DiscreteGroup;
+}
 
 template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *Gamma) : Gamma(Gamma)
 {
@@ -16,7 +21,8 @@ template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *
 template<typename T> bool GroupRepresentation<T>::checkRelations() const
 {
     std::vector<word> relations = Gamma -> getRelations();
-    T identity(complex(1.0,0.0),complex(0.0,0.0),complex(0.0,0.0),complex(1.0,0.0));
+    T identity;
+    identity.setIdentity();
     for (unsigned int i=0;i<relations.size();i++)
     {
 
@@ -31,7 +37,8 @@ template<typename T> bool GroupRepresentation<T>::checkRelations() const
 
 template<typename T> T GroupRepresentation<T>::evaluateRepresentation(const word & w) const
 {
-    T store(1.0,0.0,0.0,0.0);
+    T store;
+    store.setIdentity();
     for (unsigned int j=0;j<w.size();j++)
     {
         if(w[j].second == 1)
@@ -58,22 +65,24 @@ template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conj(const T
 
 }
 
-template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conjugate() const
-{
-    std::vector<T> list(listOfMatrices.size());
-    for (unsigned int i=0;i<=listOfMatrices.size();i++)
-    {
-        list[i] = listOfMatrices[i].conjugate();
-    }
-    GroupRepresentation<T> r(Gamma,list);
-    return r;
-}
+
 
 template<typename T> void GroupRepresentation<T>::rotateGenerators(int shift)
 {
     Gamma->rotateGenerators(shift);
     rotate(listOfMatrices.begin(), listOfMatrices.begin()+shift, listOfMatrices.end());
     return;
+}
+
+template<> GroupRepresentation<SL2CMatrix> GroupRepresentation<SL2CMatrix>::conjugate() const
+{
+    std::vector<SL2CMatrix> list(listOfMatrices.size());
+    for (unsigned int i=0;i<=listOfMatrices.size();i++)
+    {
+        list[i] = listOfMatrices[i].conjugate();
+    }
+    GroupRepresentation<SL2CMatrix> r(Gamma,list);
+    return r;
 }
 
 template <> H2Polygon IsomH2Representation::generatePolygon(const H2Point &basePoint) const
@@ -119,7 +128,10 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
         std::cout << "ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: you gave me a negative length (seriously?)" << std::endl;
     }
     if (normalized == c3)
-    {
+    {        
+        length1 *= 0.5;
+        length2 *= 0.5;
+        length3 *= 0.5;
         Gamma->setPairOfPants(c1, c2, c3);
         double C1, C2, C3, S1, S2, S3;
         C1 = cosh(length1);
@@ -150,8 +162,11 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
 
         listOfMatrices.clear();
         H2Isometry f;
+        f.setSL2Rmatrix(M1);
         listOfMatrices.push_back(f);
+        f.setSL2Rmatrix(M2);
         listOfMatrices.push_back(f);
+        f.setSL2Rmatrix(M3);
         listOfMatrices.push_back(f);
         return;
     }
@@ -173,3 +188,8 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
         return;
     }
 }
+
+template class GroupRepresentation<H2Isometry>;
+template class GroupRepresentation<H3Isometry>;
+template class GroupRepresentation<SL2RMatrix>;
+template class GroupRepresentation<SL2CMatrix>;

@@ -10,6 +10,7 @@ class SL2RMatrix
 {    
     friend SL2RMatrix operator *(const SL2RMatrix & A1, const SL2RMatrix & A2);
     friend H2Point operator *(const SL2RMatrix & A, const H2Point & p);
+    friend bool operator ==(const SL2RMatrix & A1, const SL2RMatrix & A2);
 
 public:
     SL2RMatrix();

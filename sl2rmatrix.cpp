@@ -56,3 +56,8 @@ SL2RMatrix operator *(const SL2RMatrix & A1, const SL2RMatrix & A2)
                 A1.c*A2.a + A1.d*A2.c,
                 A1.c*A2.b + A1.d*A2.d);
 }
+
+bool operator ==(const SL2RMatrix & A1, const SL2RMatrix & A2)
+{
+    return A1.a==A2.a && A1.b==A2.b && A1.c==A2.c && A1.d==A2.d;
+}

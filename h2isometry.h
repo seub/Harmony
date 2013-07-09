@@ -12,6 +12,7 @@ class H2Isometry
     friend H2Point operator *(const H2Isometry & f, const H2Point & p);
     friend H2Polygon operator *(const H2Isometry &f, const H2Polygon &P);
     friend H2Geodesic operator *(const H2Isometry & f, const H2Geodesic & L);
+    friend bool operator ==(const H2Isometry & f1, const H2Isometry & f2);
 
 public:
     H2Isometry();
@@ -19,6 +20,8 @@ public:
     void getDiskCoordinates(complex &u, complex &a) const;
     SL2CMatrix getSU11Matrix() const;
     SL2RMatrix getSL2RMatrix() const;
+
+    void setIdentity();
 
     void setByMappingBoundaryAndInteriorPointsNormalized(const complex & boundaryPoint, const complex & interiorPoint);
     void setByMappingBoundaryAndInteriorPoints(const complex & boundaryPoint1, const complex & boundaryPoint2,

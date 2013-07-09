@@ -116,7 +116,7 @@ void H3Isometry::setIdentity()
     M.setIdentity();
 }
 
-H3Isometry H3Isometry::inverse()
+H3Isometry H3Isometry::inverse() const
 {
     return H3Isometry(M.inverse());
 }
@@ -140,3 +140,16 @@ H3Point operator *(const H3Isometry & f, const H3Point & p)
 
     return q;
 }
+
+bool operator ==(const H3Isometry & f1, const H3Isometry & f2)
+{
+    return f1.M == f2.M;
+}
+
+
+
+
+
+
+
+
