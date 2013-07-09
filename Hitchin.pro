@@ -5,13 +5,13 @@
 #-------------------------------------------------
 
 QT       += core \
-    widgets
-
-QT       -= gui
-
+    widgets \
+    opengl
 TARGET = Hitchin
 CONFIG   += console
 CONFIG   -= app_bundle
+
+LIBS += -L/usr/local/lib -lGLU
 
 TEMPLATE = app
 
@@ -34,6 +34,7 @@ SOURCES += main.cpp \
     h2isometry.cpp \
     h3isometry.cpp \
     tools.cpp \
+    h3canvasdelegate.cpp\
     h2idealpoint.cpp
 
 HEADERS += \
@@ -56,6 +57,7 @@ HEADERS += \
     h3isometry.h \
     tools.h \
     types.h \
+    h3canvasdelegate.h\
     h2idealpoint.h
 
 OTHER_FILES += \

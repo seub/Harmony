@@ -9,6 +9,7 @@
 #include "canvasdelegate.h"
 #include "h2canvasdelegate.h"
 #include "discretegroup.h"
+#include "h3canvasdelegate.h"
 #include "grouprepresentation.h"
 #include "h2isometry.h"
 
@@ -16,6 +17,8 @@ int main(int argc, char *argv[])
 {
     std::cout << std::endl;
     QApplication a(argc, argv);
+    H3canvasDelegate windows(60, 0,"Test");
+    windows.show();
 
     DiscreteGroup Gamma;
     IsomH2Representation rho(&Gamma);
@@ -29,6 +32,5 @@ int main(int argc, char *argv[])
     canvas->show();
 
     std::cout << std::endl;
-
     return a.exec();
 }
