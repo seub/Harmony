@@ -107,7 +107,7 @@ void H2CanvasDelegate::drawExample()
     drawH2Polygon(A.inverse()*P, "green");
 */
     H2Isometry f1,f2,f;
-    f1.setTranslationAxisAndLength(L1,2.0);
+    f1.setTranslationAxisAndLength(L1.swapOrientation(),2.0);
     f2.setTranslationAxisAndLength(L3,3.0);
     f.setByNormalizingPairWithRepulsivePointAtOne(f1,f2);
     H2Geodesic emptyL;
@@ -123,8 +123,10 @@ void H2CanvasDelegate::drawExample()
     f2new.axis(emptyL);
     drawH2Geodesic(emptyL,"blue");
 
+
     H2Point p0;
     p0.setDiskCoordinate(.4*I);
+    drawH2Point(p0,"black",8);
     H2Isometry F;
     F.setByNormalizingPairWithChosenNearestPointToAxis(f1,f2,p0.getDiskCoordinate());
     f1new = F*f1*F.inverse();
@@ -133,7 +135,9 @@ void H2CanvasDelegate::drawExample()
     drawH2Geodesic(emptyL,"red");
     f2new.axis(emptyL);
     drawH2Geodesic(emptyL,"red");
-
+    H2Geodesic perp;
+    commonPerpendicular(emptyL,H2Geodesic(-I,I),perp);
+    drawH2Geodesic(perp,"green");
 
     return;
 }

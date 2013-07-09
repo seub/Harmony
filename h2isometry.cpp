@@ -266,12 +266,12 @@ void H2Isometry::setByNormalizingPairWithChosenNearestPointToAxis(const H2Isomet
     H2Point pUseless,pUseful;
     f1.axis(L1);
     fFirst.setByMappingEndpointsToPlusOrMinusI(L1.swapOrientation());
-/*    (fFirst*f2*fFirst.inverse()).axis(L2);
+    (fFirst*f2*fFirst.inverse()).axis(L2);
     H2Geodesic::closestPoints(L2,L,pUseless,pUseful);
+    std::cout << pUseful << ", " << pUseless << std::endl;
     fSecond.setByFixingPlusMinusIWithChosenPoints(imag(pUseful.getDiskCoordinate()),imag(P));
     *this = fSecond*fFirst;
-    */
-    *this = fFirst;
+//  *this = fFirst;
     return;
 
 }
