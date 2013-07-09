@@ -1,14 +1,10 @@
 #include "grouprepresentation.h"
 
 
-template<typename T> GroupRepresentation<T>::GroupRepresentation()
-{
-   Gamma = new DiscreteGroup;
-}
-
 template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *Gamma) : Gamma(Gamma)
 {
 }
+
 
 template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *Gamma, std::vector<T> listOfMatrices) : Gamma(Gamma), listOfMatrices(listOfMatrices)
 {
@@ -71,6 +67,7 @@ template<typename T> void GroupRepresentation<T>::rotateGenerators(int shift)
 {
     Gamma->rotateGenerators(shift);
     rotate(listOfMatrices.begin(), listOfMatrices.begin()+shift, listOfMatrices.end());
+
     return;
 }
 
@@ -128,7 +125,7 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
         std::cout << "ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: you gave me a negative length (seriously?)" << std::endl;
     }
     if (normalized == c3)
-    {        
+    {
         length1 *= 0.5;
         length2 *= 0.5;
         length3 *= 0.5;
@@ -173,13 +170,13 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
     else if (normalized == c1)
     {
         setNormalizedPairOfPantsRepresentation(c2, c3, c1, length2, length3, length1, c1);
-        rotateGenerators(1);
+        rotateGenerators(2);
         return;
     }
     else if (normalized == c2)
     {
         setNormalizedPairOfPantsRepresentation(c3, c1, c2, length3, length1, length2, c2);
-        rotateGenerators(2);
+        rotateGenerators(1);
         return;
     }
     else
@@ -188,6 +185,8 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
         return;
     }
 }
+
+
 
 template class GroupRepresentation<H2Isometry>;
 template class GroupRepresentation<H3Isometry>;

@@ -302,6 +302,7 @@ void DiscreteGroup::setPairOfPants(generatorName c1, generatorName c2, generator
 void DiscreteGroup::rotateGenerators(int shift)
 {
     rotate(generators.begin(), generators.begin() + shift, generators.end());
+
     for (unsigned int i=0; i<relations.size(); i++)
     {
         rotateWord(relations[i], shift);
@@ -310,6 +311,7 @@ void DiscreteGroup::rotateGenerators(int shift)
     {
         rotateWord(cusps[j], shift);
     }
+    return;
 }
 
 void DiscreteGroup::rotateWord(word &w, int shift)
