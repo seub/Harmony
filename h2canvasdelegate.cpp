@@ -105,7 +105,7 @@ void H2CanvasDelegate::drawExample()
     SL2RMatrix A(0.5, 0.2, 5, 4);
     drawH2Polygon(A*P, "blue");
     drawH2Polygon(A.inverse()*P, "green");
-*/
+
     H2Isometry f1,f2,f;
     f1.setTranslationAxisAndLength(L1.swapOrientation(),2.0);
     f2.setTranslationAxisAndLength(L3,3.0);
@@ -138,6 +138,9 @@ void H2CanvasDelegate::drawExample()
     H2Geodesic perp;
     commonPerpendicular(emptyL,H2Geodesic(-I,I),perp);
     drawH2Geodesic(perp,"green");
+ */
+
+
 
     return;
 }

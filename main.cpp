@@ -17,11 +17,11 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
     QApplication a(argc, argv);
 
-/*    DiscreteGroup Gamma;
+    DiscreteGroup Gamma;
     IsomH2Representation rho(&Gamma);
     rho.setNormalizedPairOfPantsRepresentation("a", "b", "c", 7.0, 3.0, 11.0, "c");
     std::cout << rho << std::endl;
-*/
+
     Canvas * canvas = new Canvas;
     H2CanvasDelegate delegate(canvas);
     canvas->setDelegate(&delegate);
