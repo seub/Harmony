@@ -51,16 +51,16 @@ int main(int argc, char *argv[])
 
     DiscreteGroup Gamma = amalgamateOverCommonGenerator(Gamma1, Gamma2);
     std::cout << Gamma << std::endl;
-
+*/
 
     Canvas * canvas = new Canvas;
     H2CanvasDelegate * delegate = new H2CanvasDelegate(canvas);
     canvas->setDelegate(delegate);
     delegate->drawExample();
     canvas->show();
-*/
 
-    GroupRepresentation<H2Isometry> rho;
+
+/*    GroupRepresentation<H2Isometry> rho;
     rho.setNormalizedPairOfPantsRepresentation("a","b","c",1.0,2.0,2.0,"a");
     H2Isometry A,B,C;
     word w;
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     w.push_back(letter(2,1));
     C = rho.evaluateRepresentation(w);
     std::cout << "translation length(C) = " << C.translationLength() << std::endl;
-
+*/
     double l=-1.4;
     SL2RMatrix M(exp(.5*l),0.0,0.0,exp(-.5*l));
     H2Isometry f;
