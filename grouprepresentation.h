@@ -30,6 +30,7 @@ public:
                                                 double length1, double length2, double length3, generatorName normalized);
     void rotateGenerators(int shift);
 
+
 private:
     DiscreteGroup* Gamma;
     std::vector<T> listOfMatrices;

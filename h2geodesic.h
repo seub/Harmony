@@ -15,6 +15,7 @@ public:
     H2Geodesic(const complex & z1, const complex & z2);
     H2Geodesic(const H2Point & p1, const H2Point & p2);
 
+
     void getEndpointsInDiskModel(complex & z1, complex & z2) const;
 
     bool isCircleInDiskModel() const;
@@ -23,6 +24,9 @@ public:
     bool getCircleAndAnglesInDiskModel(Circle & outC, double & outAngle1, double & outAngle2) const;
     bool contains(const H2Point & p) const;
     complex closestPointToOriginInDiskModel() const;
+    H2Geodesic swapOrientation() const;
+
+    static bool closestPoints(const H2Geodesic & L1, const H2Geodesic &  L2, H2Point & p1, H2Point & p2);
 
 private:
     complex z1, z2;
@@ -34,6 +38,7 @@ bool intersectionH2Geodesics(const H2Geodesic & L1, const H2Geodesic & L2, H2Poi
 bool commonPerpendicular(const H2Geodesic &  L1, const H2Geodesic & L2, H2Geodesic &output);
 bool commonEndpointInDiskModel(const H2Geodesic & L1, const H2Geodesic & L2, complex & z);
 bool commonEndpoint(const H2Geodesic & L1, const H2Geodesic & L2);
+
 
 
 class H2GeodesicArc

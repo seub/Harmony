@@ -110,6 +110,7 @@ template <> void IsomH2Representation::setFenchelNielsenCoordinates(const std::v
     return;
 }
 
+
 template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
                                                                               double length1, double length2, double length3, generatorName normalized)
 {
