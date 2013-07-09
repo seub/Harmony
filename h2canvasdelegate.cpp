@@ -82,7 +82,7 @@ void H2CanvasDelegate::drawExample()
     p6.setDiskCoordinate(-.4);
     p5.setDiskCoordinate(.3+.5*I);
 
-    H2Geodesic L1(p1, p2), L2(p2, p3), L3(p3, p4), L4(p4, p1);
+    H2Geodesic L1(p2,p1), L2(p2, p3), L3(p3, p4), L4(p4, p1);
 /*    drawH2Geodesic(L1, "blue");
     drawH2Geodesic(L2, "blue");
     drawH2Geodesic(L3, "blue");
@@ -106,20 +106,17 @@ void H2CanvasDelegate::drawExample()
     drawH2Polygon(A*P, "blue");
     drawH2Polygon(A.inverse()*P, "green");
 */
-    H2Isometry f1,f2;
-    f1.setByMappingGeodesic(L1,L2);
-    f2.setByMappingGeodesic(L2,L3);
-    H2Geodesic perp;
-    commonPerpendicular(L1,L3,perp);
-    drawH2Geodesic(L1);
-    drawH2Geodesic(L3);
-    drawH2Geodesic(perp,"blue");
+    H2Isometry f1,f2,f;
+    f1.setTranslationAxisAndLength(L1,2.0);
+    f2.setTranslationAxisAndLength(L3,3.0);
+    std::cout << "f1= " << f1 << std::endl;
+    std::cout << "f2= " << f2 << std::endl;
+    f.setByNormalizingPairWithRepulsivePointAtOne(f1,f2);
     H2Geodesic f1axis,f2axis;
     f1.axis(f1axis);
-    f2.axis(f2axis);
-    drawH2Geodesic(f1axis,"red");
+    drawH2Geodesic(f1axis);
+    drawH2Geodesic(f2axis);
 
-    H2Isometry f;
 
     return;
 }

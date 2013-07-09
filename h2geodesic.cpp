@@ -325,3 +325,8 @@ void H2GeodesicArc::getEndpointsInDiskModel(complex &output1, complex &output2) 
     return;
 }
 
+std::ostream & operator<<(std::ostream & out, const H2Geodesic & L)
+{
+    out << "{z1=" << L.z1 << ", z2=" << L.z2 << "}";
+    return out;
+}

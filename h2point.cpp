@@ -41,4 +41,8 @@ double H2distance(const H2Point & p1, const H2Point & p2)
     return acosh(1.0 + s);
 }
 
-
+std::ostream & operator<<(std::ostream & out, const H2Point &p)
+{
+    out << "z= " << p.z;
+    return out;
+}

@@ -13,6 +13,7 @@ class H2Isometry
     friend H2Polygon operator *(const H2Isometry &f, const H2Polygon &P);
     friend H2Geodesic operator *(const H2Isometry & f, const H2Geodesic & L);
     friend bool operator ==(const H2Isometry & f1, const H2Isometry & f2);
+    friend std::ostream & operator<<(std::ostream & out, const H2Isometry &f);
 
 public:
     H2Isometry();
@@ -23,6 +24,7 @@ public:
 
     void setIdentity();
 
+    void setTranslationAxisAndLength(const H2Geodesic & axis, double length);
     void setByMappingBoundaryAndInteriorPointsNormalized(const complex & boundaryPoint, const complex & interiorPoint);
     void setByMappingBoundaryAndInteriorPoints(const complex & boundaryPoint1, const complex & boundaryPoint2,
                                                const complex & interiorPoint1, const complex & interiorPoint2);

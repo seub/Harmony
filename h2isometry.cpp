@@ -28,6 +28,18 @@ void H2Isometry::setDiskCoordinates(const complex &u, const complex &a)
     return;
 }
 
+void H2Isometry::setTranslationAxisAndLength(const H2Geodesic & axis, double length)
+{
+    H2Isometry f;
+    f.setByMappingEndpointsToPlusOrMinusI(axis);
+    complex a0 = -I*sqrt((cosh(length) - 1.0)/(cosh(length) + 1.0));
+    complex u0 = 1.0;
+    H2Isometry f0;
+    f0.setDiskCoordinates(u0,a0);
+    *this = f.inverse()*f0*f;
+    return;
+}
+
 void H2Isometry::setByMappingBoundaryAndInteriorPointsNormalized(const complex &boundaryPoint, const complex &interiorPoint)
 {
     u = - (1.0 - conj(interiorPoint)*boundaryPoint)/(boundaryPoint - interiorPoint);
@@ -267,5 +279,32 @@ bool operator ==(const H2Isometry & f1, const H2Isometry & f2)
     return (f1.u == f2.u && f1.a == f2.a);
 }
 
-
+std::ostream & operator<<(std::ostream & out, const H2Isometry &f)
+{
+    if (f.isHyperbolic())
+    {
+        H2Geodesic axis;
+        f.axis(axis);
+        out << "Hyperbolic isometry, with axis " << axis << " and translation length " << f.translationLength() << std::endl;
+    }
+    if (f.isParabolic())
+    {
+        CP1Point Z1,Z2;
+        complex z1,z2;
+        f.fixedPointsInDiskModel(Z1,Z2);
+        z1 = Z1.getComplexCoordinate();
+        out << "Parabolic isometry, with fixed point " << z1 << std::endl;
+    }
+    if (f.isElliptic())
+    {
+        CP1Point Z1,Z2;
+        complex z1,z2;
+        f.fixedPointsInDiskModel(Z1,Z2);
+        z1 = Z1.getComplexCoordinate();
+        z2 = Z2.getComplexCoordinate();
+        out << "Elliptic isometry, with fixed points z1= " << z1 << "and z2= " << z2 << std::endl;
+    }
+    out << "{u= " << f.u << ", a= " << f.a << "}";
+    return out;
+}
 
