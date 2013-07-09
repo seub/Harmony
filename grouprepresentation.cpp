@@ -149,9 +149,10 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
         SL2RMatrix M3(a, b, c, d);
 
         listOfMatrices.clear();
-        listOfMatrices.push_back(H2Isometry(M1));
-        listOfMatrices.push_back(H2Isometry(M2));
-        listOfMatrices.push_back(H2Isometry(M3));
+        H2Isometry f;
+        listOfMatrices.push_back(f);
+        listOfMatrices.push_back(f);
+        listOfMatrices.push_back(f);
         return;
     }
     else if (normalized == c1)
