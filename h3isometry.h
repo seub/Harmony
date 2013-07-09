@@ -13,6 +13,7 @@ class H3Isometry
     friend CP1Point operator *(const H3Isometry & f, const CP1Point & p);
     friend H3Point operator *(const H3Isometry & f, const H3Point & p);
     friend bool operator ==(const H3Isometry & f1, const H3Isometry & f2);
+    friend std::ostream & operator<<(std::ostream & out, const H3Isometry & A);
 
 public:
     H3Isometry();

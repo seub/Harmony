@@ -107,16 +107,37 @@ void H2CanvasDelegate::drawExample()
     drawH2Polygon(A.inverse()*P, "green");
 */
     H2Isometry f1,f2,f;
-    f1.setTranslationAxisAndLength(L1,2.0);
+    f1.setTranslationAxisAndLength(L1.swapOrientation(),2.0);
     f2.setTranslationAxisAndLength(L3,3.0);
-    std::cout << "f1= " << f1 << std::endl;
-    std::cout << "f2= " << f2 << std::endl;
     f.setByNormalizingPairWithRepulsivePointAtOne(f1,f2);
-    H2Geodesic f1axis,f2axis;
-    f1.axis(f1axis);
-    drawH2Geodesic(f1axis);
-    drawH2Geodesic(f2axis);
+    H2Geodesic emptyL;
+    f1.axis(emptyL);
+    drawH2Geodesic(emptyL);
+    f2.axis(emptyL);
+    drawH2Geodesic(emptyL);
+    H2Isometry f1new,f2new;
+    f1new = f*f1*f.inverse();
+    f2new = f*f2*f.inverse();
+    f1new.axis(emptyL);
+    drawH2Geodesic(emptyL,"blue");
+    f2new.axis(emptyL);
+    drawH2Geodesic(emptyL,"blue");
 
+
+    H2Point p0;
+    p0.setDiskCoordinate(.4*I);
+    drawH2Point(p0,"black",8);
+    H2Isometry F;
+    F.setByNormalizingPairWithChosenNearestPointToAxis(f1,f2,imag(p0.getDiskCoordinate()));
+    f1new = F*f1*F.inverse();
+    f2new = F*f2*F.inverse();
+    f1new.axis(emptyL);
+    drawH2Geodesic(emptyL,"red");
+    f2new.axis(emptyL);
+    drawH2Geodesic(emptyL,"red");
+    H2Geodesic perp;
+    commonPerpendicular(emptyL,H2Geodesic(-I,I),perp);
+    drawH2Geodesic(perp,"green");
 
     return;
 }

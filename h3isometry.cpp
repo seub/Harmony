@@ -146,6 +146,11 @@ bool operator ==(const H3Isometry & f1, const H3Isometry & f2)
     return f1.M == f2.M;
 }
 
+std::ostream & operator<<(std::ostream & out, const H3Isometry & A)
+{
+    out << A.M;
+    return out;
+}
 
 
 

@@ -14,7 +14,7 @@ public:
     complex getDiskCoordinate() const;
     complex getKleinCoordinate() const;
 
-    void setUpperHalfPlaneCoordiante(complex z);
+    void setUpperHalfPlaneCoordinate(complex z);
     void setDiskCoordinate(complex z);
 
 

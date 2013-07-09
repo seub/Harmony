@@ -6,28 +6,28 @@ H2Point::H2Point()
 
 complex H2Point::getUpperHalfPlaneCoordinate() const
 {
-    return z;
+    return -I*((z + I)/(z - I));
 }
 
 complex H2Point::getDiskCoordinate() const
 {
-    return (I*(z - I)/(z + I));
+    return z;
 }
 
 complex H2Point::getKleinCoordinate() const
 {
-    complex z = getDiskCoordinate();
+//    complex z = getDiskCoordinate();
     return 2.0*z / (1.0 + norm(z));
 }
 
-void H2Point::setUpperHalfPlaneCoordiante(complex z)
+void H2Point::setUpperHalfPlaneCoordinate(complex z)
 {
-    this->z = z;
+    this->z = I*((z - I)/(z + I));
 }
 
 void H2Point::setDiskCoordinate(complex z)
 {
-    this->z = (-I*(z + I)/(z - I));
+    this->z = z;
 }
 
 double H2distance(const H2Point & p1, const H2Point & p2)
