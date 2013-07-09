@@ -39,45 +39,17 @@ void H2Isometry::setByMappingBoundaryAndInteriorPoints(const complex &boundaryPo
     return;
 }
 
-/*void H2Isometry::setByMappingGeodesic(const H2Geodesic &L1, const H2Geodesic &L2)
+void H2Isometry::setByMappingGeodesic(const H2Geodesic &L1, const H2Geodesic &L2)
 {
     H2Point p1,p2;
     p1.setDiskCoordinate(L1.closestPointToOriginInDiskModel());
     p2.setDiskCoordinate(L2.closestPointToOriginInDiskModel());
-    L1.getEndpointsInDiskModel(a1,a2);
-    L2.getEndpointsInDiskModel(b1,b2);
-    if (intersectionH2Geodesics(L1,L2,p1))
-    {
-        setByMappingBoundaryAndInteriorPoints(a1,b1,p1,p1);
-        return;
-    }
-    complex c;
-    else if (commonEndpoint(L1,L2))
-    {
-        H2Isometry f;
-        complex u;
-        if (a1 == b1)
-        {
-
-        } else if (a2 == b1)
-        {
-
-        } else if (a1 == b2)
-        {
-
-        } else if (a2 == b2)
-        {
-
-        }
-        f.setDiskCoordinates();
-    }
-    H2Geodesic L3;
-    commonPerpendicular(L1,L2,L3);
-    intersectionH2Geodesics(L3,L1,p1);
-    intersectionH2Geodesics(L3,L2,p2);
-    this->setByMappingBoundaryAndInteriorPoints(a1,b1,p1.getDiskCoordinate(),p2.getDiskCoordinate());
+    H2Isometry f1,f2;
+    f1.setByMappingEndpointsToPlusOrMinusI(L1);
+    f2.setByMappingEndpointsToPlusOrMinusI(L2);
+    *this = f2.inverse()*f1;
     return;
-}*/
+}
 
 SL2CMatrix H2Isometry::getSU11Matrix() const
 {

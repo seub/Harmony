@@ -105,7 +105,7 @@ void H2CanvasDelegate::drawExample()
     SL2RMatrix A(0.5, 0.2, 5, 4);
     drawH2Polygon(A*P, "blue");
     drawH2Polygon(A.inverse()*P, "green");
-
+*/
     H2Isometry f1,f2;
     f1.setByMappingGeodesic(L1,L2);
     f2.setByMappingGeodesic(L2,L3);
@@ -119,7 +119,7 @@ void H2CanvasDelegate::drawExample()
     f2.axis(f2axis);
     drawH2Geodesic(f1axis,"red");
 
-    H2Isometry f;*/
+    H2Isometry f;
 
     return;
 }
