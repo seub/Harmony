@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
 /*    DiscreteGroup Gamma;
     IsomH2Representation rho(&Gamma);
-    rho.setNormalizedPairOfPantsRepresentation("a", "b", "c", 7.0, 3.0, 11.0, "a");
+    rho.setNormalizedPairOfPantsRepresentation("a", "b", "c", 7.0, 3.0, 11.0, "c");
     std::cout << rho << std::endl;
 */
     Canvas * canvas = new Canvas;
@@ -29,5 +29,6 @@ int main(int argc, char *argv[])
     canvas->show();
 
     std::cout << std::endl;
+
     return a.exec();
 }
