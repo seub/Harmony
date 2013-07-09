@@ -9,6 +9,7 @@
 #include "h2polygon.h"
 #include "sl2rmatrix.h"
 #include "h2isometry.h"
+#include "grouprepresentation.h"
 
 H2CanvasDelegate::H2CanvasDelegate(Canvas *canvas) : CanvasDelegate(canvas)
 {
@@ -71,6 +72,18 @@ void H2CanvasDelegate::drawH2Polygon(const H2Polygon &P, const QColor &color, in
     return;
 }
 
+void H2CanvasDelegate::drawGeneratorAxes(const IsomH2Representation &rho, const QColor &color, int width)
+{
+    std::vector<H2Isometry> generators;
+    H2Geodesic L;
+    rho.getGenerators(generators);
+    for(unsigned int j=0;j<generators.size();j++)
+    {
+        generators[j].axis(L);
+        drawH2Geodesic(L);
+    }
+    return;
+}
 
 void H2CanvasDelegate::drawExample()
 {
@@ -140,6 +153,10 @@ void H2CanvasDelegate::drawExample()
     drawH2Geodesic(perp,"green");
  */
 
+    DiscreteGroup Gamma;
+    IsomH2Representation rho(&Gamma);
+    rho.setNormalizedPairOfPantsRepresentation("a", "b", "c", 5.0, 3.0, 4.0, "c");
+    drawGeneratorAxes(rho);
 
 
     return;

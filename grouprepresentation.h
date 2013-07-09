@@ -16,11 +16,12 @@ template <typename T> class GroupRepresentation
 
 public:
     GroupRepresentation(DiscreteGroup* Gamma);
-    GroupRepresentation(DiscreteGroup* Gamma, std::vector<T> listOfMatrices);
+    GroupRepresentation(DiscreteGroup* Gamma, std::vector<T> generatorImages);
 
 
     bool checkRelations() const;
     T evaluateRepresentation(const word & w) const;
+    void getGenerators(std::vector<T> &list) const;
 
 
     GroupRepresentation<T> conj(const T & A);
@@ -33,11 +34,12 @@ public:
     void setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
                                                 double length1, double length2, double length3, generatorName normalized);
     void rotateGenerators(int shift);
+;
 
 
 //private:
     DiscreteGroup* Gamma;
-    std::vector<T> listOfMatrices;
+    std::vector<T> generatorImages;
 };
 
 template<typename T> std::ostream & operator<<(std::ostream & out, const GroupRepresentation<T> & rho)
@@ -49,7 +51,7 @@ template<typename T> std::ostream & operator<<(std::ostream & out, const GroupRe
     out << "Images of the generators:" << std::endl;
     for (unsigned int i=0; i<generators.size(); i++)
     {
-        out << generators[i] << " -> " << rho.listOfMatrices[i] << std::endl;
+        out << generators[i] << " -> " << rho.generatorImages[i] << std::endl;
     }
     out << std::endl;
     return out;
