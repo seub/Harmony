@@ -98,6 +98,11 @@ bool H2Geodesic::getLineInDiskModel(PlanarLine &output) const
     }
 }
 
+H2Geodesic H2Geodesic::swapOrientation() const
+{
+    return H2Geodesic(z2,z1);
+}
+
 bool intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2Point & p)
 {
     complex p1,p2;
@@ -193,6 +198,25 @@ complex H2Geodesic::closestPointToOriginInDiskModel() const
         return 0.0;
     }
     return ((z1*z2)/(z1 + z2))*(2.0 - abs(z1 - z2));
+}
+
+bool H2Geodesic::closestPoints(const H2Geodesic &L1, const H2Geodesic &L2, H2Point &p1, H2Point &p2)
+{
+    H2Geodesic Lperp;
+    H2Point q;
+    if (commonEndpoint(L1,L2))
+    {
+        return false;
+    } else if (!commonPerpendicular(L1,L2,Lperp))
+    {
+        intersectionH2Geodesics(L1,L2,q);
+        p2 = q;
+        p1 = q;
+        return true;
+    }
+    intersectionH2Geodesics(L1,Lperp,p1);
+    intersectionH2Geodesics(L2,Lperp,p2);
+    return true;
 }
 
 bool commonPerpendicular(const H2Geodesic &L1, const H2Geodesic &L2, H2Geodesic &output)
@@ -300,3 +324,4 @@ void H2GeodesicArc::getEndpointsInDiskModel(complex &output1, complex &output2) 
     output2 = p2.getDiskCoordinate();
     return;
 }
+

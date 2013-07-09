@@ -28,6 +28,7 @@ public:
     H2Polygon generatePolygon(const H2Point & basePoint) const;
     void setFenchelNielsenCoordinates(const std::vector<double> & lengthParameters, const std::vector<double> & twistParameters);
 
+
 private:
     DiscreteGroup* Gamma;
     std::vector<T> listOfMatrices;
