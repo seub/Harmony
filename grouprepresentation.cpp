@@ -1,10 +1,6 @@
 #include "grouprepresentation.h"
 #include "h2isometry.h"
 
-template<typename T> GroupRepresentation<T>::GroupRepresentation()
-{
-}
-
 template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *Gamma) : Gamma(Gamma)
 {
 }
@@ -73,6 +69,13 @@ template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conjugate() 
     return r;
 }
 
+template<typename T> void GroupRepresentation<T>::rotateGenerators(int shift)
+{
+    Gamma->rotateGenerators(shift);
+    rotate(listOfMatrices.begin(), listOfMatrices.begin()+shift, listOfMatrices.end());
+    return;
+}
+
 template <> H2Polygon IsomH2Representation::generatePolygon(const H2Point &basePoint) const
 {
     H2Polygon res;
@@ -102,11 +105,71 @@ template <> H2Polygon IsomH2Representation::generatePolygon(const H2Point &baseP
 }
 
 template <> void IsomH2Representation::setFenchelNielsenCoordinates(const std::vector<double> & lengthParameters,
-                                                                  const std::vector<double> & twistParameters)
+                                                                    const std::vector<double> & twistParameters)
 {
     return;
 }
 
 
+template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
+                                                                              double length1, double length2, double length3, generatorName normalized)
+{
+    if (length1 < 0 || length2 < 0 || length3 < 0)
+    {
+        std::cout << "ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: you gave me a negative length (seriously?)" << std::endl;
+    }
+    if (normalized == c3)
+    {
+        Gamma->setPairOfPants(c1, c2, c3);
+        double C1, C2, C3, S1, S2, S3;
+        C1 = cosh(length1);
+        C2 = cosh(length2);
+        C3 = cosh(length3);
+        S1 = sinh(length1);
+        S2 = sinh(length2);
+        S3 = sinh(length3);
 
+        double a, b, c, d;
+        a = (-C1*S3 + C1*C3 + C2)/S3;
+        b = (-(C1 + C2*C3 - S2*S3)*(C3 + S3))/S3;
+        c = ((C1 + C2*C3 + S2*S3)*(C3 - S3))/S3;
+        d = (-C1*S3 -C1*C3 - C2)/S3;
+        SL2RMatrix M1(a, b, c, d);
 
+        a = (-C2*S3 + C2*C3 + C1)/S3;
+        b = (-C1 - C2*C3 + S2*S3)/S3;
+        c = (C1 + C2*C3 + S2*S3)/S3;
+        d = (-C2*S3 -C2*C3 - C1)/S3;
+        SL2RMatrix M2(a, b, c, d);
+
+        a = -C3 -S3;
+        b = 0;
+        c = 0;
+        d  =-C3 +S3;
+        SL2RMatrix M3(a, b, c, d);
+
+        listOfMatrices.clear();
+        H2Isometry f;
+        listOfMatrices.push_back(f);
+        listOfMatrices.push_back(f);
+        listOfMatrices.push_back(f);
+        return;
+    }
+    else if (normalized == c1)
+    {
+        setNormalizedPairOfPantsRepresentation(c2, c3, c1, length2, length3, length1, c1);
+        rotateGenerators(1);
+        return;
+    }
+    else if (normalized == c2)
+    {
+        setNormalizedPairOfPantsRepresentation(c3, c1, c2, length3, length1, length2, c2);
+        rotateGenerators(2);
+        return;
+    }
+    else
+    {
+        std::cout << "ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: Normalizer has to be one of the generators!" << std::endl;
+        return;
+    }
+}

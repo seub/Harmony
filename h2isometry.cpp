@@ -51,6 +51,7 @@ void H2Isometry::setByMappingGeodesic(const H2Geodesic &L1, const H2Geodesic &L2
     return;
 }
 
+
 SL2CMatrix H2Isometry::getSU11Matrix() const
 {
     double s = 1.0 / sqrt(1.0 - norm(a));
@@ -254,9 +255,6 @@ void H2Isometry::setByNormalizingPairWithChosenNearestPointToAxis(const H2Isomet
     return;
 
 }
-
-
-
 
 
 
