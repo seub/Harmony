@@ -304,9 +304,9 @@ DiscreteGroup DiscreteGroup::doHNNextensionOverInverse(const DiscreteGroup & Gam
         outputRelations = Gamma.getRelations();
         word w;
         w.push_back(letter(j1, 1));
-        w.push_back(letter(N-1, 1));
+        w.push_back(letter(N-1, -1));
         w.push_back(letter(i1, 1));
-        w.push_back(letter(N-1,-1));
+        w.push_back(letter(N-1,1));
         outputRelations.push_back(w);
     }
 
