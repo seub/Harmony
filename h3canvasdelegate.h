@@ -35,7 +35,11 @@ private:
     GLdouble normalvect[3];
     GLdouble currentPosition[3];
     GLdouble modelviewsave[16];
-
+    void drawSphere(GLdouble xcenter, GLdouble ycenter, GLdouble zcenter, GLdouble radius, GLenum  style = GLU_SILHOUETTE);
+    void drawCircleArc(GLdouble xcenter, GLdouble ycenter, GLdouble zcenter,
+                       GLdouble xnormal, GLdouble ynormal, GLdouble znormal,
+                       GLdouble xfirst, GLdouble yfirst, GLdouble zfirst,//relative to the center
+                       GLdouble angle);
 };
 
 #endif // H3CANVASDELEGATE_H

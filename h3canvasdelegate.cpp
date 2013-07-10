@@ -19,9 +19,6 @@ H3canvasDelegate::H3canvasDelegate(int framesPerSecond, QWidget *parent, char *n
         connect(t_Timer, SIGNAL(timeout()), this, SLOT(timeOutSlot()));
         t_Timer->start( timerInterval );
     }
-    mousePosition[0] = 3;
-    mousePosition[1] = 2;
-    mousePosition[2] = -4;
 }
 
 H3canvasDelegate::~H3canvasDelegate()
@@ -39,25 +36,25 @@ void H3canvasDelegate::keyPressEvent(QKeyEvent *keyEvent)
     case Qt::Key_Up:
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
-        glRotated(1, 0,1,0);
+        glRotated(2, 0,1,0);
         glPushMatrix();
         break;
     case Qt::Key_Down:
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
-        glRotated(-1, 0,1,0);
+        glRotated(-2, 0,1,0);
         glPushMatrix();
         break;
     case Qt::Key_Left:
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
-        glRotated(-1, 0,0,1);
+        glRotated(-2, 0,0,1);
         glPushMatrix();
         break;
     case Qt::Key_Right:
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
-        glRotated(1, 0,0,1);
+        glRotated(2, 0,0,1);
         glPushMatrix();
         break;
     }
@@ -241,6 +238,46 @@ void H3canvasDelegate::printAxis(double length)
     glEnd();
 }
 
+void H3canvasDelegate::drawSphere(GLdouble xcenter, GLdouble ycenter, GLdouble zcenter, GLdouble radius ,GLenum style)
+{
+    GLUquadricObj *quadric;
+    quadric = gluNewQuadric();
+    glTranslated(xcenter,ycenter,zcenter);
+    gluQuadricDrawStyle(quadric, style );
+
+    gluSphere( quadric , radius , 10, 10 );
+    glTranslated(-xcenter,-ycenter,-zcenter);
+
+    gluDeleteQuadric(quadric);
+    glEndList();
+}
+
+void H3canvasDelegate::drawCircleArc(GLdouble xcenter, GLdouble ycenter, GLdouble zcenter,
+                                     GLdouble xnormal, GLdouble ynormal, GLdouble znormal,
+                                     GLdouble xfirst, GLdouble yfirst, GLdouble zfirst, //relative to the center
+                                     GLdouble angle)
+{
+    angle = angle<2*M_PI?angle:2*M_PI;
+    GLdouble norm = sqrt(xnormal*xnormal+ynormal*ynormal+znormal*znormal);
+    GLdouble xprod = (ynormal*zfirst - znormal*yfirst)/norm;
+    GLdouble yprod = (znormal*xfirst - xnormal*zfirst)/norm;
+    GLdouble zprod = (xnormal*yfirst - ynormal*xfirst)/norm;
+    double i;
+    glBegin(GL_LINE_STRIP);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        glVertex3d(xcenter+xfirst, ycenter+yfirst, zcenter+zfirst);
+        for(i =0; i < angle; i+=0.01)
+        {
+            glVertex3d(cos(i)*xfirst + sin(i)*xprod + xcenter,
+                       cos(i)*yfirst + sin(i)*yprod + ycenter,
+                       cos(i)*zfirst + sin(i)*zprod + zcenter);
+        }
+        glVertex3d(cos(i)*xfirst + sin(i)*xprod + xcenter,
+                               cos(i)*yfirst + sin(i)*yprod + ycenter,
+                               cos(i)*zfirst + sin(i)*zprod + zcenter);
+    glEnd();
+}
+
 void H3canvasDelegate::printCube()
 {
     glBegin(GL_QUADS);
@@ -291,7 +328,7 @@ void H3canvasDelegate::paintGL()
     if(isClicked)
     {      
         glLoadMatrixd(modelviewsave);
-        glBegin(GL_LINES);
+        /*glBegin(GL_LINES);
             glColor3f(1.0f, 0.0f, 1.0f);
             float x = mousePosition[0],y = mousePosition[1],z = mousePosition[2];
             glVertex2f(0.0f,0.0f);glVertex3f(x,y,z);
@@ -299,12 +336,13 @@ void H3canvasDelegate::paintGL()
             glVertex2d(0,0);glVertex3d(currentPosition[0],currentPosition[1],currentPosition[2]);
             glColor3f(1.0f, 0.0f, 1.0f);
             glVertex2d(0,0);glVertex3d(normalvect[0],normalvect[1],normalvect[2]);
-        glEnd();
+        glEnd();*/
         glRotated(angle, normalvect[0],normalvect[1],normalvect[2]);
     }
-    //glLoadIdentity();
-    //gluLookAt(rho*cos(theta)*sin(phi)+xcenter,rho*sin(theta)*sin(phi)+ycenter,rho*cos(phi)+zcenter,xcenter,ycenter,zcenter,0,0,sin(phi)>0?1:-1);
-    printCube();
+    //printCube();
+    drawCircleArc(1.0d,0.0d,0.0d, 0.0d,0.0d,1.0d, 1.0d,0.0d,0.0d, 2*M_PI);
+    glColor3f(1.0f, 0.0f, 0.0f);
+    drawSphere(1.0d,0.0d,0.0d,1.0d, GLU_POINT);
     printAxis(2.);
 
     glPushMatrix();
