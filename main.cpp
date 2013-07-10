@@ -25,12 +25,8 @@ int main(int argc, char *argv[])
     IsomH2Representation rho(&Gamma);
     rho.setNormalizedPairOfPantsRepresentation("a", "b", "c", 7.0, 3.0, 11.0, "c");
 
+*/
 
-    Canvas * canvas = new Canvas;
-    H2CanvasDelegate delegate(canvas);
-    canvas->setDelegate(&delegate);
-    delegate.drawExample();
-    canvas->show();*/
 
 
     DiscreteGroup Gamma1, Gamma2;
@@ -40,18 +36,35 @@ int main(int argc, char *argv[])
     std::cout << Gamma3 << std::endl;
 
     IsomH2Representation rho1(&Gamma1), rho2(&Gamma2);
-    rho1.setNormalizedPairOfPantsRepresentation("a1", "a2", "a3", 0.5, 1.5, 0.7, "a1");
-    rho2.setNormalizedPairOfPantsRepresentation("b1", "b2", "b3", 0.7, 2.6, 1.0, "b2");
-    std::cout << rho1 << std::endl;
-    std::cout << rho2 << std::endl;
+    rho1.setNormalizedPairOfPantsRepresentation("a1", "a2", "a3", 3.5, 3.3, 3.4, "a3");
+    rho2.setNormalizedPairOfPantsRepresentation("b1", "b2", "b3", 3.4, 3.6, 3.4, "b1");
+    //std::cout << rho1 << std::endl;
+    //std::cout << rho2 << std::endl;
 
     DiscreteGroup Gamma;
-    IsomH2Representation rho = IsomH2Representation::amalgamateOverInverse(&Gamma, rho1, "a3", "a2", rho2, "b1", "b3", "t", -4.9);
+    IsomH2Representation rho = IsomH2Representation::amalgamateOverInverse(&Gamma, rho1, "a3", "a2", rho2, "b1", "b3", "t", 0.4);
     std::cout << rho << std::endl;
     rho.checkRelations();
 
+    DiscreteGroup Gamma4, Gamma5;
+    IsomH2Representation rho3(&Gamma4);
+    rho3.setNormalizedPairOfPantsRepresentation("c1","c2","c3",2.3,3.4,3.0,"c2");
+    IsomH2Representation rhoBig = IsomH2Representation::amalgamateOverInverse(&Gamma5, rho, "b3", "b2", rho3, "c2","c1","s", 2.8);
+    std::cout << rhoBig << std::endl;
+    rhoBig.checkRelations();
 
+    Canvas * canvas = new Canvas;
+    H2CanvasDelegate delegate(canvas);
+    canvas->setDelegate(&delegate);
+    delegate.drawGeneratorAxes(rhoBig);
+    delegate.drawGeneratorAxes(rho1,"red",5);
+    canvas->show();
 
     std::cout << std::endl;
     return a.exec();
 }
+
+
+
+
+

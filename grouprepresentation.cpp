@@ -48,6 +48,7 @@ template <typename T> bool GroupRepresentation<T>::getGeneratorImage(const gener
             return true;
         }
     }
+    std::cout << "could not find generator name " << a << " in " << *this << std::endl;
     return false;
 }
 
@@ -217,6 +218,7 @@ template <> IsomH2Representation IsomH2Representation::amalgamateOverInverse(Dis
 {
     *outputDiscreteGroup = DiscreteGroup::amalgamateOverInverse(*(rho1.Gamma), a1, *(rho2.Gamma), a1inverse, newGeneratorName);
     H2Isometry f1, f1left, f2, f2left;
+
     if (!(rho1.getGeneratorImage(a1, f1) && rho1.getGeneratorImage(a1left, f1left) &&
           rho2.getGeneratorImage(a1inverse, f2) && rho2.getGeneratorImage(a1inverseleft, f2left)))
     {

@@ -152,10 +152,6 @@ void H2CanvasDelegate::drawExample()
     drawH2Geodesic(perp,"green");
  */
 
-    DiscreteGroup Gamma;
-    IsomH2Representation rho(&Gamma);
-    rho.setNormalizedPairOfPantsRepresentation("a", "b", "c", 5.0, 3.0, 4.0, "c");
-    drawGeneratorAxes(rho);
 
 
     return;

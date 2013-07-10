@@ -293,7 +293,8 @@ H2Isometry H2Isometry::findConjugatorForGluing(const H2Isometry & f1, const H2Is
     H2Isometry conjugator1, conjugator2, centralizer;
     conjugator1.setByNormalizingPairWithRepulsivePointAtOne(f1, f1left);
     H2Geodesic L(-I, I), L1;
-    f1.axis(L1);
+    f1left.axis(L1);
+    L1 = conjugator1*L1;
     H2Point p1;
     H2Geodesic::closestPoint(L, L1, p1);
     conjugator2.setByNormalizingPairWithChosenNearestPointToAxis(f2, f2left, imag(p1.getDiskCoordinate()));
