@@ -30,6 +30,9 @@ public:
                                                const DiscreteGroup & Gamma2, const generatorName &a1inverse,
                                                const generatorName &newGeneratorName);
 
+    static DiscreteGroup doHNNextensionOverInverse(const DiscreteGroup & Gamma, const generatorName &a, const generatorName &ainverse,
+                                                   const generatorName & newGeneratorName);
+
 private:
     std::vector<generatorName> generators;
     std::vector<word> relations;
@@ -39,6 +42,7 @@ private:
     void reset();
     void rotateWord(word & w, int shift);
     static bool checkCompatibilityForAmalgamation(const DiscreteGroup & Gamma1, const DiscreteGroup & Gamma2);
+    static bool checkCompatibilityforHNNextension(const DiscreteGroup & Gamma);
     bool findGeneratorIndex(int & outputIndex, const generatorName &a) const;
 };
 

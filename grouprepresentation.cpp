@@ -14,6 +14,11 @@ template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *
     }
 }
 
+template <typename T> DiscreteGroup GroupRepresentation<T>::getDiscreteGroup() const
+{
+    return *Gamma;
+}
+
 template<typename T> bool GroupRepresentation<T>::checkRelations() const
 {
     std::vector<word> relations = Gamma -> getRelations();
@@ -242,6 +247,29 @@ template <> IsomH2Representation IsomH2Representation::amalgamateOverInverse(Dis
             outputGeneratorImages.push_back(generatorImages2[i]);
         }
     }
+
+    return IsomH2Representation(outputDiscreteGroup, outputGeneratorImages);
+}
+
+template <> IsomH2Representation IsomH2Representation::doHNNextensionOverInverse(DiscreteGroup *outputDiscreteGroup, const IsomH2Representation &rho,
+                                                                                 const generatorName &a, const generatorName &aleft,
+                                                                                 const generatorName &ainverse, const generatorName &ainverseleft,
+                                                                                 const generatorName &newGeneratorName, double twist)
+{
+    *outputDiscreteGroup = DiscreteGroup::doHNNextensionOverInverse(*(rho.Gamma), a, ainverse, newGeneratorName);
+    H2Isometry f1, f1left, f2, f2left;
+
+    if (!(rho.getGeneratorImage(a, f1) && rho.getGeneratorImage(aleft, f1left) &&
+          rho.getGeneratorImage(ainverse, f2) && rho.getGeneratorImage(ainverseleft, f2left)))
+    {
+        std::cout << "ERROR in IsomH2Representation::amalgamateOverInverse: generator name is not in the group!" << std::endl;
+    }
+
+
+    H2Isometry conjugator = H2Isometry::findConjugatorForGluing(f1, f1left, f2, f2left, twist);
+
+    std::vector<H2Isometry> outputGeneratorImages = rho.getGeneratorImages();
+    outputGeneratorImages.push_back(conjugator);
 
     return IsomH2Representation(outputDiscreteGroup, outputGeneratorImages);
 }

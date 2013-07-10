@@ -24,6 +24,7 @@ public:
     std::vector<T> getGeneratorImages() const;
     bool getGeneratorImage(const generatorName &a, T &output) const;
     void rotateGenerators(int shift);
+    DiscreteGroup getDiscreteGroup() const;
 
 
 
@@ -39,10 +40,15 @@ public:
     void setFenchelNielsenCoordinates(const std::vector<double> & lengthParameters, const std::vector<double> & twistParameters);
     void setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
                                                 double length1, double length2, double length3, generatorName normalized);
+
     static IsomH2Representation amalgamateOverInverse(DiscreteGroup *outputDiscreteGroup,
                                                        const IsomH2Representation & rho1, const generatorName &a1, const generatorName &a1left,
                                                const IsomH2Representation & rho2, const generatorName &a1inverse, const generatorName &a1inverseleft,
                                                const generatorName &newGeneratorName, double twist);
+    static IsomH2Representation doHNNextensionOverInverse(DiscreteGroup *outputDiscreteGroup, const IsomH2Representation &rho,
+                                                          const generatorName &a, const generatorName &aleft,
+                                                          const generatorName &ainverse, const generatorName &ainverseleft,
+                                                          const generatorName &newGeneratorName, double twist);
 
 
 
