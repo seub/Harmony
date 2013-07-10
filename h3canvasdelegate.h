@@ -6,6 +6,22 @@
 #include <GL/glu.h>
 #include "tools.h"
 
+
+class GLVector
+{
+public :
+    GLVector(GLdouble x = 0.0d, GLdouble y = 0.0d, GLdouble z = 0.0d);
+    GLdouble x;
+    GLdouble y;
+    GLdouble z;
+    GLdouble norm() const { return sqrt(x*x+y*y+z*z);}
+    GLdouble scalarProduct(const GLVector &v) const;
+    GLVector vectorProduct(const GLVector &v) const;
+    GLVector add(const GLVector &v) const;
+    GLVector opposite() const;
+    GLVector scalarMult(const GLdouble lambda) const;
+};
+
 class H3canvasDelegate : public QGLWidget
 {
     Q_OBJECT
@@ -18,7 +34,7 @@ public:
     void printAxis(double length);
     void printCube();
     void keyPressEvent( QKeyEvent *keyEvent );
-    void mouseGLCoordinates(QMouseEvent * mouseevent, GLdouble *pos, GLdouble *modelView = 0);
+    void mouseGLCoordinates(const QMouseEvent * mouseevent, GLVector &pos, GLdouble *modelView = 0) const;
 public slots:
     void timeOutSlot();
     void mousePressEvent(QMouseEvent * mouseevent);
@@ -28,18 +44,18 @@ public slots:
 private:
     QTimer *t_Timer;
     int timerInterval;
-
+    void glVertex3(const GLVector v);
     bool isClicked;
     GLdouble angle;
-    GLdouble mousePosition[3];
-    GLdouble normalvect[3];
-    GLdouble currentPosition[3];
+    GLVector mousePosition;
+    GLVector normalvect;
+    GLVector currentPosition;
     GLdouble modelviewsave[16];
-    void drawSphere(GLdouble xcenter, GLdouble ycenter, GLdouble zcenter, GLdouble radius, GLenum  style = GLU_SILHOUETTE);
-    void drawCircleArc(GLdouble xcenter, GLdouble ycenter, GLdouble zcenter,
-                       GLdouble xnormal, GLdouble ynormal, GLdouble znormal,
-                       GLdouble xfirst, GLdouble yfirst, GLdouble zfirst,//relative to the center
-                       GLdouble angle);
+    void drawSphere(const GLVector center,GLdouble radius,GLenum  style = GLU_SILHOUETTE);
+    void drawCircleArc(GLVector center,GLVector normal, GLVector first /*relative to the center*/, GLdouble angle);
 };
+
+
+
 
 #endif // H3CANVASDELEGATE_H

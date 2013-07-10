@@ -1,5 +1,89 @@
 #include "h3canvasdelegate.h"
 
+
+std::ostream & operator<<(std::ostream & out, const GLVector &v)
+{
+    out << "x :" << v.x << ", y : " << v.y << ", z : " << v.z;
+    return out;
+}
+
+
+void operator +=(GLVector & v, const GLVector & w)
+{
+    v = v.add(w);
+}
+
+GLVector operator -(const GLVector & v)
+{
+    return v.opposite();
+}
+
+void operator -=(GLVector & v, const GLVector & w)
+{
+    v = v.add(-w);
+}
+
+void operator *=(GLVector & w, const GLdouble & v)
+{
+    w = w.scalarMult(v);
+}
+
+GLdouble operator *(const GLVector & v, const GLVector & w)
+{
+    return v.scalarProduct(w);
+}
+
+GLVector operator *(const GLdouble & v, const GLVector & w)
+{
+    return w.scalarMult(v);
+}
+
+GLVector operator ^(const GLVector & v, const GLVector & w)
+{
+    return v.vectorProduct(w);
+}
+
+GLVector operator +(const GLVector & v, const GLVector & w)
+{
+    return v.add(w);
+}
+
+GLVector operator -(const GLVector & v, const GLVector & w)
+{
+    return v.add(-w);
+}
+
+GLVector::GLVector(GLdouble x, GLdouble y, GLdouble z):x(x),y(y),z(z)
+{
+
+}
+
+GLdouble GLVector::scalarProduct(const GLVector &v) const
+{
+    return x*v.x +y*v.y +z*v.z;
+}
+
+GLVector GLVector::vectorProduct(const GLVector &v) const
+{
+    return GLVector(y*v.z-z*v.y,z*v.x-x*v.z,x*v.y-y*v.x);
+}
+
+GLVector GLVector::add(const GLVector &v) const
+{
+    return GLVector(x+v.x,y+v.y,z+v.z);
+}
+
+GLVector GLVector::opposite() const
+{
+    return GLVector(-x,-y,-z);
+}
+
+GLVector GLVector::scalarMult(const GLdouble lambda) const
+{
+    return GLVector(lambda*x,lambda*y,lambda*z);
+}
+
+
 H3canvasDelegate::H3canvasDelegate(int framesPerSecond, QWidget *parent, char *name)
     : QGLWidget(parent)
 {
@@ -25,6 +109,10 @@ H3canvasDelegate::~H3canvasDelegate()
 {
 }
 
+void H3canvasDelegate::glVertex3(const GLVector v)
+{
+    glVertex3d(v.x,v.y,v.z);
+}
 
 void H3canvasDelegate::keyPressEvent(QKeyEvent *keyEvent)
 {
@@ -79,20 +167,10 @@ void H3canvasDelegate::wheelEvent(QWheelEvent * wheelevent)
 }
 
 
-void H3canvasDelegate::mouseGLCoordinates(QMouseEvent *mouseevent, GLdouble *pos, GLdouble *modelView)
+void H3canvasDelegate::mouseGLCoordinates(const QMouseEvent *mouseevent, GLVector &pos, GLdouble *modelView) const
 {
     bool createModelView = false;
     GLint viewport[4];
-    /*GLdouble Identity[16];
-    int i;
-    for(i = 0; i< 16;i++)
-    {
-        Identity[i]=0;
-    }
-    Identity[0]=1;
-    Identity[5]=1;
-    Identity[10]=1;
-    Identity[15]=1;*/
     GLdouble projection[16];
     if(modelView == 0)
     {
@@ -102,8 +180,8 @@ void H3canvasDelegate::mouseGLCoordinates(QMouseEvent *mouseevent, GLdouble *pos
     }
     glGetDoublev(GL_PROJECTION_MATRIX, projection);
     glGetIntegerv(GL_VIEWPORT, viewport);
-    gluProject(0.0d,0.0d,0.0d,modelView,projection,viewport,pos,pos +1,pos + 2);
-    gluUnProject(mouseevent->x(),viewport[3]- mouseevent->y(),pos[2],modelView,projection,viewport,pos,pos +1,pos + 2);
+    gluProject(0.0d,0.0d,0.0d,modelView,projection,viewport,&pos.x,&pos.y,&pos.z);
+    gluUnProject(mouseevent->x(),viewport[3]- mouseevent->y(),pos.z,modelView,projection,viewport,&pos.x,&pos.y,&pos.z);
     if(createModelView)
     {
         delete modelView;
@@ -126,7 +204,7 @@ void H3canvasDelegate::mouseReleaseEvent(QMouseEvent * /*mouseevent*/)
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
     glLoadMatrixd(modelviewsave);
-    glRotated(angle, normalvect[0],normalvect[1],normalvect[2]);
+    glRotated(angle, normalvect.x,normalvect.y,normalvect.z);
     glPushMatrix();
 
 }
@@ -136,62 +214,37 @@ void H3canvasDelegate::mouseMoveEvent(QMouseEvent * mouseevent)
     if(isClicked)
     {
         mouseGLCoordinates(mouseevent, currentPosition, modelviewsave);
-        normalvect[0] = mousePosition[1]*currentPosition[2] - mousePosition[2]*currentPosition[1];
-        normalvect[1] = mousePosition[2]*currentPosition[0] - mousePosition[0]*currentPosition[2];
-        normalvect[2] = mousePosition[0]*currentPosition[1] - mousePosition[1]*currentPosition[0];
-        GLdouble posNorm = sqrt(mousePosition[0]*mousePosition[0]
-                               + mousePosition[1]*mousePosition[1]
-                               + mousePosition[2]*mousePosition[2]);
-        GLdouble curNorm = sqrt(currentPosition[0]*currentPosition[0]
-                               + currentPosition[1]*currentPosition[1]
-                               + currentPosition[2]*currentPosition[2]);
-        GLdouble norNorm = sqrt(normalvect[0]*normalvect[0]
-                               + normalvect[1]*normalvect[1]
-                               + normalvect[2]*normalvect[2]);
-        double scal = (normalvect[0]*currentPosition[0]
-                + normalvect[1]*currentPosition[1]
-                + normalvect[2]*currentPosition[2]);
+        normalvect = mousePosition^currentPosition;
 
-        if(posNorm > curNorm)
+
+        if(mousePosition.norm() > currentPosition.norm())
         {
-            double lambda[2];
-            lambda[0] =(sqrt((posNorm*posNorm - curNorm*curNorm)))/norNorm;
+            GLdouble lambda[2];
+            lambda[0] =(sqrt((mousePosition.norm()*mousePosition.norm()
+                              - currentPosition.norm()*currentPosition.norm())))/normalvect.norm();
             lambda[1] = -lambda[0];
 
                 GLint viewport[4];
                 GLdouble projection[16];
                 glGetDoublev(GL_PROJECTION_MATRIX, projection);
                 glGetIntegerv(GL_VIEWPORT, viewport);
-                double x,y,z[2];
-                gluProject(currentPosition[0]+lambda[0]*normalvect[0],currentPosition[1]+lambda[0]*normalvect[1],
-                        currentPosition[2]+lambda[0]*normalvect[2],modelviewsave,projection,viewport,&x,&y,z);
-                gluProject(currentPosition[0]+lambda[1]*normalvect[0],currentPosition[1]+lambda[1]*normalvect[1],
-                        currentPosition[2]+lambda[1]*normalvect[2],modelviewsave,projection,viewport,&x,&y,z+1);
+                GLdouble x,y,z[2];
+                GLVector temp = currentPosition + lambda[0]*normalvect;
+                gluProject(temp.x,temp.y,temp.z,modelviewsave,projection,viewport,&x,&y,z);
+                temp = currentPosition + lambda[1]*normalvect;
+                gluProject(temp.x,temp.y,temp.z,modelviewsave,projection,viewport,&x,&y,z+1);
                 std::cout << lambda[0] << " " << lambda[1] << std::endl;
                 int i = z[0]<z[1]?0:1;
-                currentPosition[0]+=lambda[i]*normalvect[0];
-                currentPosition[1]+=lambda[i]*normalvect[1];
-                currentPosition[2]+=lambda[i]*normalvect[2];
-                normalvect[0] = mousePosition[1]*currentPosition[2] - mousePosition[2]*currentPosition[1];
-                normalvect[1] = mousePosition[2]*currentPosition[0] - mousePosition[0]*currentPosition[2];
-                normalvect[2] = mousePosition[0]*currentPosition[1] - mousePosition[1]*currentPosition[0];
-
-                curNorm = sqrt(currentPosition[0]*currentPosition[0]
-                        + currentPosition[1]*currentPosition[1]
-                        + currentPosition[2]*currentPosition[2]);
+                currentPosition += lambda[i]*normalvect;
+                normalvect = mousePosition^currentPosition;
         }
         else
         {
-            mousePosition[0]*=curNorm/posNorm;
-            mousePosition[1]*=curNorm/posNorm;
-            mousePosition[2]*=curNorm/posNorm;
+            mousePosition*=currentPosition.norm()/mousePosition.norm();
         }
         //angle = 180*asin(norNorm/(curNorm*posNorm))/M_PI*100;
-        angle = 180*acos((mousePosition[0]*currentPosition[0]
-                + mousePosition[1]*currentPosition[1]
-                + mousePosition[2]*currentPosition[2])/(posNorm*curNorm))/M_PI;
+        angle = 180*acos((mousePosition*currentPosition)/(mousePosition.norm()*currentPosition.norm()))/M_PI;
         if(angle!=angle) angle =0;
-        std::cout << angle << " " << posNorm << " " << curNorm << " " << norNorm << std::endl;
     }
 }
 
@@ -210,7 +263,6 @@ void H3canvasDelegate::initializeGL()
     glDepthFunc(GL_LEQUAL);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 }
-
 
 void H3canvasDelegate::resizeGL(int width, int height)
 {
@@ -238,43 +290,40 @@ void H3canvasDelegate::printAxis(double length)
     glEnd();
 }
 
-void H3canvasDelegate::drawSphere(GLdouble xcenter, GLdouble ycenter, GLdouble zcenter, GLdouble radius ,GLenum style)
+void H3canvasDelegate::drawSphere(const GLVector center, GLdouble radius , GLenum style)
 {
     GLUquadricObj *quadric;
     quadric = gluNewQuadric();
-    glTranslated(xcenter,ycenter,zcenter);
+    glTranslated(center.x, center.y, center.z);
     gluQuadricDrawStyle(quadric, style );
 
     gluSphere( quadric , radius , 10, 10 );
-    glTranslated(-xcenter,-ycenter,-zcenter);
+    glTranslated(-center.x, -center.y, -center.z);
 
     gluDeleteQuadric(quadric);
     glEndList();
 }
 
-void H3canvasDelegate::drawCircleArc(GLdouble xcenter, GLdouble ycenter, GLdouble zcenter,
-                                     GLdouble xnormal, GLdouble ynormal, GLdouble znormal,
-                                     GLdouble xfirst, GLdouble yfirst, GLdouble zfirst, //relative to the center
+void H3canvasDelegate::drawCircleArc(GLVector center,
+                                     GLVector normal,
+                                     GLVector first, //relative to the center
                                      GLdouble angle)
 {
     angle = angle<2*M_PI?angle:2*M_PI;
-    GLdouble norm = sqrt(xnormal*xnormal+ynormal*ynormal+znormal*znormal);
-    GLdouble xprod = (ynormal*zfirst - znormal*yfirst)/norm;
-    GLdouble yprod = (znormal*xfirst - xnormal*zfirst)/norm;
-    GLdouble zprod = (xnormal*yfirst - ynormal*xfirst)/norm;
+    GLVector prod = (1/normal.norm())*normal^first;
+    GLVector temp;
     double i;
     glBegin(GL_LINE_STRIP);
         glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex3d(xcenter+xfirst, ycenter+yfirst, zcenter+zfirst);
+        temp = center+first;
+        glVertex3d(temp.x,temp.y,temp.z);
         for(i =0; i < angle; i+=0.01)
         {
-            glVertex3d(cos(i)*xfirst + sin(i)*xprod + xcenter,
-                       cos(i)*yfirst + sin(i)*yprod + ycenter,
-                       cos(i)*zfirst + sin(i)*zprod + zcenter);
+            temp = cos(i)*first + sin(i)*prod + center;
+            glVertex3d(temp.x,temp.y,temp.z);
         }
-        glVertex3d(cos(i)*xfirst + sin(i)*xprod + xcenter,
-                               cos(i)*yfirst + sin(i)*yprod + ycenter,
-                               cos(i)*zfirst + sin(i)*zprod + zcenter);
+        temp = cos(i)*first + sin(i)*prod + center;
+        glVertex3d(temp.x,temp.y,temp.z);
     glEnd();
 }
 
@@ -337,12 +386,12 @@ void H3canvasDelegate::paintGL()
             glColor3f(1.0f, 0.0f, 1.0f);
             glVertex2d(0,0);glVertex3d(normalvect[0],normalvect[1],normalvect[2]);
         glEnd();*/
-        glRotated(angle, normalvect[0],normalvect[1],normalvect[2]);
+        glRotated(angle, normalvect.x,normalvect.y,normalvect.z);
     }
     //printCube();
-    drawCircleArc(1.0d,0.0d,0.0d, 0.0d,0.0d,1.0d, 1.0d,0.0d,0.0d, 2*M_PI);
+    drawCircleArc(GLVector(1.0d,0.0d,0.0d), GLVector(0.0d,0.0d,1.0d), GLVector(1.0d,0.0d,0.0d), 2*M_PI);
     glColor3f(1.0f, 0.0f, 0.0f);
-    drawSphere(1.0d,0.0d,0.0d,1.0d, GLU_POINT);
+    drawSphere(GLVector(1.0d,0.0d,0.0d),1.0d, GLU_POINT);
     printAxis(2.);
 
     glPushMatrix();
