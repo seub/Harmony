@@ -6,6 +6,13 @@ std::ostream & operator<<(std::ostream &out, const complex & z)
     return out;
 }
 
+/*std::string & operator<<(std::ostream &out, const int n)
+{
+    std::string s;
+    out << n;
+    s = out.str();
+    return s;
+}*/
 
 int intRound(double x)
 {

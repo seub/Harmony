@@ -1,5 +1,8 @@
 #ifndef TOPOLOGICALSURFACE_H
 #define TOPOLOGICALSURFACE_H
+#include "types.h"
+
+class DiscreteGroup;
 
 class TopologicalSurface
 {
@@ -9,6 +12,8 @@ public:
 
     int getGenus() const;
     int getNumberOfPunctures() const;
+
+    std::vector<DiscreteGroup> getPantsDecomposition() const;
 
 private:
     int genus;
