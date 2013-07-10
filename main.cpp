@@ -18,10 +18,10 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
     QApplication a(argc, argv);
 
-    /*H3canvasDelegate windows(60, 0,"Test");
+    H3canvasDelegate windows(60, 0,"Test");
     windows.show();
 
-    DiscreteGroup Gamma;
+    /*DiscreteGroup Gamma;
     IsomH2Representation rho(&Gamma);
     rho.setNormalizedPairOfPantsRepresentation("a", "b", "c", 7.0, 3.0, 11.0, "c");
 
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     H2CanvasDelegate delegate(canvas);
     canvas->setDelegate(&delegate);
     delegate.drawExample();
-    canvas->show();*/
+    canvas->show();
 
 
     DiscreteGroup Gamma1, Gamma2;
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     DiscreteGroup Gamma;
     IsomH2Representation rho = IsomH2Representation::amalgamateOverInverse(&Gamma, rho1, "a3", "a2", rho2, "b1", "b3", "t", -4.9);
     std::cout << rho << std::endl;
-    rho.checkRelations();
+    rho.checkRelations();*/
 
 
 
