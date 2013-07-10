@@ -18,43 +18,24 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
     QApplication a(argc, argv);
 
-/*    H3canvasDelegate windows(60, 0,"Test");
-    windows.show();*/
+    H3canvasDelegate windows(60, 0,"Test");
+    windows.show();
 
-    int g=2;
-    std::vector<double> lengths,twists;
-    twists.resize(3*g-3);
-    for(unsigned int k=0;k<3*g-3;k++)
-    {
-        lengths.push_back(1.0);
-    }
+    /*Canvas * canvas = new Canvas;
+H2CanvasDelegate delegate(canvas);
+canvas->setDelegate(&delegate);
+delegate.drawExample();
+canvas->show();
 
-    DiscreteGroup Gamma;
-    //IsomH2Representation rho(&Gamma);
+TopologicalSurface S(5,0);
+std::vector<DiscreteGroup> vector = S.getPantsDecomposition();
 
-    IsomH2Representation rho = IsomH2Representation::setFNCoordinatesUnnormalized(&Gamma, lengths, twists);
-    std::cout << rho << std::endl;
-    rho.checkRelations();
-
-
-
-    H2Point zero;
-    zero.setDiskCoordinate(0.0);
-    H2Polygon P = rho.generatePolygon(zero);
-
-    Canvas * canvas = new Canvas;
-    H2CanvasDelegate delegate(canvas);
-    canvas->setDelegate(&delegate);
-    delegate.drawGeneratorAxes(rho);
-    //delegate.drawH2Polygon(P);
-    canvas->show();
-
+for(unsigned int i=0;i<vector.size();i++)
+{
+std::cout << vector[i] << std::endl;
+}*/
 
     std::cout << std::endl;
     return a.exec();
 }
-
-
-
-
 
