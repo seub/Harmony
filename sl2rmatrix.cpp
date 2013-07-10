@@ -8,7 +8,7 @@ SL2RMatrix::SL2RMatrix()
 
 SL2RMatrix::SL2RMatrix(double a, double b, double c, double d) : a(a), b(b), c(c), d(d)
 {
-    if (det() != 1.0)
+    if (std::abs(det() - 1.0)>ERROR)
     {
         std::cout << "WARNING in SL2RMatrix::SL2RMatrix: determinant is not 1 (it is " << det() << ")" << std::endl;
     }

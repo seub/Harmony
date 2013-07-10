@@ -21,20 +21,34 @@ template<typename T> bool GroupRepresentation<T>::checkRelations() const
     identity.setIdentity();
     for (unsigned int i=0;i<relations.size();i++)
     {
-
-        if(!(evaluateRepresentation(relations[i]) == identity))
+        T test = evaluateRepresentation(relations[i]);
+        if(!(test == identity))
         {
             std::cout << "WARNING in GroupRepresentation<T>::checkRelations(): failed" << std::endl;
+            std::cout << test << " should be identity" << std::endl;
             return false;
         }
     }
     return true;
 }
 
-template <typename T> void GroupRepresentation<T>::getGenerators(std::vector<T> &list) const
+template <typename T> std::vector<T> GroupRepresentation<T>::getGeneratorImages() const
 {
-    list = generatorImages;
-    return;
+    return generatorImages;
+}
+
+template <typename T> bool GroupRepresentation<T>::getGeneratorImage(const generatorName &a, T & output) const
+{
+    std::vector<generatorName> generators = Gamma->getGenerators();
+    for (unsigned int i=0; i<generators.size(); i++)
+    {
+        if (generators[i] == a)
+        {
+            output = generatorImages[i];
+            return true;
+        }
+    }
+    return false;
 }
 
 template<typename T> T GroupRepresentation<T>::evaluateRepresentation(const word & w) const
@@ -55,12 +69,12 @@ template<typename T> T GroupRepresentation<T>::evaluateRepresentation(const word
     return store;
 }
 
-template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conj(const T & A)
+template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conj(const T & A) const
 {
-    std::vector<T> list(generatorImages.size());
-    for (unsigned int i=0;i<=generatorImages.size();i++)
+    std::vector<T> list;
+    for (unsigned int i=0;i<generatorImages.size();i++)
     {
-        list[i] = A*generatorImages[i]*A.inverse();
+        list.push_back(A*generatorImages[i]*A.inverse());
     }
     GroupRepresentation<T> r(Gamma,list);
     return r;
@@ -125,7 +139,7 @@ template <> void IsomH2Representation::setFenchelNielsenCoordinates(const std::v
 
 
 template <> void IsomH2Representation:: setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
-                                                                              double length1, double length2, double length3, generatorName normalized)
+                                                                               double length1, double length2, double length3, generatorName normalized)
 {
     if (length1 < 0 || length2 < 0 || length3 < 0)
     {
@@ -194,7 +208,41 @@ template <> void IsomH2Representation:: setNormalizedPairOfPantsRepresentation(g
 }
 
 
+template <> IsomH2Representation IsomH2Representation::amalgamateOverInverse(DiscreteGroup *outputDiscreteGroup,
+                                                                             const IsomH2Representation & rho1, const generatorName &a1,
+                                                                             const generatorName &a1left,
+                                                                             const IsomH2Representation & rho2, const generatorName &a1inverse,
+                                                                             const generatorName &a1inverseleft, const generatorName &newGeneratorName,
+                                                                             double twist)
+{
+    *outputDiscreteGroup = DiscreteGroup::amalgamateOverInverse(*(rho1.Gamma), a1, *(rho2.Gamma), a1inverse, newGeneratorName);
+    H2Isometry f1, f1left, f2, f2left;
+    if (!(rho1.getGeneratorImage(a1, f1) && rho1.getGeneratorImage(a1left, f1left) &&
+          rho2.getGeneratorImage(a1inverse, f2) && rho2.getGeneratorImage(a1inverseleft, f2left)))
+    {
+        std::cout << "ERROR in IsomH2Representation::amalgamateOverInverse: generator name is not in the group!" << std::endl;
+    }
 
+
+    H2Isometry conjugator = H2Isometry::findConjugatorForGluing(f1, f1left, f2, f2left, twist);
+    IsomH2Representation rho2new(rho2.Gamma);
+    rho2new = rho2.conj(conjugator);
+
+    std::vector<H2Isometry> generatorImages1 = rho1.getGeneratorImages();
+    std::vector<H2Isometry> generatorImages2 = rho2new.getGeneratorImages();
+    std::vector<H2Isometry> outputGeneratorImages = generatorImages1;
+    std::vector<generatorName> generators2 = rho2.Gamma->getGenerators();
+
+    for (unsigned int i = 0; i<generators2.size(); i++)
+    {
+        if (generators2[i] != a1inverse)
+        {
+            outputGeneratorImages.push_back(generatorImages2[i]);
+        }
+    }
+
+    return IsomH2Representation(outputDiscreteGroup, outputGeneratorImages);
+}
 
 
 

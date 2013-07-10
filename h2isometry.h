@@ -1,6 +1,8 @@
 #ifndef H2ISOMETRY_H
 #define H2ISOMETRY_H
+
 #include "types.h"
+#include "tools.h"
 #include "sl2cmatrix.h"
 #include "h2point.h"
 #include "h2geodesic.h"
@@ -25,6 +27,7 @@ public:
     void setIdentity();
 
     void setTranslationAxisAndLength(const H2Geodesic & axis, double length);
+    void setTranslationLengthNormalized(double length);
     void setByMappingBoundaryAndInteriorPointsNormalized(const complex & boundaryPoint, const complex & interiorPoint);
     void setByMappingBoundaryAndInteriorPoints(const complex & boundaryPoint1, const complex & boundaryPoint2,
                                                const complex & interiorPoint1, const complex & interiorPoint2);
@@ -54,6 +57,9 @@ public:
     double translationLength() const;
 
     complex hitComplexNumberInDiskModel(const complex & z) const;
+
+    static H2Isometry findConjugatorForGluing(const H2Isometry & f1, const H2Isometry & f1left,
+                                     const H2Isometry & f2, const H2Isometry &f2left, double twist);
 
 
 private:

@@ -28,6 +28,7 @@ public:
     H2Geodesic swapOrientation() const;
 
     static bool closestPoints(const H2Geodesic & L1, const H2Geodesic &  L2, H2Point & p1, H2Point & p2);
+    static bool closestPoint(const H2Geodesic & L1, const H2Geodesic &  L2, H2Point & p1);
 
 private:
     complex z1, z2;

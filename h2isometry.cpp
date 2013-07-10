@@ -30,13 +30,22 @@ void H2Isometry::setDiskCoordinates(const complex &u, const complex &a)
 
 void H2Isometry::setTranslationAxisAndLength(const H2Geodesic & axis, double length)
 {
+    H2Isometry f0;
+    f0.setTranslationLengthNormalized(length);
     H2Isometry f;
     f.setByMappingEndpointsToPlusOrMinusI(axis);
-    complex a0 = -I*sqrt((cosh(length) - 1.0)/(cosh(length) + 1.0));
-    complex u0 = 1.0;
-    H2Isometry f0;
-    f0.setDiskCoordinates(u0,a0);
     *this = f.inverse()*f0*f;
+    return;
+}
+
+void H2Isometry::setTranslationLengthNormalized(double length)
+{
+    a = -I*sqrt((cosh(length) - 1.0)/(cosh(length) + 1.0));
+    if (length < 0)
+    {
+        a = -a;
+    }
+    u = 1.0;
     return;
 }
 
@@ -263,20 +272,39 @@ void H2Isometry::setByNormalizingPairWithChosenNearestPointToAxis(const H2Isomet
     H2Isometry fFirst,fSecond;
     H2Geodesic L1,L2;
     H2Geodesic L(I,-I);
-    H2Point pUseless,pUseful;
+    H2Point p;
     f1.axis(L1);
     fFirst.setByMappingEndpointsToPlusOrMinusI(L1.swapOrientation());
     (fFirst*f2*fFirst.inverse()).axis(L2);
-    H2Geodesic::closestPoints(L2,L,pUseless,pUseful);
-    fSecond.setByFixingPlusMinusIWithChosenPoints(imag(pUseful.getDiskCoordinate()),P);
+    H2Geodesic::closestPoint(L,L2,p);
+    fSecond.setByFixingPlusMinusIWithChosenPoints(imag(p.getDiskCoordinate()),P);
     *this = fSecond*fFirst;
     return;
+}
 
+H2Isometry H2Isometry::findConjugatorForGluing(const H2Isometry & f1, const H2Isometry & f1left,
+                                           const H2Isometry & f2, const H2Isometry &f2left, double twist)
+{
+    if (std::abs(f1.traceSquared()-f2.traceSquared()) > ERROR)
+    {
+        std::cout << "ERROR in H2Isometry::findConjugatorForGluing: not the same translation lengths!" << std::endl;
+    }
+
+    H2Isometry conjugator1, conjugator2, centralizer;
+    conjugator1.setByNormalizingPairWithRepulsivePointAtOne(f1, f1left);
+    H2Geodesic L(-I, I), L1;
+    f1.axis(L1);
+    H2Point p1;
+    H2Geodesic::closestPoint(L, L1, p1);
+    conjugator2.setByNormalizingPairWithChosenNearestPointToAxis(f2, f2left, imag(p1.getDiskCoordinate()));
+    centralizer.setTranslationLengthNormalized(twist);
+
+    return conjugator1.inverse()*centralizer*conjugator2;
 }
 
 bool operator ==(const H2Isometry & f1, const H2Isometry & f2)
 {
-    return (f1.u == f2.u && f1.a == f2.a);
+    return (norm(f1.u -f2.u) + norm(f1.a - f2.a)<ERROR);
 }
 
 std::ostream & operator<<(std::ostream & out, const H2Isometry &f)
@@ -285,7 +313,7 @@ std::ostream & operator<<(std::ostream & out, const H2Isometry &f)
     {
         H2Geodesic axis;
         f.axis(axis);
-        out << "Hyperbolic isometry with axis " << axis << " and translation length " << f.translationLength() << std::endl;
+        out << "Hyperbolic,  axis = " << axis << ", translation length = " << f.translationLength();
     }
     if (f.isParabolic())
     {
@@ -293,7 +321,7 @@ std::ostream & operator<<(std::ostream & out, const H2Isometry &f)
         complex z1,z2;
         f.fixedPointsInDiskModel(Z1,Z2);
         z1 = Z1.getComplexCoordinate();
-        out << "Parabolic isometry with fixed point " << z1 << std::endl;
+        out << "Parabolic, fixed point = " << z1;
     }
     if (f.isElliptic())
     {
@@ -302,9 +330,9 @@ std::ostream & operator<<(std::ostream & out, const H2Isometry &f)
         f.fixedPointsInDiskModel(Z1,Z2);
         z1 = Z1.getComplexCoordinate();
         z2 = Z2.getComplexCoordinate();
-        out << "Elliptic isometry with fixed points z1= " << z1 << "and z2= " << z2 << std::endl;
+        out << "Elliptic, fixed points z1= " << z1 << "and z2= " << z2;
     }
-    //out << "{u= " << f.u << ", a= " << f.a << "}";
+    //out << "   {u= " << f.u << ", a= " << f.a << "}";
     return out;
 }
 

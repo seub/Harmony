@@ -26,8 +26,9 @@ public:
     void setPairOfPants(generatorName c1, generatorName c2, generatorName c3);
     void rotateGenerators(int shift);
 
-    static DiscreteGroup amalgamateOverInverse(const DiscreteGroup & Gamma1,
-                                                const generatorName a1, const DiscreteGroup & Gamma2, const generatorName &a1inverse);
+    static DiscreteGroup amalgamateOverInverse(const DiscreteGroup & Gamma1, const generatorName &a1,
+                                               const DiscreteGroup & Gamma2, const generatorName &a1inverse,
+                                               const generatorName &newGeneratorName);
 
 private:
     std::vector<generatorName> generators;

@@ -21,10 +21,16 @@ public:
 
     bool checkRelations() const;
     T evaluateRepresentation(const word & w) const;
-    void getGenerators(std::vector<T> &list) const;
+    std::vector<T> getGeneratorImages() const;
+    bool getGeneratorImage(const generatorName &a, T &output) const;
+    void rotateGenerators(int shift);
 
 
-    GroupRepresentation<T> conj(const T & A);
+
+    GroupRepresentation<T> conj(const T & A) const;
+
+
+
     // Specialization to GroupRepresentation<SL2CMatrix>
     GroupRepresentation<SL2CMatrix> conjugate() const;
 
@@ -33,11 +39,14 @@ public:
     void setFenchelNielsenCoordinates(const std::vector<double> & lengthParameters, const std::vector<double> & twistParameters);
     void setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
                                                 double length1, double length2, double length3, generatorName normalized);
-    void rotateGenerators(int shift);
-;
+    static IsomH2Representation amalgamateOverInverse(DiscreteGroup *outputDiscreteGroup,
+                                                       const IsomH2Representation & rho1, const generatorName &a1, const generatorName &a1left,
+                                               const IsomH2Representation & rho2, const generatorName &a1inverse, const generatorName &a1inverseleft,
+                                               const generatorName &newGeneratorName, double twist);
 
 
-//private:
+
+    private:
     DiscreteGroup* Gamma;
     std::vector<T> generatorImages;
 };
@@ -53,7 +62,6 @@ template<typename T> std::ostream & operator<<(std::ostream & out, const GroupRe
     {
         out << generators[i] << " -> " << rho.generatorImages[i] << std::endl;
     }
-    out << std::endl;
     return out;
 }
 

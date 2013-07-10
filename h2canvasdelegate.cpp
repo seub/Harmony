@@ -74,9 +74,8 @@ void H2CanvasDelegate::drawH2Polygon(const H2Polygon &P, const QColor &color, in
 
 void H2CanvasDelegate::drawGeneratorAxes(const IsomH2Representation &rho, const QColor &color, int width)
 {
-    std::vector<H2Isometry> generators;
+    std::vector<H2Isometry> generators = rho.getGeneratorImages();
     H2Geodesic L;
-    rho.getGenerators(generators);
     for(unsigned int j=0;j<generators.size();j++)
     {
         generators[j].axis(L);

@@ -214,6 +214,24 @@ bool H2Geodesic::closestPoints(const H2Geodesic &L1, const H2Geodesic &L2, H2Poi
     return true;
 }
 
+bool H2Geodesic::closestPoint(const H2Geodesic &L1, const H2Geodesic &L2, H2Point &p1)
+{
+    H2Geodesic Lperp;
+    H2Point q;
+    if (commonEndpoint(L1,L2))
+    {
+        return false;
+    } else if (!commonPerpendicular(L1,L2,Lperp))
+    {
+
+        intersectionH2Geodesics(L1,L2,q);
+        p1 = q;
+        return true;
+    }
+    intersectionH2Geodesics(L1,Lperp,p1);
+    return true;
+}
+
 bool commonPerpendicular(const H2Geodesic &L1, const H2Geodesic &L2, H2Geodesic &output)
 {
     H2Point p;

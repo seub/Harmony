@@ -205,8 +205,9 @@ bool DiscreteGroup::findGeneratorIndex(int &outputIndex, const generatorName &a)
     return false;
 }
 
-DiscreteGroup DiscreteGroup::amalgamateOverInverse(const DiscreteGroup &Gamma1, const generatorName a1,
-                                                   const DiscreteGroup &Gamma2, const generatorName &a1inverse)
+DiscreteGroup DiscreteGroup::amalgamateOverInverse(const DiscreteGroup &Gamma1, const generatorName &a1,
+                                                   const DiscreteGroup &Gamma2, const generatorName &a1inverse,
+                                                   const generatorName &newGeneratorName)
 {
     DiscreteGroup::checkCompatibilityForAmalgamation(Gamma1, Gamma2);
     int i1, j1;
@@ -228,7 +229,11 @@ DiscreteGroup DiscreteGroup::amalgamateOverInverse(const DiscreteGroup &Gamma1, 
         int i, j;
         for (i=0; i< (int) generators1.size(); i++)
         {
-            if (i != i1)
+            if (i == i1)
+            {
+                outputGenerators.push_back(newGeneratorName);
+            }
+                else
             {
                 outputGenerators.push_back(generators1[i]);
             }
@@ -240,25 +245,10 @@ DiscreteGroup DiscreteGroup::amalgamateOverInverse(const DiscreteGroup &Gamma1, 
                 outputGenerators.push_back(generators2[j]);
             }
         }
-        outputGenerators.push_back(a1);
 
         word w;
-        for (i=0; i< (int) relations1.size(); i++)
-        {
-            w = relations1[i];
-            for (j=0; j< (int) w.size(); j++)
-            {
-                if (w[j].first == i1)
-                {
-                    w[j].first = generators1.size() + generators2.size() - 2;
-                }
-                else if(w[j].first > i1)
-                {
-                    w[j].first--;
-                }
-            }
-            outputRelations.push_back(w);
-        }
+        outputRelations = relations1;
+
         for (i=0; i< (int) relations2.size(); i++)
         {
             w = relations2[i];
@@ -266,16 +256,16 @@ DiscreteGroup DiscreteGroup::amalgamateOverInverse(const DiscreteGroup &Gamma1, 
             {
                 if (w[j].first == j1)
                 {
-                    w[j].first = generators1.size() + generators2.size() - 2;
+                    w[j].first = i1;
                     w[j].second = - w[j].second;
                 }
                 else if(w[j].first < j1)
                 {
-                    w[j].first += generators1.size() - 1;
+                    w[j].first += generators1.size();
                 }
-                else
+                else if(w[j].first > j1)
                 {
-                    w[j].first += generators1.size() -2;
+                    w[j].first += generators1.size() - 1;
                 }
             }
             outputRelations.push_back(w);
@@ -300,9 +290,9 @@ void DiscreteGroup::setPairOfPants(generatorName c1, generatorName c2, generator
     generators.push_back(c2);
     generators.push_back(c3);
     word w;
-    w.push_back(letter(0, 1));
-    w.push_back(letter(1, 1));
     w.push_back(letter(2, 1));
+    w.push_back(letter(1, 1));
+    w.push_back(letter(0, 1));
     relations.push_back(w);
     return;
 }
