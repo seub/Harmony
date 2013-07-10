@@ -18,7 +18,7 @@ public:
     void printAxis(double length);
     void printCube();
     void keyPressEvent( QKeyEvent *keyEvent );
-    void mouseGLCoordinates(QMouseEvent * mouseevent, GLdouble *pos);
+    void mouseGLCoordinates(QMouseEvent * mouseevent, GLdouble *pos, GLdouble *modelView = 0);
 public slots:
     void timeOutSlot();
     void mousePressEvent(QMouseEvent * mouseevent);

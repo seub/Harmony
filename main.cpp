@@ -18,15 +18,14 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
     QApplication a(argc, argv);
 
-    /*H3canvasDelegate windows(60, 0,"Test");
+    H3canvasDelegate windows(60, 0,"Test");
     windows.show();
 
-    DiscreteGroup Gamma;
-    IsomH2Representation rho(&Gamma);
-    rho.setNormalizedPairOfPantsRepresentation("a", "b", "c", 7.0, 3.0, 11.0, "c");
-
-*/
-
+    Canvas * canvas = new Canvas;
+    H2CanvasDelegate delegate(canvas);
+    canvas->setDelegate(&delegate);
+    delegate.drawExample();
+    canvas->show();
 
 
     DiscreteGroup Gamma1, Gamma2;
@@ -56,14 +55,6 @@ int main(int argc, char *argv[])
     DiscreteGroup pf;
     IsomH2Representation test = IsomH2Representation::doHNNextensionOverInverse(&pf, rhoBig, "a1", "a2", "c3", "c1", "di", 0.0);
     std::cout << test << std::endl;
-
-
-    /*Canvas * canvas = new Canvas;
-    H2CanvasDelegate delegate(canvas);
-    canvas->setDelegate(&delegate);
-    delegate.drawGeneratorAxes(rhoBig);
-    delegate.drawGeneratorAxes(rho1,"red",5);
-    canvas->show();*/
 
     std::cout << std::endl;
     return a.exec();
