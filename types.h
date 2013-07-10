@@ -4,6 +4,14 @@
 #define ERROR 0.0000000001
 #define I complex(0.0, 1.0)
 
+#include <iostream>
+#include <vector>
+#include <string>
+#include <sstream>
+#include <complex>
+#include <cassert>
+#include <algorithm>
+
 
 template <typename T> class GroupRepresentation;
 

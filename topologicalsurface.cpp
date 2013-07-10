@@ -20,36 +20,52 @@ int TopologicalSurface::getNumberOfPunctures() const
     return numberOfPunctures;
 }
 
-/*
+
 std::vector<DiscreteGroup> TopologicalSurface::getPantsDecomposition() const
 {
     std::vector<DiscreteGroup> pantsVector;
     DiscreteGroup P;
-    P.setPairOfPants("gamma1down","alpha1up","gamma1up");
+    std::string s1,s2,w1,w2,w3;
+
+    P.setPairOfPants("W1up","U1up","W1down");
     pantsVector.push_back(P);
-    for(unsigned int j=0;j<genus-2;j++)
+
+    for(int j=0;j<genus-2;j++)
     {
-        std::string jString1,jString2;
-        std::stringstream out1,out2;
-        out1 << j + 1;
-        jString1 = out1.str();
-        out2 << j + 2;
-        jString2 = out2.str();
+        s1 = Tools::convertToString(j+1);
+        s2 = Tools::convertToString(j+2);
 
-        P.setPairOfPants("alpha"<<jString1<<"down","gamma"<<jString2<<"up","beta"<<jString1<<"up");
+        w1.append("U").append(s1).append("down");
+        w2.append("V").append(s1).append("up");
+        w3.append("W").append(s2).append("up");
+
+        P.setPairOfPants(w1,w2,w3);
         pantsVector.push_back(P);
 
-        P.setPairOfPants("alpha"<<jString2<<"up","beta"<<jString1<<"down","gamma"<<jString2<<"down");
+        w1.clear();
+        w2.clear();
+        w3.clear();
+
+        w1.append("U").append(s2).append("up");
+        w2.append("W").append(s2).append("down");
+        w3.append("V").append(s1).append("down");
+
+        P.setPairOfPants(w1,w2,w3);
         pantsVector.push_back(P);
+
+        w1.clear();
+        w2.clear();
+        w3.clear();
     }
-    std::string jString1,jString2;
-    std::stringstream out1,out2;
-    out1 << genus - 1;
-    jString1 = out1.str();
-    out2 << genus;
-    jString2 = out2.str();
-    P.setPairOfPants("alpha"<<jString1<<"down","gamma"<<jString2<<"down","gamma"<<jString2<<"up");
+    s1 = Tools::convertToString(genus-1);
+    s2 = Tools::convertToString(genus);
+
+    w1.append("U").append(s1).append("down");
+    w2.append("W").append(s2).append("up");
+    w3.append("W").append(s2).append("down");
+
+    P.setPairOfPants(w1,w2,w3);
     pantsVector.push_back(P);
     return pantsVector;
 }
-*/
+

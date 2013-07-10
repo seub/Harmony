@@ -79,4 +79,12 @@ bool Tools::haveCommonElements(const std::vector<std::string> & list1, const std
     return false;
 }
 
+std::string Tools::convertToString(int i)
+{
+    std::string s;
+    std::stringstream out;
+    out << i;
+    s = out.str();
+    return s;
+}
 

@@ -20,6 +20,7 @@ namespace Tools
 int intRound(double x);
 double mod2Pi(double t);
 
+std::string convertToString(int i);
 
 
 std::vector<int> findStringInList(const std::string &s, const std::vector<std::string> & list);

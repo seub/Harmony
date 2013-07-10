@@ -21,13 +21,11 @@ DiscreteGroup::DiscreteGroup(const TopologicalSurface &S)
     std::vector<generatorName> generatorsList;
     generatorsList.reserve(2*genus);
 
+    std::string s;
     int i;
     for (i=1; i<=genus; i++)
     {
-        std::string s;
-        std::stringstream out;
-        out << i;
-        s = out.str();
+        s = Tools::convertToString(i);
 
         std::string a_i;
         a_i.append("a");
@@ -42,10 +40,7 @@ DiscreteGroup::DiscreteGroup(const TopologicalSurface &S)
     int j;
     for(j=1; j<=numberOfPunctures; j++)
     {
-        std::string s;
-        std::stringstream out;
-        out << j;
-        s = out.str();
+        s = Tools::convertToString(j);
 
         std::string c_j;
         c_j.append("c");
@@ -57,8 +52,6 @@ DiscreteGroup::DiscreteGroup(const TopologicalSurface &S)
     generators = generatorsList;
 
     std::vector<word> relationsList;
-
-    std::vector<generatorName> gen = generatorsList;
 
     std::vector<letter> relation;
     letter l;
@@ -315,8 +308,9 @@ DiscreteGroup DiscreteGroup::doHNNextensionOverInverse(const DiscreteGroup & Gam
         w.push_back(letter(i1, 1));
         w.push_back(letter(N-1,-1));
         outputRelations.push_back(w);
-        return DiscreteGroup(outputGenerators, outputRelations);
     }
+
+    return DiscreteGroup(outputGenerators, outputRelations);
 }
 
 void DiscreteGroup::reset()
