@@ -1,7 +1,7 @@
 #ifndef SL2RMATRIX_H
 #define SL2RMATRIX_H
 
-#include "types.h"
+#include "tools.h"
 #include "h2point.h"
 #include "sl2cmatrix.h"
 #include "h2polygon.h"

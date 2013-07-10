@@ -1,6 +1,6 @@
 #ifndef PLANARLINE_H
 #define PLANARLINE_H
-#include "types.h"
+#include "tools.h"
 
 class PlanarLine
 {

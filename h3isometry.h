@@ -2,7 +2,7 @@
 #define H3ISOMETRY_H
 
 
-#include "types.h"
+#include "tools.h"
 #include "sl2cmatrix.h"
 #include "h3point.h"
 #include "cp1point.h"

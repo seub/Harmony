@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "types.h"
+#include "tools.h"
 
 class CanvasDelegate;
 class Canvas : public QWidget

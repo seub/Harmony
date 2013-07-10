@@ -44,8 +44,8 @@ QImage * CanvasDelegate::getImage() const
 
 void CanvasDelegate::rescale(int sizeX, int sizeY)
 {
-    originX = intRound(originX*sizeX/(this->sizeX*1.0) + shiftX*scaleX);
-    originY = intRound(originY*sizeY/(this->sizeY*1.0) + shiftY*scaleY);
+    originX = Tools::intRound(originX*sizeX/(this->sizeX*1.0) + shiftX*scaleX);
+    originY = Tools::intRound(originY*sizeY/(this->sizeY*1.0) + shiftY*scaleY);
     this->sizeX = sizeX;
     this->sizeY = sizeY;
     scaleX = zoom*sizeX/(xmax - xmin);
@@ -57,8 +57,8 @@ void CanvasDelegate::reset()
 {
     scaleX = sizeX/2.2;
     scaleY = sizeY/2.2;
-    originX = intRound(sizeX/2.0);
-    originY = intRound(sizeY/2.0);
+    originX = Tools::intRound(sizeX/2.0);
+    originY = Tools::intRound(sizeY/2.0);
     shiftX = 0.0;
     shiftY = 0.0;
     zoom = 1.0;
@@ -67,8 +67,8 @@ void CanvasDelegate::reset()
 
 void CanvasDelegate::ComplexToPixelCoordinates(int &xout, int &yout, complex z) const
 {
-    xout = intRound(real(z)*scaleX + originX);
-    yout = intRound(-imag(z)*scaleY + originY);
+    xout = Tools::intRound(real(z)*scaleX + originX);
+    yout = Tools::intRound(-imag(z)*scaleY + originY);
     return;
 }
 
@@ -135,8 +135,8 @@ void CanvasDelegate::drawArcCounterClockwise(const complex &center, double radiu
     pen->setColor(color);
     pen->setWidth(width);
     painter->setPen(*pen);
-    double QtAngle1 = intRound(mod2Pi(angle1)*16*360/(2*M_PI));
-    double QtSpan = intRound(mod2Pi(angle2 - angle1)*16*360/(2*M_PI));
+    double QtAngle1 = Tools::intRound(Tools::mod2Pi(angle1)*16*360/(2*M_PI));
+    double QtSpan = Tools::intRound(Tools::mod2Pi(angle2 - angle1)*16*360/(2*M_PI));
     painter->drawArc(x1, y1, x2 - x1, y2 - y1, QtAngle1, QtSpan);
     return;
 }
@@ -145,7 +145,7 @@ void CanvasDelegate::drawSmallerArc(const complex &center, double radius, double
                                     double angle2, const QColor &color, int width)
 {
     double d = angle2 - angle1;
-    d = mod2Pi(d);
+    d = Tools::mod2Pi(d);
     if (d>M_PI)
     {
         drawArcCounterClockwise(center, radius, angle2, angle1, color, width);

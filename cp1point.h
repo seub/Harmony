@@ -1,6 +1,6 @@
 #ifndef CP1POINT_H
 #define CP1POINT_H
-#include "types.h"
+#include "tools.h"
 
 
 class SL2CMatrix;

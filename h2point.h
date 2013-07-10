@@ -1,7 +1,7 @@
 #ifndef H2POINT_H
 #define H2POINT_H
 
-#include "types.h"
+#include "tools.h"
 
 class H2Point
 {

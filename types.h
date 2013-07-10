@@ -1,16 +1,6 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <sstream>
-#include <complex>
-#include <cassert>
-#include <algorithm>
-
-
-
 #define ERROR 0.0000000001
 #define I complex(0.0, 1.0)
 

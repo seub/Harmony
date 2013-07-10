@@ -1,5 +1,4 @@
 #include "discretegroup.h"
-#include "tools.h"
 
 DiscreteGroup::DiscreteGroup()
 {
@@ -174,12 +173,12 @@ bool DiscreteGroup::checkCompatibilityForAmalgamation(const DiscreteGroup &Gamma
     std::vector<generatorName> generators1 = Gamma1.getGenerators();
     std::vector<generatorName> generators2 = Gamma2.getGenerators();
 
-    if (containsDuplicates(generators1) || containsDuplicates(generators2))
+    if (Tools::containsDuplicates(generators1) || Tools::containsDuplicates(generators2))
     {
         std::cout << "WARNING in DiscreteGroup::checkCompatibilityForAmalgamation: group generators contains duplicates!" << std::endl;
         return false;
     }
-    if (haveCommonElements(generators1, generators2))
+    if (Tools::haveCommonElements(generators1, generators2))
     {
         std::cout << "WARNING in DiscreteGroup::checkCompatibilityForAmalgamation: common generator names!" << std::endl;
         return false;
@@ -187,6 +186,23 @@ bool DiscreteGroup::checkCompatibilityForAmalgamation(const DiscreteGroup &Gamma
     if (Gamma1.numberOfCusps() != 0 || Gamma2.numberOfCusps() != 0)
     {
         std::cout << "WARNING in DiscreteGroup::checkCompatibilityForAmalgamation: I don't handle cusps (for the moment)!" << std::endl;
+        return false;
+    }
+    return true;
+}
+
+bool DiscreteGroup::checkCompatibilityforHNNextension(const DiscreteGroup &Gamma)
+{
+    std::vector<generatorName> generators = Gamma.getGenerators();
+
+    if (Tools::containsDuplicates(generators))
+    {
+        std::cout << "WARNING in DiscreteGroup::checkCompatibilityforHNNextension: group generators contains duplicates!" << std::endl;
+        return false;
+    }
+    if (Gamma.numberOfCusps() != 0)
+    {
+        std::cout << "WARNING in DiscreteGroup::checkCompatibilityforHNNextension: I don't handle cusps (for the moment)!" << std::endl;
         return false;
     }
     return true;
@@ -209,7 +225,6 @@ DiscreteGroup DiscreteGroup::amalgamateOverInverse(const DiscreteGroup &Gamma1, 
                                                    const DiscreteGroup &Gamma2, const generatorName &a1inverse,
                                                    const generatorName &newGeneratorName)
 {
-    DiscreteGroup::checkCompatibilityForAmalgamation(Gamma1, Gamma2);
     int i1, j1;
     if (!Gamma1.findGeneratorIndex(i1, a1) || !Gamma2.findGeneratorIndex(j1, a1inverse))
     {
@@ -233,7 +248,7 @@ DiscreteGroup DiscreteGroup::amalgamateOverInverse(const DiscreteGroup &Gamma1, 
             {
                 outputGenerators.push_back(newGeneratorName);
             }
-                else
+            else
             {
                 outputGenerators.push_back(generators1[i]);
             }
@@ -273,6 +288,35 @@ DiscreteGroup DiscreteGroup::amalgamateOverInverse(const DiscreteGroup &Gamma1, 
     }
 
     return DiscreteGroup(outputGenerators, outputRelations);
+}
+
+DiscreteGroup DiscreteGroup::doHNNextensionOverInverse(const DiscreteGroup & Gamma, const generatorName &a, const generatorName &ainverse,
+                                                       const generatorName & newGeneratorName)
+{
+    int i1, j1;
+    if (!Gamma.findGeneratorIndex(i1, a) || !Gamma.findGeneratorIndex(j1, ainverse))
+    {
+        std::cout << "WARNING in DiscreteGroup::amalgamateOverInverse: generator is not in the group!" << std::endl;
+    }
+
+    std::vector<generatorName> outputGenerators;
+    std::vector<word> outputRelations;
+
+    if (checkCompatibilityforHNNextension(Gamma))
+    {
+        outputGenerators = Gamma.getGenerators();
+        outputGenerators.push_back(newGeneratorName);
+        int N = outputGenerators.size();
+
+        outputRelations = Gamma.getRelations();
+        word w;
+        w.push_back(letter(j1, 1));
+        w.push_back(letter(N-1, 1));
+        w.push_back(letter(i1, 1));
+        w.push_back(letter(N-1,-1));
+        outputRelations.push_back(w);
+        return DiscreteGroup(outputGenerators, outputRelations);
+    }
 }
 
 void DiscreteGroup::reset()

@@ -1,7 +1,7 @@
 #ifndef SL2CMATRIX_H
 #define SL2CMATRIX_H
 
-#include "types.h"
+#include "tools.h"
 #include "cp1point.h"
 #include "h3point.h"
 

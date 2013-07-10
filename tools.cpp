@@ -14,12 +14,12 @@ std::ostream & operator<<(std::ostream &out, const complex & z)
     return s;
 }*/
 
-int intRound(double x)
+int Tools::intRound(double x)
 {
     return (x < 0) ? int(x - 0.5) : int(x + 0.5);
 }
 
-double mod2Pi(double t)
+double Tools::mod2Pi(double t)
 {
     if (t>=0)
     {
@@ -33,8 +33,7 @@ double mod2Pi(double t)
     }
 }
 
-
-std::vector<int> findStringInList(const std::string &s, const std::vector<std::string> & list)
+std::vector<int> Tools::findStringInList(const std::string &s, const std::vector<std::string> & list)
 {
     std::vector<int> outputIndices;
     for (unsigned int i=0; i<list.size(); i++)
@@ -47,7 +46,7 @@ std::vector<int> findStringInList(const std::string &s, const std::vector<std::s
     return outputIndices;
 }
 
-bool containsDuplicates(const std::vector<std::string> &list)
+bool Tools::containsDuplicates(const std::vector<std::string> &list)
 {
     int i,j, N=list.size();
     for (i=0; i<N-1; i++)
@@ -64,7 +63,7 @@ bool containsDuplicates(const std::vector<std::string> &list)
 }
 
 
-bool haveCommonElements(const std::vector<std::string> & list1, const std::vector<std::string> & list2)
+bool Tools::haveCommonElements(const std::vector<std::string> & list1, const std::vector<std::string> & list2)
 {
     unsigned int i,j, N1 = list1.size(), N2 = list2.size();
     for (i=0; i<N1; i++)
@@ -79,3 +78,5 @@ bool haveCommonElements(const std::vector<std::string> & list1, const std::vecto
     }
     return false;
 }
+
+
