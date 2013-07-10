@@ -1,6 +1,6 @@
 #ifndef H2POLYGON_H
 #define H2POLYGON_H
-#include "types.h"
+#include "tools.h"
 
 class H2Point;
 class H2GeodesicArc;

@@ -3,7 +3,7 @@
 #include <QWidget>
 
 
-#include "types.h"
+#include "tools.h"
 
 #include "canvas.h"
 #include "canvasdelegate.h"

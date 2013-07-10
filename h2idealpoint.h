@@ -1,6 +1,6 @@
 #ifndef H2IDEALPOINT_H
 #define H2IDEALPOINT_H
-#include "types.h"
+#include "tools.h"
 #include "h2point.h"
 
 

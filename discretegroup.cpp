@@ -1,5 +1,4 @@
 #include "discretegroup.h"
-#include "tools.h"
 
 DiscreteGroup::DiscreteGroup()
 {
@@ -174,12 +173,12 @@ bool DiscreteGroup::checkCompatibilityForAmalgamation(const DiscreteGroup &Gamma
     std::vector<generatorName> generators1 = Gamma1.getGenerators();
     std::vector<generatorName> generators2 = Gamma2.getGenerators();
 
-    if (containsDuplicates(generators1) || containsDuplicates(generators2))
+    if (Tools::containsDuplicates(generators1) || Tools::containsDuplicates(generators2))
     {
         std::cout << "WARNING in DiscreteGroup::checkCompatibilityForAmalgamation: group generators contains duplicates!" << std::endl;
         return false;
     }
-    if (haveCommonElements(generators1, generators2))
+    if (Tools::haveCommonElements(generators1, generators2))
     {
         std::cout << "WARNING in DiscreteGroup::checkCompatibilityForAmalgamation: common generator names!" << std::endl;
         return false;
@@ -196,7 +195,7 @@ bool DiscreteGroup::checkCompatibilityforHNNextension(const DiscreteGroup &Gamma
 {
     std::vector<generatorName> generators = Gamma.getGenerators();
 
-    if (containsDuplicates(generators))
+    if (Tools::containsDuplicates(generators))
     {
         std::cout << "WARNING in DiscreteGroup::checkCompatibilityforHNNextension: group generators contains duplicates!" << std::endl;
         return false;

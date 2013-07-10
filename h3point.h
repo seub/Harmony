@@ -1,6 +1,6 @@
 #ifndef H3POINT_H
 #define H3POINT_H
-#include "types.h"
+#include "tools.h"
 
 
 class SL2CMatrix;

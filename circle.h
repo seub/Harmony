@@ -1,6 +1,6 @@
 #ifndef CIRCLE_H
 #define CIRCLE_H
-#include "types.h"
+#include "tools.h"
 #include "planarline.h"
 
 

@@ -1,7 +1,7 @@
 #ifndef GROUPREPRESENTATION_H
 #define GROUPREPRESENTATION_H
 
-#include "types.h"
+#include "tools.h"
 #include "discretegroup.h"
 #include "sl2cmatrix.h"
 #include "sl2rmatrix.h"

@@ -1,7 +1,7 @@
 #ifndef DISCRETEGROUP_H
 #define DISCRETEGROUP_H
 
-#include "types.h"
+#include "tools.h"
 #include "topologicalsurface.h"
 
 class DiscreteGroup

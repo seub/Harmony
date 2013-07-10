@@ -1,7 +1,7 @@
 #ifndef CANVASDELEGATE_H
 #define CANVASDELEGATE_H
 
-#include "types.h"
+#include "tools.h"
 
 #include <QColor>
 

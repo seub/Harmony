@@ -4,7 +4,7 @@
 #include <QtOpenGL>
 #include <QGLWidget>
 #include <GL/glu.h>
-#include "types.h"
+#include "tools.h"
 
 class H3canvasDelegate : public QGLWidget
 {

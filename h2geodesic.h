@@ -1,7 +1,7 @@
 #ifndef H2GEODESIC_H
 #define H2GEODESIC_H
 
-#include "types.h"
+#include "tools.h"
 #include "h2point.h"
 
 class Circle;

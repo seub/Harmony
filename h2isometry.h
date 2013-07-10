@@ -1,7 +1,7 @@
 #ifndef H2ISOMETRY_H
 #define H2ISOMETRY_H
 
-#include "types.h"
+#include "tools.h"
 #include "tools.h"
 #include "sl2cmatrix.h"
 #include "h2point.h"
