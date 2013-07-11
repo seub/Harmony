@@ -302,6 +302,7 @@ H2Isometry H2Isometry::findConjugatorForGluing(const H2Isometry & f1, const H2Is
     conjugator2.setByNormalizingPairWithChosenNearestPointToAxis(f2, f2left, imag(p1.getDiskCoordinate()));
     centralizer.setTranslationLengthNormalized(twist);
 
+
     return conjugator1.inverse()*centralizer*conjugator2;
 }
 

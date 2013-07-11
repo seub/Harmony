@@ -262,7 +262,7 @@ template <> std::vector<IsomH2Representation> IsomH2Representation::getPantsRepr
         std::vector<generatorName> generators = V[0].getGenerators();
         rhos[0].setNormalizedPairOfPantsRepresentation(generators[0], generators[1], generators[2],
                 lengths[0], lengths[1], lengths[0],
-                generators[0]);
+                generators[1]);
 
         for (int j = 0; j<g-2; j++)
         {
