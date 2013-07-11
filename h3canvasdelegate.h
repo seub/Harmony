@@ -20,6 +20,7 @@ public :
     GLVector add(const GLVector &v) const;
     GLVector opposite() const;
     GLVector scalarMult(const GLdouble lambda) const;
+    GLVector normalize() const;
 };
 
 class H3canvasDelegate : public QGLWidget
@@ -51,8 +52,9 @@ private:
     GLVector normalvect;
     GLVector currentPosition;
     GLdouble modelviewsave[16];
-    void drawSphere(const GLVector center,GLdouble radius,GLenum  style = GLU_SILHOUETTE);
-    void drawCircleArc(GLVector center,GLVector normal, GLVector first /*relative to the center*/, GLdouble angle);
+    void drawSphere(const GLVector &center,GLdouble radius,GLenum  style = GLU_SILHOUETTE);
+    void drawCircleArc(const GLVector &center, const GLVector &normal, const GLVector &first /*relative to the center*/, GLdouble angle) const;
+    void drawH3geodesic(const GLVector &, const GLVector &) const;
 };
 
 
