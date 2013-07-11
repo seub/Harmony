@@ -1,4 +1,5 @@
 #include "grouprepresentation.h"
+#include "topologicalsurface.h"
 
 
 template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *Gamma) : Gamma(Gamma)
@@ -6,7 +7,8 @@ template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *
 }
 
 
-template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *Gamma, std::vector<T> listOfMatrices) : Gamma(Gamma), generatorImages(listOfMatrices)
+template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *Gamma, std::vector<T> listOfMatrices) :
+    Gamma(Gamma), generatorImages(listOfMatrices)
 {
     if(listOfMatrices.size() != (Gamma -> getGenerators()).size())
     {
@@ -137,19 +139,18 @@ template <> H2Polygon IsomH2Representation::generatePolygon(const H2Point &baseP
     return res;
 }
 
-template <> void IsomH2Representation::setFenchelNielsenCoordinates(const std::vector<double> & lengthParameters,
-                                                                    const std::vector<double> & twistParameters)
-{
-    return;
-}
 
 
-template <> void IsomH2Representation:: setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
-                                                                               double length1, double length2, double length3, generatorName normalized)
+
+
+template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
+                                                                              double length1, double length2, double length3,
+                                                                              generatorName normalized)
 {
     if (length1 < 0 || length2 < 0 || length3 < 0)
     {
-        std::cout << "ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: you gave me a negative length (seriously?)" << std::endl;
+        std::cout << "ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: you gave me a negative length (seriously?)"
+                  << std::endl;
     }
     if (normalized == c3)
     {
@@ -208,20 +209,93 @@ template <> void IsomH2Representation:: setNormalizedPairOfPantsRepresentation(g
     }
     else
     {
-        std::cout << "ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: Normalizer has to be one of the generators!" << std::endl;
+        std::cout << "ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: ";
+        std::cout << "Normalizer has to be one of the generators!" << std::endl;
         return;
     }
+}
+
+
+
+template <> bool IsomH2Representation::checkCompatibilityOfFNcoordinates(const std::vector<double> & lengths,
+                                                                         const std::vector<double> & twists)
+{
+    int N = lengths.size();
+    if ((int) twists.size() != N)
+    {
+        std::cout << "ERROR in IsomH2Representation::setFenchelNielsenCoordinatesUnnormalized: ";
+        std::cout << "number of lengths and twists don't match!" << std::endl;
+        return false;
+    }
+    else if (N%3 != 0)
+    {
+        std::cout << "ERROR in IsomH2Representation::setFenchelNielsenCoordinatesUnnormalized: ";
+        std::cout << "number of lengths and twists has to be a multiple of 3!" << std::endl;
+        return false;
+    }
+    else if (N<3)
+    {
+        std::cout << "ERROR in IsomH2Representation::setFenchelNielsenCoordinatesUnnormalized: ";
+        std::cout << "at least 3 lengths and twists are needed!" << std::endl;
+        return false;
+    }
+    return true;
+}
+
+template <> std::vector<IsomH2Representation> IsomH2Representation::getPantsRepresentations(const std::vector<double> & lengths,
+                                                                                            const std::vector<double> & twists,
+                                                                                            const std::vector<DiscreteGroup *> &outputDiscreteGroups)
+{
+    int N = lengths.size();
+    std::vector<IsomH2Representation> rhos;
+    if (IsomH2Representation::checkCompatibilityOfFNcoordinates(lengths, twists))
+    {
+        int g = N/3 + 1;
+        TopologicalSurface S(g, 0);
+        std::vector<DiscreteGroup> V = S.getPantsDecomposition();
+
+        for (unsigned int k=0; k<V.size(); k++)
+        {
+            rhos.push_back(IsomH2Representation(outputDiscreteGroups[k]));
+        }
+
+        std::vector<generatorName> generators = V[0].getGenerators();
+        rhos[0].setNormalizedPairOfPantsRepresentation(generators[0], generators[1], generators[2],
+                lengths[0], lengths[1], lengths[0],
+                generators[1]);
+
+        for (int j = 0; j<g-2; j++)
+        {
+            generators = V[2*j+1].getGenerators();
+            rhos[2*j+1].setNormalizedPairOfPantsRepresentation(generators[0], generators[1], generators[2],
+                    lengths[3*j+1], lengths[3*j+2], lengths[3*j+3],
+                    generators[0]);
+            generators = V[2*j+2].getGenerators();
+            rhos[2*j+2].setNormalizedPairOfPantsRepresentation(generators[0], generators[1], generators[2],
+                    lengths[3*j+4], lengths[3*j+3], lengths[3*j+2],
+                    generators[0]);
+        }
+
+        generators = V[2*g-3].getGenerators();
+        rhos[2*g-3].setNormalizedPairOfPantsRepresentation(generators[0], generators[1], generators[2],
+                lengths[3*g-5], lengths[3*g-4], lengths[3*g-4],
+                generators[0]);
+
+
+    }
+    return rhos;
 }
 
 
 template <> IsomH2Representation IsomH2Representation::amalgamateOverInverse(DiscreteGroup *outputDiscreteGroup,
                                                                              const IsomH2Representation & rho1, const generatorName &a1,
                                                                              const generatorName &a1left,
-                                                                             const IsomH2Representation & rho2, const generatorName &a1inverse,
-                                                                             const generatorName &a1inverseleft, const generatorName &newGeneratorName,
+                                                                             const IsomH2Representation & rho2,
+                                                                             const generatorName &a1inverse,
+                                                                             const generatorName &a1inverseleft,
                                                                              double twist)
 {
-    *outputDiscreteGroup = DiscreteGroup::amalgamateOverInverse(*(rho1.Gamma), a1, *(rho2.Gamma), a1inverse, newGeneratorName);
+    *outputDiscreteGroup = DiscreteGroup::amalgamateOverInverse(*(rho1.Gamma), a1, *(rho2.Gamma), a1inverse);
     H2Isometry f1, f1left, f2, f2left;
 
     if (!(rho1.getGeneratorImage(a1, f1) && rho1.getGeneratorImage(a1left, f1left) &&
@@ -238,22 +312,17 @@ template <> IsomH2Representation IsomH2Representation::amalgamateOverInverse(Dis
     std::vector<H2Isometry> generatorImages1 = rho1.getGeneratorImages();
     std::vector<H2Isometry> generatorImages2 = rho2new.getGeneratorImages();
     std::vector<H2Isometry> outputGeneratorImages = generatorImages1;
-    std::vector<generatorName> generators2 = rho2.Gamma->getGenerators();
 
-    for (unsigned int i = 0; i<generators2.size(); i++)
-    {
-        if (generators2[i] != a1inverse)
-        {
-            outputGeneratorImages.push_back(generatorImages2[i]);
-        }
-    }
+    outputGeneratorImages.insert(outputGeneratorImages.end(), generatorImages2.begin(), generatorImages2.end());
 
     return IsomH2Representation(outputDiscreteGroup, outputGeneratorImages);
 }
 
-template <> IsomH2Representation IsomH2Representation::doHNNextensionOverInverse(DiscreteGroup *outputDiscreteGroup, const IsomH2Representation &rho,
+template <> IsomH2Representation IsomH2Representation::doHNNextensionOverInverse(DiscreteGroup *outputDiscreteGroup,
+                                                                                 const IsomH2Representation &rho,
                                                                                  const generatorName &a, const generatorName &aleft,
-                                                                                 const generatorName &ainverse, const generatorName &ainverseleft,
+                                                                                 const generatorName &ainverse,
+                                                                                 const generatorName &ainverseleft,
                                                                                  const generatorName &newGeneratorName, double twist)
 {
     *outputDiscreteGroup = DiscreteGroup::doHNNextensionOverInverse(*(rho.Gamma), a, ainverse, newGeneratorName);
@@ -273,6 +342,193 @@ template <> IsomH2Representation IsomH2Representation::doHNNextensionOverInverse
 
     return IsomH2Representation(outputDiscreteGroup, outputGeneratorImages);
 }
+
+
+
+template <> IsomH2Representation IsomH2Representation::setFNCoordinatesUnnormalized(DiscreteGroup* outputDiscreteGroup,
+                                                                                    const std::vector<double> & lengths,
+                                                                                    const std::vector<double> & twists)
+{
+    int N = lengths.size();
+    int g = N/3 + 1;
+    IsomH2Representation Output(outputDiscreteGroup);
+
+    //std::vector<DiscreteGroup> PantGroups;
+    std::vector<DiscreteGroup*> PantGroupsPointers;
+    for (int m=0; m<2*g-2; m++)
+    {
+        DiscreteGroup * PantGroup = new DiscreteGroup;
+        PantGroupsPointers.push_back(PantGroup);
+    }
+
+    std::vector<IsomH2Representation> rhos = IsomH2Representation::getPantsRepresentations(lengths, twists, PantGroupsPointers);
+
+
+    Output = IsomH2Representation::amalgamateOverInverse(outputDiscreteGroup, rhos[0], "U1up", "W1up", rhos[1], "U1down", "W2up", twists[1]);
+
+    if (g > 2)
+    {
+        Output = IsomH2Representation::amalgamateOverInverse(outputDiscreteGroup, Output, "V1up","U1down", rhos[2], "V1down", "W2down", twists[2]);
+    }
+
+    std::string s1,s2,s3,uUp,uDn,vUp,vDn,fuUp,fuDn,fvUp,fvDn;
+
+    for(int j=1; j<g-2; j++)
+    {
+        s1 = Tools::convertToString(j);
+        s2 = Tools::convertToString(j+1);
+        s3 = Tools::convertToString(j+2);
+
+        uUp.append("U").append(s2).append("up");
+        uDn.append("U").append(s2).append("down");
+        vUp.append("V").append(s2).append("up");
+        vDn.append("V").append(s2).append("down");
+        fuUp.append("V").append(s1).append("down");
+        fuDn.append("W").append(s3).append("up");
+        fvUp.append("U").append(s2).append("down");
+        fvDn.append("W").append(s3).append("down");
+
+
+        Output = IsomH2Representation::amalgamateOverInverse(outputDiscreteGroup, Output, uUp, fuUp,
+                                                             rhos[2*j+1], uDn, fuDn, twists[3*j+1]);
+        Output = IsomH2Representation::amalgamateOverInverse(outputDiscreteGroup, Output, vUp, fvUp,
+                                                             rhos[2*j+2], vDn, fvDn, twists[3*j+2]);
+
+        uUp.clear();
+        uDn.clear();
+        vUp.clear();
+        vDn.clear();
+        fuUp.clear();
+        fuDn.clear();
+        fvUp.clear();
+        fvDn.clear();
+
+    }
+    //std::cout << Output << std::endl;
+
+
+    if (g>2)
+    {
+        s1 = Tools::convertToString(g-1);
+        s2 = Tools::convertToString(g);
+        s3 = Tools::convertToString(g-2);
+
+        uUp.append("U").append(s1).append("up");
+        uDn.append("U").append(s1).append("down");
+        fuUp.append("V").append(s3).append("down");
+        fuDn.append("W").append(s2).append("down");
+
+        Output = IsomH2Representation::amalgamateOverInverse(outputDiscreteGroup, Output, uUp, fuUp,
+                                                             rhos[2*g-3], uDn, fuDn, twists[3*g-5]);
+    }
+
+
+
+
+    Output = IsomH2Representation::doHNNextensionOverInverse(outputDiscreteGroup,Output,"W1up","W1down","W1down","U1up","D1",twists[0]);
+
+    std::string wUp,wDn,fwUp,fwDn,d;
+
+    for(int k=0;k<g-2;k++)
+    {
+        s2 = Tools::convertToString(k+1);
+        s3 = Tools::convertToString(k+2);
+
+        wUp.append("W").append(s3).append("up");
+        wDn.append("W").append(s3).append("down");
+
+        fwUp.append("V").append(s2).append("up");
+        fwDn.append("U").append(s3).append("up");
+        d.append("D").append(s3);
+
+        Output = IsomH2Representation::doHNNextensionOverInverse(outputDiscreteGroup,Output,wUp,fwUp,wDn,fwDn,d,twists[3*k+3]);
+
+        wUp.clear();
+        wDn.clear();
+        fwUp.clear();
+        fwDn.clear();
+        d.clear();
+    }
+    s1 = Tools::convertToString(g-1);
+    s2 = Tools::convertToString(g);
+
+    wUp.append("W").append(s2).append("up");
+    wDn.append("W").append(s2).append("down");
+
+    fwUp.append("U").append(s1).append("down");
+    fwDn.append("W").append(s2).append("up");
+    d.append("D").append(s2);
+
+    Output = IsomH2Representation::doHNNextensionOverInverse(outputDiscreteGroup,Output,wUp,fwUp,wDn,fwDn,d,twists[3*g-4]);
+
+
+    /*for (unsigned int l = 0; l<PantGroupsPointers.size(); l++)
+    {
+        delete PantGroupsPointers[l];
+    }*/
+    //std::cout << "Leaving IsomH2Representation::setFNCoordinatesUnnormalized" << std::endl;
+
+    return Output;
+}
+
+
+
+template <> void IsomH2Representation::setFenchelNielsenCoordinates(const std::vector<double> & lengths,
+                                                                    const std::vector<double> & twists)
+{
+    DiscreteGroup GammaUnnormalized;
+    IsomH2Representation Unnormalized = IsomH2Representation::setFNCoordinatesUnnormalized(&GammaUnnormalized, lengths, twists);
+
+    int g = lengths.size()/3 + 1;
+    *Gamma = DiscreteGroup(TopologicalSurface(g, 0));
+
+    std::vector<H2Isometry> OutputGeneratorImages;
+    std::string Viup, Di, s;
+    H2Isometry A, B;
+
+    Unnormalized.getGeneratorImage("W1down", A);
+    A = A.inverse();
+    OutputGeneratorImages.push_back(A);
+
+    Unnormalized.getGeneratorImage("D1", B);
+    OutputGeneratorImages.push_back(B);
+
+    for (int i = 1; i < g-1; i++)
+    {
+        s = Tools::convertToString(i);
+        Viup.append("V").append(s).append("up");
+        Unnormalized.getGeneratorImage(Viup, A);
+        A = A.inverse();
+        OutputGeneratorImages.push_back(A);
+
+        s = Tools::convertToString(i+1);
+        Di.append("D").append(s);
+        Unnormalized.getGeneratorImage(Di, B);
+        OutputGeneratorImages.push_back(B);
+
+        Viup.clear();
+        Di.clear();
+    }
+
+    s=Tools::convertToString(g);
+    std::string Wgup, Dg;
+    Wgup.append("W").append(s).append("up");
+
+    Unnormalized.getGeneratorImage(Wgup, A);
+    A = A.inverse();
+    OutputGeneratorImages.push_back(A);
+
+    Dg.append("D").append(s);
+    Unnormalized.getGeneratorImage(Dg, B);
+    B = B.inverse();
+    OutputGeneratorImages.push_back(B);
+
+    generatorImages = OutputGeneratorImages;
+    return;
+}
+
+
+
 
 
 

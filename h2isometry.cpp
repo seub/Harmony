@@ -287,6 +287,8 @@ H2Isometry H2Isometry::findConjugatorForGluing(const H2Isometry & f1, const H2Is
 {
     if (std::abs(f1.traceSquared()-f2.traceSquared()) > ERROR)
     {
+        //std::cout << f1 << std::endl;
+        //std::cout << f2 << std::endl;
         std::cout << "ERROR in H2Isometry::findConjugatorForGluing: not the same translation lengths!" << std::endl;
     }
 
@@ -299,6 +301,7 @@ H2Isometry H2Isometry::findConjugatorForGluing(const H2Isometry & f1, const H2Is
     H2Geodesic::closestPoint(L, L1, p1);
     conjugator2.setByNormalizingPairWithChosenNearestPointToAxis(f2, f2left, imag(p1.getDiskCoordinate()));
     centralizer.setTranslationLengthNormalized(twist);
+
 
     return conjugator1.inverse()*centralizer*conjugator2;
 }
@@ -333,7 +336,7 @@ std::ostream & operator<<(std::ostream & out, const H2Isometry &f)
         z2 = Z2.getComplexCoordinate();
         out << "Elliptic, fixed points z1= " << z1 << "and z2= " << z2;
     }
-    //out << "   {u= " << f.u << ", a= " << f.a << "}";
+    out << "   {u= " << f.u << ", a= " << f.a << "}";
     return out;
 }
 

@@ -27,8 +27,7 @@ public:
     void rotateGenerators(int shift);
 
     static DiscreteGroup amalgamateOverInverse(const DiscreteGroup & Gamma1, const generatorName &a1,
-                                               const DiscreteGroup & Gamma2, const generatorName &a1inverse,
-                                               const generatorName &newGeneratorName);
+                                               const DiscreteGroup & Gamma2, const generatorName &a1inverse);
 
     static DiscreteGroup doHNNextensionOverInverse(const DiscreteGroup & Gamma, const generatorName &a, const generatorName &ainverse,
                                                    const generatorName & newGeneratorName);

@@ -215,8 +215,7 @@ bool DiscreteGroup::findGeneratorIndex(int &outputIndex, const generatorName &a)
 }
 
 DiscreteGroup DiscreteGroup::amalgamateOverInverse(const DiscreteGroup &Gamma1, const generatorName &a1,
-                                                   const DiscreteGroup &Gamma2, const generatorName &a1inverse,
-                                                   const generatorName &newGeneratorName)
+                                                   const DiscreteGroup &Gamma2, const generatorName &a1inverse)
 {
     int i1, j1;
     if (!Gamma1.findGeneratorIndex(i1, a1) || !Gamma2.findGeneratorIndex(j1, a1inverse))
@@ -234,50 +233,26 @@ DiscreteGroup DiscreteGroup::amalgamateOverInverse(const DiscreteGroup &Gamma1, 
         std::vector<word> relations1 = Gamma1.getRelations();
         std::vector<word> relations2 = Gamma2.getRelations();
 
-        int i, j;
-        for (i=0; i< (int) generators1.size(); i++)
-        {
-            if (i == i1)
-            {
-                outputGenerators.push_back(newGeneratorName);
-            }
-            else
-            {
-                outputGenerators.push_back(generators1[i]);
-            }
-        }
-        for (j=0; j< (int) generators2.size(); j++)
-        {
-            if (j != j1)
-            {
-                outputGenerators.push_back(generators2[j]);
-            }
-        }
+        outputGenerators = generators1;
+        outputGenerators.insert(outputGenerators.end(), generators2.begin(), generators2.end());
 
         word w;
         outputRelations = relations1;
 
-        for (i=0; i< (int) relations2.size(); i++)
+        for (unsigned int i=0; i< relations2.size(); i++)
         {
             w = relations2[i];
-            for (j=0; j< (int) w.size(); j++)
+            for (unsigned int j=0; j< w.size(); j++)
             {
-                if (w[j].first == j1)
-                {
-                    w[j].first = i1;
-                    w[j].second = - w[j].second;
-                }
-                else if(w[j].first < j1)
-                {
-                    w[j].first += generators1.size();
-                }
-                else if(w[j].first > j1)
-                {
-                    w[j].first += generators1.size() - 1;
-                }
+                w[j].first += generators1.size();
             }
             outputRelations.push_back(w);
         }
+
+        w.clear();
+        w.push_back(letter(i1,1));
+        w.push_back(letter(j1 + generators1.size(),1));
+        outputRelations.push_back(w);
     }
 
     return DiscreteGroup(outputGenerators, outputRelations);
