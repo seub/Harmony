@@ -8,3 +8,5 @@ Cleanup code
 utiliser des long double ?
 
 réécrire twistcorrection, etc
+
+store conjugators ?

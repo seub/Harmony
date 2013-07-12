@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     //H3canvasDelegate windows(60, 0,"Test");
     //windows.show();
 
-    int g = 2;
+    int g = 4;
     std::vector<double> lengths;
     std::vector<double> twists;
     twists.resize(3*g-3);
@@ -46,9 +46,9 @@ int main(int argc, char *argv[])
     double time = (t1-t0)*1.0/CLOCKS_PER_SEC;
     std::cout << "time spent: " << time << "s" << std::endl;*/
     //IsomH2Representation rho = IsomH2Representation::setFNCoordinatesUnnormalized(&Gamma, lengths, twists);
-    IsomH2Representation rho(&Gamma);
-    rho.setFenchelNielsenCoordinates(lengths, twists);
-    std::cout << rho << std::endl;
+    //IsomH2Representation rho(&Gamma);
+    //rho.setFenchelNielsenCoordinates(lengths, twists);
+    //std::cout << rho << std::endl;
     //rho.checkRelations();
 
 
@@ -65,15 +65,12 @@ int main(int argc, char *argv[])
     Canvas canvas;
     H2CanvasDelegate delegate(&canvas);
     canvas.setDelegate(&delegate);
-    //delegate.drawGeneratorAxes(rho2);
-    delegate.drawGeneratorAxes(rho, "red");
+    delegate.drawGeneratorAxes(rho2);
+    /*delegate.drawGeneratorAxes(rho, "red");
     H2Point p;
     p.setDiskCoordinate(0.9*I);
     H2Polygon P = rho.generatePolygon(p);
-    delegate.drawH2Polygon(P);
-    std::vector<H2Isometry> y = rho.getGeneratorImages();
-    delegate.drawH2Polygon(y[0]*P, "blue");
-    delegate.drawH2Polygon(y[0]*y[1]*P, "green");
+    //delegate.drawH2Polygon(P);*/
 
     canvas.show();
 
