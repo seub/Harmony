@@ -10,3 +10,8 @@ utiliser des long double ?
 réécrire twistcorrection, etc
 
 store conjugators ?
+
+different coordinates for complex numbers?
+disk model : z = (1 - exp(u)) e^(it)
+upper half plane model : z = x + i e^u
+or maybe in disk model : angle + hyperbolic distance to the origin

@@ -12,11 +12,12 @@ class PantsTree
 {
     friend class PantsTreeNode;
     friend class PantsTreeRoot;
+    friend class FenchelNielsenConstructor;
 public:
-    PantsTree(int index, const std::vector<double> & lengths, bool root);
+    PantsTree(int index, const std::vector<double> & lengths, const std::string & genericCurveName);
     virtual ~PantsTree() {}
     virtual bool isLeaf() const = 0;
-    virtual IsomH2Representation getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator) = 0;
+    virtual IsomH2Representation getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator, const std::string & genericCurveName) = 0;
 protected:
     DiscreteGroup Gamma;
     IsomH2Representation *rho;
@@ -27,12 +28,12 @@ protected:
 class PantsTreeNode : public PantsTree
 {
 public:
-    PantsTreeNode(int index, const std::vector<double> & lengths, const std::vector<double> & twists);
+    PantsTreeNode(int index, const std::vector<double> & lengths, const std::vector<double> & twists, const std::string & genericCurveName);
     ~PantsTreeNode();
 
     bool isLeaf() const {return false;}
     bool isRoot() const {return false;}
-    IsomH2Representation  getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator);
+    IsomH2Representation  getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator, const std::string & genericCurveName);
 private:
     PantsTree *leftChild;
     PantsTree *rightChild;
@@ -43,16 +44,16 @@ private:
 class PantsTreeLeaf : public PantsTree
 {
 public:
-    PantsTreeLeaf(int index, const std::vector<double> & lengths, const std::vector<double> & twists);
+    PantsTreeLeaf(int index, const std::vector<double> & lengths, const std::vector<double> & twists, const std::string &genericCurveName);
     ~PantsTreeLeaf();
     bool isLeaf() const {return true;}
-    IsomH2Representation getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator);
+    IsomH2Representation getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator, const std::string &genericCurveName);
 private:
     H2Isometry hNNconjugator;
 };
 
 
-class PantsTreeRoot: public PantsTree
+/*class PantsTreeRoot: public PantsTree
 {
 
 public:
@@ -64,7 +65,10 @@ private:
     H2Isometry hNNconjugator;
     H2Isometry conjugator;
     PantsTree *child;
-};
+};*/
+
+
+
 
 class FenchelNielsenConstructor
 {
@@ -74,7 +78,9 @@ public:
     IsomH2Representation getrepresentation(DiscreteGroup *group);
 
 private:
-    PantsTreeRoot * tree;
+    double firstTwist;
+    PantsTreeNode * LeftTree;
+    PantsTreeNode * RightTree;
 };
 
 

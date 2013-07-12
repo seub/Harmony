@@ -3,54 +3,54 @@
 #include "h2canvasdelegate.h"
 
 
-PantsTree::PantsTree(int index, const std::vector<double> &lengths, bool root) : index(index)
+PantsTree::PantsTree(int index, const std::vector<double> &lengths, const std::string & genericCurveName) : index(index)
 {
     rho = new IsomH2Representation(&Gamma);
 
-    if (!root)
-    {
-        double Lup = lengths[index];
-        double Lleft = lengths[2*index];
-        double Lright = lengths[2*index +1];
+    double Lup = lengths[index-1];
+    double Lleft = lengths[2*index-1];
+    double Lright = lengths[2*index];
 
-        std::string sup = Tools::convertToString(index), sleft = Tools::convertToString(2*index), sright = Tools::convertToString(2*index + 1);
-        generatorName up, left, right;
-        up.append("c").append(sup).append("down");
-        left.append("c").append(sleft).append("up");
-        right.append("c").append(sright).append("up");
-        rho->setNormalizedPairOfPantsRepresentation(up, left, right, Lup, Lleft, Lright, up);
+    std::string sup = Tools::convertToString(index), sleft = Tools::convertToString(2*index), sright = Tools::convertToString(2*index + 1);
+    generatorName up, left, right;
+    up.append(genericCurveName).append(sup).append("down");
+    left.append(genericCurveName).append(sleft).append("up");
+    right.append(genericCurveName).append(sright).append("up");
+    rho->setNormalizedPairOfPantsRepresentation(up, left, right, Lup, Lleft, Lright, up);
 
-        H2Isometry fRight;
-        rho->getGeneratorImage(right, fRight);
-        H2Geodesic L;
-        fRight.axis(L);
-        H2Point p0, p;
-        p0.setDiskCoordinate(0.0);
-        L.closestPoint(H2Geodesic(-I, I), L, p);
-        double d = H2distance(p0,p);
-        twistCorrection = imag(p.getDiskCoordinate())>0 ? d : -d;
-    }
+    H2Isometry fRight;
+    rho->getGeneratorImage(right, fRight);
+    H2Geodesic L;
+    fRight.axis(L);
+    H2Point p0, p;
+    p0.setDiskCoordinate(0.0);
+    L.closestPoint(H2Geodesic(-I, I), L, p);
+    double d = H2distance(p0,p);
+    twistCorrection = imag(p.getDiskCoordinate())>0 ? d : -d;
+
 }
 
-PantsTreeNode::PantsTreeNode(int index, const std::vector<double> &lengths, const std::vector<double> &twists) : PantsTree(index, lengths, false)
+PantsTreeNode::PantsTreeNode(int index, const std::vector<double> &lengths, const std::vector<double> &twists, const std::string &genericCurveName)
+    : PantsTree(index, lengths, genericCurveName)
 {
+
     int N = lengths.size();
     if(8*index >= N)
     {
-        leftChild = new PantsTreeLeaf(2*index,lengths, twists);
+        leftChild = new PantsTreeLeaf(2*index,lengths, twists, genericCurveName);
     }
     else
     {
-        leftChild = new PantsTreeNode(2*index,lengths, twists);
+        leftChild = new PantsTreeNode(2*index,lengths, twists, genericCurveName);
     }
 
     if(8*index +4 >= N)
     {
-        rightChild = new PantsTreeLeaf(2*index+1,lengths, twists);
+        rightChild = new PantsTreeLeaf(2*index+1,lengths, twists, genericCurveName);
     }
     else
     {
-        rightChild = new PantsTreeNode(2*index+1,lengths, twists);
+        rightChild = new PantsTreeNode(2*index+1,lengths, twists, genericCurveName);
     }
 
     double twistCorrectionLeft = leftChild->twistCorrection, twistCorrectionright = rightChild->twistCorrection;
@@ -60,12 +60,12 @@ PantsTreeNode::PantsTreeNode(int index, const std::vector<double> &lengths, cons
 
     conjugatorLeft.setByNormalizingPairWithChosenNearestPointToAxis(fLeft, fUp, 0.0);
     H2Isometry twister;
-    twister.setTranslationLengthNormalized(twists[2*index] + twistCorrectionLeft);
+    twister.setTranslationLengthNormalized(-twists[2*index-1] + twistCorrectionLeft);
     conjugatorLeft = twister*conjugatorLeft;
     conjugatorLeft = conjugatorLeft.inverse();
 
     conjugatorRight.setByNormalizingPairWithChosenNearestPointToAxis(fRight, fLeft, 0.0);
-    twister.setTranslationLengthNormalized(twists[2*index+1] + twistCorrectionright);
+    twister.setTranslationLengthNormalized(-twists[2*index] + twistCorrectionright);
     conjugatorRight = twister*conjugatorRight;
     conjugatorRight = conjugatorRight.inverse();
     //std::cout << *rho << std::endl;
@@ -77,7 +77,7 @@ PantsTreeNode::~PantsTreeNode()
     delete rightChild;
     delete rho;
 }
-IsomH2Representation PantsTreeNode::getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator)
+IsomH2Representation PantsTreeNode::getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator, const std::string &genericCurveName)
 {
     H2Isometry totalConjugatorLeft = totalConjugator*conjugatorLeft;
     H2Isometry totalConjugatorRight = totalConjugator*conjugatorRight;
@@ -86,19 +86,21 @@ IsomH2Representation PantsTreeNode::getRepresentation(DiscreteGroup *group, H2Is
     IsomH2Representation rhobis(&Gamma);
     rhobis = (*rho).conj(totalConjugator);
     DiscreteGroup leftgroup, rightgroup;
-    IsomH2Representation leftrho = leftChild->getRepresentation(&leftgroup,totalConjugatorLeft);
-    IsomH2Representation rightrho = rightChild->getRepresentation(&rightgroup,totalConjugatorRight);
+    IsomH2Representation leftrho = leftChild->getRepresentation(&leftgroup,totalConjugatorLeft, genericCurveName);
+    IsomH2Representation rightrho = rightChild->getRepresentation(&rightgroup,totalConjugatorRight, genericCurveName);
     DiscreteGroup tempGroup;
     IsomH2Representation temprho = IsomH2Representation::amalgamateOverInverse(&tempGroup,rhobis,generators[1],leftrho,
             leftChild->Gamma.getGenerators()[0]);
     return IsomH2Representation::amalgamateOverInverse(group,temprho,generators[2],rightrho,rightChild->Gamma.getGenerators()[0]);
 }
 
-PantsTreeLeaf::PantsTreeLeaf(int index, const std::vector<double> &lengths, const std::vector<double> &twists) : PantsTree(index, lengths, false)
+PantsTreeLeaf::PantsTreeLeaf(int index, const std::vector<double> &lengths, const std::vector<double> &twists,
+                             const std::string & genericCurveName) :
+    PantsTree(index, lengths, genericCurveName)
 {
     std::vector<H2Isometry> upleftright = rho->getGeneratorImages();
     H2Isometry fLeft = upleftright[1], fUp = upleftright[0], fRight= upleftright[2];
-    hNNconjugator = H2Isometry::findConjugatorForGluing(fRight, fLeft, fLeft, fUp, twists[2*index]);
+    hNNconjugator = H2Isometry::findConjugatorForGluing(fRight, fLeft, fLeft, fUp, twists[2*index-1]);
     //std::cout << *rho << std::endl;
 }
 
@@ -107,23 +109,18 @@ PantsTreeLeaf::~PantsTreeLeaf()
     delete rho;
 }
 
-IsomH2Representation  PantsTreeLeaf::getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator)
+IsomH2Representation  PantsTreeLeaf::getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator, const std::string & genericCurveName)
 {
     std::string s = Tools::convertToString(index);
     generatorName stableLetter;
-    stableLetter.append("b").append(s);
+    stableLetter.append(genericCurveName).append("s").append(s);
     std::vector<generatorName> generators = Gamma.getGenerators();
-
-    IsomH2Representation test = IsomH2Representation::doHNNextensionOverInverse(group,*rho,generators[2],
-            generators[1],stableLetter,hNNconjugator);
-    test.checkRelations();
-    test = test.conj(totalConjugator);
 
     return (IsomH2Representation::doHNNextensionOverInverse(group,*rho,generators[2],
             generators[1],stableLetter,hNNconjugator)).conj(totalConjugator);
 }
 
-PantsTreeRoot::PantsTreeRoot(const std::vector<double> &lengths, const std::vector<double> &twists) : PantsTree(0, lengths, true)
+/*PantsTreeRoot::PantsTreeRoot(const std::vector<double> &lengths, const std::vector<double> &twists) : PantsTree(0, lengths, true)
 {
     index =0;
 
@@ -152,7 +149,7 @@ PantsTreeRoot::PantsTreeRoot(const std::vector<double> &lengths, const std::vect
 
     conjugator.setDiskCoordinates(-1.0, 0.0);
     H2Isometry twister;
-    twister.setTranslationLengthNormalized(twists[1] + child->twistCorrection);
+    twister.setTranslationLengthNormalized(-twists[1] + child->twistCorrection);
     conjugator = twister * conjugator;
 
     //std::cout << *rho << std::endl;
@@ -177,36 +174,83 @@ IsomH2Representation  PantsTreeRoot::getRepresentation(DiscreteGroup *group, H2I
     id.setIdentity();
     IsomH2Representation childRho = child->getRepresentation(&childGroup,id);
     return IsomH2Representation::amalgamateOverInverse(group,tempRho,"c1up",childRho,"c1down");
-}
+}*/
 
 FenchelNielsenConstructor::FenchelNielsenConstructor(const std::vector<double> &lengths, const std::vector<double> &twists)
 {
-    std::vector<double> lengthsAugmented = lengths;
-    std::vector<double> twistsAugmented = twists;
-    int N = lengths.size();
-    int g = N/3 +1;
+    std::vector<double> lengthsAugmentedLeft, twistsAugmentedLeft, lengthsAugmentedRight, twistsAugmentedRight;
 
-    lengthsAugmented.erase(lengthsAugmented.end() - g +1 ,lengthsAugmented.end());
-    twistsAugmented.erase(twistsAugmented.end() - g +1,twistsAugmented.end());
-    for(int i = N-g+1 ; i<N ; i++)
+    int g = lengths.size()/3 + 1;
+
+    int g1 = g/2;
+    int g2 = g - g1;
+
+    for (int i1=0; i1<2*g1 - 1; i1++)
     {
-        lengthsAugmented.push_back(lengths[i]);
-        lengthsAugmented.push_back(lengths[i]);
-        twistsAugmented.push_back(twists[i]);
-        twistsAugmented.push_back(twists[i]);
+        lengthsAugmentedLeft.push_back(lengths[i1]);
+        twistsAugmentedLeft.push_back(twists[i1]);
     }
-    tree = new PantsTreeRoot(lengthsAugmented, twistsAugmented);
+
+    for (int i2=2*g1-1; i2<3*g1 - 1; i2++)
+    {
+        lengthsAugmentedLeft.push_back(lengths[i2]);
+        twistsAugmentedLeft.push_back(twists[i2]);
+        lengthsAugmentedLeft.push_back(lengths[i2]);
+        twistsAugmentedLeft.push_back(twists[i2]);
+    }
+
+
+    lengthsAugmentedRight.push_back(lengths[0]);
+    twistsAugmentedRight.push_back(twists[0]);
+
+    for (int j1=0; j1<2*g2 - 2; j1++)
+    {
+        lengthsAugmentedRight.push_back(lengths[j1 + 3*g1 - 1]);
+        twistsAugmentedRight.push_back(twists[j1 + 3*g1 - 1]);
+    }
+
+    for (int j2=2*g2-2; j2<3*g2 - 2; j2++)
+    {
+        lengthsAugmentedRight.push_back(lengths[j2 + 3*g1 - 3]);
+        twistsAugmentedRight.push_back(twists[j2 + 3*g1 -3]);
+        lengthsAugmentedRight.push_back(lengths[j2 + 3*g1 - 3]);
+        twistsAugmentedRight.push_back(twists[j2 + 3*g1 -3]);
+    }
+
+    firstTwist = twists[0];
+
+    LeftTree = new PantsTreeNode(1, lengthsAugmentedLeft, twistsAugmentedLeft, "c");
+    RightTree = new PantsTreeNode(1, lengthsAugmentedRight, twistsAugmentedRight, "d");
+
 }
 
 
 FenchelNielsenConstructor::~FenchelNielsenConstructor()
 {
-    delete tree;
+    delete LeftTree;
+    delete RightTree;
 }
 
 IsomH2Representation FenchelNielsenConstructor::getrepresentation(DiscreteGroup *group)
 {
     H2Isometry id;
     id.setIdentity();
-    return tree->getRepresentation(group,id);
+
+    DiscreteGroup GammaLeft, GammaRight;
+
+    IsomH2Representation rhoLeft = LeftTree->getRepresentation(&GammaLeft, id, "c");
+    IsomH2Representation rhoRight = RightTree->getRepresentation(&GammaRight, id, "d");
+
+
+    H2Isometry twister;
+    twister.setTranslationLengthNormalized(firstTwist + LeftTree->twistCorrection - RightTree->twistCorrection);
+
+    DiscreteGroup tempGamma;
+    IsomH2Representation tempRho(&tempGamma);
+    H2Isometry halfTurn;
+    halfTurn.setDiskCoordinates(-1.0, 0.0);
+    tempRho = rhoRight.conj(halfTurn*twister);
+
+
+    return IsomH2Representation::amalgamateOverInverse(group, rhoLeft, "c1down", tempRho, "d1down");
 }

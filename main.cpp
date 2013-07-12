@@ -22,16 +22,16 @@ int main(int argc, char *argv[])
     //H3canvasDelegate windows(60, 0,"Test");
     //windows.show();
 
-    int g = 4;
+    int g = 2;
     std::vector<double> lengths;
     std::vector<double> twists;
     twists.resize(3*g-3);
     twists[2] = 1.0;
     for (int i=0; i<3*g-3; i++)
     {
-        lengths.push_back(1.0);
+        lengths.push_back(1.6+0.2*i);
     }
-    DiscreteGroup Gamma;
+    //DiscreteGroup Gamma;
     /*clock_t t0, t1;
 
     t0 = clock();
