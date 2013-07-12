@@ -18,6 +18,7 @@ public:
     SL2RMatrix(double a, double b, double c, double d);
 
     double det() const;
+    double error() const;
 
     SL2CMatrix complexCast() const;
     void getCoefficients(double &a, double &b, double &c, double &d) const;

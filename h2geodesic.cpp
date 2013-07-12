@@ -221,7 +221,8 @@ bool H2Geodesic::closestPoint(const H2Geodesic &L1, const H2Geodesic &L2, H2Poin
     if (commonEndpoint(L1,L2))
     {
         return false;
-    } else if (!commonPerpendicular(L1,L2,Lperp))
+    }
+    else if (!commonPerpendicular(L1,L2,Lperp))
     {
 
         intersectionH2Geodesics(L1,L2,q);

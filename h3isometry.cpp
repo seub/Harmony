@@ -38,6 +38,11 @@ bool H3Isometry::isH2Isometry() const
     return M.isReal();
 }
 
+double H3Isometry::error() const
+{
+    return M.error();
+}
+
 bool H3Isometry::isLoxodromic() const
 {
     complex tr = M.trace();

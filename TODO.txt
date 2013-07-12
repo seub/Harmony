@@ -4,3 +4,7 @@ Think about ERROR:
 -needed at all?
 
 Cleanup code
+
+utiliser des long double ?
+
+réécrire twistcorrection, etc

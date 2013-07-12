@@ -28,6 +28,8 @@ public:
     void eigenvalues(complex & lambda1,complex & lambda2) const;
     void fixedPoints(complex & z1, complex & z2) const;
     bool isReal() const;
+    double error() const;
+
     SL2CMatrix inverse() const;
     SL2CMatrix transpose() const;
     SL2CMatrix conjugate() const;

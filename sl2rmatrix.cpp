@@ -28,6 +28,11 @@ double SL2RMatrix::det() const
     return a*d - b*c;
 }
 
+double SL2RMatrix::error() const
+{
+    return (a - 1.0)*(a - 1.0) + b*b + c*c + (d - 1.0)*(d- 1.0);
+}
+
 SL2CMatrix SL2RMatrix::complexCast() const
 {
     return SL2CMatrix(a, b, c, d);

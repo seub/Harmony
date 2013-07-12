@@ -60,7 +60,10 @@ bool SL2CMatrix::isReal() const
     return std::abs(imag(a))<ERROR && std::abs(imag(b))<ERROR && std::abs(imag(c))<ERROR && std::abs(imag(d))<ERROR;
 }
 
-
+double SL2CMatrix::error() const
+{
+    return norm(a - 1.0) + norm(b) + norm(c) + norm(d - 1.0);
+}
 
 SL2CMatrix SL2CMatrix::inverse() const
 {

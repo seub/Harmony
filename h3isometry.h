@@ -30,6 +30,7 @@ public:
     bool isElliptic() const;
     bool isLoxodromic() const;
     bool isH2Isometry() const;
+    double error() const;
 
 private:
     SL2CMatrix M;

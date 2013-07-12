@@ -35,7 +35,8 @@ SOURCES += main.cpp \
     h3isometry.cpp \
     tools.cpp \
     h3canvasdelegate.cpp\
-    h2idealpoint.cpp
+    h2idealpoint.cpp \
+    fenchelnielsenconstructor.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -58,7 +59,8 @@ HEADERS += \
     tools.h \
     types.h \
     h3canvasdelegate.h\
-    h2idealpoint.h
+    h2idealpoint.h \
+    fenchelnielsenconstructor.h
 
 OTHER_FILES += \
     TODO.txt

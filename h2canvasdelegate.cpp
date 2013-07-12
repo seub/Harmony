@@ -79,7 +79,7 @@ void H2CanvasDelegate::drawGeneratorAxes(const IsomH2Representation &rho, const 
     for(unsigned int j=0;j<generators.size();j++)
     {
         generators[j].axis(L);
-        drawH2Geodesic(L);
+        drawH2Geodesic(L, color, width);
     }
     return;
 }

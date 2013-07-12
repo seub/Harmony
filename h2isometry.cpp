@@ -138,6 +138,11 @@ double H2Isometry::translationLength() const
     return acosh(.5*traceSquared() - 1.0);
 }
 
+double H2Isometry::error() const
+{
+    return norm(a) + norm(u - 1.0);
+}
+
 H2Isometry H2Isometry::inverse() const
 {
     H2Isometry fOut;

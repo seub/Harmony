@@ -12,6 +12,7 @@
 #include "h3canvasdelegate.h"
 #include "grouprepresentation.h"
 #include "h2isometry.h"
+#include "fenchelnielsenconstructor.h"
 
 int main(int argc, char *argv[])
 {
@@ -25,13 +26,13 @@ int main(int argc, char *argv[])
     std::vector<double> lengths;
     std::vector<double> twists;
     twists.resize(3*g-3);
+    twists[2] = 1.0;
     for (int i=0; i<3*g-3; i++)
     {
-        lengths.push_back(1.2+i);
+        lengths.push_back(1.0);
     }
     DiscreteGroup Gamma;
-    IsomH2Representation rho(&Gamma);
-    clock_t t0, t1;
+    /*clock_t t0, t1;
 
     t0 = clock();
 
@@ -43,20 +44,38 @@ int main(int argc, char *argv[])
 
     t1 = clock();
     double time = (t1-t0)*1.0/CLOCKS_PER_SEC;
-    std::cout << "time spent: " << time << "s" << std::endl;
+    std::cout << "time spent: " << time << "s" << std::endl;*/
     //IsomH2Representation rho = IsomH2Representation::setFNCoordinatesUnnormalized(&Gamma, lengths, twists);
-
-    //std::cout << rho << std::endl;
+    IsomH2Representation rho(&Gamma);
+    rho.setFenchelNielsenCoordinates(lengths, twists);
+    std::cout << rho << std::endl;
     //rho.checkRelations();
+
+
+    FenchelNielsenConstructor fn(lengths,twists);
+    DiscreteGroup group;
+    IsomH2Representation rho2 = fn.getrepresentation(&group);
+
+    //std::cout << rho2 << std::endl;
+    rho2.checkRelations();
+    //rho.checkRelations();
+
+
 
     Canvas canvas;
     H2CanvasDelegate delegate(&canvas);
     canvas.setDelegate(&delegate);
-    delegate.drawGeneratorAxes(rho);
-    //H2Point p;
-    //p.setDiskCoordinate(0.0);
-    //delegate.drawH2Polygon(rho.generatePolygon(p));
-    //canvas.show();
+    //delegate.drawGeneratorAxes(rho2);
+    delegate.drawGeneratorAxes(rho, "red");
+    H2Point p;
+    p.setDiskCoordinate(0.9*I);
+    H2Polygon P = rho.generatePolygon(p);
+    delegate.drawH2Polygon(P);
+    std::vector<H2Isometry> y = rho.getGeneratorImages();
+    delegate.drawH2Polygon(y[0]*P, "blue");
+    delegate.drawH2Polygon(y[0]*y[1]*P, "green");
+
+    canvas.show();
 
     std::cout << std::endl;
     return a.exec();

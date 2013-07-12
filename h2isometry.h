@@ -55,6 +55,7 @@ public:
     H2Isometry inverse() const;
     double traceSquared() const;
     double translationLength() const;
+    double error() const;
 
     complex hitComplexNumberInDiskModel(const complex & z) const;
 
