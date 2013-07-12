@@ -1,5 +1,7 @@
 #include "h3canvasdelegate.h"
-
+#include "h2point.h"
+#include "planarline.h"
+#include "circle.h"
 
 std::ostream & operator<<(std::ostream & out, const GLVector &v)
 {
@@ -23,7 +25,7 @@ void operator -=(GLVector & v, const GLVector & w)
     v = v.add(-w);
 }
 
-void operator *=(GLVector & w, const GLdouble & v)
+void operator *=(GLVector & w, const GLdouble  v)
 {
     w = w.scalarMult(v);
 }
@@ -33,11 +35,17 @@ GLdouble operator *(const GLVector & v, const GLVector & w)
     return v.scalarProduct(w);
 }
 
-GLVector operator *(const GLdouble & v, const GLVector & w)
+GLVector operator *(const GLdouble  v, const GLVector & w)
 {
     return w.scalarMult(v);
 }
 
+GLVector operator *(const GLdouble *v, const GLVector & w)
+{
+    return GLVector(v[0]*w.x+v[1]*w.y + v[2]*w.z,
+            v[3]*w.x+v[4]*w.y + v[5]*w.z,
+            v[6]*w.x+v[7]*w.y + v[8]*w.z);
+}
 GLVector operator ^(const GLVector & v, const GLVector & w)
 {
     return v.vectorProduct(w);
@@ -53,9 +61,19 @@ GLVector operator -(const GLVector & v, const GLVector & w)
     return v.add(-w);
 }
 
+bool operator ||(const GLVector & v, const GLVector & w)
+{
+    return fabs(asin((1.0/((v.norm())*(w.norm())))*(v^w).norm()))< ERROR;
+}
+
 GLVector::GLVector(GLdouble x, GLdouble y, GLdouble z):x(x),y(y),z(z)
 {
 
+}
+
+GLVector GLVector::normalize() const
+{
+    return (1/this->norm())*(*this);
 }
 
 GLdouble GLVector::scalarProduct(const GLVector &v) const
@@ -165,7 +183,6 @@ void H3canvasDelegate::wheelEvent(QWheelEvent * wheelevent)
         glPushMatrix();
     }
 }
-
 
 void H3canvasDelegate::mouseGLCoordinates(const QMouseEvent *mouseevent, GLVector &pos, GLdouble *modelView) const
 {
@@ -290,7 +307,7 @@ void H3canvasDelegate::printAxis(double length)
     glEnd();
 }
 
-void H3canvasDelegate::drawSphere(const GLVector center, GLdouble radius , GLenum style)
+void H3canvasDelegate::drawSphere(const GLVector &center, GLdouble radius , GLenum style)
 {
     GLUquadricObj *quadric;
     quadric = gluNewQuadric();
@@ -304,20 +321,18 @@ void H3canvasDelegate::drawSphere(const GLVector center, GLdouble radius , GLenu
     glEndList();
 }
 
-void H3canvasDelegate::drawCircleArc(GLVector center,
-                                     GLVector normal,
-                                     GLVector first, //relative to the center
-                                     GLdouble angle)
+void H3canvasDelegate::drawCircleArc(const GLVector &center,const GLVector &normal,
+                                     const GLVector &first /*relative to the center*/,GLdouble angle) const
 {
-    angle = angle<2*M_PI?angle:2*M_PI;
-    GLVector prod = (1/normal.norm())*normal^first;
+    GLdouble angle2 = angle<2*M_PI?angle:2*M_PI;
+    GLVector prod = normal.normalize()^first;
     GLVector temp;
     double i;
     glBegin(GL_LINE_STRIP);
         glColor3f(0.0f, 0.0f, 1.0f);
         temp = center+first;
         glVertex3d(temp.x,temp.y,temp.z);
-        for(i =0; i < angle; i+=0.01)
+        for(i =0; i < angle2; i+=0.01)
         {
             temp = cos(i)*first + sin(i)*prod + center;
             glVertex3d(temp.x,temp.y,temp.z);
@@ -327,6 +342,68 @@ void H3canvasDelegate::drawCircleArc(GLVector center,
     glEnd();
 }
 
+void H3canvasDelegate::drawH3geodesic(const GLVector &v, const GLVector &w) const
+{
+    if(v||w)
+    {
+        glBegin(GL_LINES);
+            glVertex3d(v.x,v.y,v.z);glVertex3d(w.x,w.y,w.z);
+        glEnd();
+    }
+    else
+    {
+        /*glBegin(GL_TRIANGLES);
+            glVertex3d(0.0d,0.0d,0.0d);glVertex3d(v.x,v.y,v.z);glVertex3d(w.x,w.y,w.z);
+        glEnd();*/
+        GLVector vnorm = v.normalize();
+        GLVector normal = (v^w).normalize();
+        GLVector normal2 = normal^vnorm;
+        GLdouble matrix[9];
+        matrix[0]=vnorm.x;
+        matrix[1]=vnorm.y;
+        matrix[2]=vnorm.z;
+        matrix[3]=normal2.x;
+        matrix[4]=normal2.y;
+        matrix[5]=normal2.z;
+        matrix[6]=normal.x;
+        matrix[7]=normal.y;
+        matrix[8]=normal.z;
+         GLdouble matrixinv[9];
+        matrixinv[0]=matrix[4]*matrix[8]-matrix[7]*matrix[5];
+        matrixinv[1]=matrix[2]*matrix[7]-matrix[8]*matrix[1];
+        matrixinv[2]=matrix[1]*matrix[5]-matrix[4]*matrix[2];
+        matrixinv[3]=matrix[6]*matrix[5]-matrix[3]*matrix[8];
+        matrixinv[4]=matrix[0]*matrix[8]-matrix[2]*matrix[6];
+        matrixinv[5]=matrix[3]*matrix[2]-matrix[0]*matrix[5];
+        matrixinv[6]=matrix[3]*matrix[7]-matrix[6]*matrix[4];
+        matrixinv[7]=matrix[1]*matrix[6]-matrix[7]*matrix[0];
+        matrixinv[8]=matrix[0]*matrix[4]-matrix[3]*matrix[1];
+
+        GLVector vbis = matrix*v;
+        GLVector wbis = matrix*w;
+        complex z1(vbis.x,vbis.y);
+        complex z2(wbis.x,wbis.y);
+        complex p1Klein, p2Klein;
+        H2Point p1, p2;
+        p1.setDiskCoordinate(z1);
+        p2.setDiskCoordinate(z2);
+        p1Klein = p1.getKleinCoordinate();
+        p2Klein = p2.getKleinCoordinate();
+        PlanarLine L(p1Klein,p2Klein);
+        Circle C(0.0,1.0);
+        intersectCircleAndLine(C,L,z1,z2);
+        complex center = 2.0*(z1*z2)/(z1 + z2);
+        GLVector circlecenter = GLVector(center.real(),center.imag(),0.0d);
+        circlecenter = matrixinv*circlecenter;
+        std::cout << "vbis" << vbis << std::endl;
+        std::cout << "wbis" << wbis << std::endl;
+        std::cout << "circlecenter" << circlecenter << std::endl;
+        std::cout << (v^w).normalize() << std::endl;
+        std::cout << ((v-circlecenter)^(w-circlecenter)).normalize() << std::endl;
+        drawCircleArc(circlecenter,(v-circlecenter)^(w-circlecenter),v-circlecenter,
+                      acos(((v-circlecenter)*(w-circlecenter))/(((v-circlecenter).norm())*((w-circlecenter).norm()))));
+    }
+}
 void H3canvasDelegate::printCube()
 {
     glBegin(GL_QUADS);
@@ -389,9 +466,12 @@ void H3canvasDelegate::paintGL()
         glRotated(angle, normalvect.x,normalvect.y,normalvect.z);
     }
     //printCube();
-    drawCircleArc(GLVector(1.0d,0.0d,0.0d), GLVector(0.0d,0.0d,1.0d), GLVector(1.0d,0.0d,0.0d), 2*M_PI);
+    //drawCircleArc(GLVector(1.0d,0.0d,0.0d), GLVector(0.0d,0.0d,1.0d), GLVector(1.0d,0.0d,0.0d), 2*M_PI);
     glColor3f(1.0f, 0.0f, 0.0f);
-    drawSphere(GLVector(1.0d,0.0d,0.0d),1.0d, GLU_POINT);
+    drawSphere(GLVector(0.0d,0.0d,0.0d),1.0d, GLU_POINT);
+    drawH3geodesic(GLVector(-0.5d,-0.5d,0.5d),GLVector(-0.3d,-0.2d,0.6d));
+    drawH3geodesic(GLVector(-0.5d,-0.5d,0.5d),GLVector(0.3d,0.2d,0.6d));
+    drawH3geodesic(GLVector(0.3d,0.2d,0.6d),GLVector(-0.3d,-0.2d,0.6d));
     printAxis(2.);
 
     glPushMatrix();
