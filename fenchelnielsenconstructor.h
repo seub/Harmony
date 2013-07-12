@@ -75,9 +75,12 @@ class FenchelNielsenConstructor
 public:
     FenchelNielsenConstructor(const std::vector<double> & lengths, const std::vector<double> & twists);
     ~FenchelNielsenConstructor();
-    IsomH2Representation getrepresentation(DiscreteGroup *group);
+
+    IsomH2Representation getUnnormalizedRepresentation(DiscreteGroup *group);
+    IsomH2Representation getRepresentation(DiscreteGroup *group);
 
 private:
+    int genus;
     double firstTwist;
     PantsTreeNode * LeftTree;
     PantsTreeNode * RightTree;

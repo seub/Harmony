@@ -26,12 +26,11 @@ int main(int argc, char *argv[])
     std::vector<double> lengths;
     std::vector<double> twists;
     twists.resize(3*g-3);
-    twists[2] = 1.0;
+    //twists[2] = 1.0;
     for (int i=0; i<3*g-3; i++)
     {
-        lengths.push_back(1.6+0.2*i);
+        lengths.push_back(2.0);
     }
-    //DiscreteGroup Gamma;
     /*clock_t t0, t1;
 
     t0 = clock();
@@ -46,18 +45,20 @@ int main(int argc, char *argv[])
     double time = (t1-t0)*1.0/CLOCKS_PER_SEC;
     std::cout << "time spent: " << time << "s" << std::endl;*/
     //IsomH2Representation rho = IsomH2Representation::setFNCoordinatesUnnormalized(&Gamma, lengths, twists);
-    //IsomH2Representation rho(&Gamma);
-    //rho.setFenchelNielsenCoordinates(lengths, twists);
+
+    DiscreteGroup Gamma;
+    IsomH2Representation rho(&Gamma);
+    rho.setFenchelNielsenCoordinates(lengths, twists);
     //std::cout << rho << std::endl;
     //rho.checkRelations();
 
 
-    FenchelNielsenConstructor fn(lengths,twists);
-    DiscreteGroup group;
-    IsomH2Representation rho2 = fn.getrepresentation(&group);
+    //FenchelNielsenConstructor fn(lengths,twists);
+    //DiscreteGroup group;
+    //IsomH2Representation rho2 = fn.getrepresentation(&group);
 
     //std::cout << rho2 << std::endl;
-    rho2.checkRelations();
+    //std::cout << rho2 << std::endl;
     //rho.checkRelations();
 
 
@@ -65,12 +66,24 @@ int main(int argc, char *argv[])
     Canvas canvas;
     H2CanvasDelegate delegate(&canvas);
     canvas.setDelegate(&delegate);
-    delegate.drawGeneratorAxes(rho2);
-    /*delegate.drawGeneratorAxes(rho, "red");
+    //delegate.drawGeneratorAxes(rho2);
+    delegate.drawGeneratorAxes(rho, "red");
     H2Point p;
-    p.setDiskCoordinate(0.9*I);
+    p.setDiskCoordinate(0.0*I);
     H2Polygon P = rho.generatePolygon(p);
-    //delegate.drawH2Polygon(P);*/
+    delegate.drawH2Polygon(P);
+
+    std::vector<H2Isometry> generatorImages = rho.getGeneratorImages();
+    H2Isometry a1 = generatorImages[0];
+    H2Isometry b1 = generatorImages[1];
+    H2Isometry a2 = generatorImages[2];
+    H2Isometry b2 = generatorImages[3];
+
+    delegate.drawH2Polygon(a1*P, "blue");
+    delegate.drawH2Polygon(b1*P, "green");
+    delegate.drawH2Polygon(a2*P, "purple");
+    delegate.drawH2Polygon(b2*P, "yellow");
+
 
     canvas.show();
 

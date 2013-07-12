@@ -181,6 +181,7 @@ FenchelNielsenConstructor::FenchelNielsenConstructor(const std::vector<double> &
     std::vector<double> lengthsAugmentedLeft, twistsAugmentedLeft, lengthsAugmentedRight, twistsAugmentedRight;
 
     int g = lengths.size()/3 + 1;
+    genus = g;
 
     int g1 = g/2;
     int g2 = g - g1;
@@ -231,7 +232,7 @@ FenchelNielsenConstructor::~FenchelNielsenConstructor()
     delete RightTree;
 }
 
-IsomH2Representation FenchelNielsenConstructor::getrepresentation(DiscreteGroup *group)
+IsomH2Representation FenchelNielsenConstructor::getUnnormalizedRepresentation(DiscreteGroup *group)
 {
     H2Isometry id;
     id.setIdentity();
@@ -253,4 +254,18 @@ IsomH2Representation FenchelNielsenConstructor::getrepresentation(DiscreteGroup 
 
 
     return IsomH2Representation::amalgamateOverInverse(group, rhoLeft, "c1down", tempRho, "d1down");
+}
+
+IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup *group)
+{
+    DiscreteGroup group1;
+    IsomH2Representation rhoU = getUnnormalizedRepresentation(&group1);
+
+    IsomH2Representation rho(group);
+    *group = DiscreteGroup(TopologicalSurface(genus, 0));
+
+    // something
+
+
+    return rho;
 }
