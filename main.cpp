@@ -68,23 +68,32 @@ int main(int argc, char *argv[])
     H2CanvasDelegate delegate(&canvas);
     canvas.setDelegate(&delegate);
     //delegate.drawGeneratorAxes(rho2);
-    delegate.drawGeneratorAxes(rho, "red");
+    delegate.drawGeneratorAxes(rho, "red",1);
     H2Point p;
-    p.setDiskCoordinate(0.0*I);
+    p.setDiskCoordinate(0.0);
     H2Polygon P = rho.generatePolygon(p);
-    delegate.drawH2Polygon(P);
+    delegate.drawH2Polygon(P,"black",5);
 
     std::vector<H2Isometry> generatorImages = rho.getGeneratorImages();
     H2Isometry a1 = generatorImages[0];
     H2Isometry b1 = generatorImages[1];
+    H2Isometry a1inv = generatorImages[0].inverse();
+    H2Isometry b1inv = generatorImages[1].inverse();
     H2Isometry a2 = generatorImages[2];
     H2Isometry b2 = generatorImages[3];
+    H2Isometry a2inv = generatorImages[2].inverse();
+    H2Isometry b2inv = generatorImages[3].inverse();
 
-    delegate.drawH2Polygon(a1*P, "blue");
-    delegate.drawH2Polygon(b1*P, "green");
-    delegate.drawH2Polygon(a2*P, "purple");
-    delegate.drawH2Polygon(b2*P, "yellow");
+    delegate.drawH2Polygon(a1inv*P, "blue");
+    delegate.drawH2Polygon(b1inv*a1inv*P, "blue");
+    delegate.drawH2Polygon(a1*b1inv*a1inv*P, "blue");
+    delegate.drawH2Polygon(b1*a1*b1inv*a1inv*P, "blue");
+    delegate.drawH2Polygon(a2inv*b1*a1*b1inv*a1inv*P, "blue");
+    delegate.drawH2Polygon(b2inv*a2inv*b1*a1*b1inv*a1inv*P, "blue");
+    delegate.drawH2Polygon(a2*b2inv*a2inv*b1*a1*b1inv*a1inv*P, "blue");
+    delegate.drawH2Polygon(b2*a2*b2inv*a2inv*b1*a1*b1inv*a1inv*P, "blue");
 
+    std::cout << b2*a2*b2inv*a2inv*b1*a1*b1inv*a1inv << std::endl;
 
     canvas.show();
 

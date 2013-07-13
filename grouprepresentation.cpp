@@ -118,11 +118,11 @@ template <> H2Polygon IsomH2Representation::generatePolygon(const H2Point &baseP
     H2Polygon res;
     if (Gamma->isClosedSurfaceGroup())
     {
-        H2Point point = basePoint;
-        res.addVertex(point);
+        res.addVertex(basePoint);
         int genus = generatorImages.size()/2;
-
-        for (int i=genus-1; i>=0; i--)
+        H2Isometry f;
+        f.setIdentity();
+/*        for (int i=genus-1; i>=0; i--)
         {
             point = generatorImages[2*i + 1].inverse()*point;
             res.addVertex(point);
@@ -132,9 +132,20 @@ template <> H2Polygon IsomH2Representation::generatePolygon(const H2Point &baseP
             res.addVertex(point);
             point = generatorImages[2*i]*point;
             res.addVertex(point);
-        }
+        }*/
         //std::cout << res << std::endl;
 
+        for (int i = 0; i<genus; i++)
+        {
+            f = f*generatorImages[2*i];
+            res.addVertex(f*basePoint);
+            f = f*generatorImages[2*i+1];
+            res.addVertex(f*basePoint);
+            f = f*generatorImages[2*i].inverse();
+            res.addVertex(f*basePoint);
+            f = f*generatorImages[2*i+1].inverse();
+            res.addVertex(f*basePoint);
+        }
         res.removeLastVertex();
     }
     else
