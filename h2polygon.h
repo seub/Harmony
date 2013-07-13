@@ -8,6 +8,7 @@ class H2Geodesic;
 
 class H2Polygon
 {
+    friend std::ostream & operator<<(std::ostream & out, const H2Polygon &P);
 public:
     H2Polygon();
     void addVertex(const H2Point & p);

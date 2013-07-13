@@ -121,17 +121,20 @@ template <> H2Polygon IsomH2Representation::generatePolygon(const H2Point &baseP
         H2Point point = basePoint;
         res.addVertex(point);
         int genus = generatorImages.size()/2;
-        for (int i=0; i<genus; i++)
+
+        for (int i=genus-1; i>=0; i--)
         {
-            point = generatorImages[2*i]*point;
-            res.addVertex(point);
             point = generatorImages[2*i + 1].inverse()*point;
             res.addVertex(point);
             point = generatorImages[2*i].inverse()*point;
             res.addVertex(point);
             point = generatorImages[2*i + 1]*point;
             res.addVertex(point);
+            point = generatorImages[2*i]*point;
+            res.addVertex(point);
         }
+        //std::cout << res << std::endl;
+
         res.removeLastVertex();
     }
     else

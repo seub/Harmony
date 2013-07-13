@@ -26,10 +26,11 @@ int main(int argc, char *argv[])
     std::vector<double> lengths;
     std::vector<double> twists;
     twists.resize(3*g-3);
-    //twists[2] = 1.0;
+    twists[2] = 1.0;
+    //twists[4] = 1.0;
     for (int i=0; i<3*g-3; i++)
     {
-        lengths.push_back(2.0);
+        lengths.push_back(2.5);
     }
     /*clock_t t0, t1;
 
@@ -50,7 +51,7 @@ int main(int argc, char *argv[])
     IsomH2Representation rho(&Gamma);
     rho.setFenchelNielsenCoordinates(lengths, twists);
     //std::cout << rho << std::endl;
-    //rho.checkRelations();
+    rho.checkRelations();
 
 
     //FenchelNielsenConstructor fn(lengths,twists);

@@ -87,6 +87,14 @@ std::vector<H2Geodesic> H2Polygon::getCompletedSides() const
 }
 
 
+std::ostream & operator<<(std::ostream & out, const H2Polygon &P)
+{
+    for(unsigned int i=0; i<(P.vertices).size();i++)
+    {
+        out << (P.vertices)[i] << std::endl;
+    }
+    return out;
+}
 
 
 
