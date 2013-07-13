@@ -82,8 +82,8 @@ public:
 private:
     int genus;
     double firstTwist;
-    PantsTreeNode * LeftTree;
-    PantsTreeNode * RightTree;
+    PantsTree * LeftTree;
+    PantsTree * RightTree;
 };
 
 

@@ -175,3 +175,19 @@ void CanvasDelegate::drawArcCounterClockwise(const Circle &C, double angle1, dou
     drawArcCounterClockwise(center, radius, angle1, angle2, color, width);
     return;
 }
+
+void CanvasDelegate::setzoom(const double &coeff, int centerX, int centerY)
+{
+    originX = centerX -(centerX-originX)*coeff;
+    originY = centerY -(centerY-originY)*coeff;
+    scaleX*=coeff;
+    scaleY*=coeff;
+    redrawBuffer();
+    return;
+}
+
+void CanvasDelegate::setMouse(const int mouseX, const int mouseY)
+{
+    this->mouseX = mouseX;
+    this->mouseY = mouseY;
+}

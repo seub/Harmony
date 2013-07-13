@@ -2,7 +2,7 @@
 #define CANVASDELEGATE_H
 
 #include "tools.h"
-
+#include "h2isometry.h"
 #include <QColor>
 
 class QImage;
@@ -15,6 +15,7 @@ class Circle;
 
 class CanvasDelegate
 {
+    friend class Canvas;
 public:
     CanvasDelegate(Canvas *canvas);
     ~CanvasDelegate();
@@ -32,7 +33,10 @@ public:
     void drawSmallerArc(const Circle &C, double angle1, double angle2,
                         const QColor &color = "black", int width = 1);
     void drawArcCounterClockwise(const Circle &C, double angle1, double angle2, const QColor &color = "black", int width = 1);
-
+    virtual void redrawBuffer(const H2Isometry &mobius = H2Isometry::identity()) =0;
+    void setzoom(const double &coeff, int centerX, int centerY);
+    virtual void setMouse(const int mouseX, const int mouseY);
+    virtual void moveMouse(const int mouseX, const int mouseY) =0;
 protected:
     Canvas *canvas;
 
@@ -41,6 +45,7 @@ protected:
     double scaleX, scaleY, zoom;
     double shiftX, shiftY;
     double xmin, xmax, ymin, ymax;
+    int mouseX, mouseY;
 
 
     QPen *pen;

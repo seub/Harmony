@@ -6,6 +6,7 @@
 #include "tools.h"
 
 class CanvasDelegate;
+
 class Canvas : public QWidget
 {
     Q_OBJECT
@@ -15,9 +16,12 @@ public:
     void setDelegate(CanvasDelegate * delegate);
 
 signals:
-    
-public slots:
 
+public slots:
+    //void resizeEvent(QResizeEvent *);
+    void mousePressEvent(QMouseEvent * mouseevent);
+    void mouseMoveEvent(QMouseEvent * mouseevent);
+    void wheelEvent(QWheelEvent * wheelevent);
 private:
     CanvasDelegate * delegate;
 

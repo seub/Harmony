@@ -183,16 +183,16 @@ FenchelNielsenConstructor::FenchelNielsenConstructor(const std::vector<double> &
     int g = lengths.size()/3 + 1;
     genus = g;
 
-    int g1 = g/2;
-    int g2 = g - g1;
+    int gleft = g/2;
+    int gright = g - gleft;
 
-    for (int i1=0; i1<2*g1 - 1; i1++)
+    for (int i1=0; i1<2*gleft - 1; i1++)
     {
         lengthsAugmentedLeft.push_back(lengths[i1]);
         twistsAugmentedLeft.push_back(twists[i1]);
     }
 
-    for (int i2=2*g1-1; i2<3*g1 - 1; i2++)
+    for (int i2=2*gleft-1; i2<3*gleft - 1; i2++)
     {
         lengthsAugmentedLeft.push_back(lengths[i2]);
         twistsAugmentedLeft.push_back(twists[i2]);
@@ -204,24 +204,39 @@ FenchelNielsenConstructor::FenchelNielsenConstructor(const std::vector<double> &
     lengthsAugmentedRight.push_back(lengths[0]);
     twistsAugmentedRight.push_back(twists[0]);
 
-    for (int j1=0; j1<2*g2 - 2; j1++)
+    for (int j1=0; j1<2*gright - 2; j1++)
     {
-        lengthsAugmentedRight.push_back(lengths[j1 + 3*g1 - 1]);
-        twistsAugmentedRight.push_back(twists[j1 + 3*g1 - 1]);
+        lengthsAugmentedRight.push_back(lengths[j1 + 3*gleft - 1]);
+        twistsAugmentedRight.push_back(twists[j1 + 3*gleft - 1]);
     }
 
-    for (int j2=2*g2-2; j2<3*g2 - 2; j2++)
+    for (int j2=2*gright-2; j2<3*gright - 2; j2++)
     {
-        lengthsAugmentedRight.push_back(lengths[j2 + 3*g1 - 3]);
-        twistsAugmentedRight.push_back(twists[j2 + 3*g1 -3]);
-        lengthsAugmentedRight.push_back(lengths[j2 + 3*g1 - 3]);
-        twistsAugmentedRight.push_back(twists[j2 + 3*g1 -3]);
+        lengthsAugmentedRight.push_back(lengths[j2 + 3*gleft - 3]);
+        twistsAugmentedRight.push_back(twists[j2 + 3*gleft -3]);
+        lengthsAugmentedRight.push_back(lengths[j2 + 3*gleft - 3]);
+        twistsAugmentedRight.push_back(twists[j2 + 3*gleft -3]);
     }
 
     firstTwist = twists[0];
+    if(gleft>1)
+    {
+        LeftTree = new PantsTreeNode(1, lengthsAugmentedLeft, twistsAugmentedLeft, "c");
 
-    LeftTree = new PantsTreeNode(1, lengthsAugmentedLeft, twistsAugmentedLeft, "c");
-    RightTree = new PantsTreeNode(1, lengthsAugmentedRight, twistsAugmentedRight, "d");
+    }
+    else
+    {
+        LeftTree = new PantsTreeLeaf(1, lengthsAugmentedLeft, twistsAugmentedLeft, "c");
+    }
+
+    if(gright>1)
+    {
+        RightTree = new PantsTreeNode(1, lengthsAugmentedRight, twistsAugmentedRight, "d");
+    }
+    else
+    {
+        RightTree = new PantsTreeLeaf(1, lengthsAugmentedRight, twistsAugmentedRight, "d");
+    }
 
 }
 
@@ -264,8 +279,99 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
     IsomH2Representation rho(group);
     *group = DiscreteGroup(TopologicalSurface(genus, 0));
 
-    // something
+    std::string s;
+    generatorName ai, bi;
+    unsigned int gleft = genus/2;
+    unsigned int gright = genus - gleft;
+    std::vector<H2Isometry> rhoIsometry;
+    H2Isometry tempIsom;
+    unsigned int ops=1;
+    while(ops<gright)
+    {
+        ops*=2;
+    }
+    for(unsigned int i = ops ; i<2*gleft;i++)
+    {
+        s = Tools::convertToString(i);
+        bi = "c";
+        bi.append("s").append(s);
+        rhoU.getGeneratorImage(bi,tempIsom);
+        rhoIsometry.push_back(tempIsom.inverse());
+
+        s = Tools::convertToString(2*(i)+1);
+        ai = "c";
+        ai.append(s).append("up");
+        rhoU.getGeneratorImage(ai,tempIsom);
+        rhoIsometry.push_back(tempIsom);
+
+    }
+    for(unsigned int i = gleft ; i<ops;i++)
+    {
+        s = Tools::convertToString(i);
+        bi = "c";
+        bi.append("s").append(s);
+        rhoU.getGeneratorImage(bi,tempIsom);
+        rhoIsometry.push_back(tempIsom.inverse());
+
+        s = Tools::convertToString(2*(i)+1);
+        ai = "c";
+        ai.append(s).append("up");
+        rhoU.getGeneratorImage(ai,tempIsom);
+        rhoIsometry.push_back(tempIsom);
+
+    }
+    ops=1;
+    while(ops<gright)
+    {
+        ops*=2;
+    }
+
+    for(unsigned int i = ops ; i<2*gright;i++)
+    {
+
+        s = Tools::convertToString(i);
+        bi = "d";
+        bi.append("s").append(s);
+        if(!rhoU.getGeneratorImage(bi,tempIsom))
+        {
+            std::cout << "probleme" << std::endl;
+        }
+        rhoIsometry.push_back(tempIsom.inverse());
+
+        s = Tools::convertToString(2*(i)+1);
+        ai = "d";
+        ai.append(s).append("up");
+        if(!rhoU.getGeneratorImage(ai,tempIsom))
+        {
+            std::cout << "probleme" << std::endl;
+        }
+        rhoIsometry.push_back(tempIsom);
+    }
+    for(unsigned int i = gright ; i<ops;i++)
+    {
+
+        s = Tools::convertToString(i);
+        bi = "d";
+        bi.append("s").append(s);
+        if(!rhoU.getGeneratorImage(bi,tempIsom))
+        {
+            std::cout << "probleme" << std::endl;
+        }
+        rhoIsometry.push_back(tempIsom.inverse());
+
+        s = Tools::convertToString(2*(i)+1);
+        ai = "d";
+        ai.append(s).append("up");
+        if(!rhoU.getGeneratorImage(ai,tempIsom))
+        {
+            std::cout << "probleme" << std::endl;
+        }
+        rhoIsometry.push_back(tempIsom);
 
 
+    }
+    rho.generatorImages = rhoIsometry;
+    std::cout << rhoU <<std::endl;
+    std::cout <<rho << std::endl;
     return rho;
 }

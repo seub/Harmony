@@ -226,6 +226,18 @@ H2Geodesic operator*(const H2Isometry &f, const H2Geodesic &L)
     return H2Geodesic(w1,w2);
 }
 
+H2GeodesicArc operator*(const H2Isometry &f, const H2GeodesicArc &L)
+{
+    complex z1,z2,w1,w2;
+    L.getEndpointsInDiskModel(z1,z2);
+    w1 = f.u*((z1-f.a)/(1.0 - (conj(f.a)*z1)));
+    w2 = f.u*((z2-f.a)/(1.0 - (conj(f.a)*z2)));
+    H2Point p1, p2;
+    p1.setDiskCoordinate(w1);
+    p2.setDiskCoordinate(w2);
+    return H2GeodesicArc(p1,p2);
+}
+
 void H2Isometry::setByMappingEndpointsToPlusOrMinusI(const H2Geodesic &L)
 {
     complex a1,a2;
@@ -345,3 +357,9 @@ std::ostream & operator<<(std::ostream & out, const H2Isometry &f)
     return out;
 }
 
+H2Isometry H2Isometry::identity()
+{
+    H2Isometry identity;
+    identity.setIdentity();
+    return identity;
+}
