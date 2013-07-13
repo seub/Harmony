@@ -36,7 +36,10 @@ public:
     GroupRepresentation<SL2CMatrix> conjugate() const;
 
     //Specialization to GroupRepresentation<H2ISometry> (i.e. IsomH2Representation)
-    H2Polygon generatePolygon(const H2Point & basePoint) const;
+    H2Polygon generateFundamentalDomainForNormalizedSurfaceGroup(const H2Point & basePoint) const;
+    std::vector<H2Isometry> getSidePairingsForNormalizedFundamentalDomain() const;
+
+
 
     void setFenchelNielsenCoordinates(const std::vector<double> & lengths, const std::vector<double> & twists);
 

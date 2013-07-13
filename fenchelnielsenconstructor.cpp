@@ -256,16 +256,68 @@ IsomH2Representation FenchelNielsenConstructor::getUnnormalizedRepresentation(Di
     return IsomH2Representation::amalgamateOverInverse(group, rhoLeft, "c1down", tempRho, "d1down");
 }
 
-IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup *group)
+IsomH2Representation FenchelNielsenConstructor::getNormalizedRepresentationJonah(DiscreteGroup *group)
 {
     DiscreteGroup group1;
     IsomH2Representation rhoU = getUnnormalizedRepresentation(&group1);
+    std::vector<H2Isometry> generators;
 
-    IsomH2Representation rho(group);
+    int g1 = genus/2;
+    int g2 = genus - g1;
+    std::string s2i,si;
+    std::string ci,csi;
+    H2Isometry ai,bi;
+    for (int i=g1; i < 2*g1 ; i++)
+    {
+        s2i = Tools::convertToString(2*i+1);
+        si = Tools::convertToString(i);
+        ci.append("c").append(s2i).append("up");
+        csi.append("cs").append(si);
+
+        rhoU.getGeneratorImage(csi,ai);
+        generators.push_back(ai.inverse());
+
+        rhoU.getGeneratorImage(ci,bi);
+        generators.push_back(bi);
+
+        ci.clear();
+        csi.clear();
+    }
+    std::string di,dsi;
+    for (int i=g2; i < 2*g2 ; i++)
+    {
+        s2i = Tools::convertToString(2*i+1);
+        si = Tools::convertToString(i);
+        di.append("d").append(s2i).append("up");
+        dsi.append("ds").append(si);
+
+        rhoU.getGeneratorImage(dsi,ai);
+        generators.push_back(ai.inverse());
+
+        rhoU.getGeneratorImage(di,bi);
+        generators.push_back(bi);
+
+        di.clear();
+        dsi.clear();
+    }
+
+
     *group = DiscreteGroup(TopologicalSurface(genus, 0));
 
-    // something
-
-
+    IsomH2Representation rho(group,generators);
     return rho;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

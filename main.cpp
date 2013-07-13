@@ -22,15 +22,16 @@ int main(int argc, char *argv[])
     //H3canvasDelegate windows(60, 0,"Test");
     //windows.show();
 
-    int g = 2;
+    int g = 4;
     std::vector<double> lengths;
     std::vector<double> twists;
-    twists.resize(3*g-3);
-    twists[2] = 1.0;
-    //twists[4] = 1.0;
     for (int i=0; i<3*g-3; i++)
     {
-        lengths.push_back(2.5);
+        twists.push_back(0.0);
+    }
+    for (int i=0; i<3*g-3; i++)
+    {
+        lengths.push_back(2.0-.1*i);
     }
     /*clock_t t0, t1;
 
@@ -48,33 +49,33 @@ int main(int argc, char *argv[])
     //IsomH2Representation rho = IsomH2Representation::setFNCoordinatesUnnormalized(&Gamma, lengths, twists);
 
     DiscreteGroup Gamma;
-    IsomH2Representation rho(&Gamma);
-    rho.setFenchelNielsenCoordinates(lengths, twists);
-    //std::cout << rho << std::endl;
-    rho.checkRelations();
-
-
-    //FenchelNielsenConstructor fn(lengths,twists);
-    //DiscreteGroup group;
-    //IsomH2Representation rho2 = fn.getrepresentation(&group);
-
-    //std::cout << rho2 << std::endl;
-    //std::cout << rho2 << std::endl;
+    //IsomH2Representation rho(&Gamma);
+    //rho.setFenchelNielsenCoordinates(lengths, twists);
     //rho.checkRelations();
 
 
+    FenchelNielsenConstructor fn(lengths,twists);
+    DiscreteGroup group;
+
+    IsomH2Representation rho2 = fn.getUnnormalizedRepresentation(&group);
+    std::cout << rho2 << std::endl;
+    rho2.checkRelations();
+
+    IsomH2Representation rho3 = fn.getNormalizedRepresentationJonah(&group);
+    std::cout << rho3 << std::endl;
+    rho3.checkRelations();
 
     Canvas canvas;
     H2CanvasDelegate delegate(&canvas);
     canvas.setDelegate(&delegate);
-    //delegate.drawGeneratorAxes(rho2);
-    delegate.drawGeneratorAxes(rho, "red",1);
+    //delegate.drawGeneratorAxes(rho, "red",1);
     H2Point p;
     p.setDiskCoordinate(0.0);
-    H2Polygon P = rho.generatePolygon(p);
-    delegate.drawH2Polygon(P,"black",5);
+    H2Polygon P = rho3.generateFundamentalDomainForNormalizedSurfaceGroup(p);
+    delegate.drawH2Polygon(P,"blue",3);
+    delegate.drawListOfAxesOfIsometries(rho3.getSidePairingsForNormalizedFundamentalDomain(),"red",1);
 
-    std::vector<H2Isometry> generatorImages = rho.getGeneratorImages();
+/*    std::vector<H2Isometry> generatorImages = rho.getGeneratorImages();
     H2Isometry a1 = generatorImages[0];
     H2Isometry b1 = generatorImages[1];
     H2Isometry a1inv = generatorImages[0].inverse();
@@ -83,6 +84,7 @@ int main(int argc, char *argv[])
     H2Isometry b2 = generatorImages[3];
     H2Isometry a2inv = generatorImages[2].inverse();
     H2Isometry b2inv = generatorImages[3].inverse();
+    H2Geodesic L;
 
     delegate.drawH2Polygon(a1inv*P, "blue");
     delegate.drawH2Polygon(b1inv*a1inv*P, "blue");
@@ -91,9 +93,9 @@ int main(int argc, char *argv[])
     delegate.drawH2Polygon(a2inv*b1*a1*b1inv*a1inv*P, "blue");
     delegate.drawH2Polygon(b2inv*a2inv*b1*a1*b1inv*a1inv*P, "blue");
     delegate.drawH2Polygon(a2*b2inv*a2inv*b1*a1*b1inv*a1inv*P, "blue");
-    delegate.drawH2Polygon(b2*a2*b2inv*a2inv*b1*a1*b1inv*a1inv*P, "blue");
+*/
 
-    std::cout << b2*a2*b2inv*a2inv*b1*a1*b1inv*a1inv << std::endl;
+
 
     canvas.show();
 

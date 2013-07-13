@@ -74,11 +74,16 @@ void H2CanvasDelegate::drawH2Polygon(const H2Polygon &P, const QColor &color, in
 
 void H2CanvasDelegate::drawGeneratorAxes(const IsomH2Representation &rho, const QColor &color, int width)
 {
-    std::vector<H2Isometry> generators = rho.getGeneratorImages();
+    drawListOfAxesOfIsometries(rho.getGeneratorImages(), color, width);
+    return;
+}
+
+void H2CanvasDelegate::drawListOfAxesOfIsometries(const std::vector<H2Isometry> &isometries, const QColor &color, int width)
+{
     H2Geodesic L;
-    for(unsigned int j=0;j<generators.size();j++)
+    for(unsigned int j=0;j<isometries.size();j++)
     {
-        generators[j].axis(L);
+        isometries[j].axis(L);
         drawH2Geodesic(L, color, width);
     }
     return;

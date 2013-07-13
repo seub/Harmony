@@ -22,6 +22,7 @@ public:
 
     void drawExample();
     void drawGeneratorAxes(const IsomH2Representation & rho, const QColor & color = "black", int width = 2);
+    void drawListOfAxesOfIsometries(const std::vector<H2Isometry> & isometries, const QColor & color = "black", int width = 2);
 
 private:
 };
