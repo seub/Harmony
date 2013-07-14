@@ -113,37 +113,65 @@ template<> GroupRepresentation<SL2CMatrix> GroupRepresentation<SL2CMatrix>::conj
     return r;
 }
 
-template <> H2Polygon IsomH2Representation::generatePolygon(const H2Point &basePoint) const
+template <> H2Polygon IsomH2Representation::generateFundamentalDomainForNormalizedSurfaceGroup(const H2Point &basePoint) const
 {
     H2Polygon res;
     if (Gamma->isClosedSurfaceGroup())
     {
-        H2Point point = basePoint;
-        res.addVertex(point);
+        res.addVertex(basePoint);
         int genus = generatorImages.size()/2;
+        H2Isometry f;
+        f.setIdentity();
 
-        for (int i=genus-1; i>=0; i--)
+        for (int i = 0; i<genus; i++)
         {
-            point = generatorImages[2*i + 1].inverse()*point;
-            res.addVertex(point);
-            point = generatorImages[2*i].inverse()*point;
-            res.addVertex(point);
-            point = generatorImages[2*i + 1]*point;
-            res.addVertex(point);
-            point = generatorImages[2*i]*point;
-            res.addVertex(point);
+            f = f*generatorImages[2*i];
+            res.addVertex(f*basePoint);
+            f = f*generatorImages[2*i+1];
+            res.addVertex(f*basePoint);
+            f = f*generatorImages[2*i].inverse();
+            res.addVertex(f*basePoint);
+            f = f*generatorImages[2*i+1].inverse();
+            res.addVertex(f*basePoint);
         }
-        //std::cout << res << std::endl;
-
         res.removeLastVertex();
     }
     else
     {
         std::cout << "WARNING in RealRepresentation::generatePolygon: not a closed surface group representation" << std::endl;
     }
+    std::cout << res << std::endl;
     return res;
 }
 
+
+template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsForNormalizedFundamentalDomain() const
+{
+    std::vector<H2Isometry> output;
+    if (Gamma->isClosedSurfaceGroup())
+    {
+        int genus = generatorImages.size()/2;
+        H2Isometry store;
+        store.setIdentity();
+
+        for (int i = 0; i<genus; i++)
+        {
+            output.push_back(store*generatorImages[2*i]*
+                    generatorImages[2*i+1]*
+                    generatorImages[2*i].inverse()*store.inverse());
+            output.push_back(store*generatorImages[2*i]*generatorImages[2*i+1]*
+                    generatorImages[2*i].inverse()*
+                    generatorImages[2*i+1].inverse()*generatorImages[2*i].inverse()*store.inverse());
+            store = store*generatorImages[2*i]*generatorImages[2*i+1]*
+                    generatorImages[2*i].inverse()*generatorImages[2*i+1].inverse();
+        }
+    }
+    else
+    {
+        std::cout << "WARNING in RealRepresentation::generatePolygon: not a closed surface group representation" << std::endl;
+    }
+    return output;
+}
 
 
 

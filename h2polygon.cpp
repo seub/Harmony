@@ -95,7 +95,3 @@ std::ostream & operator<<(std::ostream & out, const H2Polygon &P)
     }
     return out;
 }
-
-
-
-

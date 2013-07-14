@@ -16,6 +16,7 @@ public:
     std::vector<DiscreteGroup> getPantsDecomposition() const;
 
 
+
 private:
     int genus;
     int numberOfPunctures;
