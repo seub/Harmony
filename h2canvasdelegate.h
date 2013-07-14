@@ -21,6 +21,7 @@ public:
     void drawH2Geodesic(const H2Geodesic & L, const QColor & color = "black", int width = 1);
     void drawH2GeodesicArc(const H2GeodesicArc &L, const QColor & color = "black", int width = 2);
     void drawH2Polygon(const H2Polygon & P, const QColor & color = "black", int width = 2);
+    void drawListOfAxesOfIsometries(const std::vector<H2Isometry> & isometries, const QColor & color = "black", int width = 2);
 
     void drawExample();
     void drawGeneratorAxes(const IsomH2Representation & rho, const QColor & color = "black", int width = 2);

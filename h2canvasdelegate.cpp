@@ -86,6 +86,17 @@ void H2CanvasDelegate::drawGeneratorAxes(const IsomH2Representation &rho, const 
     return;
 }
 
+void H2CanvasDelegate::drawListOfAxesOfIsometries(const std::vector<H2Isometry> &isometries, const QColor &color, int width)
+{
+    H2Geodesic L;
+    for(unsigned int j=0;j<isometries.size();j++)
+    {
+        isometries[j].axis(L);
+        drawH2Geodesic(L, color, width);
+    }
+    return;
+}
+
 void H2CanvasDelegate::redrawBuffer(const H2Isometry &mobius)
 {
     image->fill("white");
@@ -123,6 +134,7 @@ void H2CanvasDelegate::moveMouse(const int mouseX, const int mouseY)
     mobius = changemobius*savedmobius;
     redrawBuffer();
 }
+
 
 void H2CanvasDelegate::drawExample()
 {
