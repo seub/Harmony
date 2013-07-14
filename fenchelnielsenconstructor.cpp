@@ -293,30 +293,30 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
     for(unsigned int i = ops ; i<2*gleft;i++)
     {
         s = Tools::convertToString(i);
-        bi = "c";
-        bi.append("s").append(s);
-        rhoU.getGeneratorImage(bi,tempIsom);
+        ai = "c";
+        ai.append("s").append(s);
+        rhoU.getGeneratorImage(ai,tempIsom);
         rhoIsometry.push_back(tempIsom.inverse());
 
         s = Tools::convertToString(2*(i)+1);
-        ai = "c";
-        ai.append(s).append("up");
-        rhoU.getGeneratorImage(ai,tempIsom);
+        bi = "c";
+        bi.append(s).append("up");
+        rhoU.getGeneratorImage(bi,tempIsom);
         rhoIsometry.push_back(tempIsom);
 
     }
     for(unsigned int i = gleft ; i<ops;i++)
     {
         s = Tools::convertToString(i);
-        bi = "c";
-        bi.append("s").append(s);
-        rhoU.getGeneratorImage(bi,tempIsom);
+        ai = "c";
+        ai.append("s").append(s);
+        rhoU.getGeneratorImage(ai,tempIsom);
         rhoIsometry.push_back(tempIsom.inverse());
 
         s = Tools::convertToString(2*(i)+1);
-        ai = "c";
-        ai.append(s).append("up");
-        rhoU.getGeneratorImage(ai,tempIsom);
+        bi = "c";
+        bi.append(s).append("up");
+        rhoU.getGeneratorImage(bi,tempIsom);
         rhoIsometry.push_back(tempIsom);
 
     }
@@ -373,5 +373,57 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
     rho.generatorImages = rhoIsometry;
     std::cout << rhoU <<std::endl;
     std::cout <<rho << std::endl;
+    return rho;
+}
+
+IsomH2Representation FenchelNielsenConstructor::getNormalizedRepresentationJonah(DiscreteGroup *group)
+{
+    DiscreteGroup group1;
+    IsomH2Representation rhoU = getUnnormalizedRepresentation(&group1);
+    std::vector<H2Isometry> generators;
+
+    int g1 = genus/2;
+    int g2 = genus - g1;
+    std::string s2i,si;
+    std::string ci,csi;
+    H2Isometry ai,bi;
+    for (int i=g1; i < 2*g1 ; i++)
+    {
+        s2i = Tools::convertToString(2*i+1);
+        si = Tools::convertToString(i);
+        ci.append("c").append(s2i).append("up");
+        csi.append("cs").append(si);
+
+        rhoU.getGeneratorImage(csi,ai);
+        generators.push_back(ai.inverse());
+
+        rhoU.getGeneratorImage(ci,bi);
+        generators.push_back(bi);
+
+        ci.clear();
+        csi.clear();
+    }
+    std::string di,dsi;
+    for (int i=g2; i < 2*g2 ; i++)
+    {
+        s2i = Tools::convertToString(2*i+1);
+        si = Tools::convertToString(i);
+        di.append("d").append(s2i).append("up");
+        dsi.append("ds").append(si);
+
+        rhoU.getGeneratorImage(dsi,ai);
+        generators.push_back(ai.inverse());
+
+        rhoU.getGeneratorImage(di,bi);
+        generators.push_back(bi);
+
+        di.clear();
+        dsi.clear();
+    }
+
+
+    *group = DiscreteGroup(TopologicalSurface(genus, 0));
+
+    IsomH2Representation rho(group,generators);
     return rho;
 }

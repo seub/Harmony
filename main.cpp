@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     //H3canvasDelegate windows(60, 0,"Test");
     //windows.show();
 
-    int g = 6;
+    int g = 16;
     std::vector<double> lengths;
     std::vector<double> twists;
     twists.resize(3*g-3);
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
     delegate.drawH2Polygon(b2*P, "yellow");*/
 
 
-    //canvas.show();
+    canvas.show();
 
     std::cout << std::endl;
     return a.exec();

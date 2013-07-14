@@ -78,6 +78,7 @@ public:
 
     IsomH2Representation getUnnormalizedRepresentation(DiscreteGroup *group);
     IsomH2Representation getRepresentation(DiscreteGroup *group);
+    IsomH2Representation getNormalizedRepresentationJonah(DiscreteGroup *group);
 
 private:
     int genus;
