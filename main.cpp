@@ -53,24 +53,27 @@ int main(int argc, char *argv[])
     //std::cout << rho << std::endl;
     rho.checkRelations();*/
 
-
+    Canvas canvas;
+    H2CanvasDelegate delegate(&canvas);
     FenchelNielsenConstructor fn(lengths,twists);
     DiscreteGroup group;
     IsomH2Representation rho2 = fn.getRepresentation(&group);
-    //std::cout << rho2 << std::endl;
-    //std::cout << rho2 << std::endl;
     rho2.checkRelations();
 
 
 
-    Canvas canvas;
-    H2CanvasDelegate delegate(&canvas);
+
     canvas.setDelegate(&delegate);
     //delegate.drawGeneratorAxes(rho2);
-    DrawGeneratorAxes test(rho2, "red");
-    delegate.addElementToBuffer(test);
+    //DrawGeneratorAxes test(rho2, "red");
+    //delegate.addElementToBuffer(test);
     H2Isometry id;
     id.setDiskCoordinates(I, 0);
+
+
+    DrawListOfAxesOfIsometries isometriesList(rho2.generatorImages);
+    delegate.addElementToBuffer(isometriesList);
+
     delegate.redrawBuffer(id);
     //delegate.drawGeneratorAxes(rho2, "red");
     /*H2Point p;

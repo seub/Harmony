@@ -135,7 +135,6 @@ void H2CanvasDelegate::moveMouse(const int mouseX, const int mouseY)
     redrawBuffer();
 }
 
-
 void H2CanvasDelegate::drawExample()
 {
     H2Point p1, p2, p3, p4, p5, p6;
@@ -209,12 +208,12 @@ void H2CanvasDelegate::drawExample()
     return;
 }
 
-
 DrawH2Point::DrawH2Point(const H2Point & p, const  QColor  &color, int width, int identifiant):
     DrawElement(color, width, identifiant), p(p)
 {
 
 }
+
 void DrawH2Point::drawElement(H2CanvasDelegate *canvas)
 {
     canvas->drawH2Point(p, color, width);
@@ -262,4 +261,16 @@ DrawGeneratorAxes::DrawGeneratorAxes(const IsomH2Representation & rho, const QCo
 void DrawGeneratorAxes::drawElement(H2CanvasDelegate *canvas)
 {
     canvas->drawGeneratorAxes(rho, color, width);
+}
+
+DrawListOfAxesOfIsometries::DrawListOfAxesOfIsometries(const std::vector<H2Isometry> &isometries,
+                                                       const QColor &color, int width, int identifiant) :
+    DrawElement(color, width, identifiant), isometries(isometries)
+{
+
+}
+
+void DrawListOfAxesOfIsometries::drawElement(H2CanvasDelegate *canvas)
+{
+    canvas->drawListOfAxesOfIsometries(isometries,color,width);
 }

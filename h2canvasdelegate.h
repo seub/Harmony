@@ -8,7 +8,7 @@
 #include "h2polygon.h"
 #include "grouprepresentation.h"
 
-enum drawElementType {POINT, GEODESIC, GEODESICARC, POLYGON, GENERATORAXES};
+enum drawElementType {POINT, GEODESIC, GEODESICARC, POLYGON, GENERATORAXES, LISTOFAXES};
 
 class DrawElement;
 
@@ -98,5 +98,13 @@ private:
     IsomH2Representation rho;
 };
 
-
+class DrawListOfAxesOfIsometries : public DrawElement
+{
+public:
+    DrawListOfAxesOfIsometries(const std::vector<H2Isometry> & isometries, const QColor & color = "black", int width = 2, int identifiant = 0);
+    drawElementType getElementType() {return LISTOFAXES;}
+    void drawElement(H2CanvasDelegate *canvas);
+private:
+    std::vector<H2Isometry> isometries;
+};
 #endif // H2CANVASDELEGATE_H
