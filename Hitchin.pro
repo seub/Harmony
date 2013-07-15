@@ -37,7 +37,7 @@ SOURCES += main.cpp \
     h3canvasdelegate.cpp\
     h2idealpoint.cpp \
     fenchelnielsenconstructor.cpp \
-    drawelement.cpp
+    h2buffer.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -62,7 +62,7 @@ HEADERS += \
     h3canvasdelegate.h\
     h2idealpoint.h \
     fenchelnielsenconstructor.h \
-    drawelement.h
+    h2buffer.h
 
 OTHER_FILES += \
     TODO.txt

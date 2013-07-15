@@ -15,3 +15,11 @@ different coordinates for complex numbers?
 disk model : z = (1 - exp(u)) e^(it)
 upper half plane model : z = x + i e^u
 or maybe in disk model : angle + hyperbolic distance to the origin
+
+bug des lignes droites qui sautent
+
+réécrire mobiusage
+
+bazarder le getrepresentation de Biby
+
+relire ce que Biby a écrit
