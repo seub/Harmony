@@ -41,31 +41,14 @@ public:
 
 
 
-    void setFenchelNielsenCoordinates(const std::vector<double> & lengths, const std::vector<double> & twists);
-
     void setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
                                                 double length1, double length2, double length3, generatorName normalized);
 
     static IsomH2Representation amalgamateOverInverse(DiscreteGroup *outputDiscreteGroup,
                                                       const IsomH2Representation & rho1, const generatorName &a1,
-                                                      const generatorName &a1left,
-                                                      const IsomH2Representation & rho2,
-                                                      const generatorName &a1inverse,
-                                                      const generatorName &a1inverseleft,
-                                                      double twist);
-    static IsomH2Representation amalgamateOverInverse(DiscreteGroup *outputDiscreteGroup,
-                                                      const IsomH2Representation & rho1, const generatorName &a1,
-                                                      const IsomH2Representation & rho2,
-                                                      const generatorName &a1inverse,
-                                                      const H2Isometry & conjugator);
-    static IsomH2Representation amalgamateOverInverse(DiscreteGroup *outputDiscreteGroup,
-                                                      const IsomH2Representation & rho1, const generatorName &a1,
                                                       const IsomH2Representation & rho2,
                                                       const generatorName &a1inverse);
-    static IsomH2Representation doHNNextensionOverInverse(DiscreteGroup *outputDiscreteGroup, const IsomH2Representation &rho,
-                                                          const generatorName &a, const generatorName &aleft,
-                                                          const generatorName &ainverse, const generatorName &ainverseleft,
-                                                          const generatorName &newGeneratorName, double twist);
+
     static IsomH2Representation doHNNextensionOverInverse(DiscreteGroup *outputDiscreteGroup, const IsomH2Representation &rho,
                                                           const generatorName &a,
                                                           const generatorName &ainverse,
@@ -77,8 +60,6 @@ public:
     DiscreteGroup* Gamma;
     std::vector<T> generatorImages;
 
-    static IsomH2Representation setFNCoordinatesUnnormalized(DiscreteGroup *outputDiscreteGroup, const std::vector<double> & lengths, const std::vector<double> & twists);
-    static IsomH2Representation setFNCoordinatesUnnormalizedNew(DiscreteGroup *outputDiscreteGroup, const std::vector<double> & lengths, const std::vector<double> & twists);
     static bool checkCompatibilityOfFNcoordinates(const std::vector<double> & lengths, const std::vector<double> & twists);
     static std::vector<IsomH2Representation> getPantsRepresentations(const std::vector<double> & lengths,
                                                                      const std::vector<double> & twists,

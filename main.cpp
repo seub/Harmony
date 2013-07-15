@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     //H3canvasDelegate windows(60, 0,"Test");
     //windows.show();
 
-    int g = 5;
+    int g = 10;
     std::vector<double> lengths;
     std::vector<double> twists;
     twists.resize(3*g-3);
