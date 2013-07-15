@@ -53,7 +53,6 @@ void H2Buffer::addElement(const H2Isometry &isometry, const QColor &color, int w
 }
 
 
-
 void H2Buffer::addElement(const IsomH2Representation &rho, const QColor &color, int width)
 {
     std::vector<H2Isometry> generatorImages = rho.getGeneratorImages();
@@ -64,7 +63,16 @@ void H2Buffer::addElement(const IsomH2Representation &rho, const QColor &color, 
     return;
 }
 
-void H2Buffer::addElement(const std::vector<H2Isometry> V, const QColor &color, int width)
+void H2Buffer::addElement(const std::vector<H2Isometry> &V, const QColor &color, int width)
+{
+    for (unsigned int i=0; i<V.size(); i++)
+    {
+        addElement(V[i], color, width);
+    }
+    return;
+}
+
+void H2Buffer::addElement(const std::vector<H2Polygon> &V, const QColor &color, int width)
 {
     for (unsigned int i=0; i<V.size(); i++)
     {
