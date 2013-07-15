@@ -49,6 +49,13 @@ void H2Isometry::setTranslationLengthNormalized(double length)
     return;
 }
 
+void H2Isometry::setVerticalTranslation(double t)
+{
+    a = t > 0 ? - I*t : I*t;
+
+}
+
+
 void H2Isometry::setByMappingBoundaryAndInteriorPointsNormalized(const complex &boundaryPoint, const complex &interiorPoint)
 {
     u = - (1.0 - conj(interiorPoint)*boundaryPoint)/(boundaryPoint - interiorPoint);

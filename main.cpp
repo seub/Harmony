@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     DiscreteGroup Gamma(S);
 
     clock_t t0 = clock();
-    std::vector<word> words = Gamma.getWordsOfLengthEqualTo(8);
+    std::vector<word> words = Gamma.getWordsOfLengthEqualTo(4);
     clock_t t1 = clock();
 
     std::cout << "time spent: " << (t1 - t0)/(CLOCKS_PER_SEC*1.0) << std::endl;

@@ -29,6 +29,10 @@ public:
 
     void setTranslationAxisAndLength(const H2Geodesic & axis, double length);
     void setTranslationLengthNormalized(double length);
+
+    void setVerticalTranslation(double t);
+
+
     void setByMappingBoundaryAndInteriorPointsNormalized(const complex & boundaryPoint, const complex & interiorPoint);
     void setByMappingBoundaryAndInteriorPointsInDiskModel(const complex & boundaryPoint1, const complex & boundaryPoint2,
                                                const complex & interiorPoint1, const complex & interiorPoint2);
