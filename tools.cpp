@@ -33,6 +33,33 @@ double Tools::mod2Pi(double t)
     }
 }
 
+word Tools::contractWord(word &w)
+{
+    letter l;
+    word result;
+    int index = w[0].first;
+    int power=0;
+    for(int i=0; w.size(); i++)
+    {
+        if(w[i].first==index)
+        {
+            power+=w[i].second;
+        }
+        else
+        {
+            if (power!=0)
+            {
+                l.first = index;
+                l.second = power;
+                result.push_back(l);
+            }
+            index = w[i].first;
+            power = w[i].second;
+        }
+    }
+    return result;
+}
+
 std::vector<int> Tools::findStringInList(const std::string &s, const std::vector<std::string> & list)
 {
     std::vector<int> outputIndices;

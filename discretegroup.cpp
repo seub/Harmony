@@ -86,6 +86,39 @@ DiscreteGroup::DiscreteGroup(const TopologicalSurface &S)
     closedSurfaceGroup = (numberOfPunctures == 0);
 }
 
+/*std::vector<word> DiscreteGroup::getWordsOfLengthLessThan(int n)
+{
+    std::vector<word> words;
+    word w;
+    for (int j=0; j<n ; j++)
+    {
+
+    }
+}*/
+
+/*std::vector<word> DiscreteGroup::getWordsOfLengthEqualTo(int n)
+{
+    letter l;
+    word w;
+    w.resize(n);
+    std::vector<word> output;
+    int numberOfGenerators = generators.size();
+    int outputSize=2*numberOfGenerators;
+    for (int k=1; k<n ; k++)
+    {
+        outputSize *= (2*numberOfGenerators - 1);
+    }
+    output.resize(outputSize);
+
+    for (int i=0; i<n; i++)
+    {
+        for (int j=0; j<numberOfGenerators; j++)
+        {
+            l.first = generators[j];
+            l.second = 1;
+        }
+    }
+}*/
 
 std::vector<generatorName> DiscreteGroup::getGenerators() const
 {

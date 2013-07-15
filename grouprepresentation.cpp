@@ -156,6 +156,7 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsForNorm
 
         for (int i = 0; i<genus; i++)
         {
+
             output.push_back(store*generatorImages[2*i]*
                     generatorImages[2*i+1]*
                     generatorImages[2*i].inverse()*store.inverse());
