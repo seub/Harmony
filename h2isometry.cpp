@@ -40,7 +40,8 @@ void H2Isometry::setTranslationAxisAndLength(const H2Geodesic & axis, double len
 
 void H2Isometry::setTranslationLengthNormalized(double length)
 {
-    a = -I*sqrt((cosh(length) - 1.0)/(cosh(length) + 1.0));
+    double L = cosh(length);
+    a = -I*sqrt((L - 1.0)/(L + 1.0));
     if (length < 0)
     {
         a = -a;
@@ -51,8 +52,18 @@ void H2Isometry::setTranslationLengthNormalized(double length)
 
 void H2Isometry::setVerticalTranslation(double t)
 {
-    a = t > 0 ? - I*t : I*t;
+    a = - I*t;
+    u = 1.0;
+    return;
+}
 
+void H2Isometry::setVerticalTranslation(double t1, double t2)
+{
+    double t = (t1 + t2)/(1 + t1 * t2);
+
+    a = - I*t;
+    u = 1.0;
+    return;
 }
 
 
@@ -377,4 +388,19 @@ H2Isometry H2Isometry::identity()
     H2Isometry identity;
     identity.setIdentity();
     return identity;
+}
+
+double H2Isometry::geodesicNormalizer(const H2Geodesic &L)
+{
+    complex z1, z2;
+    L.getEndpointsInDiskModel(z1, z2);
+
+
+    double b = -2 * (imag(z1) + imag(z2)) / norm(1.0 - z1*z2);
+
+    double delta = sqrt(b*b - 1);
+
+    double t1 = -b -delta;
+    double t2 = -b + delta;
+    return std::abs(t1) < std::abs(t2) ? t1 : t2;
 }

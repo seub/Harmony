@@ -27,7 +27,7 @@ protected:
 class PantsTreeNode : public PantsTree
 {
 public:
-    PantsTreeNode(int index, const std::vector<double> & lengths, const std::vector<double> & twists, const std::string & genericCurveName);
+    PantsTreeNode(int index, const std::vector<double> & lengths, const std::vector<double> & twistsNormalized, const std::string & genericCurveName);
     ~PantsTreeNode();
 
     IsomH2Representation getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator, const std::string & genericCurveName);
@@ -41,7 +41,7 @@ private:
 class PantsTreeLeaf : public PantsTree
 {
 public:
-    PantsTreeLeaf(int index, const std::vector<double> & lengths, const std::vector<double> & twists, const std::string &genericCurveName);
+    PantsTreeLeaf(int index, const std::vector<double> & lengths, const std::vector<double> & twistsNormalized, const std::string &genericCurveName);
     ~PantsTreeLeaf();
     IsomH2Representation getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator, const std::string &genericCurveName);
 private:

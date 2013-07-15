@@ -25,3 +25,5 @@ add zoom keys
 bazarder le getrepresentation de Biby
 
 relire ce que Biby a écrit
+
+utiliser des lengths normalized

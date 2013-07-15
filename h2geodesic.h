@@ -16,7 +16,6 @@ public:
     H2Geodesic(const complex & z1, const complex & z2);
     H2Geodesic(const H2Point & p1, const H2Point & p2);
 
-
     void getEndpointsInDiskModel(complex & z1, complex & z2) const;
 
     bool isCircleInDiskModel() const;

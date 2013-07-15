@@ -31,6 +31,7 @@ public:
     void setTranslationLengthNormalized(double length);
 
     void setVerticalTranslation(double t);
+    void setVerticalTranslation(double t1, double t2);
 
 
     void setByMappingBoundaryAndInteriorPointsNormalized(const complex & boundaryPoint, const complex & interiorPoint);
@@ -68,8 +69,7 @@ public:
     static H2Isometry findConjugatorForGluing(const H2Isometry & f1, const H2Isometry & f1left,
                                      const H2Isometry & f2, const H2Isometry &f2left, double twist);
     static H2Isometry identity();
-
-
+    static double geodesicNormalizer(const H2Geodesic & L);
 
 private:
     complex u,a;
