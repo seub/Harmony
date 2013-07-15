@@ -79,6 +79,16 @@ template<typename T> T GroupRepresentation<T>::evaluateRepresentation(const word
     return store;
 }
 
+template<typename T> std::vector<T> GroupRepresentation<T>::evaluateRepresentation(const std::vector<word> & listOfWords)
+{
+    std::vector<T> output;
+    for(unsigned int i=0; i<listOfWords.size(); i++)
+    {
+        output.push_back(evaluateRepresentation(listOfWords[i]));
+    }
+    return output;
+}
+
 template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conj(const T & A) const
 {
     std::vector<T> list;

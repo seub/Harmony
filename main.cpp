@@ -22,12 +22,9 @@ int main(int argc, char *argv[])
     //H3canvasDelegate windows(60, 0,"Test");
     //windows.show();
 
-/*
-    int g = 3;
-=======
 
-    int g = 10;
->>>>>>> 63a62e2a9ef548c6bd736ac23214dc2bc4e86102
+    int g = 2;
+
     std::vector<double> lengths;
     std::vector<double> twists;
     twists.resize(3*g-3);
@@ -43,13 +40,8 @@ int main(int argc, char *argv[])
     IsomH2Representation rho = fn.getRepresentation(&group);
     rho.checkRelations();
 
-
-
-
     Canvas canvas;
     H2CanvasDelegate delegate(&canvas);canvas.setDelegate(&delegate);
-
-
 
     H2Point p;
     p.setDiskCoordinate(0.0);
@@ -62,18 +54,15 @@ int main(int argc, char *argv[])
 
 
     canvas.show();
-*/
+
     TopologicalSurface S(2,0);
     DiscreteGroup Gamma(S);
 
-    clock_t t0 = clock();
-    std::vector<word> words = Gamma.getWordsOfLengthEqualTo(8);
-    clock_t t1 = clock();
+    std::vector<word> words = Gamma.getWordsOfLengthEqualTo(4);
 
-    std::cout << "time spent: " << (t1 - t0)/(CLOCKS_PER_SEC*1.0) << std::endl;
+    std::vector<H2Isometry> listOfIsoms = rho.evaluateRepresentation(words);
 
-
-    std::cout << words.size() << std::endl;
+    delegate.buffer.addElement(listOfIsoms*P);
 
 
     std::cout << std::endl;
