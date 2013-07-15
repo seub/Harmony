@@ -140,7 +140,6 @@ template <> H2Polygon IsomH2Representation::generateFundamentalDomainForNormaliz
     {
         std::cout << "WARNING in RealRepresentation::generatePolygon: not a closed surface group representation" << std::endl;
     }
-    std::cout << res << std::endl;
     return res;
 }
 
