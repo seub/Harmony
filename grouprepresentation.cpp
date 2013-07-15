@@ -241,6 +241,56 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormali
     return output;
 }
 
+template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormalizedAroundVertices() const
+{
+    int genus = generatorImages.size()/2;
+    std::vector<H2Isometry> output,previous,storePrevious;
+    output.reserve(16*genus*genus);
+    H2Isometry store,ai,bi;
+    store.setIdentity();
+    previous = getSidePairingsNormalizedAroundVertex();
+    previous.push_back(store);
+    output = previous;
+
+    for (int i=0; i<genus-1; i++)
+    {
+        ai = generatorImages[2*i];
+        bi = generatorImages[2*i+1];
+
+        store = store*ai;
+        storePrevious = store*previous;
+        output.insert(output.end(), storePrevious.begin(), storePrevious.end());
+
+        store = store*bi;
+        storePrevious = store*previous;
+        output.insert(output.end(), storePrevious.begin(), storePrevious.end());
+
+        store = store*ai.inverse();
+        storePrevious = store*previous;
+        output.insert(output.end(), storePrevious.begin(), storePrevious.end());
+
+        store = store*bi.inverse();
+        storePrevious = store*previous;
+        output.insert(output.end(), storePrevious.begin(), storePrevious.end());
+
+    }
+    ai = generatorImages[2*genus-2];
+    bi = generatorImages[2*genus-1];
+
+    store = store*ai;
+    storePrevious = store*previous;
+    output.insert(output.end(), storePrevious.begin(), storePrevious.end());
+
+    store = store*bi;
+    storePrevious = store*previous;
+    output.insert(output.end(), storePrevious.begin(), storePrevious.end());
+
+    store = store*ai.inverse();
+    storePrevious = store*previous;
+    output.insert(output.end(), storePrevious.begin(), storePrevious.end());
+
+    return output;
+}
 
 template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
                                                                               double length1, double length2, double length3,
