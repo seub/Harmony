@@ -76,7 +76,7 @@ bool H2Geodesic::getCircleInDiskModel(Circle &output) const
     {
         complex center = 2.0*(z1*z2)/(z1 + z2);
         double radius = abs(z1 - z2)/abs(z1 + z2);
-        output.setCenterAndRadius(center,radius);
+        output = Circle(center, radius);
         return true;
     }
     else

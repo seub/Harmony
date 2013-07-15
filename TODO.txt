@@ -18,7 +18,9 @@ or maybe in disk model : angle + hyperbolic distance to the origin
 
 bug des lignes droites qui sautent
 
-réécrire mobiusage
+add rotations to mobiusing
+add shift (only keys ?)
+add zoom keys
 
 bazarder le getrepresentation de Biby
 

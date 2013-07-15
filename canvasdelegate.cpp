@@ -25,7 +25,7 @@ CanvasDelegate::CanvasDelegate(Canvas *canvas) : canvas(canvas)
     painter->eraseRect(0, 0, sizeX, sizeY);
     painter->setPen(*pen);
 
-    reset();
+    resetView();
 
     //std::cout << "Leaving CanvasDelegate::CanvasDelegate" << std::endl;
 }
@@ -53,7 +53,7 @@ void CanvasDelegate::rescale(int sizeX, int sizeY)
     return;
 }
 
-void CanvasDelegate::reset()
+void CanvasDelegate::resetView()
 {
     scaleX = sizeX/2.2;
     scaleY = sizeY/2.2;
@@ -176,7 +176,7 @@ void CanvasDelegate::drawArcCounterClockwise(const Circle &C, double angle1, dou
     return;
 }
 
-void CanvasDelegate::setzoom(const double &coeff, int centerX, int centerY)
+void CanvasDelegate::setZoom(const double &coeff, int centerX, int centerY)
 {
     originX = centerX -(centerX-originX)*coeff;
     originY = centerY -(centerY-originY)*coeff;

@@ -56,13 +56,21 @@ void H2Isometry::setByMappingBoundaryAndInteriorPointsNormalized(const complex &
     return;
 }
 
-void H2Isometry::setByMappingBoundaryAndInteriorPoints(const complex &boundaryPoint1, const complex &boundaryPoint2,
+void H2Isometry::setByMappingBoundaryAndInteriorPointsInDiskModel(const complex &boundaryPoint1, const complex &boundaryPoint2,
                                                        const complex &interiorPoint1, const complex &interiorPoint2)
 {
     H2Isometry f1,f2;
     f1.setByMappingBoundaryAndInteriorPointsNormalized(boundaryPoint1,interiorPoint1);
     f2.setByMappingBoundaryAndInteriorPointsNormalized(boundaryPoint2,interiorPoint2);
     *this = f2.inverse()*f1;
+    return;
+}
+
+void H2Isometry::setByMappingPointInDiskModelNormalized(const complex &zIn, const complex &zOut)
+{
+    double n1 = norm(zIn), n2 = norm(zOut);
+    u = 1.0;
+    a = (zIn*(1 - n2) - zOut*(1 - n1)) / (1 - n1*n2);
     return;
 }
 

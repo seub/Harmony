@@ -22,7 +22,7 @@ public:
     void drawGeneratorAxes(const IsomH2Representation & rho, const QColor & color = "black", int width = 2);
     void redrawBuffer(const H2Isometry &mobius = H2Isometry::identity());
     void setMouse(int mouseX, int mouseY);
-    void moveMouse(int mouseX, int mouseY);
+    void mouseMove(int mouseX, int mouseY);
     void stopMovingMouse(const int mouseX, const int mouseY);
 
 //private:

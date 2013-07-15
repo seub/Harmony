@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     //H3canvasDelegate windows(60, 0,"Test");
     //windows.show();
 
-    int g = 5;
+    int g = 3;
     std::vector<double> lengths;
     std::vector<double> twists;
     twists.resize(3*g-3);
@@ -41,22 +41,18 @@ int main(int argc, char *argv[])
 
 
 
-
     Canvas canvas;
     H2CanvasDelegate delegate(&canvas);canvas.setDelegate(&delegate);
-
-    H2Isometry id;
-    id.setIdentity();
-
-
 
 
 
     H2Point p;
-    p.setDiskCoordinate(0.8);
+    p.setDiskCoordinate(0.0);
     H2Polygon P = rho.generateFundamentalDomainForNormalizedSurfaceGroup(p);
     delegate.buffer.addElement(rho, "red");
     delegate.buffer.addElement(P, "blue", 2);
+    H2Isometry id;
+    id.setIdentity();
     delegate.redrawBuffer(id);
 
 

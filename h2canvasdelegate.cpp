@@ -115,15 +115,14 @@ void H2CanvasDelegate::setMouse(int mouseX, int mouseY)
     redrawBuffer();
 }
 
-void H2CanvasDelegate::moveMouse(int mouseX, int mouseY)
+void H2CanvasDelegate::mouseMove(int mouseX, int mouseY)
 {
-    H2Isometry changemobius;
-    complex oldMouse(PixelToComplexCoordinates(this->mouseX,this->mouseY));
-    complex newMouse(PixelToComplexCoordinates(mouseX,mouseY));
-    /*complex a((oldMouse.real()-newMouse.real())/(oldMouse.real()*newMouse.real()-1),
-              (newMouse.imag()-oldMouse.imag())/(oldMouse.imag()*newMouse.imag()+1));
-    changemobius.setDiskCoordinates(1.0,a);*/
-    changemobius.setByMappingBoundaryAndInteriorPoints(-1.0,-1.0,oldMouse,newMouse);
-    mobius = changemobius*savedMobius;
+    H2Isometry mobiusChange;
+    complex mouseOld(PixelToComplexCoordinates(this->mouseX,this->mouseY));
+    complex mouseNew(PixelToComplexCoordinates(mouseX,mouseY));
+
+    mobiusChange.setByMappingPointInDiskModelNormalized(mouseOld, mouseNew);
+    mobius = mobiusChange*savedMobius;
     redrawBuffer();
+    return;
 }
