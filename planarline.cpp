@@ -9,7 +9,8 @@ PlanarLine::PlanarLine(const complex & p1, const complex & p2)
     if (p1 == p2)
     {
         std::cout << "Planar Line won't draw a line from a point to itself!" << std::endl;
-        throw(0);
+        //throw(0);
+        return;
     }
     point = p1;
     direction = p1 - p2;

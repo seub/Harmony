@@ -127,6 +127,14 @@ void CanvasDelegate::drawCircle(const Circle &C, const QColor &color, int width)
 
 void CanvasDelegate::drawArcCounterClockwise(const complex &center, double radius, double angle1, double angle2, const QColor &color, int width)
 {
+    double angleMin = M_PI/(180*16);
+    if(radius*scaleX*angleMin>1.0)
+    {
+        complex z1 = center + radius*exp(angle1*I);
+        complex z2 = center + radius*exp(angle2*I);
+        drawSegment(z1,z2,color,width);
+        return;
+    }
     int x1, y1, x2, y2;
     complex firstCorner = center + radius*(-1.0 + 1.0*I);
     complex secondCorner = center + radius*(1.0 - 1.0*I);
@@ -135,8 +143,8 @@ void CanvasDelegate::drawArcCounterClockwise(const complex &center, double radiu
     pen->setColor(color);
     pen->setWidth(width);
     painter->setPen(*pen);
-    double QtAngle1 = Tools::intRound(Tools::mod2Pi(angle1)*16*360/(2*M_PI));
-    double QtSpan = Tools::intRound(Tools::mod2Pi(angle2 - angle1)*16*360/(2*M_PI));
+    int QtAngle1 = Tools::intRound(Tools::mod2Pi(angle1)*16*360/(2*M_PI));
+    int QtSpan = Tools::intRound(Tools::mod2Pi(angle2 - angle1)*16*360/(2*M_PI));
     painter->drawArc(x1, y1, x2 - x1, y2 - y1, QtAngle1, QtSpan);
     return;
 }

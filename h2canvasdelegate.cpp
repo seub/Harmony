@@ -29,17 +29,18 @@ void H2CanvasDelegate::drawH2Point(const H2Point &p, const QColor &color, int wi
 
 void H2CanvasDelegate::drawH2Geodesic(const H2Geodesic &L, const QColor &color, int width)
 {
-    if ((mobius*L).isCircleInDiskModel())
+    H2Geodesic tempGeodesic =  mobius*L;
+    if (tempGeodesic.isCircleInDiskModel())
     {
         Circle C;
         double angle1, angle2;
-        (mobius*L).getCircleAndAnglesInDiskModel(C, angle1, angle2);
+        tempGeodesic.getCircleAndAnglesInDiskModel(C, angle1, angle2);
         drawSmallerArc(C, angle1, angle2, color, width);
     }
     else
     {
         complex z1, z2;
-        (mobius*L).getEndpointsInDiskModel(z1, z2);
+        tempGeodesic.getEndpointsInDiskModel(z1, z2);
         drawSegment(z1, z2, color, width);
     }
     return;
@@ -47,17 +48,18 @@ void H2CanvasDelegate::drawH2Geodesic(const H2Geodesic &L, const QColor &color, 
 
 void H2CanvasDelegate::drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color, int width)
 {
-    if ((mobius*L).isCircleArcInDiskModel())
+    H2GeodesicArc tempGeodesic =  mobius*L;
+    if(tempGeodesic.isCircleArcInDiskModel())
     {
         Circle C;
         double angle1, angle2;
-        (mobius*L).getCircleAndAnglesInDiskModel(C, angle1, angle2);
+        tempGeodesic.getCircleAndAnglesInDiskModel(C, angle1, angle2);
         drawSmallerArc(C, angle1, angle2, color, width);
     }
     else
     {
         complex z1, z2;
-        (mobius*L).getEndpointsInDiskModel(z1, z2);
+        tempGeodesic.getEndpointsInDiskModel(z1, z2);
         drawSegment(z1, z2, color, width);
     }
     return;
