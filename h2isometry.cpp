@@ -254,6 +254,17 @@ std::vector<H2Polygon> operator *(const std::vector<H2Isometry> & listOfIsoms, c
     return listOfPolys;
 }
 
+std::vector<H2Isometry> operator *(const H2Isometry & f, const std::vector<H2Isometry> & listOfIsoms)
+{
+    std::vector<H2Isometry> output;
+    output.reserve(listOfIsoms.size());
+    for (unsigned int i =0; i<listOfIsoms.size(); i++)
+    {
+        output.push_back(f*listOfIsoms[i]);
+    }
+    return output;
+}
+
 H2Geodesic operator*(const H2Isometry &f, const H2Geodesic &L)
 {
     complex z1,z2,w1,w2;

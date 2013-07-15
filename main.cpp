@@ -55,12 +55,8 @@ int main(int argc, char *argv[])
     //delegate.buffer.addElement(rho, "red");
     delegate.buffer.addElement(P, "blue", 3);
 
-    std::vector<H2Isometry> listOfIsoms1 = rho.getSidePairingsNormalizedToDepth(2);
-    std::vector<H2Isometry> listOfIsoms2 = rho.getSidePairingsNormalizedAroundVertex();
-    std::vector<H2Isometry> listOfIsoms;
-    listOfIsoms.reserve( listOfIsoms1.size() + listOfIsoms2.size() );
-    listOfIsoms.insert( listOfIsoms.end(), listOfIsoms1.begin(), listOfIsoms1.end() );
-    listOfIsoms.insert( listOfIsoms.end(), listOfIsoms2.begin(), listOfIsoms2.end() );
+//    std::vector<H2Isometry> listOfIsoms = rho.getSidePairingsNormalizedToDepth(2);
+    std::vector<H2Isometry> listOfIsoms = rho.getSidePairingsNormalizedAroundVertices();
 
     std::vector<H2Polygon> listOfPolys = listOfIsoms*P;
     delegate.buffer.addElement(listOfPolys);
