@@ -89,7 +89,7 @@ template<typename T> std::vector<T> GroupRepresentation<T>::evaluateRepresentati
     return output;
 }
 
-template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conj(const T & A) const
+template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conjugate(const T & A) const
 {
     std::vector<T> list;
     for (unsigned int i=0;i<generatorImages.size();i++)
@@ -112,12 +112,12 @@ template<typename T> void GroupRepresentation<T>::rotateGenerators(int shift)
     return;
 }
 
-template<> GroupRepresentation<SL2CMatrix> GroupRepresentation<SL2CMatrix>::conjugate() const
+template<> GroupRepresentation<SL2CMatrix> GroupRepresentation<SL2CMatrix>::bar() const
 {
     std::vector<SL2CMatrix> list(generatorImages.size());
     for (unsigned int i=0;i<=generatorImages.size();i++)
     {
-        list[i] = generatorImages[i].conjugate();
+        list[i] = generatorImages[i].bar();
     }
     GroupRepresentation<SL2CMatrix> r(Gamma,list);
     return r;
@@ -302,6 +302,69 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
     else if (normalized == c2)
     {
         setNormalizedPairOfPantsRepresentation(c3, c1, c2, length3, length1, length2, c2);
+        rotateGenerators(2);
+        return;
+    }
+    else
+    {
+        std::cout << "ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: ";
+        std::cout << "Normalizer has to be one of the generators!" << std::endl;
+        return;
+    }
+}
+
+
+template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
+                                                                              double C1, double C2, double C3,
+                                                                              double S1, double S2, double S3,
+                                                                              generatorName normalized)
+{
+    if (S1<0 || S2 < 0 || S3 < 0)
+    {
+        std::cout << "ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: you gave me a negative length (seriously?)"
+                  << std::endl;
+    }
+    if (normalized == c3)
+    {
+        Gamma->setPairOfPants(c1, c2, c3);
+
+        generatorImages.clear();
+        H2Isometry f;
+
+        complex W, Z, A, U;
+
+        Z = complex(-C1*S3 , -C3*C1 - C2*C3*C3 + S2*S3*S3);
+        W = complex(-C3*S2*S3 + S3*C1 + S3*C2*C3 , -C1*C3 - C2);
+        U = Z/conj(Z);
+        A = W/Z;
+
+        f.setDiskCoordinates(U, A);
+        generatorImages.push_back(f);
+
+        Z = complex(-C2*S3 , -C1-C2*C3);
+        W = complex(-S2*S3 , -C2*C3-C1);
+        U = Z/conj(Z);
+        A = W/Z;
+
+        f.setDiskCoordinates(U, A);
+        generatorImages.push_back(f);
+
+        U = 1.0;
+        A = complex(0.0, -S3/C3);
+
+        f.setDiskCoordinates(U, A);
+        generatorImages.push_back(f);
+        return;
+    }
+    else if (normalized == c1)
+    {
+        setNormalizedPairOfPantsRepresentation(c2, c3, c1, C2, C3, C1, S2, S3, S1, c1);
+        rotateGenerators(1);
+        return;
+    }
+    else if (normalized == c2)
+    {
+        setNormalizedPairOfPantsRepresentation(c3, c1, c2, C3, C1, C2, S3, S1, S2, c2);
         rotateGenerators(2);
         return;
     }

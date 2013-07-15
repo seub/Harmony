@@ -28,12 +28,12 @@ public:
 
     std::vector<T> evaluateRepresentation(const std::vector<word> & listOfWords);
 
-    GroupRepresentation<T> conj(const T & A) const;
+    GroupRepresentation<T> conjugate(const T & A) const;
 
 
 
     // Specialization to GroupRepresentation<SL2CMatrix>
-    GroupRepresentation<SL2CMatrix> conjugate() const;
+    GroupRepresentation<SL2CMatrix> bar() const;
 
     //Specialization to GroupRepresentation<H2ISometry> for closed surface group (i.e. IsomH2Representation)
     H2Polygon generateFundamentalDomainForNormalizedSurfaceGroup(const H2Point & basePoint) const;
@@ -45,6 +45,11 @@ public:
 
     void setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
                                                 double length1, double length2, double length3, generatorName normalized);
+
+    void setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
+                                                double C1, double C2, double C3,
+                                                double S1, double S2, double S3,
+                                                generatorName normalized);
 
     static IsomH2Representation amalgamateOverInverse(DiscreteGroup *outputDiscreteGroup,
                                                       const IsomH2Representation & rho1, const generatorName &a1,

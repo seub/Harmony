@@ -75,14 +75,14 @@ SL2CMatrix SL2CMatrix::transpose() const
     return SL2CMatrix(a,c,b,d);
 }
 
-SL2CMatrix SL2CMatrix::conjugate() const
+SL2CMatrix SL2CMatrix::bar() const
 {
     return SL2CMatrix(conj(a),conj(b),conj(c),conj(d));
 }
 
 SL2CMatrix SL2CMatrix::adjoint() const
 {
-    return this->transpose().conjugate();
+    return this->transpose().bar();
 }
 
 void SL2CMatrix::getRealPart(SL2RMatrix & output) const

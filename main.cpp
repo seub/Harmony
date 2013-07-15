@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     //windows.show();
 
 
-    int g = 3;
+    int g = 10;
 
     std::vector<double> lengths;
     std::vector<double> twists;
@@ -52,10 +52,10 @@ int main(int argc, char *argv[])
     H2Point p;
     p.setDiskCoordinate(0.0);
     H2Polygon P = rho.generateFundamentalDomainForNormalizedSurfaceGroup(p);
-    //delegate.buffer.addElement(rho, "red");
+    delegate.buffer.addElement(rho, "red");
     delegate.buffer.addElement(P, "blue", 3);
 
-    std::vector<H2Isometry> listOfIsoms1 = rho.getSidePairingsNormalizedToDepth(2);
+    /*std::vector<H2Isometry> listOfIsoms1 = rho.getSidePairingsNormalizedToDepth(2);
     std::vector<H2Isometry> listOfIsoms2 = rho.getSidePairingsNormalizedAroundVertex();
     std::vector<H2Isometry> listOfIsoms;
     listOfIsoms.reserve( listOfIsoms1.size() + listOfIsoms2.size() );
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     listOfIsoms.insert( listOfIsoms.end(), listOfIsoms2.begin(), listOfIsoms2.end() );
 
     std::vector<H2Polygon> listOfPolys = listOfIsoms*P;
-    delegate.buffer.addElement(listOfPolys);
+    delegate.buffer.addElement(listOfPolys);*/
 
     H2Isometry id;
     id.setIdentity();

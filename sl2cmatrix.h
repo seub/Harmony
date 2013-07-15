@@ -32,7 +32,7 @@ public:
 
     SL2CMatrix inverse() const;
     SL2CMatrix transpose() const;
-    SL2CMatrix conjugate() const;
+    SL2CMatrix bar() const;
     SL2CMatrix adjoint() const;
 
 

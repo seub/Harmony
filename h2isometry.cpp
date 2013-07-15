@@ -336,6 +336,8 @@ void H2Isometry::setByNormalizingPairWithChosenNearestPointToAxis(const H2Isomet
     return;
 }
 
+//void H2Isometry::setByNormalizingPairOnLeftHandSide(const H2Isometry &f1inverse, const H2Isometry &f2inverse)
+
 H2Isometry H2Isometry::findConjugatorForGluing(const H2Isometry & f1, const H2Isometry & f1left,
                                            const H2Isometry & f2, const H2Isometry &f2left, double twist)
 {
