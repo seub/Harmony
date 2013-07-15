@@ -63,3 +63,12 @@ void H2Buffer::addElement(const IsomH2Representation &rho, const QColor &color, 
     }
     return;
 }
+
+void H2Buffer::addElement(const std::vector<H2Isometry> V, const QColor &color, int width)
+{
+    for (unsigned int i=0; i<V.size(); i++)
+    {
+        addElement(V[i], color, width);
+    }
+    return;
+}

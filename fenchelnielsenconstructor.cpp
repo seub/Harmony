@@ -109,7 +109,7 @@ PantsTreeLeaf::~PantsTreeLeaf()
     delete rho;
 }
 
-IsomH2Representation  PantsTreeLeaf::getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator, const std::string & genericCurveName)
+IsomH2Representation PantsTreeLeaf::getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator, const std::string & genericCurveName)
 {
     std::string s = Tools::convertToString(index);
     generatorName stableLetter;
@@ -119,62 +119,6 @@ IsomH2Representation  PantsTreeLeaf::getRepresentation(DiscreteGroup *group, H2I
     return (IsomH2Representation::doHNNextensionOverInverse(group,*rho,generators[2],
             generators[1],stableLetter,hNNconjugator)).conj(totalConjugator);
 }
-
-/*PantsTreeRoot::PantsTreeRoot(const std::vector<double> &lengths, const std::vector<double> &twists) : PantsTree(0, lengths, true)
-{
-    index =0;
-
-    double Lupleft = lengths[0];
-    double Lupright = lengths[0];
-    double Ldown = lengths[1];
-
-    rho->setNormalizedPairOfPantsRepresentation("c1up", "c0right", "c0left", Ldown, Lupright, Lupleft, "c1up");
-
-    int N = lengths.size();
-    if(4 >= N)
-    {
-        child = new PantsTreeLeaf(1, lengths, twists);
-    }
-    else
-    {
-        child = new PantsTreeNode(1, lengths, twists);
-    }
-
-    std::vector<H2Isometry> downrightleft = rho->getGeneratorImages();
-    H2Isometry fDown = downrightleft[0], fRight = downrightleft[1], fLeft= downrightleft[2];
-    hNNconjugator = H2Isometry::findConjugatorForGluing(fLeft, fRight, fRight, fDown, twists[0]);
-
-
-
-
-    conjugator.setDiskCoordinates(-1.0, 0.0);
-    H2Isometry twister;
-    twister.setTranslationLengthNormalized(-twists[1] + child->twistCorrection);
-    conjugator = twister * conjugator;
-
-    //std::cout << *rho << std::endl;
-}
-
-PantsTreeRoot::~PantsTreeRoot()
-{
-    delete child;
-    delete rho;
-}
-
-IsomH2Representation  PantsTreeRoot::getRepresentation(DiscreteGroup *group, H2Isometry &)
-{
-    std::string s = Tools::convertToString(index);
-    generatorName stableLetter;
-    stableLetter.append("b").append(s);
-    std::vector<generatorName> generators = Gamma.getGenerators();
-    DiscreteGroup tempGroup, childGroup;
-    IsomH2Representation tempRho = (IsomH2Representation::doHNNextensionOverInverse(&tempGroup,*rho,generators[2],generators[1],
-            stableLetter,hNNconjugator)).conj(conjugator);
-    H2Isometry id;
-    id.setIdentity();
-    IsomH2Representation childRho = child->getRepresentation(&childGroup,id);
-    return IsomH2Representation::amalgamateOverInverse(group,tempRho,"c1up",childRho,"c1down");
-}*/
 
 FenchelNielsenConstructor::FenchelNielsenConstructor(const std::vector<double> &lengths, const std::vector<double> &twists)
 {
@@ -254,21 +198,20 @@ IsomH2Representation FenchelNielsenConstructor::getUnnormalizedRepresentation(Di
 
     DiscreteGroup GammaLeft, GammaRight;
 
-    IsomH2Representation rhoLeft = LeftTree->getRepresentation(&GammaLeft, id, "c");
-    IsomH2Representation rhoRight = RightTree->getRepresentation(&GammaRight, id, "d");
 
 
     H2Isometry twister;
     twister.setTranslationLengthNormalized(firstTwist + LeftTree->twistCorrection - RightTree->twistCorrection);
 
-    DiscreteGroup tempGamma;
-    IsomH2Representation tempRho(&tempGamma);
     H2Isometry halfTurn;
     halfTurn.setDiskCoordinates(-1.0, 0.0);
-    tempRho = rhoRight.conj(halfTurn*twister);
+    H2Isometry totalConjugatorRight = halfTurn*twister;
+
+    IsomH2Representation rhoLeft = LeftTree->getRepresentation(&GammaLeft, id, "c");
+    IsomH2Representation rhoRight = RightTree->getRepresentation(&GammaRight, totalConjugatorRight, "d");
 
 
-    return IsomH2Representation::amalgamateOverInverse(group, rhoLeft, "c1down", tempRho, "d1down");
+    return IsomH2Representation::amalgamateOverInverse(group, rhoLeft, "c1down", rhoRight, "d1down");
 }
 
 IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup *group)
@@ -285,12 +228,14 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
     unsigned int gright = genus - gleft;
     std::vector<H2Isometry> rhoIsometry;
     H2Isometry tempIsom;
-    unsigned int ops=1;
-    while(ops<gright)
+
+    unsigned int powerOfTwo=1;
+
+    while(powerOfTwo<gright)
     {
-        ops*=2;
+        powerOfTwo*=2;
     }
-    for(unsigned int i = ops ; i<2*gleft;i++)
+    for(unsigned int i = powerOfTwo ; i<2*gleft;i++)
     {
         s = Tools::convertToString(i);
         ai = "c";
@@ -305,7 +250,7 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
         rhoIsometry.push_back(tempIsom);
 
     }
-    for(unsigned int i = gleft ; i<ops;i++)
+    for(unsigned int i = gleft ; i<powerOfTwo;i++)
     {
         s = Tools::convertToString(i);
         ai = "c";
@@ -320,13 +265,13 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
         rhoIsometry.push_back(tempIsom);
 
     }
-    ops=1;
-    while(ops<gright)
+    powerOfTwo=1;
+    while(powerOfTwo<gright)
     {
-        ops*=2;
+        powerOfTwo*=2;
     }
 
-    for(unsigned int i = ops ; i<2*gright;i++)
+    for(unsigned int i = powerOfTwo ; i<2*gright;i++)
     {
 
         s = Tools::convertToString(i);
@@ -334,7 +279,7 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
         bi.append("s").append(s);
         if(!rhoU.getGeneratorImage(bi,tempIsom))
         {
-            std::cout << "probleme" << std::endl;
+            std::cout << "problem" << std::endl;
         }
         rhoIsometry.push_back(tempIsom.inverse());
 
@@ -343,11 +288,11 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
         ai.append(s).append("up");
         if(!rhoU.getGeneratorImage(ai,tempIsom))
         {
-            std::cout << "probleme" << std::endl;
+            std::cout << "problem" << std::endl;
         }
         rhoIsometry.push_back(tempIsom);
     }
-    for(unsigned int i = gright ; i<ops;i++)
+    for(unsigned int i = gright ; i<powerOfTwo;i++)
     {
 
         s = Tools::convertToString(i);
@@ -355,7 +300,7 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
         bi.append("s").append(s);
         if(!rhoU.getGeneratorImage(bi,tempIsom))
         {
-            std::cout << "probleme" << std::endl;
+            std::cout << "problem" << std::endl;
         }
         rhoIsometry.push_back(tempIsom.inverse());
 
@@ -364,16 +309,12 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
         ai.append(s).append("up");
         if(!rhoU.getGeneratorImage(ai,tempIsom))
         {
-            std::cout << "probleme" << std::endl;
+            std::cout << "problem" << std::endl;
         }
         rhoIsometry.push_back(tempIsom);
 
 
     }
     rho.generatorImages = rhoIsometry;
-    //std::cout << rhoU <<std::endl;
-    //std::cout <<rho << std::endl;
     return rho;
 }
-
-

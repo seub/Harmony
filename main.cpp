@@ -21,8 +21,13 @@ int main(int argc, char *argv[])
 
     //H3canvasDelegate windows(60, 0,"Test");
     //windows.show();
+
 /*
     int g = 3;
+=======
+
+    int g = 10;
+>>>>>>> 63a62e2a9ef548c6bd736ac23214dc2bc4e86102
     std::vector<double> lengths;
     std::vector<double> twists;
     twists.resize(3*g-3);
