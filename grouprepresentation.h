@@ -26,7 +26,7 @@ public:
     void rotateGenerators(int shift);
     DiscreteGroup getDiscreteGroup() const;
 
-    std::vector<T> evaluateRepresentation(const std::vector<word> & listOfWwords);
+    std::vector<T> evaluateRepresentation(const std::vector<word> & listOfWords);
 
     GroupRepresentation<T> conj(const T & A) const;
 
@@ -35,9 +35,11 @@ public:
     // Specialization to GroupRepresentation<SL2CMatrix>
     GroupRepresentation<SL2CMatrix> conjugate() const;
 
-    //Specialization to GroupRepresentation<H2ISometry> (i.e. IsomH2Representation)
+    //Specialization to GroupRepresentation<H2ISometry> for closed surface group (i.e. IsomH2Representation)
     H2Polygon generateFundamentalDomainForNormalizedSurfaceGroup(const H2Point & basePoint) const;
     std::vector<H2Isometry> getSidePairingsForNormalizedFundamentalDomain() const;
+    std::vector<H2Isometry> getSidePairingsNormalizedToDepth(int n) const;
+    std::vector<H2Isometry> getSidePairingsNormalizedAroundVertex() const;
 
 
 

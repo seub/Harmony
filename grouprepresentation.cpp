@@ -148,7 +148,8 @@ template <> H2Polygon IsomH2Representation::generateFundamentalDomainForNormaliz
     }
     else
     {
-        std::cout << "WARNING in RealRepresentation::generatePolygon: not a closed surface group representation" << std::endl;
+        std::cout << "WARNING in IsomH2Representation::generateFundmentalDomainForNormalizedSurfaceGroup:"
+                     " not a closed surface group representation" << std::endl;
     }
     return res;
 }
@@ -160,17 +161,21 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsForNorm
     if (Gamma->isClosedSurfaceGroup())
     {
         int genus = generatorImages.size()/2;
-        H2Isometry store;
+        H2Isometry store,extra;
         store.setIdentity();
 
         for (int i = 0; i<genus; i++)
         {
-            output.push_back(store*generatorImages[2*i]*
+            extra = store*generatorImages[2*i]*
                     generatorImages[2*i+1]*
-                    generatorImages[2*i].inverse()*store.inverse());
-            output.push_back(store*generatorImages[2*i]*generatorImages[2*i+1]*
+                    generatorImages[2*i].inverse()*store.inverse();
+            output.push_back(extra);
+            output.push_back(extra.inverse());
+            extra = store*generatorImages[2*i]*generatorImages[2*i+1]*
                     generatorImages[2*i].inverse()*
-                    generatorImages[2*i+1].inverse()*generatorImages[2*i].inverse()*store.inverse());
+                    generatorImages[2*i+1].inverse()*generatorImages[2*i].inverse()*store.inverse();
+            output.push_back(extra);
+            output.push_back(extra.inverse());
             store = store*generatorImages[2*i]*generatorImages[2*i+1]*
                     generatorImages[2*i].inverse()*generatorImages[2*i+1].inverse();
         }
@@ -182,7 +187,59 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsForNorm
     return output;
 }
 
+template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormalizedToDepth(int n) const
+{
+    int genus = generatorImages.size()/2;
+    std::vector<H2Isometry> output;
+    output.reserve(Tools::exponentiation(4*genus,n));
+    H2Isometry f;
+    if (n<=0)
+    {
+        std::cout << "Error in IsomH2Representation::getSidePairingsNormalizedToDepth: Side pairings of 'negative'' depth" << std::endl;
+        throw(0);
+    }
+    if (n==1)
+    {
+        output = getSidePairingsForNormalizedFundamentalDomain();
+        return output;
+    }
+    std::vector<H2Isometry> previous = getSidePairingsNormalizedToDepth(n-1);
+    output = previous;
 
+    for (unsigned int j=0; j<previous.size(); j++)
+    {
+        f = previous[j];
+        for (unsigned int k=0; k<previous.size(); k++)
+        {
+            output.push_back(f*previous[k]);
+        }
+    }
+    return output;
+}
+
+template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormalizedAroundVertex() const
+{
+    int genus = generatorImages.size()/2;
+    std::vector<H2Isometry> output;
+    output.reserve(4*genus);
+    H2Isometry f,store,ai,bi;
+    store.setIdentity();
+    for (int i=0; i<genus; i++)
+    {
+        ai = generatorImages[2*i];
+        bi = generatorImages[2*i+1];
+        store = store*ai;
+        output.push_back(store.inverse());
+        store = store*bi;
+        output.push_back(store.inverse());
+        store = store*ai.inverse();
+        output.push_back(store.inverse());
+        store = store*bi.inverse();
+        output.push_back(store.inverse());
+    }
+    output.pop_back();
+    return output;
+}
 
 
 template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
@@ -344,10 +401,10 @@ template <> IsomH2Representation IsomH2Representation::amalgamateOverInverse(Dis
 
 
 template <> IsomH2Representation IsomH2Representation::doHNNextensionOverInverse(DiscreteGroup *outputDiscreteGroup, const IsomH2Representation &rho,
-                                                          const generatorName &a,
-                                                          const generatorName &ainverse,
-                                                          const generatorName &newGeneratorName,
-                                                          const H2Isometry & conjugator)
+                                                                                 const generatorName &a,
+                                                                                 const generatorName &ainverse,
+                                                                                 const generatorName &newGeneratorName,
+                                                                                 const H2Isometry & conjugator)
 {
     *outputDiscreteGroup = DiscreteGroup::doHNNextensionOverInverse(*(rho.Gamma), a, ainverse, newGeneratorName);
     std::vector<H2Isometry> outputGeneratorImages = rho.getGeneratorImages();

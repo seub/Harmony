@@ -236,9 +236,9 @@ std::vector<H2Polygon> operator *(const std::vector<H2Isometry> & listOfIsoms, c
 {
     std::vector<H2Polygon> listOfPolys;
     listOfPolys.reserve(listOfIsoms.size());
-    for (unsigned int i=0; listOfIsoms.size(); i++)
+    for (unsigned int i=0; i<listOfIsoms.size(); i++)
     {
-        listOfPolys[i] = listOfIsoms[i]*P;
+        listOfPolys.push_back(listOfIsoms[i]*P);
     }
     return listOfPolys;
 }
