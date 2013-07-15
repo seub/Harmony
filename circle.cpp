@@ -72,7 +72,7 @@ bool intersectCircleAndLine(Circle &C, PlanarLine &L, complex &out1, complex &ou
     double Delta = b*b - a*c;
     if (Delta < 0.0)
     {
-        std::cout <<  "Jonah you fuck up" << std::endl;
+        std::cout <<  "Error in intersectCircleAndLine" << std::endl;
         return false;
     }
     double s1 = (-b - sqrt(Delta)) / a;

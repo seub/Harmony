@@ -20,6 +20,7 @@ namespace Tools
 
 int intRound(double x);
 double mod2Pi(double t);
+int exponentiation(int base, int power);
 
 word contractWord(word & w);
 
