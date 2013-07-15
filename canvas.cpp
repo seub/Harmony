@@ -34,13 +34,14 @@ void Canvas::mousePressEvent(QMouseEvent *mouseEvent)
     {
         delegate->setMouse(mouseEvent->x(),mouseEvent->y());
     }
+    return;
 }
 
 void Canvas::mouseMoveEvent(QMouseEvent * mouseEvent)
 {
     if(Qt::LeftButton == mouseEvent->buttons())
     {
-        delegate->moveMouse(mouseEvent->x(), mouseEvent->y());
+        delegate->mouseMove(mouseEvent->x(), mouseEvent->y());
     }
     repaint();
 }
@@ -48,6 +49,6 @@ void Canvas::mouseMoveEvent(QMouseEvent * mouseEvent)
 void Canvas::wheelEvent(QWheelEvent * wheelEvent)
 {
     double coeff = pow(1.2,wheelEvent->delta()/120);
-    delegate->setzoom(coeff,wheelEvent->x(),wheelEvent->y());
+    delegate->setZoom(coeff,wheelEvent->x(),wheelEvent->y());
     repaint();
 }

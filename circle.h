@@ -9,12 +9,10 @@ class Circle
 public:
     Circle();
     Circle(complex center, double radius);
-    Circle(const complex & p1, const complex & p2, const complex & p3);
 
     complex getCenter() const;
     double getRadius() const;
     void getCenterAndRadius(complex & center, double & radius) const;
-    void setCenterAndRadius(complex & center, double & radius);
 
     bool contains(const complex & z) const;
     complex pointAtAngle(double angle) const;

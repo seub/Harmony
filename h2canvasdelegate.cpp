@@ -10,7 +10,6 @@
 #include "sl2rmatrix.h"
 #include "h2isometry.h"
 #include "grouprepresentation.h"
-#include "drawelement.h"
 
 H2CanvasDelegate::H2CanvasDelegate(Canvas *canvas) : CanvasDelegate(canvas)
 {
@@ -75,68 +74,55 @@ void H2CanvasDelegate::drawH2Polygon(const H2Polygon &P, const QColor &color, in
     return;
 }
 
-void H2CanvasDelegate::drawGeneratorAxes(const IsomH2Representation &rho, const QColor &color, int width)
-{
-    std::vector<H2Isometry> generators = rho.getGeneratorImages();
-    H2Geodesic L;
-    for(unsigned int j=0;j<generators.size();j++)
-    {
-        generators[j].axis(L);
-        drawH2Geodesic(L, color, width);
-    }
-    return;
-}
-
-void H2CanvasDelegate::drawListOfAxesOfIsometries(const std::vector<H2Isometry> &isometries, const QColor &color, int width)
-{
-    H2Geodesic L;
-    for(unsigned int j=0;j<isometries.size();j++)
-    {
-        isometries[j].axis(L);
-        drawH2Geodesic(L, color, width);
-    }
-    return;
-}
-
 void H2CanvasDelegate::redrawBuffer(const H2Isometry &mobius)
 {
     image->fill("white");
     drawCircle(0, 1);
+
     this->mobius = mobius*this->mobius;
-    unsigned int i;
-    for(i=0;i<buffer.size();i++)
+
+
+    int i;
+
+    int nbPolygons = buffer.polygons.size();
+    for (i = 0; i < nbPolygons; i++)
     {
-        buffer[i]->drawElement(this);
+        drawH2Polygon(buffer.polygons[i], buffer.polygonsColors[i], buffer.polygonsWidths[i]);
     }
+
+    int nbGeodesics = buffer.geodesics.size();
+    for (i = 0; i < nbGeodesics; i++)
+    {
+        drawH2Geodesic(buffer.geodesics[i], buffer.geodesicsColors[i], buffer.geodesicsWidths[i]);
+    }
+
+    int nbPoints = buffer.points.size();
+    for (i = 0; i < nbPoints; i++)
+    {
+        drawH2Point(buffer.points[i], buffer.pointsColors[i], buffer.pointsWidths[i]);
+    }
+
+
+    return;
 }
 
-void H2CanvasDelegate::addElementToBuffer(DrawElement &element)
-{
-    buffer.push_back(&element);
-}
 
 void H2CanvasDelegate::setMouse(int mouseX, int mouseY)
 {
     this->mouseX = mouseX;
     this->mouseY = mouseY;
-    savedmobius = mobius;
+    savedMobius = mobius;
     redrawBuffer();
 }
 
-void H2CanvasDelegate::moveMouse(int mouseX, int mouseY)
+void H2CanvasDelegate::mouseMove(int mouseX, int mouseY)
 {
-    H2Isometry changemobius;
-    complex oldMouse(PixelToComplexCoordinates(this->mouseX,this->mouseY));
-    complex newMouse(PixelToComplexCoordinates(mouseX,mouseY));
-    /*complex a((oldMouse.real()-newMouse.real())/(oldMouse.real()*newMouse.real()-1),
-              (newMouse.imag()-oldMouse.imag())/(oldMouse.imag()*newMouse.imag()+1));
-    changemobius.setDiskCoordinates(1.0,a);*/
-    changemobius.setByMappingBoundaryAndInteriorPoints(-1.0,-1.0,oldMouse,newMouse);
-    mobius = changemobius*savedmobius;
-    redrawBuffer();
-}
+    H2Isometry mobiusChange;
+    complex mouseOld(PixelToComplexCoordinates(this->mouseX,this->mouseY));
+    complex mouseNew(PixelToComplexCoordinates(mouseX,mouseY));
 
-void H2CanvasDelegate::drawExample()
-{
+    mobiusChange.setByMappingPointInDiskModelNormalized(mouseOld, mouseNew);
+    mobius = mobiusChange*savedMobius;
+    redrawBuffer();
     return;
 }

@@ -7,8 +7,7 @@
 #include "h2geodesic.h"
 #include "h2polygon.h"
 #include "grouprepresentation.h"
-
-class DrawElement;
+#include "h2buffer.h"
 
 class H2CanvasDelegate : public CanvasDelegate
 {
@@ -19,19 +18,17 @@ public:
     void drawH2Geodesic(const H2Geodesic & L, const QColor & color = "black", int width = 1);
     void drawH2GeodesicArc(const H2GeodesicArc &L, const QColor & color = "black", int width = 2);
     void drawH2Polygon(const H2Polygon & P, const QColor & color = "black", int width = 2);
-    void drawListOfAxesOfIsometries(const std::vector<H2Isometry> & isometries, const QColor & color = "black", int width = 2);
 
-    void drawExample();
     void drawGeneratorAxes(const IsomH2Representation & rho, const QColor & color = "black", int width = 2);
     void redrawBuffer(const H2Isometry &mobius = H2Isometry::identity());
-    void addElementToBuffer(DrawElement &element);
     void setMouse(int mouseX, int mouseY);
-    void moveMouse(int mouseX, int mouseY);
+    void mouseMove(int mouseX, int mouseY);
     void stopMovingMouse(const int mouseX, const int mouseY);
-private:
-    std::vector<DrawElement *> buffer;
+
+//private:
+    H2Buffer buffer;
     H2Isometry mobius;
-    H2Isometry savedmobius;
+    H2Isometry savedMobius;
 };
 
 

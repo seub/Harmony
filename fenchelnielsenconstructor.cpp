@@ -371,8 +371,8 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
 
     }
     rho.generatorImages = rhoIsometry;
-    std::cout << rhoU <<std::endl;
-    std::cout <<rho << std::endl;
+    //std::cout << rhoU <<std::endl;
+    //std::cout <<rho << std::endl;
     return rho;
 }
 
