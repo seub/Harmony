@@ -13,6 +13,7 @@ class H2Isometry
     friend H2Isometry operator *(const H2Isometry & f1, const H2Isometry & f2);
     friend H2Point operator *(const H2Isometry & f, const H2Point & p);
     friend H2Polygon operator *(const H2Isometry &f, const H2Polygon &P);
+    friend std::vector<H2Polygon> operator *(const std::vector<H2Isometry> & listOfIsoms, const H2Polygon &P);
     friend H2Geodesic operator *(const H2Isometry & f, const H2Geodesic & L);
     friend H2GeodesicArc operator *(const H2Isometry & f, const H2GeodesicArc & L);
     friend bool operator ==(const H2Isometry & f1, const H2Isometry & f2);

@@ -26,7 +26,7 @@ public:
     void rotateGenerators(int shift);
     DiscreteGroup getDiscreteGroup() const;
 
-
+    std::vector<T> evaluateRepresentation(const std::vector<word> & listOfWwords);
 
     GroupRepresentation<T> conj(const T & A) const;
 
