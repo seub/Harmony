@@ -28,26 +28,26 @@ void Canvas::paintEvent(QPaintEvent *)
     return;
 }
 
-void Canvas::mousePressEvent(QMouseEvent *mouseevent)
+void Canvas::mousePressEvent(QMouseEvent *mouseEvent)
 {
-    if(mouseevent->button()== Qt::LeftButton)
+    if(mouseEvent->button()== Qt::LeftButton)
     {
-        delegate->setMouse(mouseevent->x(),mouseevent->y());
+        delegate->setMouse(mouseEvent->x(),mouseEvent->y());
     }
 }
 
-void Canvas::mouseMoveEvent(QMouseEvent * mouseevent)
+void Canvas::mouseMoveEvent(QMouseEvent * mouseEvent)
 {
-    if(Qt::LeftButton == mouseevent->buttons())
+    if(Qt::LeftButton == mouseEvent->buttons())
     {
-        delegate->moveMouse(mouseevent->x(), mouseevent->y());
+        delegate->moveMouse(mouseEvent->x(), mouseEvent->y());
     }
     repaint();
 }
 
-void Canvas::wheelEvent(QWheelEvent * wheelevent)
+void Canvas::wheelEvent(QWheelEvent * wheelEvent)
 {
-    double coeff = pow(1.2,wheelevent->delta()/120);
-    delegate->setzoom(coeff,wheelevent->x(),wheelevent->y());
+    double coeff = pow(1.2,wheelEvent->delta()/120);
+    delegate->setzoom(coeff,wheelEvent->x(),wheelEvent->y());
     repaint();
 }

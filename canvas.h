@@ -19,9 +19,9 @@ signals:
 
 public slots:
     //void resizeEvent(QResizeEvent *);
-    void mousePressEvent(QMouseEvent * mouseevent);
-    void mouseMoveEvent(QMouseEvent * mouseevent);
-    void wheelEvent(QWheelEvent * wheelevent);
+    void mousePressEvent(QMouseEvent * mouseEvent);
+    void mouseMoveEvent(QMouseEvent * mouseEvent);
+    void wheelEvent(QWheelEvent * wheelEvent);
 private:
     CanvasDelegate * delegate;
 

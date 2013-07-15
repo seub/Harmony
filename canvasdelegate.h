@@ -34,9 +34,10 @@ public:
                         const QColor &color = "black", int width = 1);
     void drawArcCounterClockwise(const Circle &C, double angle1, double angle2, const QColor &color = "black", int width = 1);
     virtual void redrawBuffer(const H2Isometry &mobius = H2Isometry::identity()) =0;
+
     void setzoom(const double &coeff, int centerX, int centerY);
     virtual void setMouse(const int mouseX, const int mouseY);
-    virtual void moveMouse(const int mouseX, const int mouseY) =0;
+    virtual void moveMouse(const int mouseX, const int mouseY) = 0;
 protected:
     Canvas *canvas;
 

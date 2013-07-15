@@ -13,6 +13,7 @@
 #include "grouprepresentation.h"
 #include "h2isometry.h"
 #include "fenchelnielsenconstructor.h"
+#include "drawelement.h"
 
 int main(int argc, char *argv[])
 {
@@ -22,7 +23,7 @@ int main(int argc, char *argv[])
     //H3canvasDelegate windows(60, 0,"Test");
     //windows.show();
 
-    int g = 16;
+    int g = 2;
     std::vector<double> lengths;
     std::vector<double> twists;
     twists.resize(3*g-3);
@@ -72,14 +73,18 @@ int main(int argc, char *argv[])
 
 
     DrawListOfAxesOfIsometries isometriesList(rho2.generatorImages);
+
+    delegate.drawGeneratorAxes(rho2, "red");
+    H2Point p;
+    p.setDiskCoordinate(0.9);
+    H2Polygon P = rho2.generateFundamentalDomainForNormalizedSurfaceGroup(p);
+    DrawH2Polygon polygon(P);
     delegate.addElementToBuffer(isometriesList);
+    delegate.addElementToBuffer(polygon);
 
     delegate.redrawBuffer(id);
-    //delegate.drawGeneratorAxes(rho2, "red");
-    /*H2Point p;
-    p.setDiskCoordinate(0.0*I);
-    H2Polygon P = rho.generatePolygon(p);
-    delegate.drawH2Polygon(P);
+
+    /*delegate.drawH2Polygon(P);
 
     std::vector<H2Isometry> generatorImages = rho.getGeneratorImages();
     H2Isometry a1 = generatorImages[0];

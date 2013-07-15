@@ -25,4 +25,8 @@ typedef std::complex<double> complex;
 class H2Isometry;
 typedef GroupRepresentation<H2Isometry> IsomH2Representation;
 
+
+enum drawElementType {POINT, GEODESIC, GEODESICARC, POLYGON, GENERATORAXES, LISTOFAXES};
+
+
 #endif // TYPES_H
