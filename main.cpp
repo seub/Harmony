@@ -28,8 +28,8 @@ int main(int argc, char *argv[])
     std::vector<double> lengths;
     std::vector<double> twists;
     twists.resize(3*g-3);
-    //twists[2] = 1.0;
-    //twists[4] = 1.0;
+    twists[2] = 1.0;
+    twists[4] = 1.0;
     for (int i=0; i<3*g-3; i++)
     {
         lengths.push_back(2.5);
@@ -60,7 +60,6 @@ int main(int argc, char *argv[])
 
     std::vector<H2Polygon> listOfPolys = listOfIsoms*P;
     delegate.buffer.addElement(listOfPolys);
-
     H2Isometry id;
     id.setIdentity();
     delegate.redrawBuffer(id);

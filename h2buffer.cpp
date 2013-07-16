@@ -32,11 +32,22 @@ void H2Buffer::addElement(const H2Geodesic &geodesic, const QColor &color, int w
     return;
 }
 
+void H2Buffer::addElement(const H2GeodesicArc &geodesicArc, const QColor &color, int width)
+{
+    geodesicArcs.push_back(geodesicArc);
+    geodesicArcsColors.push_back(color);
+    geodesicArcsWidths.push_back(width);
+    return;
+}
 void H2Buffer::addElement(const H2Polygon &polygon, const QColor &color, int width)
 {
-    polygons.push_back(polygon);
-    polygonsColors.push_back(color);
-    polygonsWidths.push_back(width);
+    int sizePoly = polygon.getNumberOfVertices();
+    for (int i=0; i<sizePoly ; i++)
+    {
+        addElement(polygon.getSide(i),color,width);
+        addElement(polygon.getVertex(i));
+    }
+    return;
     return;
 }
 

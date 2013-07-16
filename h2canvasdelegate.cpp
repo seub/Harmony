@@ -86,10 +86,10 @@ void H2CanvasDelegate::redrawBuffer(const H2Isometry &mobius)
 
     int i;
 
-    int nbPolygons = buffer.polygons.size();
-    for (i = 0; i < nbPolygons; i++)
+    int nbGeodesicArcs = buffer.geodesicArcs.size();
+    for (i = 0; i < nbGeodesicArcs; i++)
     {
-        drawH2Polygon(buffer.polygons[i], buffer.polygonsColors[i], buffer.polygonsWidths[i]);
+        drawH2GeodesicArc(buffer.geodesicArcs[i], buffer.geodesicArcsColors[i], buffer.geodesicArcsWidths[i]);
     }
 
     int nbGeodesics = buffer.geodesics.size();
