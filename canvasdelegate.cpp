@@ -67,15 +67,15 @@ void CanvasDelegate::resetView()
 
 void CanvasDelegate::ComplexToPixelCoordinates(int &xout, int &yout, complex z) const
 {
-    xout = Tools::intRound(real(z)*scaleX + originX);
-    yout = Tools::intRound(-imag(z)*scaleY + originY);
+    xout = Tools::intRound(real(z)*scaleX*zoom + originX+shiftX);
+    yout = Tools::intRound(-imag(z)*scaleY*zoom + originY + shiftY);
     return;
 }
 
 complex CanvasDelegate::PixelToComplexCoordinates(int x, int y) const
 {
-    double a = (x - originX)*1.0/scaleX;
-    double b = -(y - originY)*1.0/scaleY;
+    double a = (x - originX-shiftX)*1.0/scaleX*zoom;
+    double b = -(y - originY-shiftY)*1.0/scaleY*zoom;
     return complex(a,b);
 }
 
@@ -186,10 +186,9 @@ void CanvasDelegate::drawArcCounterClockwise(const Circle &C, double angle1, dou
 
 void CanvasDelegate::setZoom(const double &coeff, int centerX, int centerY)
 {
-    originX = centerX -(centerX-originX)*coeff;
-    originY = centerY -(centerY-originY)*coeff;
-    scaleX*=coeff;
-    scaleY*=coeff;
+    shiftX= centerX -(centerX-originX-shiftX)*coeff - originX;
+    shiftY = centerY -(centerY-originY-shiftY)*coeff - originY;
+    zoom*=coeff;
     redrawBuffer();
     return;
 }
