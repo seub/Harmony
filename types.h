@@ -1,7 +1,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#define ERROR 0.0000000001
+#define ERROR 0.00000001
 #define I complex(0.0, 1.0)
 
 #include <iostream>
