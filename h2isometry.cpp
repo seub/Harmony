@@ -33,7 +33,7 @@ void H2Isometry::setTranslationAxisAndLength(const H2Geodesic & axis, double len
     H2Isometry f0;
     f0.setTranslationLengthNormalized(length);
     H2Isometry f;
-    f.setByMappingEndpointsToPlusOrMinusI(axis);
+    f.setByMappingToVerticalUp(axis);
     *this = f.inverse()*f0*f;
     return;
 }
@@ -66,21 +66,12 @@ void H2Isometry::setVerticalTranslation(double t1, double t2)
     return;
 }
 
-
-void H2Isometry::setByMappingBoundaryAndInteriorPointsNormalized(const complex &boundaryPoint, const complex &interiorPoint)
+void H2Isometry::setVerticalTranslation(double t1, double t2, double t3)
 {
-    u = - (1.0 - conj(interiorPoint)*boundaryPoint)/(boundaryPoint - interiorPoint);
-    a = interiorPoint;
-    return;
-}
+    double t = (t1 + t2 + t3 + t1*t2*t3) / (1 + t1*t2 + t1*t3 + t2*t3);
 
-void H2Isometry::setByMappingBoundaryAndInteriorPointsInDiskModel(const complex &boundaryPoint1, const complex &boundaryPoint2,
-                                                       const complex &interiorPoint1, const complex &interiorPoint2)
-{
-    H2Isometry f1,f2;
-    f1.setByMappingBoundaryAndInteriorPointsNormalized(boundaryPoint1,interiorPoint1);
-    f2.setByMappingBoundaryAndInteriorPointsNormalized(boundaryPoint2,interiorPoint2);
-    *this = f2.inverse()*f1;
+    a = - I*t;
+    u = 1.0;
     return;
 }
 
@@ -98,8 +89,8 @@ void H2Isometry::setByMappingGeodesic(const H2Geodesic &L1, const H2Geodesic &L2
     p1.setDiskCoordinate(L1.closestPointToOriginInDiskModel());
     p2.setDiskCoordinate(L2.closestPointToOriginInDiskModel());
     H2Isometry f1,f2;
-    f1.setByMappingEndpointsToPlusOrMinusI(L1);
-    f2.setByMappingEndpointsToPlusOrMinusI(L2);
+    f1.setByMappingToVerticalUp(L1);
+    f2.setByMappingToVerticalUp(L2);
     *this = f2.inverse()*f1;
     return;
 }
@@ -286,7 +277,7 @@ H2GeodesicArc operator*(const H2Isometry &f, const H2GeodesicArc &L)
     return H2GeodesicArc(p1,p2);
 }
 
-void H2Isometry::setByMappingEndpointsToPlusOrMinusI(const H2Geodesic &L)
+void H2Isometry::setByMappingToVerticalUp(const H2Geodesic &L)
 {
     complex a1,a2;
     L.getEndpointsInDiskModel(a1,a2);
@@ -295,62 +286,45 @@ void H2Isometry::setByMappingEndpointsToPlusOrMinusI(const H2Geodesic &L)
     return;
 }
 
-void H2Isometry::setByFixingPlusMinusI(const complex & pointMappedToOne)
+void H2Isometry::setByMappingToVerticalDown(const H2Geodesic &L)
 {
-    u = 1.0;
-    a = -(1.0 - pointMappedToOne)/(1.0 + pointMappedToOne);
+    complex a1,a2;
+    L.getEndpointsInDiskModel(a1,a2);
+    a = L.closestPointToOriginInDiskModel();
+    u = -I*((conj(a)*(a1 + a2) - 2.0)/(a1 - a2));
     return;
 }
 
-void H2Isometry::setByNormalizingPairWithRepulsivePointAtOne(const H2Isometry &f1, const H2Isometry &f2)
+void H2Isometry::setByNormalizingPairOnLeftHandSide(const H2Isometry &f1, const H2Isometry &f1left)
 {
-    H2Isometry fFirst,fSecond;
-    H2Geodesic L1,L2;
+    H2Geodesic L1, L1left, L1leftNew;
     f1.axis(L1);
-    f2.axis(L2);
-    fFirst.setByMappingEndpointsToPlusOrMinusI(L1);
-    complex b1,b2;
-    L2.getEndpointsInDiskModel(b1,b2);
-    fSecond.setByFixingPlusMinusI(fFirst.hitComplexNumberInDiskModel(b1));
-
+    f1left.axis(L1left);
+    H2Isometry fFirst, fSecond;
+    fFirst.setByMappingToVerticalDown(L1);
+    L1leftNew = fFirst*L1left;
+    double t = H2Isometry::geodesicNormalizer(L1leftNew);
+    fSecond.setVerticalTranslation(t);
     *this = fSecond*fFirst;
     return;
 }
 
-complex H2Isometry::hitComplexNumberInDiskModel(const complex &z) const
+void H2Isometry::setByNormalizingPairOnRightHandSide(const H2Isometry &f1, const H2Isometry &f1left)
 {
-    return u*(z - a)/(1.0 - conj(a)*z);
-}
-
-void H2Isometry::setByFixingPlusMinusIWithChosenPoints(const double pointIn, const double pointOut)
-{
-    complex p1, p2;
-    p1 = pointIn;
-    p2 = pointOut;
-    u = 1;
-    a = I*(p1 - p2)/(1.0 - p1*p2);
-    return;
-}
-
-void H2Isometry::setByNormalizingPairWithChosenNearestPointToAxis(const H2Isometry &f1, const H2Isometry &f2, const double P)
-{
-    H2Isometry fFirst,fSecond;
-    H2Geodesic L1,L2;
-    H2Geodesic L(I,-I);
-    H2Point p;
+    H2Geodesic L1, L1left, L1leftNew;
     f1.axis(L1);
-    fFirst.setByMappingEndpointsToPlusOrMinusI(L1.swapOrientation());
-    (fFirst*f2*fFirst.inverse()).axis(L2);
-    H2Geodesic::closestPoint(L,L2,p);
-    fSecond.setByFixingPlusMinusIWithChosenPoints(imag(p.getDiskCoordinate()),P);
+    f1left.axis(L1left);
+    H2Isometry fFirst, fSecond;
+    fFirst.setByMappingToVerticalUp(L1);
+    L1leftNew = fFirst*L1left;
+    double t = H2Isometry::geodesicNormalizer(L1leftNew);
+    fSecond.setVerticalTranslation(t);
     *this = fSecond*fFirst;
     return;
 }
-
-//void H2Isometry::setByNormalizingPairOnLeftHandSide(const H2Isometry &f1inverse, const H2Isometry &f2inverse)
 
 H2Isometry H2Isometry::findConjugatorForGluing(const H2Isometry & f1, const H2Isometry & f1left,
-                                           const H2Isometry & f2, const H2Isometry &f2left, double twist)
+                                           const H2Isometry & f2, const H2Isometry &f2left, double twistNormalized)
 {
     if (std::abs(f1.traceSquared()-f2.traceSquared()) > ERROR)
     {
@@ -359,19 +333,28 @@ H2Isometry H2Isometry::findConjugatorForGluing(const H2Isometry & f1, const H2Is
         std::cout << "ERROR in H2Isometry::findConjugatorForGluing: not the same translation lengths!" << std::endl;
     }
 
-    H2Isometry conjugator1, conjugator2, centralizer;
-    conjugator1.setByNormalizingPairWithRepulsivePointAtOne(f1, f1left);
-    H2Geodesic L(-I, I), L1;
-    f1left.axis(L1);
-    L1 = conjugator1*L1;
-    H2Point p1;
-    H2Geodesic::closestPoint(L, L1, p1);
-    conjugator2.setByNormalizingPairWithChosenNearestPointToAxis(f2, f2left, imag(p1.getDiskCoordinate()));
-    centralizer.setTranslationLengthNormalized(twist);
+    H2Isometry c1, c2, c;
+
+    H2Geodesic L1, L1left, L1leftNew;
+    f1.axis(L1);
+    f1left.axis(L1left);
+    c1.setByMappingToVerticalUp(L1);
+    L1leftNew = c1*L1left;
+    double t1 = H2Isometry::geodesicNormalizer(L1leftNew);
 
 
-    return conjugator1.inverse()*centralizer*conjugator2;
+    f2.axis(L1);
+    f2left.axis(L1left);
+    c2.setByMappingToVerticalDown(L1);
+    L1leftNew = c2*L1left;
+    double t2 = H2Isometry::geodesicNormalizer(L1leftNew);
+
+    c.setVerticalTranslation(-t1, twistNormalized, t2);
+
+    return c1.inverse()*c*c2;
 }
+
+
 
 bool operator ==(const H2Isometry & f1, const H2Isometry & f2)
 {
@@ -401,7 +384,7 @@ std::ostream & operator<<(std::ostream & out, const H2Isometry &f)
         f.fixedPointsInDiskModel(Z1,Z2);
         z1 = Z1.getComplexCoordinate();
         z2 = Z2.getComplexCoordinate();
-        out << "Elliptic, fixed points z1= " << z1 << "and z2= " << z2;
+        out << "Elliptic, fixed points z1= " << z1 << " and z2= " << z2;
     }
     out << "   {u= " << f.u << ", a= " << f.a << "}";
     return out;
@@ -426,5 +409,5 @@ double H2Isometry::geodesicNormalizer(const H2Geodesic &L)
 
     double t1 = -b -delta;
     double t2 = -b + delta;
-    return std::abs(t1) < std::abs(t2) ? t1 : t2;
+    return std::abs(t1) < std::abs(t2) ? -t1 : -t2;
 }

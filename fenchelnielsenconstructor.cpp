@@ -58,13 +58,13 @@ PantsTreeNode::PantsTreeNode(int index, const std::vector<double> & coshHalfLeng
 
     H2Isometry fUp = upleftright[0], fLeft = upleftright[1], fRight= upleftright[2];
 
-    conjugatorLeft.setByNormalizingPairWithChosenNearestPointToAxis(fLeft, fUp, 0.0);
+    conjugatorLeft.setByNormalizingPairOnLeftHandSide(fLeft, fUp);
     H2Isometry twister;
     twister.setVerticalTranslation(-twistsNormalized[2*index-1], twistCorrectionLeft);
     conjugatorLeft = twister*conjugatorLeft;
     conjugatorLeft = conjugatorLeft.inverse();
 
-    conjugatorRight.setByNormalizingPairWithChosenNearestPointToAxis(fRight, fLeft, 0.0);
+    conjugatorRight.setByNormalizingPairOnLeftHandSide(fRight, fLeft);
     twister.setVerticalTranslation(-twistsNormalized[2*index], twistCorrectionright);
     conjugatorRight = twister*conjugatorRight;
     conjugatorRight = conjugatorRight.inverse();
@@ -230,14 +230,27 @@ IsomH2Representation FenchelNielsenConstructor::getUnnormalizedRepresentation(Di
 
 
 
-    H2Isometry twister;
-    twister.setTranslationLengthNormalized(firstTwist + LeftTree->twistCorrection - RightTree->twistCorrection);
+    /*H2Isometry twister;
+    twister.setVerticalTranslation(firstTwist, LeftTree->twistCorrection, - RightTree->twistCorrection);
+
 
     H2Isometry halfTurn;
-    halfTurn.setDiskCoordinates(-1.0, 0.0);
-    H2Isometry totalConjugatorRight = halfTurn*twister;
+    halfTurn.setDiskCoordinates(-1.0, 0.0);*/
 
-    IsomH2Representation rhoLeft = LeftTree->getRepresentation(&GammaLeft, id, "c");
+    H2Isometry c, c2;
+    c.setVerticalTranslation(firstTwist);
+    H2Isometry halfTurn;
+    halfTurn.setDiskCoordinates(-1.0, 0.0);
+    c2.setVerticalTranslation(RightTree->twistCorrection);
+    c2 = halfTurn*c2;
+
+
+    H2Isometry totalConjugatorRight = c*c2;
+    H2Isometry totalConjugatorLeft;
+    totalConjugatorLeft.setVerticalTranslation(LeftTree->twistCorrection);
+
+
+    IsomH2Representation rhoLeft = LeftTree->getRepresentation(&GammaLeft, totalConjugatorLeft, "c");
     IsomH2Representation rhoRight = RightTree->getRepresentation(&GammaRight, totalConjugatorRight, "d");
 
 

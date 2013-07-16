@@ -41,8 +41,6 @@ int main(int argc, char *argv[])
     rho.checkRelations();
 
 
-
-
     Canvas canvas;
     H2CanvasDelegate delegate(&canvas);
     canvas.setDelegate(&delegate);
@@ -52,20 +50,21 @@ int main(int argc, char *argv[])
     H2Point p;
     p.setDiskCoordinate(0.0);
     H2Polygon P = rho.generateFundamentalDomainForNormalizedSurfaceGroup(p);
-    //delegate.buffer.addElement(rho, "red");
+    delegate.buffer.addElement(rho, "red");
     delegate.buffer.addElement(P, "blue", 3);
 
-// std::vector<H2Isometry> listOfIsoms = rho.getSidePairingsNormalizedToDepth(2);
-    std::vector<H2Isometry> listOfIsoms = rho.getSidePairingsNormalizedAroundVertices();
+    /*std::vector<H2Isometry> listOfIsoms = rho.getSidePairingsNormalizedAroundVertices();
 
     std::vector<H2Polygon> listOfPolys = listOfIsoms*P;
-    delegate.buffer.addElement(listOfPolys);
+    delegate.buffer.addElement(listOfPolys);*/
+
     H2Isometry id;
     id.setIdentity();
     delegate.redrawBuffer(id);
 
 
     canvas.show();
+
 
 
 

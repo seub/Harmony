@@ -128,7 +128,7 @@ void CanvasDelegate::drawCircle(const Circle &C, const QColor &color, int width)
 void CanvasDelegate::drawArcCounterClockwise(const complex &center, double radius, double angle1, double angle2, const QColor &color, int width)
 {
     double angleMin = M_PI/(180*16);
-    if(radius*scaleX*angleMin>6.0)
+    if(radius*scaleX*angleMin>8.0)
     {
         complex z1 = center + radius*exp(angle1*I);
         complex z2 = center + radius*exp(angle2*I);
