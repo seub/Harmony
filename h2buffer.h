@@ -21,6 +21,7 @@ public:
 
     void addElement(const H2Point & point, const QColor & color = "black", int width = 3);
     void addElement(const H2Geodesic & geodesic, const QColor & color = "black", int width = 1);
+    void addElement(const H2GeodesicArc & geodesicArc, const QColor & color = "black", int width = 1);
     void addElement(const H2Polygon & polygon, const QColor & color = "black", int width = 1);
     void addElement(const H2Isometry & isometry, const QColor & color = "black", int width = 1);
     void addElement(const IsomH2Representation & rho, const QColor & color = "black", int width = 1);
@@ -38,9 +39,10 @@ public:
     std::vector<QColor> geodesicsColors;
     std::vector<int> geodesicsWidths;
 
-    std::vector<H2Polygon> polygons;
-    std::vector<QColor> polygonsColors;
-    std::vector<int> polygonsWidths;
+    std::vector<H2GeodesicArc> geodesicArcs;
+    std::vector<QColor> geodesicArcsColors;
+    std::vector<int> geodesicArcsWidths;
+
 };
 
 #endif // H2BUFFER_H
