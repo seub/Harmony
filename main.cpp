@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     //windows.show();
 
 
-    int g = 8;
+    int g = 3;
 
     std::vector<double> lengths;
     std::vector<double> twists;
