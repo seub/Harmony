@@ -279,7 +279,7 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormali
 
     store = store*ai;
     storePrevious = store*previous;
-    //output.insert(output.end(), storePrevious.begin(), storePrevious.end());
+    output.insert(output.end(), storePrevious.begin(), storePrevious.end());
 
     store = store*bi;
     storePrevious = store*previous;
@@ -287,11 +287,29 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormali
 
     store = store*ai.inverse();
     storePrevious = store*previous;
-    //output.insert(output.end(), storePrevious.begin(), storePrevious.end());
+    output.insert(output.end(), storePrevious.begin(), storePrevious.end());
     /*std::vector<H2Isometry> output2;
     output2.reserve(output.size()/2);
     for(unsigned int i = 0;i< output.size();i+=2)
         output2.push_back(output[i]);*/
+    return output;
+}
+
+template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormalizedAroundVerticesToDepth(int n)
+{
+    int genus = generatorImages.size()/2;
+    std::vector<H2Isometry> output,aroundVertices,shortWords,store;
+    aroundVertices = getSidePairingsNormalizedAroundVertices();
+    store.reserve(aroundVertices.size());
+    output.reserve(Tools::exponentiation(4*genus,n));
+    output = aroundVertices;
+    std::vector<word> words = (Gamma->getWordsOfNonRepeatingLettersLengthLessThan(n));
+    shortWords = evaluateRepresentation(words);
+    for (unsigned int i=0; i<shortWords.size(); i++)
+    {
+        store = shortWords[i]*aroundVertices;
+        output.insert(output.end(), store.begin(),store.end());
+    }
     return output;
 }
 

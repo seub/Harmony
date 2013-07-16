@@ -19,8 +19,10 @@ public:
     std::vector<word> getCusps() const;
     int numberOfCusps() const;
 
-    std::vector<word> getWordsOfLengthLessThan(int n);
-    std::vector<word> getWordsOfLengthEqualTo(int n);
+    std::vector<word> getWordsOfLengthLessThan(int n) const;
+    std::vector<word> getWordsOfLengthEqualTo(int n) const;
+    std::vector<word> getWordsOfNonRepeatingLettersLengthLessThan(int n) const;
+    std::vector<word> getWordsOfNonRepeatingLettersLengthEqualTo(int n) const;
 
     std::string getWordAsString(const word & w) const;
     std::string getLetterAsString(const letter & l) const;

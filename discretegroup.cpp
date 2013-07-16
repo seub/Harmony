@@ -86,17 +86,20 @@ DiscreteGroup::DiscreteGroup(const TopologicalSurface &S)
     closedSurfaceGroup = (numberOfPunctures == 0);
 }
 
-/*std::vector<word> DiscreteGroup::getWordsOfLengthLessThan(int n)
+std::vector<word> DiscreteGroup::getWordsOfLengthLessThan(int n) const
 {
-    std::vector<word> words;
+    std::vector<word> words,wordsStore;
     word w;
+
     for (int j=0; j<n ; j++)
     {
-
+        wordsStore = getWordsOfLengthEqualTo(j);
+        words.insert(words.end(), wordsStore.begin(), wordsStore.end());
     }
-}*/
+    return words;
+}
 
-std::vector<word> DiscreteGroup::getWordsOfLengthEqualTo(int n)
+std::vector<word> DiscreteGroup::getWordsOfLengthEqualTo(int n) const
 {
 
     std::vector<word> output;
@@ -152,6 +155,73 @@ std::vector<word> DiscreteGroup::getWordsOfLengthEqualTo(int n)
         }
     }
     return output;
+}
+
+std::vector<word> DiscreteGroup::getWordsOfNonRepeatingLettersLengthEqualTo(int n) const
+{
+
+    std::vector<word> output;
+    letter l;
+    word w,wNew;
+    int numberOfGenerators = generators.size();
+    if (n <= 0)
+    {
+        std::cout << "There are no words of negative length" << std::endl;
+        throw(0);
+    }
+    if (n==1)
+    {
+        w.push_back(l);
+        for (int i=0; i<numberOfGenerators; i++)
+        {
+            l.first = i;
+            l.second = 1;
+            w.back() = l;
+            output.push_back(w);
+            l.second = -1;
+            w.back() = l;
+            output.push_back(w);
+        }
+        return output;
+    }
+    w.reserve(n-1);
+    wNew.reserve(n);
+    std::vector<word> outPrevious = getWordsOfLengthEqualTo(n-1);
+    int previousSize = outPrevious.size();
+    for (int j=0; j<previousSize; j++)
+    {
+        w = outPrevious[j];
+        wNew = w;
+        wNew.push_back(l);
+        int lastGen = w.back().first;
+        for (int k=0; k< numberOfGenerators; k++)
+        {
+            if (k != lastGen)
+            {
+                l.first = k;
+                l.second = 1;
+                wNew.back() = l;
+                output.push_back(wNew);
+                l.second = -1;
+                wNew.back() = l;
+                output.push_back(wNew);
+            }
+        }
+    }
+    return output;
+}
+
+std::vector<word> DiscreteGroup::getWordsOfNonRepeatingLettersLengthLessThan(int n) const
+{
+    std::vector<word> words,wordsStore;
+    word w;
+
+    for (int j=1; j<n ; j++)
+    {
+        wordsStore = getWordsOfNonRepeatingLettersLengthEqualTo(j);
+        words.insert(words.end(), wordsStore.begin(), wordsStore.end());
+    }
+    return words;
 }
 
 std::vector<generatorName> DiscreteGroup::getGenerators() const
