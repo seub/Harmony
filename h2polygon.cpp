@@ -100,6 +100,17 @@ std::vector<double> H2Polygon::getEuclideanSideLengths() const
     return lengths;
 }
 
+std::vector<double> H2Polygon::getEuclideanDistancesFromOrigin() const
+{
+    std::vector<double> lengths;
+    lengths.reserve(vertices.size());
+    for(unsigned int i=0; i<vertices.size(); i++)
+    {
+        lengths.push_back( abs( vertices[i].getDiskCoordinate() ));
+    }
+    return lengths;
+}
+
 double H2Polygon::normLargestEuclideanSideLength() const
 {
     std::vector<double> lengths = getEuclideanSideLengths();
@@ -118,7 +129,7 @@ double H2Polygon::normReciprocalSmallestEuclideanSideLength() const
 double H2Polygon::normReciprocalEuclideanSideLengthsL1() const
 {
     std::vector<double> lengths = getEuclideanSideLengths();
-    double L1sum;
+    double L1sum=0;
     for (unsigned int i=0; i<lengths.size(); i++)
     {
         L1sum += 1/lengths[i];
@@ -129,7 +140,7 @@ double H2Polygon::normReciprocalEuclideanSideLengthsL1() const
 double H2Polygon::normReciprocalEuclideanSideLengthsL2() const
 {
     std::vector<double> lengths = getEuclideanSideLengths();
-    double L1sum;
+    double L1sum=0;
     for (unsigned int i=0; i<lengths.size(); i++)
     {
         L1sum += 1/(lengths[i]*lengths[i]);
@@ -139,14 +150,33 @@ double H2Polygon::normReciprocalEuclideanSideLengthsL2() const
 
 double H2Polygon::normFurthestEuclideanDistanceFromOrigin() const
 {
-    double eucl=0;
-    for (unsigned int i=0; i< vertices.size(); i++)
-    {
-        eucl = std::max( abs(vertices[i].getDiskCoordinate()) , eucl);
-    }
+    std::vector<double> lengths = getEuclideanDistancesFromOrigin();
+    double max;
+    max = *std::max_element(lengths.begin(),lengths.end());
     return eucl;
 }
 
+double H2Polygon::normEuclideanDistanceFromOriginL1() const
+{
+    double distanceSum=0;
+    std::vector<double> distances = getEuclideanDistancesFromOrigin();
+    for (unsigned int i=0; i< distances.size(); i++)
+    {
+        distanceSum += distances[i];
+    }
+    return distanceSum;
+}
+
+double H2Polygon::normEuclideanDistanceFromOriginL2() const
+{
+    double distanceSum=0;
+    std::vector<double> distances = getEuclideanDistancesFromOrigin();
+    for (unsigned int i=0; i< distances.size(); i++)
+    {
+        distanceSum += distances[i]*distances[i];
+    }
+    return distanceSum;
+}
 
 void H2Polygon::optimalMobius(H2Isometry &output) const
 {
