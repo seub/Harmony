@@ -159,8 +159,7 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int TilingSize) cons
     double step = 1.0/TilingSize;
 
     H2Point p;
-    p.setDiskCoordinate(0.0);
-    H2Polygon polygon, bestPolygon = generatePolygon(p);
+    H2Polygon polygon, bestPolygon;
     double currentNorm, bestNorm = 10000000000;
     complex z;
 
@@ -177,7 +176,7 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int TilingSize) cons
             {
                 p.setDiskCoordinate(complex(x, y));
                 polygon = generatePolygon(p);
-                currentNorm = polygon.normReciprocalSmallestEuclideanSideLength();
+                currentNorm = polygon.normReciprocalEuclideanSideLengthsL1();
                 if (currentNorm < bestNorm)
                 {
                     bestNorm = currentNorm;

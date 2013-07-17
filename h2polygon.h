@@ -25,12 +25,10 @@ public:
     std::vector<double> getEuclideanSideLengths() const;
     std::vector<double> getEuclideanDistancesFromOrigin() const;
 
-    double normReciprocalSmallestEuclideanSideLength() const;
     double normReciprocalEuclideanSideLengthsL1() const;
     double normReciprocalEuclideanSideLengthsL2() const;
-    double normLargestEuclideanSideLength() const;
-    double normFurthestEuclideanDistanceFromOrigin() const;
-    double normEuclideanDistanceFromOriginL1() const;
+
+
     double normEuclideanDistanceFromOriginL2() const;
 
     H2GeodesicArc getSide(int index) const;
