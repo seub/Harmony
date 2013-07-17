@@ -36,7 +36,9 @@ public:
     GroupRepresentation<SL2CMatrix> bar() const;
 
     //Specialization to GroupRepresentation<H2ISometry> for closed surface group (i.e. IsomH2Representation)
-    H2Polygon generateFundamentalDomainForNormalizedSurfaceGroup(const H2Point & basePoint) const;
+    H2Polygon generatePolygon(const H2Point & basePoint) const;
+    H2Polygon generatePolygon(int TilingSize) const;
+
     std::vector<H2Isometry> getSidePairingsForNormalizedFundamentalDomain() const;
     std::vector<H2Isometry> getSidePairingsNormalizedToDepth(int n) const;
     std::vector<H2Isometry> getSidePairingsNormalizedAroundVertex() const;
