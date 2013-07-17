@@ -41,6 +41,7 @@ public:
     std::vector<H2Isometry> getSidePairingsNormalizedToDepth(int n) const;
     std::vector<H2Isometry> getSidePairingsNormalizedAroundVertex() const;
     std::vector<H2Isometry> getSidePairingsNormalizedAroundVertices() const;
+    std::vector<H2Isometry> getSidePairingsNormalizedAroundVerticesToDepth(int n);
 
 
 
