@@ -108,7 +108,7 @@ double H2Polygon::normLargestEuclideanSideLength() const
     return max;
 }
 
-double H2Polygon::normReciprocalSmallestEuclideanSideLength()
+double H2Polygon::normReciprocalSmallestEuclideanSideLength() const
 {
     std::vector<double> lengths = getEuclideanSideLengths();
     double smallest = *std::min_element(lengths.begin(),lengths.end());

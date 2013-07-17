@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 
     H2Point p;
     p.setDiskCoordinate(0.0);
-    H2Polygon P = rho.generatePolygon(1000);
+    H2Polygon P = rho.generatePolygon(100);
     delegate.buffer.addElement(rho, "red");
     delegate.buffer.addElement(P, "blue", 4);
 
