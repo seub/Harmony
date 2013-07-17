@@ -108,12 +108,46 @@ double H2Polygon::normLargestEuclideanSideLength() const
     return max;
 }
 
-double H2Polygon::normReciprocalSmallestEuclideanSideLength()
+double H2Polygon::normReciprocalSmallestEuclideanSideLength() const
 {
     std::vector<double> lengths = getEuclideanSideLengths();
     double smallest = *std::min_element(lengths.begin(),lengths.end());
     return 1/smallest;
 }
+
+double H2Polygon::normReciprocalEuclideanSideLengthsL1() const
+{
+    std::vector<double> lengths = getEuclideanSideLengths();
+    double L1sum;
+    for (unsigned int i=0; i<lengths.size(); i++)
+    {
+        L1sum += 1/lengths[i];
+    }
+    return L1sum;
+}
+
+double H2Polygon::normReciprocalEuclideanSideLengthsL2() const
+{
+    std::vector<double> lengths = getEuclideanSideLengths();
+    double L1sum;
+    for (unsigned int i=0; i<lengths.size(); i++)
+    {
+        L1sum += 1/(lengths[i]*lengths[i]);
+    }
+    return L1sum;
+}
+
+double H2Polygon::normFurthestEuclideanDistanceFromOrigin() const
+{
+    double eucl=0;
+    for (unsigned int i=0; i< vertices.size(); i++)
+    {
+        eucl = std::max( abs(vertices[i].getDiskCoordinate()) , eucl);
+    }
+    return eucl;
+}
+
+
 void H2Polygon::optimalMobius(H2Isometry &output) const
 {
     complex zk;
