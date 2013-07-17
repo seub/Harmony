@@ -161,13 +161,14 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int TilingSize) cons
     H2Point p;
     p.setDiskCoordinate(0.0);
     H2Polygon polygon, bestPolygon = generatePolygon(p);
-    double currentNorm, bestNorm = bestPolygon.normLargestEuclideanSideLength();
+    double currentNorm, bestNorm = 10000000000;
     complex z;
 
     double x = -1.0, y = -1.0;
     for(int i=1; i<2*TilingSize; i++)
     {
         x += step;
+        y = -1.0;
         for (int j=1; j<2*TilingSize; j++)
         {
             y += step;
@@ -176,7 +177,7 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int TilingSize) cons
             {
                 p.setDiskCoordinate(complex(x, y));
                 polygon = generatePolygon(p);
-                currentNorm = polygon.normLargestEuclideanSideLength();
+                currentNorm = polygon.normReciprocalSmallestEuclideanSideLength();
                 if (currentNorm < bestNorm)
                 {
                     bestNorm = currentNorm;
@@ -186,6 +187,7 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int TilingSize) cons
         }
     }
 
+    std::cout << bestPolygon.getVertex(0) << std::endl;
 
     return bestPolygon;
 }
