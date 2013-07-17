@@ -1,10 +1,13 @@
 #ifndef H2POLYGON_H
 #define H2POLYGON_H
+
 #include "tools.h"
+
 
 class H2Point;
 class H2GeodesicArc;
 class H2Geodesic;
+class H2Isometry;
 
 class H2Polygon
 {
@@ -29,6 +32,8 @@ public:
     H2GeodesicArc getSide(int index) const;
     std::vector<H2GeodesicArc> getSides() const;
     std::vector<H2Geodesic> getCompletedSides() const;
+
+    void optimalMobius(H2Isometry &output) const;
 
 private:
     std::vector<H2Point> vertices;

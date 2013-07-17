@@ -339,6 +339,28 @@ void H2GeodesicArc::getEndpointsInDiskModel(complex &output1, complex &output2) 
     return;
 }
 
+Circle H2GeodesicArc::getCircleInDiskModel() const
+{
+    complex z1 = p1.getDiskCoordinate(), z2 = p2.getDiskCoordinate();
+    complex c = (z2*(1.0+norm(z1)) - z1*(1.0+norm(z2)))/(2.0*I*imag(conj(z1)*z2));
+    double r = sqrt(norm(c) - 1);
+    return Circle(c, r);
+}
+
+complex H2GeodesicArc::getCircleCenterInDiskModel() const
+{
+    complex z1 = p1.getDiskCoordinate(), z2 = p2.getDiskCoordinate();
+    return (z2*(1.0+norm(z1)) - z1*(1.0+norm(z2)))/(2.0*I*imag(conj(z1)*z2));
+}
+
+double H2GeodesicArc::getCircleRadiusInDiskModel() const
+{
+    complex z1 = p1.getDiskCoordinate(), z2 = p2.getDiskCoordinate();
+    complex w = conj(z2)*z1;
+    complex Z = (z2 - z1)*(1.0 - w);
+    return std::abs(Z)/(2.0*std::abs(imag(w)));
+}
+
 std::ostream & operator<<(std::ostream & out, const H2Geodesic & L)
 {
     out << "{z1=" << L.z1 << ", z2=" << L.z2 << "}";

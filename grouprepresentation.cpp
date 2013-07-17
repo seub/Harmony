@@ -123,7 +123,7 @@ template<> GroupRepresentation<SL2CMatrix> GroupRepresentation<SL2CMatrix>::bar(
     return r;
 }
 
-template <> H2Polygon IsomH2Representation::generateFundamentalDomainForNormalizedSurfaceGroup(const H2Point &basePoint) const
+template <> H2Polygon IsomH2Representation::generatePolygon(const H2Point &basePoint) const
 {
     H2Polygon res;
     if (Gamma->isClosedSurfaceGroup())
@@ -152,6 +152,37 @@ template <> H2Polygon IsomH2Representation::generateFundamentalDomainForNormaliz
                      " not a closed surface group representation" << std::endl;
     }
     return res;
+}
+
+template <> H2Polygon IsomH2Representation::generatePolygon(int TilingSize) const
+{
+    double step = 1.0/TilingSize;
+
+    H2Point p;
+    p.setDiskCoordinate(0.0);
+    H2Polygon polygon, bestPolygon = generatePolygon(p);
+    double norm, bestNorm = bestPolygon.norm();
+
+    double x = -1.0, y = -1.0;
+    for(int i=1; i<2*TilingSize; i++)
+    {
+        x += step;
+        for (int j=1; j<2*TilingSize; j++)
+        {
+            y += step;
+            p.setDiskCoordinate(complex(x, y));
+            polygon = generatePolygon(p);
+            norm = polygon.norm();
+            if (norm < bestNorm)
+            {
+                bestNorm = norm;
+                bestPolygon = polygon;
+            }
+        }
+    }
+
+
+    return bestPolygon;
 }
 
 

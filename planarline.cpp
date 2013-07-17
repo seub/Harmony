@@ -53,6 +53,11 @@ bool PlanarLine::contains(const complex & z) const
     return (imag((z - point) / direction) == 0);
 }
 
+complex PlanarLine::getDirection() const
+{
+    return direction;
+}
+
 bool intersectionPlanarLines(const PlanarLine & l1, const PlanarLine & l2, complex & output)
 {
     complex p1, p2, d1, d2;

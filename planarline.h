@@ -11,6 +11,7 @@ public:
     void getPointAndDirection(complex & point, complex & direction) const;
     void setPointAndDirection(complex & point, complex & direction);
     void setPerpendicularBisector(const complex & z1, const complex & z2);
+    complex getDirection() const;
 
     bool contains(const complex & z) const;
 

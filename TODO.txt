@@ -5,25 +5,13 @@ Think about ERROR:
 
 Cleanup code
 
-utiliser des long double ?
-
-réécrire twistcorrection, etc
-
-store conjugators ?
 
 different coordinates for complex numbers?
 disk model : z = (1 - exp(u)) e^(it)
 upper half plane model : z = x + i e^u
 or maybe in disk model : angle + hyperbolic distance to the origin
 
-bug des lignes droites qui sautent
 
 add rotations to mobiusing
 add shift (only keys ?)
 add zoom keys
-
-bazarder le getrepresentation de Biby
-
-relire ce que Biby a écrit
-
-utiliser des lengths normalized

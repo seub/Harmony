@@ -1,6 +1,8 @@
 #include "h2polygon.h"
 #include "h2point.h"
 #include "h2geodesic.h"
+#include "circle.h"
+#include "h2isometry.h"
 
 H2Polygon::H2Polygon()
 {
@@ -112,6 +114,66 @@ double H2Polygon::normReciprocalSmallestEuclideanSideLength()
     double smallest = *std::min_element(lengths.begin(),lengths.end());
     return 1/smallest;
 }
+void H2Polygon::optimalMobius(H2Isometry &output) const
+{
+    complex zk;
+    double rk;
+    double A = 0.0;
+    complex T = 0.0;
+    Circle Ck;
+    PlanarLine Lk;
+
+
+    std::vector<H2Geodesic> geodesics = getCompletedSides();
+
+    unsigned int k;
+    for (k=0; k<geodesics.size(); k++)
+    {
+        if (geodesics[k].getCircleInDiskModel(Ck))
+        {
+            Ck.getCenterAndRadius(zk, rk);
+            T += zk/rk;
+            A += 2.0/rk;
+        }
+        else if (geodesics[k].getLineInDiskModel(Lk))
+        {
+            complex nextVertex = vertices[(k+2)%vertices.size()].getDiskCoordinate();
+            complex direction = Lk.getDirection();
+            if (imag(nextVertex*conj(direction))<0)
+            {
+                T += I*direction;
+            }
+            else
+            {
+                T += -I*direction;
+            }
+        }
+        else
+        {
+            std::cout << "ERROR in H2Polygon::optimalMobius(): geodesic is neither circle nor line ?!" << std::endl;
+        }
+    }
+
+
+    complex Tu = T/abs(T);
+    double u = -abs(T);
+
+    double B = 0.5*A/u;
+    double delta = B*B - 1;
+
+    if (delta < 0)
+    {
+        //std::cout << "ERROR in Graphe<Circle>::optimal_mobius(): negative discriminant!" << std::endl;
+        output.setIdentity();
+    }
+    else
+    {
+        double rac = sqrt(delta);
+        double rho = -B - rac;
+        output.setDiskCoordinates(1.0, rho*Tu);
+    }
+}
+
 
 std::ostream & operator<<(std::ostream & out, const H2Polygon &P)
 {
@@ -121,3 +183,5 @@ std::ostream & operator<<(std::ostream & out, const H2Polygon &P)
     }
     return out;
 }
+
+
