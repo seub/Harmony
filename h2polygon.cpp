@@ -86,6 +86,32 @@ std::vector<H2Geodesic> H2Polygon::getCompletedSides() const
     return arcList;
 }
 
+std::vector<double> H2Polygon::getEuclideanSideLengths() const
+{
+    std::vector<double> lengths;
+    lengths.reserve(vertices.size());
+    for(unsigned int i=0; i<vertices.size()-1; i++)
+    {
+        lengths.push_back( abs( vertices[i].getDiskCoordinate() - vertices[i+1].getDiskCoordinate() ) );
+    }
+    lengths.push_back( abs( vertices.back().getDiskCoordinate() - vertices[0].getDiskCoordinate() ) );
+    return lengths;
+}
+
+double H2Polygon::normLargestEuclideanSideLength() const
+{
+    std::vector<double> lengths = getEuclideanSideLengths();
+    double max;
+    max = *std::max_element(lengths.begin(),lengths.end());
+    return max;
+}
+
+double H2Polygon::normReciprocalSmallestEuclideanSideLength()
+{
+    std::vector<double> lengths = getEuclideanSideLengths();
+    double smallest = *std::min_element(lengths.begin(),lengths.end());
+    return 1/smallest;
+}
 
 std::ostream & operator<<(std::ostream & out, const H2Polygon &P)
 {
