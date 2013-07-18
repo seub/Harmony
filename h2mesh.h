@@ -34,7 +34,13 @@ private:
     complex * meshPoints;
     bool * isInside;
 
+    int * leftNeighbors;
+    int * rightNeighbors;
+    int * upNeighbors;
+    int * downNeighbors;
+
     void fillIsInside();
+    void fillNeighbors();
 };
 
 #endif // H2MESH_H
