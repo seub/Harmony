@@ -160,7 +160,7 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int TilingSize) cons
 
     H2Point p;
     H2Polygon polygon, bestPolygon;
-    double currentNorm, bestNorm = 10000000000;
+    double currentNorm, bestNorm = 1.0/ERROR;
     complex z;
 
     double x = -1.0, y = -1.0;
@@ -176,7 +176,7 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int TilingSize) cons
             {
                 p.setDiskCoordinate(complex(x, y));
                 polygon = generatePolygon(p);
-                currentNorm = polygon.normReciprocalEuclideanSideLengthsL1();
+                currentNorm = polygon.norm1();
                 if (currentNorm < bestNorm)
                 {
                     bestNorm = currentNorm;
@@ -186,7 +186,9 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int TilingSize) cons
         }
     }
 
-    std::cout << bestPolygon.getVertex(0) << std::endl;
+    complex v = bestPolygon.getVertex(0).getDiskCoordinate();
+    std::cout << "Vertex found: " << v << std::endl;
+    std::cout << "Norm(z) = " << norm(v) << std::endl;
 
     return bestPolygon;
 }
@@ -219,7 +221,8 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsForNorm
     }
     else
     {
-        std::cout << "WARNING in RealRepresentation::generatePolygon: not a closed surface group representation" << std::endl;
+        std::cout << "WARNING in RealRepresentation::getSidePairingsForNormalizedFundamentalDomain: not a closed surface group representation"
+                  << std::endl;
     }
     return output;
 }
@@ -482,6 +485,97 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
         std::cout << "Normalizer has to be one of the generators!" << std::endl;
         return;
     }
+}
+
+template <> void IsomH2Representation::setNiceRepresentation()
+{
+    *Gamma = DiscreteGroup(TopologicalSurface(2, 0));
+
+    H2Isometry A1, B1, A2, B2, a1, b1, a2, b2;
+
+    H2Point p1, p2;
+    H2Geodesic L1, L2;
+
+    complex z1 = 1.0/sqrt(sqrt(2.0));
+    complex u = (1.0 + I)/sqrt(2.0);
+
+    p1.setDiskCoordinate(z1);
+    p2.setDiskCoordinate(u*z1);
+    L1.setPassingThroughTwoPoints(p1, p2);
+    p1.setDiskCoordinate(I*u*z1);
+    p2.setDiskCoordinate(I*z1);
+    L2.setPassingThroughTwoPoints(p1, p2);
+
+    A1.setByMappingGeodesic(L1, L2);
+
+    p1.setDiskCoordinate(u*z1);
+    p2.setDiskCoordinate(I*z1);
+    L1.setPassingThroughTwoPoints(p1, p2);
+    p1.setDiskCoordinate(-z1);
+    p2.setDiskCoordinate(u*I*z1);
+    L2.setPassingThroughTwoPoints(p1, p2);
+
+    B1.setByMappingGeodesic(L1, L2);
+
+    p1.setDiskCoordinate(-z1);
+    p2.setDiskCoordinate(-u*z1);
+    L1.setPassingThroughTwoPoints(p1, p2);
+    p1.setDiskCoordinate(-I*u*z1);
+    p2.setDiskCoordinate(-I*z1);
+    L2.setPassingThroughTwoPoints(p1, p2);
+
+    A2.setByMappingGeodesic(L1, L2);
+
+    p1.setDiskCoordinate(-u*z1);
+    p2.setDiskCoordinate(-I*z1);
+    L1.setPassingThroughTwoPoints(p1, p2);
+    p1.setDiskCoordinate(z1);
+    p2.setDiskCoordinate(-I*u*z1);
+    L2.setPassingThroughTwoPoints(p1, p2);
+
+    B2.setByMappingGeodesic(L1, L2);
+
+
+    a1 = A1.inverse()*B1.inverse()*A1;
+    b1 = A1.inverse()*B1*A1*B1.inverse()*A1;
+    b2 = A2*B1*A1.inverse()*B1.inverse()*A1;
+    a2 = b2.inverse()*B2.inverse()*b2;
+
+
+
+    p1.setDiskCoordinate(-z1);
+    std::cout << "a2 * (-z1) = " << a2*p1 << std::endl;
+
+
+
+
+    generatorImages.clear();
+    generatorImages.push_back(a1);
+    generatorImages.push_back(b1);
+    generatorImages.push_back(a2);
+    generatorImages.push_back(b2);
+
+    /*p1.setDiskCoordinate(0.5);
+    p1 = a1.inverse()*p1;
+    std::cout << p1 << std::endl;
+    p1 = b1.inverse()*p1;
+    std::cout << p1 << std::endl;
+    p1 = a1*p1;
+    std::cout << p1 << std::endl;
+    p1 = b1*p1;
+    std::cout << p1 << std::endl;
+    p1 = a2.inverse()*p1;
+    std::cout << p1 << std::endl;
+    p1 = b2.inverse()*p1;
+    std::cout << p1 << std::endl;
+    p1 = a2*p1;
+    std::cout << p1 << std::endl;
+    p1 = b2*p1;
+    std::cout << p1 << std::endl;*/
+
+    std::cout << A1.inverse()*B1*A1*B1.inverse()*A2.inverse()*B2*A2*B2.inverse() << std::endl;
+
+    return;
 }
 
 

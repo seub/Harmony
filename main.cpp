@@ -35,12 +35,15 @@ int main(int argc, char *argv[])
     }
     for (int i=0; i<3*g-3; i++)
     {
-        lengths.push_back(1.0);
+        lengths.push_back(2.0);
     }
 
     FenchelNielsenConstructor fn(lengths,twists);
     DiscreteGroup group;
-    IsomH2Representation rho = fn.getRepresentation(&group);
+    //IsomH2Representation rho = fn.getRepresentation(&group);
+
+    IsomH2Representation rho(&group);
+    rho.setNiceRepresentation();
     rho.checkRelations();
 
 
@@ -49,15 +52,16 @@ int main(int argc, char *argv[])
     canvas.setDelegate(&delegate);
 
     H2Point p;
-    p.setDiskCoordinate(0.0);
-    H2Polygon P = rho.generatePolygon(500);
+    p.setDiskCoordinate(1.0/sqrt(sqrt(2.0)));
+    H2Polygon P = rho.generatePolygon(p);
     delegate.buffer.addElement(rho, "red");
     delegate.buffer.addElement(P, "blue", 4);
 
-    /*std::vector<H2Isometry> listOfIsoms = rho.getSidePairingsNormalizedAroundVerticesToDepth(1);
+    std::vector<H2Isometry> listOfIsoms = rho.getSidePairingsNormalizedAroundVerticesToDepth(1);
     std::vector<H2Polygon> listOfPolys = listOfIsoms*P;
 
-    delegate.buffer.addElement(listOfPolys);*/
+    delegate.buffer.addElement(listOfPolys);
+
 
 
     H2Isometry id;

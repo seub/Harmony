@@ -13,8 +13,9 @@ class H2Geodesic
 public:
 
     H2Geodesic();
-    H2Geodesic(const complex & z1, const complex & z2);
-    H2Geodesic(const H2Point & p1, const H2Point & p2);
+
+    void setEndpointsInDiskModel(const complex & z1, const complex & z2);
+    void setPassingThroughTwoPoints(const H2Point & p1, const H2Point & p2);
 
     void getEndpointsInDiskModel(complex & z1, complex & z2) const;
 

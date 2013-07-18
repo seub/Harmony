@@ -85,9 +85,6 @@ void H2Isometry::setByMappingPointInDiskModelNormalized(const complex &zIn, cons
 
 void H2Isometry::setByMappingGeodesic(const H2Geodesic &L1, const H2Geodesic &L2)
 {
-    H2Point p1,p2;
-    p1.setDiskCoordinate(L1.closestPointToOriginInDiskModel());
-    p2.setDiskCoordinate(L2.closestPointToOriginInDiskModel());
     H2Isometry f1,f2;
     f1.setByMappingToVerticalUp(L1);
     f2.setByMappingToVerticalUp(L2);
@@ -195,11 +192,11 @@ bool H2Isometry::axis(H2Geodesic & L) const
         c2 = C2.getComplexCoordinate();
         if(norm(1.0 - conj(a)*c2) < norm(1.0 - conj(a)*c1))
         {
-            L = H2Geodesic(c2,c1);
+            L.setEndpointsInDiskModel(c2,c1);
             return true;
         } else
         {
-            L = H2Geodesic(c1,c2);
+            L.setEndpointsInDiskModel(c1,c2);
             return true;
         }
     }
@@ -262,7 +259,10 @@ H2Geodesic operator*(const H2Isometry &f, const H2Geodesic &L)
     L.getEndpointsInDiskModel(z1,z2);
     w1 = f.u*((z1-f.a)/(1.0 - (conj(f.a)*z1)));
     w2 = f.u*((z2-f.a)/(1.0 - (conj(f.a)*z2)));
-    return H2Geodesic(w1,w2);
+
+    H2Geodesic res;
+    res.setEndpointsInDiskModel(w1, w2);
+    return res;
 }
 
 H2GeodesicArc operator*(const H2Isometry &f, const H2GeodesicArc &L)

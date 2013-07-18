@@ -22,14 +22,11 @@ public:
     std::vector<H2Point> getVertices() const;
     std::vector<complex> getVerticesInDiskModel() const;
 
-    std::vector<double> getEuclideanSideLengths() const;
-    std::vector<double> getEuclideanDistancesFromOrigin() const;
+    double norm0() const;
+    double norm1() const;
+    double norm2() const;
+    double norm3() const;
 
-    double normReciprocalEuclideanSideLengthsL1() const;
-    double normReciprocalEuclideanSideLengthsL2() const;
-
-
-    double normEuclideanDistanceFromOriginL2() const;
 
     H2GeodesicArc getSide(int index) const;
     std::vector<H2GeodesicArc> getSides() const;

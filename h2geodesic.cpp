@@ -6,25 +6,22 @@ H2Geodesic::H2Geodesic()
 {    
 }
 
-H2Geodesic::H2Geodesic(const complex &z1, const complex &z2)
+void H2Geodesic::setEndpointsInDiskModel(const complex &z1, const complex &z2)
 {
     if (z1 == z2)
     {
-        std::cout << "There is no H2Geodesic between a point and itself." << std::endl;
-        throw(0);
+        std::cout << "ERROR in H2Geodesic::setEndpointsInDiskModel: there is no H2Geodesic between a point and itself." << std::endl;
+        //throw(0);
     }
     this->z1 = z1;
     this->z2 = z2;
+    return;
 }
 
-H2Geodesic::H2Geodesic(const H2Point & p1, const H2Point & p2)
+void H2Geodesic::setPassingThroughTwoPoints(const H2Point & p1, const H2Point & p2)
 {
-    complex p1Klein, p2Klein;
-    p1Klein = p1.getKleinCoordinate();
-    p2Klein = p2.getKleinCoordinate();
-    PlanarLine L(p1Klein,p2Klein);
-    Circle C(0.0,1.0);
-    intersectCircleAndLine(C,L,z1,z2);
+    H2GeodesicArc A(p1, p2);
+    *this = A.getGeodesic();
 }
 
 void H2Geodesic::getEndpointsInDiskModel(complex &z1, complex &z2) const
@@ -100,7 +97,9 @@ bool H2Geodesic::getLineInDiskModel(PlanarLine &output) const
 
 H2Geodesic H2Geodesic::swapOrientation() const
 {
-    return H2Geodesic(z2,z1);
+    H2Geodesic L;
+    L.setEndpointsInDiskModel(z2, z1);
+    return L;
 }
 
 bool intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2Point & p)
@@ -252,7 +251,10 @@ bool commonPerpendicular(const H2Geodesic &L1, const H2Geodesic &L2, H2Geodesic 
     delta = sqrt(S*S - 4.0*P);
     c1 = (S - delta)/2.0;
     c2 = (S + delta)/2.0;
-    output = H2Geodesic(c1,c2);
+
+    H2Geodesic L;
+    L.setEndpointsInDiskModel(c1, c2);
+    output = L;
     return true;
 }
 
@@ -308,22 +310,38 @@ H2GeodesicArc::H2GeodesicArc(const H2Point &p1, const H2Point &p2) : p1(p1), p2(
 
 H2Geodesic H2GeodesicArc::getGeodesic() const
 {
-    return H2Geodesic(p1, p2);
+    complex c = getCircleCenterInDiskModel();
+    double r = getCircleRadiusInDiskModel();
+    complex z1 = (1.0 - I*r)/conj(c);
+    complex z2 = (1.0 + I*r)/conj(c);
+
+    H2Geodesic L;
+    if (norm(z1 - p1.getDiskCoordinate()) < norm(z2 - p1.getDiskCoordinate()))
+    {
+        L.setEndpointsInDiskModel(z1, z2);
+    }
+    else
+    {
+        L.setEndpointsInDiskModel(z2, z1);
+    }
+    return L;
 }
 
 bool H2GeodesicArc::isCircleArcInDiskModel() const
 {
-    return H2Geodesic(p1, p2).isCircleInDiskModel();
+
+    return getGeodesic().isCircleInDiskModel();
 }
 
 bool H2GeodesicArc::getCircleAndAnglesInDiskModel(Circle &outC, double &outAngle1, double &outAngle2) const
 {
-    H2Geodesic L(p1, p2);
-    if (L.isCircleInDiskModel())
-    {
-        L.getCircleInDiskModel(outC);
-        outAngle1 = arg(p1.getDiskCoordinate() - outC.getCenter());
-        outAngle2 = arg(p2.getDiskCoordinate() - outC.getCenter());
+    complex z1 = p1.getDiskCoordinate();
+    complex z2 = p2.getDiskCoordinate();
+    if (imag(z2*conj(z1)) != 0.0)
+    {        
+        outC = getCircleInDiskModel();
+        outAngle1 = arg(z1 - outC.getCenter());
+        outAngle2 = arg(z2 - outC.getCenter());
         return true;
     }
     else
@@ -360,6 +378,8 @@ double H2GeodesicArc::getCircleRadiusInDiskModel() const
     complex Z = (z2 - z1)*(1.0 - w);
     return std::abs(Z)/(2.0*std::abs(imag(w)));
 }
+
+
 
 std::ostream & operator<<(std::ostream & out, const H2Geodesic & L)
 {

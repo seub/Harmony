@@ -88,60 +88,57 @@ std::vector<H2Geodesic> H2Polygon::getCompletedSides() const
     return arcList;
 }
 
-std::vector<double> H2Polygon::getEuclideanSideLengths() const
+double H2Polygon::norm0() const
 {
-    std::vector<double> lengths;
-    lengths.reserve(vertices.size());
-    for(unsigned int i=0; i<vertices.size()-1; i++)
+    double res = 0;
+    for (unsigned int i=0; i<vertices.size(); i++)
     {
-        lengths.push_back( std::abs(vertices[i].getDiskCoordinate() - vertices[i+1].getDiskCoordinate() ) );
+        res += norm(vertices[i].getDiskCoordinate());
     }
-    lengths.push_back( std::abs(vertices.back().getDiskCoordinate() - vertices[0].getDiskCoordinate() ) );
-    return lengths;
+    return res;
 }
 
-std::vector<double> H2Polygon::getEuclideanDistancesFromOrigin() const
+double H2Polygon::norm1() const
 {
-    std::vector<double> lengths;
-    lengths.reserve(vertices.size());
-    for(unsigned int i=0; i<vertices.size(); i++)
+    double res = norm(vertices.front().getDiskCoordinate() - vertices.back().getDiskCoordinate());
+    for (unsigned int i=0; i<vertices.size()-1; i++)
     {
-        lengths.push_back( std::abs( vertices[i].getDiskCoordinate() ));
+        res += norm(vertices[i+1].getDiskCoordinate() - vertices[i].getDiskCoordinate());
     }
-    return lengths;
+    return res;
 }
 
-double H2Polygon::normReciprocalEuclideanSideLengthsL1() const
+double H2Polygon::norm2() const
 {
-    std::vector<double> lengths = getEuclideanSideLengths();
-    double L1sum=0;
-    for (unsigned int i=0; i<lengths.size(); i++)
+    double res = 0;
+    complex z1, z2, z3;
+    z1= vertices.front().getKleinCoordinate();
+    z2 = vertices.back().getKleinCoordinate();
+    complex u = conj(z2 - z1);
+
+
+    unsigned int i;
+    for (i=0 ; i <vertices.size()-1; i++)
     {
-        L1sum += 1/lengths[i];
+        z3 = vertices[i].getKleinCoordinate();
+        res += std::abs(imag((z3 - z1) *  u));
     }
-    return L1sum;
+    return 2.0/res;
 }
 
-double H2Polygon::normReciprocalEuclideanSideLengthsL2() const
+double H2Polygon::norm3() const
 {
-    std::vector<double> lengths = getEuclideanSideLengths();
-    double L1sum=0;
-    for (unsigned int i=0; i<lengths.size(); i++)
-    {
-        L1sum += 1/(lengths[i]*lengths[i]);
-    }
-    return L1sum;
-}
+    double average = norm1()/vertices.size();
 
-double H2Polygon::normEuclideanDistanceFromOriginL2() const
-{
-    double distanceSum=0;
-    std::vector<double> distances = getEuclideanDistancesFromOrigin();
-    for (unsigned int i=0; i< distances.size(); i++)
+    double diff = norm(vertices.front().getDiskCoordinate() - vertices.back().getDiskCoordinate()) - average;
+    double res = diff*diff;
+
+    for (unsigned int i=1; i<vertices.size()-1; i++)
     {
-        distanceSum += distances[i]*distances[i];
+        diff = norm(vertices[i+1].getDiskCoordinate() - vertices[i].getDiskCoordinate()) - average;
+        res += diff*diff;
     }
-    return distanceSum;
+    return res;
 }
 
 void H2Polygon::optimalMobius(H2Isometry &output) const

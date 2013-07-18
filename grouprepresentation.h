@@ -54,6 +54,7 @@ public:
                                                 double C1, double C2, double C3,
                                                 double S1, double S2, double S3,
                                                 generatorName normalized);
+    void setNiceRepresentation();
 
     static IsomH2Representation amalgamateOverInverse(DiscreteGroup *outputDiscreteGroup,
                                                       const IsomH2Representation & rho1, const generatorName &a1,
