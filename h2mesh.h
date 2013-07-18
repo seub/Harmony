@@ -25,6 +25,8 @@ private:
     int nbPointsY;
     int nbMeshPoints;
 
+
+    double xMin,xMax,yMin,yMax;
     H2Polygon polygon;
 
     complex firstMeshPoint;

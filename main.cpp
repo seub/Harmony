@@ -14,6 +14,7 @@
 #include "h2isometry.h"
 #include "fenchelnielsenconstructor.h"
 #include "circle.h"
+#include "h2mesh.h"
 
 int main(int argc, char *argv[])
 {
@@ -71,7 +72,7 @@ int main(int argc, char *argv[])
     int i,index;
     for(i=0; i<10; i++)
     {
-        index = mesh.getClosestMeshIndex(0.0 + (i+0.0)*(.02 + I*.03));
+        index = mesh.getClosestMeshIndex(0.0 + (10*i+0.0)*(.02 + I*.03));
         std::cout << mesh.getMeshPoints()[index] << std::endl;
     }
 
