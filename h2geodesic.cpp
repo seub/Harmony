@@ -327,10 +327,11 @@ H2Geodesic H2GeodesicArc::getGeodesic() const
     return L;
 }
 
-bool H2GeodesicArc::isCircleArcInDiskModel() const
-{
-
-    return getGeodesic().isCircleInDiskModel();
+bool H2GeodesicArc::isLineSegmentInDiskModel() const
+{    
+    complex z1 = p1.getDiskCoordinate();
+    complex z2 = p2.getDiskCoordinate();
+    return imag(z2*conj(z1))==0;
 }
 
 bool H2GeodesicArc::getCircleAndAnglesInDiskModel(Circle &outC, double &outAngle1, double &outAngle2) const

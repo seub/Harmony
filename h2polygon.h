@@ -2,9 +2,8 @@
 #define H2POLYGON_H
 
 #include "tools.h"
+#include "h2point.h"
 
-
-class H2Point;
 class H2GeodesicArc;
 class H2Geodesic;
 class H2Isometry;
@@ -14,6 +13,7 @@ class H2Polygon
     friend std::ostream & operator<<(std::ostream & out, const H2Polygon &P);
 public:
     H2Polygon();
+
     void addVertex(const H2Point & p);
     void removeLastVertex();
 
@@ -21,12 +21,18 @@ public:
     H2Point getVertex(int index) const;
     std::vector<H2Point> getVertices() const;
     std::vector<complex> getVerticesInDiskModel() const;
+    std::vector<complex> getVerticesInKleinModel() const;
+
+    void getExtremalCoordinatesInDiskModel(double& xMin, double& xMax, double& yMin, double & yMax) const;
 
     double norm0() const;
     double norm1() const;
     double norm2() const;
     double norm3() const;
 
+    bool isInsideInKleinModel(const complex & z) const;
+    bool isInsideInDiskModel(const complex & z) const;
+    bool isInside(const H2Point & point) const;
 
     H2GeodesicArc getSide(int index) const;
     std::vector<H2GeodesicArc> getSides() const;
@@ -36,6 +42,7 @@ public:
 
 private:
     std::vector<H2Point> vertices;
+    std::vector<complex> verticesInKleinModel;
 };
 
 #endif // H2POLYGON_H

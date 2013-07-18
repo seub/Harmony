@@ -24,26 +24,26 @@ int main(int argc, char *argv[])
     //windows.show();
 
 
-    int g = 2;
+    int g = 8;
 
     std::vector<double> lengths;
     std::vector<double> twists;
     for (int i=0; i<3*g-3; i++)
     {
         //twists.push_back(1.0-.3*i);
-        twists.push_back(0.0);
+        twists.push_back(-1.0 + i*.1);
     }
     for (int i=0; i<3*g-3; i++)
     {
-        lengths.push_back(2.0);
+        lengths.push_back(1.0 + .3*i);
     }
 
     FenchelNielsenConstructor fn(lengths,twists);
     DiscreteGroup group;
-    //IsomH2Representation rho = fn.getRepresentation(&group);
+    IsomH2Representation rho = fn.getRepresentation(&group);
 
-    IsomH2Representation rho(&group);
-    rho.setNiceRepresentation();
+    //IsomH2Representation rho(&group);
+    //rho.setNiceRepresentation();
     rho.checkRelations();
 
 
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     canvas.setDelegate(&delegate);
 
     H2Point p;
-    p.setDiskCoordinate(1.0/sqrt(sqrt(2.0)));
+    p.setDiskCoordinate( 0.3 );
     H2Polygon P = rho.generatePolygon(p);
     delegate.buffer.addElement(rho, "red");
     delegate.buffer.addElement(P, "blue", 4);
@@ -62,7 +62,18 @@ int main(int argc, char *argv[])
 
     delegate.buffer.addElement(listOfPolys);
 
+    clock_t t0 = clock();
+    H2mesh mesh(0.01, P);
+    clock_t t1 = clock();
+    std::cout << "time to construct mesh: " << (t1-t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+    delegate.buffer.addElement(mesh, "red");
 
+    int i,index;
+    for(i=0; i<10; i++)
+    {
+        index = mesh.getClosestMeshIndex(0.0 + (i+0.0)*(.02 + I*.03));
+        std::cout << mesh.getMeshPoints()[index] << std::endl;
+    }
 
     H2Isometry id;
     id.setIdentity();

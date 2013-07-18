@@ -54,7 +54,7 @@ public:
     double getCircleRadiusInDiskModel() const;
 
     H2Geodesic getGeodesic() const;
-    bool isCircleArcInDiskModel() const;
+    bool isLineSegmentInDiskModel() const;
     bool getCircleAndAnglesInDiskModel(Circle & outC, double & outAngle1, double & outAngle2) const;
     void getEndpointsInDiskModel(complex &output1, complex &output2) const;
 

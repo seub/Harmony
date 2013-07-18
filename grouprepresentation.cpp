@@ -544,9 +544,6 @@ template <> void IsomH2Representation::setNiceRepresentation()
 
 
     p1.setDiskCoordinate(-z1);
-    std::cout << "a2 * (-z1) = " << a2*p1 << std::endl;
-
-
 
 
     generatorImages.clear();
@@ -554,26 +551,6 @@ template <> void IsomH2Representation::setNiceRepresentation()
     generatorImages.push_back(b1);
     generatorImages.push_back(a2);
     generatorImages.push_back(b2);
-
-    /*p1.setDiskCoordinate(0.5);
-    p1 = a1.inverse()*p1;
-    std::cout << p1 << std::endl;
-    p1 = b1.inverse()*p1;
-    std::cout << p1 << std::endl;
-    p1 = a1*p1;
-    std::cout << p1 << std::endl;
-    p1 = b1*p1;
-    std::cout << p1 << std::endl;
-    p1 = a2.inverse()*p1;
-    std::cout << p1 << std::endl;
-    p1 = b2.inverse()*p1;
-    std::cout << p1 << std::endl;
-    p1 = a2*p1;
-    std::cout << p1 << std::endl;
-    p1 = b2*p1;
-    std::cout << p1 << std::endl;*/
-
-    std::cout << A1.inverse()*B1*A1*B1.inverse()*A2.inverse()*B2*A2*B2.inverse() << std::endl;
 
     return;
 }

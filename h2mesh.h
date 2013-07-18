@@ -1,22 +1,38 @@
 #ifndef H2MESH_H
 #define H2MESH_H
-#include "types.h"
 
+#include "types.h"
+#include "h2polygon.h"
 
 class H2mesh
 {
 public:
     H2mesh();
-    H2mesh(int width);
+    ~H2mesh();
 
-    complex getMeshPoint(int index) const;
-    std::vector<complex> getMeshPoints() const;
-    double getWidth() const;
+    H2mesh(double step, const H2Polygon & polygon);
+    const complex * getMeshPoints() const;
+    const bool * getIsInside() const;
+    int getNbMeshPoints() const;
+
+    int getClosestMeshIndex(const complex & z) const;
+
 
 private:
-    double width;
-    std::vector<complex> meshPoints;
-    int numberOfMeshPoints;
+    double step;
+
+    int nbPointsX;
+    int nbPointsY;
+    int nbMeshPoints;
+
+    H2Polygon polygon;
+
+    complex firstMeshPoint;
+
+    complex * meshPoints;
+    bool * isInside;
+
+    void fillIsInside();
 };
 
 #endif // H2MESH_H

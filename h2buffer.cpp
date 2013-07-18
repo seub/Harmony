@@ -91,3 +91,36 @@ void H2Buffer::addElement(const std::vector<H2Polygon> &V, const QColor &color, 
     }
     return;
 }
+
+void H2Buffer::addElement(const H2mesh &mesh, const QColor &color, int width)
+{
+    const complex * meshPoints = mesh.getMeshPoints();
+    const bool * isInside = mesh.getIsInside();
+
+    int nbMeshPoints = mesh.getNbMeshPoints();
+
+    H2Point p;
+    for (int i=0; i<nbMeshPoints; i++)
+    {
+        p.setDiskCoordinate(meshPoints[i]);
+        if (isInside[i])
+        {
+            addElement(p, color, width);
+        }
+        else
+        {
+            addElement(p, "black", std::max(width/2, 1));
+        }
+    }
+    return;
+}
+
+
+
+
+
+
+
+
+
+

@@ -13,12 +13,14 @@ H2Polygon::H2Polygon()
 void H2Polygon::addVertex(const H2Point &p)
 {
     vertices.push_back(p);
+    verticesInKleinModel.push_back(p.getKleinCoordinate());
     return;
 }
 
 void H2Polygon::removeLastVertex()
 {
     vertices.pop_back();
+    verticesInKleinModel.pop_back();
     return;
 }
 
@@ -46,6 +48,45 @@ std::vector<complex> H2Polygon::getVerticesInDiskModel() const
         complexList[j] = vertices[j].getDiskCoordinate();
     }
     return complexList;
+}
+
+std::vector<complex> H2Polygon::getVerticesInKleinModel() const
+{
+    return verticesInKleinModel;
+}
+
+void H2Polygon::getExtremalCoordinatesInDiskModel(double &xMin, double &xMax, double &yMin, double &yMax) const
+{
+    xMin = 1.0;
+    xMax = -1.0;
+    yMin = 1.0;
+    yMax = -1.0;
+
+    double x, y;
+    complex z;
+    for (unsigned int i=0; i<vertices.size(); i++)
+    {
+        z = vertices[i].getDiskCoordinate();
+        x = real(z);
+        y = imag(z);
+        if (x < xMin)
+        {
+            xMin = x;
+        }
+        if (x > xMax)
+        {
+            xMax = x;
+        }
+        if (y < yMin)
+        {
+            yMin = y;
+        }
+        if (y > yMax)
+        {
+            yMax = y;
+        }
+    }
+    return;
 }
 
 H2GeodesicArc H2Polygon::getSide(int index) const
@@ -199,6 +240,69 @@ void H2Polygon::optimalMobius(H2Isometry &output) const
         double rho = -B - rac;
         output.setDiskCoordinates(1.0, rho*Tu);
     }
+}
+
+bool H2Polygon::isInsideInDiskModel(const complex &z) const
+{
+    if (norm(z)>1.0)
+    {
+        return false;
+    }
+    complex w = 2.0*z/(1.0 + norm(z));
+    return isInsideInKleinModel(w);
+}
+
+bool H2Polygon::isInside(const H2Point &point) const
+{
+    complex w = point.getKleinCoordinate();
+    return isInsideInKleinModel(w);
+}
+
+bool H2Polygon::isInsideInKleinModel(const complex &z) const
+{
+    unsigned int nbIntersections = 0;
+    double xLeft, yLeft, xRight, yRight;
+
+    unsigned int n = verticesInKleinModel.size();
+
+    if (norm(z)>1.0)
+    {
+        return false;
+    }
+
+    unsigned int i;
+    for (i=0; i<n; i++)
+    {
+        xLeft = real(verticesInKleinModel[i] - z);
+        yLeft = imag(verticesInKleinModel[i]- z);
+        xRight = real(verticesInKleinModel[(i+1)%n] - z);
+        yRight = imag(verticesInKleinModel[(i+1)%n] - z);
+        if (xLeft*xRight<0)
+        {
+            if (yLeft + xLeft*(yRight - yLeft)/(xLeft - xRight) > 0)
+            {
+                nbIntersections++;
+            }
+        }
+        else if((xLeft<xRight?xLeft:xRight) == 0)
+        {
+            if (xLeft==0)
+            {
+                if (yLeft>0)
+                {
+                    nbIntersections++;
+                }
+            }
+            else
+            {
+                if (yRight >0)
+                {
+                    nbIntersections++;
+                }
+            }
+        }
+    }
+    return (nbIntersections%2 == 1);
 }
 
 

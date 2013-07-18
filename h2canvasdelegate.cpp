@@ -27,6 +27,14 @@ void H2CanvasDelegate::drawH2Point(const H2Point &p, const QColor &color, int wi
     return;
 }
 
+void H2CanvasDelegate::drawComplexPointInDiskModel(const complex &z, const QColor &color, int width)
+{
+    H2Point P;
+    P.setDiskCoordinate(z);
+    drawH2Point(P, color, width);
+    return;
+}
+
 void H2CanvasDelegate::drawH2Geodesic(const H2Geodesic &L, const QColor &color, int width)
 {
     H2Geodesic tempGeodesic =  mobius*L;
@@ -49,7 +57,7 @@ void H2CanvasDelegate::drawH2Geodesic(const H2Geodesic &L, const QColor &color, 
 void H2CanvasDelegate::drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color, int width)
 {
     H2GeodesicArc tempGeodesic =  mobius*L;
-    if(tempGeodesic.isCircleArcInDiskModel())
+    if(!tempGeodesic.isLineSegmentInDiskModel())
     {
         Circle C;
         double angle1, angle2;
