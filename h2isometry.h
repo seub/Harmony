@@ -45,6 +45,8 @@ public:
 
     bool axis(H2Geodesic &L) const;
 
+    complex hitComplexInDiskModel(const complex & z);
+
     H2Isometry inverse() const;
     double traceSquared() const;
     double translationLength() const;

@@ -29,6 +29,7 @@ public:
     double norm1() const;
     double norm2() const;
     double norm3() const;
+    double norm4() const;
 
     bool isInsideInKleinModel(const complex & z) const;
     bool isInsideInDiskModel(const complex & z) const;

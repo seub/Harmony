@@ -202,6 +202,11 @@ bool H2Isometry::axis(H2Geodesic & L) const
     }
 }
 
+complex H2Isometry::hitComplexInDiskModel(const complex &z)
+{
+    return u*(z - a)/(1.0 - conj(a)*z);
+}
+
 H2Isometry operator *(const H2Isometry & f1, const H2Isometry & f2)
 {
     H2Isometry fOut;

@@ -182,6 +182,16 @@ double H2Polygon::norm3() const
     return res;
 }
 
+double H2Polygon::norm4() const
+{
+    double res = 0;
+    for (unsigned int i=0; i<vertices.size(); i++)
+    {
+        res += 1.0/(1.0-norm(vertices[i].getDiskCoordinate()));
+    }
+    return res;
+}
+
 void H2Polygon::optimalMobius(H2Isometry &output) const
 {
     complex zk;

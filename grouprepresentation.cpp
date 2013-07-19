@@ -176,7 +176,7 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int TilingSize) cons
             {
                 p.setDiskCoordinate(complex(x, y));
                 polygon = generatePolygon(p);
-                currentNorm = polygon.norm1();
+                currentNorm = polygon.norm4();
                 if (currentNorm < bestNorm)
                 {
                     bestNorm = currentNorm;
@@ -185,10 +185,6 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int TilingSize) cons
             }
         }
     }
-
-    complex v = bestPolygon.getVertex(0).getDiskCoordinate();
-    std::cout << "Vertex found: " << v << std::endl;
-    std::cout << "Norm(z) = " << norm(v) << std::endl;
 
     return bestPolygon;
 }

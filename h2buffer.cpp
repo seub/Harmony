@@ -112,6 +112,9 @@ void H2Buffer::addElement(const H2mesh &mesh, const QColor &color, int width)
             addElement(p, "black", std::max(width/2, 1));
         }
     }
+
+    addElement(mesh.getPolygon(), "blue", 2);
+    addElement(mesh.getRho(), "red");
     return;
 }
 
