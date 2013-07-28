@@ -66,8 +66,10 @@ int main(int argc, char *argv[])
     H2Polygon Q = rho.generatePolygon(200);
     delegate.buffer.addElement(rho);
     delegate.buffer.addElement(Q,"blue",2);
-    delegate.buffer.addElement(triangulate(Q.triangulate()),"red",1);
+    std::vector<H2Triangle> triangleList = triangulate(triangulate(Q.triangulate()));
+    delegate.buffer.addElement(triangleList,"red",1);
 
+    std::cout << "There are " << triangleList.size() << " triangles" << std::endl;
 
     /*int i,index;
     for(i=0; i<10; i++)
