@@ -73,3 +73,15 @@ std::vector<H2Triangle> H2Triangle::triangulate() const
     output.push_back(Tmid);
     return output;
 }
+
+std::vector<H2Triangle> triangulate(const std::vector<H2Triangle> &triangleList)
+{
+    std::vector<H2Triangle> output;
+    std::vector<H2Triangle> temp;
+    for (unsigned int j=0; j<triangleList.size(); j++)
+    {
+        temp = triangleList[j].triangulate();
+        output.insert(output.end(),temp.begin(),temp.end());
+    }
+    return output;
+}

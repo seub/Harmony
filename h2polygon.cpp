@@ -497,22 +497,23 @@ void H2Polygon::subdivideByBiggestAngles(H2Polygon &P1, H2Polygon &P2) const
     unsigned int j;
     for (j=0; j< vertices.size(); j++)
     {
-        if (biggestAngle < angles[j])
+        if (biggestAngle < 2*M_PI - angles[j])
         {
-            biggestAngle = angles[j];
+            biggestAngle = 2*M_PI - angles[j];
             biggestAngleIndex = j;
         }
     }
-    std::cout << "Here" << vertices.size() << std::endl;
+
     for (j=0; j<vertices.size(); j++)
     {
-        if ((biggestAngleIndex == 0 && j>1 && j<vertices.size()-1) ||
-                (biggestAngleIndex == vertices.size() && j>0 && j<vertices.size()-2) ||
-                (j!=biggestAngleIndex && j!=biggestAngleIndex-1 && j!=biggestAngleIndex+1))
+        if ((biggestAngleIndex == 0 && j>1 && j<(vertices.size()-1)) ||
+                (biggestAngleIndex == vertices.size()-1 && j>0 && j<vertices.size()-2) ||
+                (biggestAngleIndex>0 && biggestAngleIndex<vertices.size()-1 &&
+                 j!=biggestAngleIndex-1 && j!=biggestAngleIndex+1 && j!=biggestAngleIndex))
         {
-            if (nextBiggestAngle < angles[j])
+            if (nextBiggestAngle < 2*M_PI - angles[j])
             {
-                nextBiggestAngle = angles[j];
+                nextBiggestAngle = 2*M_PI - angles[j];
                 nextBiggestAngleIndex = j;
             }
         }
