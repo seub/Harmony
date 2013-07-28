@@ -71,3 +71,8 @@ std::ostream & operator<<(std::ostream & out, const H2Point &p)
     out << "z= " << p.z;
     return out;
 }
+
+bool operator ==(H2Point & p1, H2Point & p2)
+{
+    return p1.z == p2.z;
+}
