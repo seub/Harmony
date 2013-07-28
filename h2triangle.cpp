@@ -1,5 +1,6 @@
 #include "h2triangle.h"
 
+
 H2Triangle::H2Triangle()
 {
 }
@@ -26,9 +27,9 @@ void H2Triangle::getPoints(H2Point &a, H2Point &b, H2Point &c) const
 
 void H2Triangle::getSideLengths(double &A, double &B, double &C) const
 {
-    A = H2distance(b,c);
-    B = H2distance(a,c);
-    C = H2distance(a,b);
+    A = H2Point::H2distance(b,c);
+    B = H2Point::H2distance(a,c);
+    C = H2Point::H2distance(a,b);
     return;
 }
 
@@ -59,9 +60,9 @@ void H2Triangle::getAngles(double &angleA, double &angleB, double &angleC) const
 std::vector<H2Triangle> H2Triangle::triangulate() const
 {
     H2Point midA, midB, midC;
-    midA = H2Midpoint(b,c);
-    midB = H2Midpoint(a,c);
-    midC = H2Midpoint(a,b);
+    midA = H2Point::H2Midpoint(b,c);
+    midB = H2Point::H2Midpoint(a,c);
+    midC = H2Point::H2Midpoint(a,b);
     H2Triangle Ta(a,midB,midC);
     H2Triangle Tb(b,midA,midC);
     H2Triangle Tc(c,midA,midB);

@@ -23,7 +23,7 @@ public:
 
 
     static double H2distance(const H2Point & p1, const H2Point & p2);
-    static H2Point H2MidPoint(const H2Point & p1, const H2Point & p2);
+    static H2Point H2Midpoint(const H2Point & p1, const H2Point & p2);
 
 private:
     complex z;
