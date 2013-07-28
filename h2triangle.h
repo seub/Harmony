@@ -22,4 +22,6 @@ private:
     H2Point a,b,c;
 };
 
+std::vector<H2Triangle> triangulate(const std::vector<H2Triangle> & triangleList);
+
 #endif // H2TRIANGLE_H

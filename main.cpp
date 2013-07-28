@@ -63,12 +63,11 @@ int main(int argc, char *argv[])
     std::cout << "time to construct mesh: " << (t1-t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     delegate.buffer.addElement(mesh, "red", 2);*/
 
-    delegate.buffer.addElement(rho);
     H2Polygon Q = rho.generatePolygon(200);
+    delegate.buffer.addElement(rho);
     delegate.buffer.addElement(Q,"blue",2);
+    delegate.buffer.addElement(triangulate(Q.triangulate()),"red",1);
 
-    H2Polygon P1,P2;
-    Q.subdivideByBiggestAngles(P1,P2);
 
     /*int i,index;
     for(i=0; i<10; i++)
