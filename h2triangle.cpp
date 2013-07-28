@@ -32,13 +32,27 @@ void H2Triangle::getSideLengths(double &A, double &B, double &C) const
     return;
 }
 
-void H2Triangle::getAngles(double &angA, double &angB, double &angC) const
+void H2Triangle::getAngles(double &angleA, double &angleB, double &angleC) const
 {
-    double A,B,C;
-    getSideLengths(A,B,C);
-    angA = acos((cosh(B)*cosh(C) - cosh(A))/(sinh(B)*sinh(C)));
-    angB = acos((cosh(A)*cosh(C) - cosh(B))/(sinh(A)*sinh(C)));
-    angC = acos((cosh(B)*cosh(A) - cosh(C))/(sinh(B)*sinh(A)));
+    complex z1 = a.getDiskCoordinate();
+    complex z2 = b.getDiskCoordinate();
+    complex z3 = c.getDiskCoordinate();
+
+    complex u,v;
+
+    u = (z3 - z1) / (1.0 - conj(z1)*z3);
+    v = (z2 - z1) / (1.0 - conj(z1)*z2);
+    angleA = Tools::mod2Pi(arg(v*conj(u)));
+
+    u = (z1 - z2) / (1.0 - conj(z2)*z1);
+    v = (z3 - z2) / (1.0 - conj(z2)*z3);
+    angleB = Tools::mod2Pi(arg(v*conj(u)));
+
+    u = (z2 - z3) / (1.0 - conj(z3)*z2);
+    v = (z1 - z3) / (1.0 - conj(z3)*z1);
+    angleC = Tools::mod2Pi(arg(v*conj(u)));
+
+
     return;
 }
 

@@ -376,6 +376,37 @@ bool H2Polygon::isInsideInKleinModel(const complex &z) const
     return (nbIntersections%2 == 1);
 }
 
+std::vector<double> H2Polygon::getAngles() const
+{
+    std::vector<double> res;
+
+    complex u, v;
+
+    u = (vertices.back().getDiskCoordinate() - vertices.front().getDiskCoordinate()) /
+            (1.0 - conj(vertices.front().getDiskCoordinate())*vertices.back().getDiskCoordinate());
+    v = (vertices[1].getDiskCoordinate() - vertices.front().getDiskCoordinate()) /
+            (1.0 - conj(vertices.front().getDiskCoordinate())*vertices[1].getDiskCoordinate());
+    res.push_back(Tools::mod2Pi(arg(v*conj(u))));
+
+    for (unsigned int i=1; i+1<vertices.size(); i++)
+    {
+        u = (vertices[i-1].getDiskCoordinate() - vertices[i].getDiskCoordinate()) /
+                (1.0 - conj(vertices[i].getDiskCoordinate())*vertices[i-1].getDiskCoordinate());
+        v = (vertices[i+1].getDiskCoordinate() - vertices[i].getDiskCoordinate()) /
+                (1.0 - conj(vertices[i].getDiskCoordinate())*vertices[i+1].getDiskCoordinate());
+        res.push_back(Tools::mod2Pi(arg(v*conj(u))));
+    }
+
+    u = (vertices[vertices.size()-2].getDiskCoordinate() - vertices.back().getDiskCoordinate()) /
+            (1.0 - conj(vertices.back().getDiskCoordinate())*vertices[vertices.size()-2].getDiskCoordinate());
+    v = (vertices.front().getDiskCoordinate() - vertices.back().getDiskCoordinate()) /
+            (1.0 - conj(vertices.back().getDiskCoordinate())*vertices.front().getDiskCoordinate());
+    res.push_back(Tools::mod2Pi(arg(v*conj(u))));
+
+
+    return res;
+}
+
 
 std::ostream & operator<<(std::ostream & out, const H2Polygon &P)
 {
