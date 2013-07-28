@@ -20,14 +20,27 @@ complex H2Point::getKleinCoordinate() const
     return 2.0*z / (1.0 + norm(z));
 }
 
+complex H2Point::getHyperboloidProjection() const
+{
+    return 2.0*z / (1.0 - norm(z));
+}
+
 void H2Point::setUpperHalfPlaneCoordinate(complex z)
 {
     this->z = I*((z - I)/(z + I));
+    return;
 }
 
 void H2Point::setDiskCoordinate(complex z)
 {
     this->z = z;
+    return;
+}
+
+void H2Point::setHyperboloidProjection(complex z)
+{
+    this->z = z / (1.0 + sqrt(1.0 + norm(z)));
+    return;
 }
 
 double H2distance(const H2Point & p1, const H2Point & p2)

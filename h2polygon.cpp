@@ -55,6 +55,67 @@ std::vector<complex> H2Polygon::getVerticesInKleinModel() const
     return verticesInKleinModel;
 }
 
+std::vector<complex> H2Polygon::getVerticesInHyperboloidProjection() const
+{
+    std::vector<complex> output;
+    for (unsigned int i=0; i<vertices.size(); i++)
+    {
+        output.push_back(vertices[i].getHyperboloidProjection());
+    }
+    return output;
+}
+
+/*void H2Polygon::getExtremalCoordinatesInHyperboloidProjection(double &xMin, double &yMin, double &xMax, double &yMax) const
+{
+    complex z = vertices[0].getHyperboloidProjection();
+    xMin = real(z);
+    xMax = real(z);
+    yMin = imag(z);
+    yMax = imag(z);
+    double xmin,xmax,ymin,ymax;
+    std::vector<H2GeodesicArc> sides = getSides();
+    for (unsigned int j=0; j<vertices.size(); j++)
+    {
+        sides[j].getExtremalCoordinatesInHyperboloidProjection(xmin,xmax,ymin,ymax);
+        xMin = std::min(xmin,xMin);
+        yMin = std::min(ymin,yMin);
+        xMax = std::max(xmax,xMax);
+        yMax = std::max(ymax,yMax);
+    }
+    re*/
+
+void H2Polygon::getExtremalCoordinatesInHyperboloidProjection(double &xMin, double &xMax, double &yMin, double &yMax) const
+{
+    complex z = vertices[0].getHyperboloidProjection();
+    xMin = real(z);
+    xMax = real(z);
+    yMin = imag(z);
+    yMax = imag(z);
+    for (unsigned int j=1; j<vertices.size(); j++)
+    {
+        z = vertices[j].getHyperboloidProjection();
+        //std::cout << "z = " << z << std::endl;
+        if (real(z) < xMin)
+        {
+            xMin = real(z);
+        }
+        if (imag(z) < yMin)
+        {
+            yMin = imag(z);
+        }
+        if (real(z) > xMax)
+        {
+            xMax = real(z);
+        }
+        if (imag(z) > yMax)
+        {
+            yMax = imag(z);
+        }
+        //std::cout << "xMin, xMax, yMin, yMax: " << xMin << ", " << xMax << ", " << yMin << ", " << yMax << std::endl;
+    }
+    return;
+}
+
 void H2Polygon::getExtremalCoordinatesInDiskModel(double &xMin, double &xMax, double &yMin, double &yMax) const
 {
     xMin = 1.0;

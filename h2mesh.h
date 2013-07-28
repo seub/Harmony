@@ -17,8 +17,9 @@ public:
     H2Polygon getPolygon() const;
     IsomH2Representation getRho() const;
 
-    int getClosestMeshIndex(const complex & z) const;
+    int getClosestMeshIndex(const complex & z);
 
+    std::vector<int> getSpecialPoints() const;
 
 private:
     double step;
@@ -42,6 +43,9 @@ private:
     int * rightNeighborIndices;
     int * upNeighborIndices;
     int * downNeighborIndices;
+
+
+    std::vector<int> specialPoints;
 
     void fillMeshPoints();
     void fillIsInside();

@@ -18,7 +18,7 @@ public:
 signals:
 
 public slots:
-    //void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent *resizeEvent);
     void mousePressEvent(QMouseEvent * mouseEvent);
     void mouseMoveEvent(QMouseEvent * mouseEvent);
     void wheelEvent(QWheelEvent * wheelEvent);

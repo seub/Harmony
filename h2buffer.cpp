@@ -102,15 +102,22 @@ void H2Buffer::addElement(const H2mesh &mesh, const QColor &color, int width)
     H2Point p;
     for (int i=0; i<nbMeshPoints; i++)
     {
-        p.setDiskCoordinate(meshPoints[i]);
+        p.setHyperboloidProjection(meshPoints[i]);
         if (isInside[i])
         {
             addElement(p, color, width);
         }
-        else
+        /*else
         {
             addElement(p, "black", std::max(width/2, 1));
-        }
+        }*/
+    }
+
+    std::vector<int> specialPoints = mesh.getSpecialPoints();
+    for(unsigned int j=0; j<specialPoints.size(); j++)
+    {
+        p.setHyperboloidProjection(meshPoints[specialPoints[j]]);
+        addElement(p, "green", 5);
     }
 
     addElement(mesh.getPolygon(), "blue", 2);

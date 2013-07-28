@@ -60,10 +60,10 @@ int main(int argc, char *argv[])
     //delegate.buffer.addElement(listOfPolys);
 
     clock_t t0 = clock();
-    H2mesh mesh(0.01, rho);
+    H2mesh mesh(1.0, rho);
     clock_t t1 = clock();
     std::cout << "time to construct mesh: " << (t1-t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
-    delegate.buffer.addElement(mesh, "red");
+    delegate.buffer.addElement(mesh, "red", 2);
 
     /*int i,index;
     for(i=0; i<10; i++)

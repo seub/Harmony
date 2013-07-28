@@ -13,9 +13,11 @@ public:
     complex getUpperHalfPlaneCoordinate() const;
     complex getDiskCoordinate() const;
     complex getKleinCoordinate() const;
+    complex getHyperboloidProjection() const;
 
     void setUpperHalfPlaneCoordinate(complex z);
     void setDiskCoordinate(complex z);
+    void setHyperboloidProjection(complex z);
 
 
 private:

@@ -122,6 +122,8 @@ void H2CanvasDelegate::setMouse(int mouseX, int mouseY)
     this->mouseX = mouseX;
     this->mouseY = mouseY;
     savedMobius = mobius;
+
+    std::cout << "Point clicked: " << PixelToComplexCoordinates(mouseX, mouseY) << std::endl;
     redrawBuffer();
 }
 

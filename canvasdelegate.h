@@ -42,8 +42,8 @@ public:
 
     virtual void redrawBuffer(const H2Isometry &mobius = H2Isometry::identity()) =0;
 
-    void setZoom(const double &coeff, int centerX, int centerY);
-    virtual void setMouse(const int mouseX, const int mouseY);
+    void setZoom(double coeff, int centerX, int centerY);
+    virtual void setMouse(int mouseX, int mouseY);
     virtual void mouseMove(const int mouseX, const int mouseY) = 0;
 
 
@@ -51,10 +51,8 @@ protected:
     Canvas *canvas;
 
     int sizeX, sizeY;
-    int originX, originY;
-    double scaleX, scaleY, zoom;
-    double shiftX, shiftY;
-    double xmin, xmax, ymin, ymax;
+    double scaleX, scaleY;
+    double xMin, yMax;
     int mouseX, mouseY;
 
     QPen *pen;
@@ -64,7 +62,7 @@ protected:
     void rescale(int sizeX, int sizeY);
     void resetView();
     complex PixelToComplexCoordinates(int x, int y) const;
-    void ComplexToPixelCoordinates(int & xout, int & yout, complex z) const;
+    void ComplexToPixelCoordinates(int & xOut, int & yOut, complex z) const;
 
 };
 

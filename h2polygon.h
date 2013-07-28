@@ -22,8 +22,10 @@ public:
     std::vector<H2Point> getVertices() const;
     std::vector<complex> getVerticesInDiskModel() const;
     std::vector<complex> getVerticesInKleinModel() const;
+    std::vector<complex> getVerticesInHyperboloidProjection() const;
 
     void getExtremalCoordinatesInDiskModel(double& xMin, double& xMax, double& yMin, double & yMax) const;
+    void getExtremalCoordinatesInHyperboloidProjection(double & xMin, double & xMax, double & yMin, double & yMax) const;
 
     double norm0() const;
     double norm1() const;

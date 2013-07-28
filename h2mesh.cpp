@@ -6,12 +6,14 @@
 H2mesh::H2mesh(double step, const IsomH2Representation &rho): step(step), rho(rho)
 {
     polygon = rho.generatePolygon(100);
-    polygon.getExtremalCoordinatesInDiskModel(xMin,xMax,yMin,yMax);
+    polygon.getExtremalCoordinatesInHyperboloidProjection(xMin,xMax,yMin,yMax);
 
     listOfIsoms = rho.getSidePairingsNormalizedAroundVertices();
 
     xMin -= 1.5*step;
     yMin -= 1.5*step;
+
+    std::cout << "xMin = " << xMin << ", xMax = " << xMax << ", yMin = " << yMin << ", yMax = " << yMax << std::endl;
 
     nbPointsX = 3 + int((xMax - xMin)/step);
     nbPointsY = 3 + int((yMax - yMin)/step);
@@ -20,6 +22,7 @@ H2mesh::H2mesh(double step, const IsomH2Representation &rho): step(step), rho(rh
 
     xMax = xMin + (nbPointsX-1)*step;
     yMax = yMin + (nbPointsY-1)*step;
+
 
     meshPoints = new complex[nbMeshPoints];
     isInside = new bool[nbMeshPoints];
@@ -52,9 +55,11 @@ void H2mesh::fillMeshPoints()
 
 void H2mesh::fillIsInside()
 {
+    H2Point p;
     for (int i=0; i<nbMeshPoints; i++)
     {
-        isInside[i] = polygon.isInsideInDiskModel(meshPoints[i]);
+        p.setHyperboloidProjection(meshPoints[i]);
+        isInside[i] = polygon.isInside(p);
     }
     return;
 }
@@ -77,28 +82,24 @@ void H2mesh::fillNeighbors()
         }
         else
         {
-            complex zIn,zOut;
-            zIn = meshPoints[i-1];
-            if (norm(zIn) > 1.0)
-            {
-                std::cout << "Error in H2mesh::fillNeighbors: Leftmost neighbor is not in the disk" << std::endl;
-                leftNeighborIndices[i] = -1;
-            }
+            H2Point pIn,pOut;
+            pIn.setHyperboloidProjection(meshPoints[i-1]);
+
             unsigned int j=0;
-            zOut = zIn;
-            while (!polygon.isInsideInDiskModel(zOut) && j<listOfIsoms.size())
+            pOut = pIn;
+            while (!polygon.isInside(pOut) && j<listOfIsoms.size())
             {
-                zOut = listOfIsoms[j].hitComplexInDiskModel(zIn);
+                pOut = listOfIsoms[j]*pIn;
                 j++;
             }
-            if (!polygon.isInsideInDiskModel(zOut))
+            if (!polygon.isInside(pOut))
             {
                 std::cout << "Error in H2mesh::fillNeighbors: Leftmost neighbor was not found" << std::endl;
                 leftNeighborIndices[i] = -1;
             }
             else
             {
-                leftNeighborIndices[i] = getClosestMeshIndex(zOut);
+                leftNeighborIndices[i] = getClosestMeshIndex(pOut.getHyperboloidProjection());
             }
         }
     }
@@ -119,27 +120,23 @@ void H2mesh::fillNeighbors()
         }
         else
         {
-            complex zIn,zOut;
-            zIn = meshPoints[i+1];
-            if (norm(zIn) > 1)
-            {
-                std::cout << "Error in H2mesh::fillNeighbors: Rightmost neighbor is not in the disk" << std::endl;
-                rightNeighborIndices[i] = -1;
-            }
+            H2Point pIn,pOut;
+            pIn.setHyperboloidProjection(meshPoints[i+1]);
+
             unsigned int j=0;
-            zOut = zIn;
-            while (!polygon.isInsideInDiskModel(zOut) && j<listOfIsoms.size())
+            pOut = pIn;
+            while (!polygon.isInside(pOut) && j<listOfIsoms.size())
             {
-                zOut = listOfIsoms[j].hitComplexInDiskModel(zIn);
+                pOut = listOfIsoms[j]*pIn;
                 j++;
             }
-            if (!polygon.isInsideInDiskModel(zOut))
+            if (!polygon.isInside(pOut))
             {
                 std::cout << "Error in H2mesh::fillNeighbors: Rightmost neighbor was not found" << std::endl;
                 rightNeighborIndices[i] = -1;
             } else
             {
-                rightNeighborIndices[i] = getClosestMeshIndex(zOut);
+                rightNeighborIndices[i] = getClosestMeshIndex(pOut.getHyperboloidProjection());
             }
         }
     }
@@ -160,27 +157,23 @@ void H2mesh::fillNeighbors()
         }
         else
         {
-            complex zIn,zOut;
-            zIn = meshPoints[i+nbPointsX];
-            if (norm(zIn) > 1)
-            {
-                std::cout << "Error in H2mesh::fillNeighbors: Leftmost neighbor is not in the disk" << std::endl;
-                upNeighborIndices[i] = -1;
-            }
+            H2Point pIn,pOut;
+            pIn.setHyperboloidProjection(meshPoints[i+nbPointsX]);
+
             unsigned int j=0;
-            zOut = zIn;
-            while (!polygon.isInsideInDiskModel(zOut) && j<listOfIsoms.size())
+            pOut = pIn;
+            while (!polygon.isInside(pOut) && j<listOfIsoms.size())
             {
-                zOut = listOfIsoms[j].hitComplexInDiskModel(zIn);
+                pOut = listOfIsoms[j]*pIn;
                 j++;
             }
-            if (!polygon.isInsideInDiskModel(zOut))
+            if (!polygon.isInside(pOut))
             {
                 std::cout << "Error in H2mesh::fillNeighbors: Upmost neighbor was not found" << std::endl;
                 upNeighborIndices[i] = -1;
             } else
             {
-                upNeighborIndices[i] = getClosestMeshIndex(zOut);
+                upNeighborIndices[i] = getClosestMeshIndex(pOut.getHyperboloidProjection());
             }
         }
     }
@@ -201,27 +194,23 @@ void H2mesh::fillNeighbors()
         }
         else
         {
-            complex zIn,zOut;
-            zIn = meshPoints[i-nbPointsX];
-            if (norm(zIn) > 1)
-            {
-                std::cout << "Error in H2mesh::fillNeighbors: Rightmost neighbor is not in the disk" << std::endl;
-                downNeighborIndices[i] = -1;
-            }
+            H2Point pIn,pOut;
+            pIn.setHyperboloidProjection(meshPoints[i-nbPointsX]);
+
             unsigned int j=0;
-            zOut = zIn;
-            while (!polygon.isInsideInDiskModel(zOut) && j<listOfIsoms.size())
+            pOut = pIn;
+            while (!polygon.isInside(pOut) && j<listOfIsoms.size())
             {
-                zOut = listOfIsoms[j].hitComplexInDiskModel(zIn);
+                pOut = listOfIsoms[j]*pIn;
                 j++;
             }
-            if (!polygon.isInsideInDiskModel(zOut))
+            if (!polygon.isInside(pOut))
             {
                 std::cout << "Error in H2mesh::fillNeighbors: Downmost neighbor was not found" << std::endl;
                 downNeighborIndices[i] = -1;
             } else
             {
-                downNeighborIndices[i] = getClosestMeshIndex(zOut);
+                downNeighborIndices[i] = getClosestMeshIndex(pOut.getHyperboloidProjection());
             }
         }
     }
@@ -263,7 +252,12 @@ IsomH2Representation H2mesh::getRho() const
     return rho;
 }
 
-int H2mesh::getClosestMeshIndex(const complex &z) const
+std::vector<int> H2mesh::getSpecialPoints() const
+{
+    return specialPoints;
+}
+
+int H2mesh::getClosestMeshIndex(const complex &z)
 {
     if (real(z) < xMin || real(z) > xMax  || imag(z) < yMin || imag(z) > yMax)
     {
@@ -277,7 +271,9 @@ int H2mesh::getClosestMeshIndex(const complex &z) const
     int NcloseY = int((y - imag(firstMeshPoint))/step);
     int index = NcloseX + nbPointsX*NcloseY;
 
-    if (!polygon.isInsideInDiskModel(z))
+    H2Point p;
+    p.setHyperboloidProjection(z);
+    if (!polygon.isInside(p))
     {
         std::cout << "Error in H2mesh::getClosestMeshIndex: Point is not inside polygon" << std::endl;
         return index;
@@ -327,6 +323,7 @@ int H2mesh::getClosestMeshIndex(const complex &z) const
     if (!pointFound)
     {
         std::cout << "Error in H2mesh::getClosestMeshIndex: no point found" << std::endl;
+        specialPoints.push_back(index);
     }
     else if (!isInside[output])
     {

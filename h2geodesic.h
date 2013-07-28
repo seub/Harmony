@@ -53,6 +53,8 @@ public:
     complex getCircleCenterInDiskModel() const;
     double getCircleRadiusInDiskModel() const;
 
+    void getExtremalCoordinatesInHyperboloidProjection(double & xMin, double & xMax, double & yMin, double & yMax);
+
     H2Geodesic getGeodesic() const;
     bool isLineSegmentInDiskModel() const;
     bool getCircleAndAnglesInDiskModel(Circle & outC, double & outAngle1, double & outAngle2) const;

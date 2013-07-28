@@ -15,14 +15,11 @@ CanvasDelegate::CanvasDelegate(Canvas *canvas) : canvas(canvas)
 
     pen = new QPen;
 
-    sizeX = canvas->width();
-    sizeY = canvas->height();
-
-    image = new QImage(sizeX, sizeY, QImage::Format_RGB32);
+    image = new QImage(canvas->width(), canvas->height(), QImage::Format_RGB32);
 
     painter = new QPainter(image);
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->eraseRect(0, 0, sizeX, sizeY);
+    painter->eraseRect(0, 0, canvas->width(), canvas->height());
     painter->setPen(*pen);
 
     resetView();
@@ -44,40 +41,91 @@ QImage * CanvasDelegate::getImage() const
 
 void CanvasDelegate::rescale(int sizeX, int sizeY)
 {
-    originX = Tools::intRound(originX*sizeX/(this->sizeX*1.0) + shiftX*scaleX);
-    originY = Tools::intRound(originY*sizeY/(this->sizeY*1.0) + shiftY*scaleY);
+    //std::cout << "Entering CanvasDelegate::rescale" << std::endl;
+
+    //QImage * oldImage = image;
+    QImage * newImage = new QImage(sizeX, sizeY, QImage::Format_RGB32);
+
+    //QPainter * oldPainter = painter;
+    QPainter * newPainter = new QPainter(newImage);
+    newPainter->setRenderHint(QPainter::Antialiasing, true);
+    newPainter->eraseRect(0, 0, sizeX, sizeY);
+    newPainter->setPen(*pen);
+
+    image = newImage;
+    painter = newPainter;
+
+    // Memory leak!
+    //delete oldImage;
+    //delete oldPainter;
+
+    double xFactor = (sizeX *1.0/ this->sizeX);
+    double yFactor = (sizeY *1.0/ this->sizeY);
+
     this->sizeX = sizeX;
     this->sizeY = sizeY;
-    scaleX = zoom*sizeX/(xmax - xmin);
-    scaleY = zoom*sizeY/(ymax - ymin);
+
+    scaleX = xFactor * scaleX;
+    scaleY = yFactor * scaleY;
+
+    //std::cout << "Leaving CanvasDelegate::rescale" << std::endl;
+
     return;
 }
 
 void CanvasDelegate::resetView()
 {
+    xMin = -1.1;
+    yMax = 1.1;
+
+    sizeX = canvas->width();
+    sizeY = canvas->height();
+
+
     scaleX = sizeX/2.2;
     scaleY = sizeY/2.2;
-    originX = Tools::intRound(sizeX/2.0);
-    originY = Tools::intRound(sizeY/2.0);
-    shiftX = 0.0;
-    shiftY = 0.0;
-    zoom = 1.0;
     return;
 }
 
-void CanvasDelegate::ComplexToPixelCoordinates(int &xout, int &yout, complex z) const
+void CanvasDelegate::ComplexToPixelCoordinates(int &xOut, int &yOut, complex z) const
 {
-    xout = Tools::intRound(real(z)*scaleX*zoom + originX+shiftX);
-    yout = Tools::intRound(-imag(z)*scaleY*zoom + originY + shiftY);
+    double x = real(z), y = imag(z);
+    xOut = Tools::intRound((x - xMin)*scaleX);
+    yOut = Tools::intRound((yMax - y)*scaleY);
     return;
 }
 
 complex CanvasDelegate::PixelToComplexCoordinates(int x, int y) const
 {
-    double a = (x - originX-shiftX)*1.0/scaleX*zoom;
-    double b = -(y - originY-shiftY)*1.0/scaleY*zoom;
+    double a = xMin + (x/scaleX);
+    double b = yMax - (y/scaleY);
     return complex(a,b);
 }
+
+
+
+void CanvasDelegate::setZoom(double coeff, int centerX, int centerY)
+{
+    double x = xMin + centerX/scaleX;
+    double y = yMax - centerY/scaleY;
+
+    xMin = x - (x - xMin)/coeff;
+    yMax = y + (yMax - y)/coeff;
+
+    scaleX *= coeff;
+    scaleY *= coeff;
+
+    //redrawBuffer();
+    return;
+}
+
+void CanvasDelegate::setMouse(int mouseX, int mouseY)
+{
+    this->mouseX = mouseX;
+    this->mouseY = mouseY;
+    return;
+}
+
 
 void CanvasDelegate::drawPoint(const complex &z, const QColor &color, int width)
 {
@@ -127,14 +175,14 @@ void CanvasDelegate::drawCircle(const Circle &C, const QColor &color, int width)
 
 void CanvasDelegate::drawArcCounterClockwise(const complex &center, double radius, double angle1, double angle2, const QColor &color, int width)
 {
-    double angleMin = M_PI/(180*16);
-    if(radius*scaleX*angleMin>8.0)
+    /*double angleMin = M_PI/(180*16);
+    if(radius*scaleX*angleMin>10.0)
     {
         complex z1 = center + radius*exp(angle1*I);
         complex z2 = center + radius*exp(angle2*I);
         drawSegment(z1,z2,color,width);
         return;
-    }
+    }*/
     int x1, y1, x2, y2;
     complex firstCorner = center + radius*(-1.0 + 1.0*I);
     complex secondCorner = center + radius*(1.0 - 1.0*I);
@@ -182,19 +230,4 @@ void CanvasDelegate::drawArcCounterClockwise(const Circle &C, double angle1, dou
     C.getCenterAndRadius(center, radius);
     drawArcCounterClockwise(center, radius, angle1, angle2, color, width);
     return;
-}
-
-void CanvasDelegate::setZoom(const double &coeff, int centerX, int centerY)
-{
-    shiftX= centerX -(centerX-originX-shiftX)*coeff - originX;
-    shiftY = centerY -(centerY-originY-shiftY)*coeff - originY;
-    zoom*=coeff;
-    redrawBuffer();
-    return;
-}
-
-void CanvasDelegate::setMouse(const int mouseX, const int mouseY)
-{
-    this->mouseX = mouseX;
-    this->mouseY = mouseY;
 }
