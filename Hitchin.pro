@@ -39,7 +39,8 @@ SOURCES += main.cpp \
     fenchelnielsenconstructor.cpp \
     h2buffer.cpp \
     h2mesh.cpp \
-    h2triangle.cpp
+    h2triangle.cpp \
+    h2triangulation.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -66,7 +67,8 @@ HEADERS += \
     fenchelnielsenconstructor.h \
     h2buffer.h \
     h2mesh.h \
-    h2triangle.h
+    h2triangle.h \
+    h2triangulation.h
 
 OTHER_FILES += \
     TODO.txt

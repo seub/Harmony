@@ -129,7 +129,7 @@ void H2Polygon::getExtremalCoordinatesInDiskModel(double &xMin, double &xMax, do
     xMax = -1.0;
     yMin = 1.0;
     yMax = -1.0;
-
+    
     double x, y;
     complex z;
     for (unsigned int i=0; i<vertices.size(); i++)
@@ -155,6 +155,52 @@ void H2Polygon::getExtremalCoordinatesInDiskModel(double &xMin, double &xMax, do
         }
     }
     return;
+}
+
+bool H2Polygon::isPositivelyOriented() const
+{
+    complex z1 = verticesInKleinModel.back();
+    complex z2 = k+1==verticesInKleinModel.front();
+    double x = 0.5*(real(z1) + real(z2)), y = 0.5*(imag(z1) + imag(z2));
+
+    complex w1, w2;
+    double x1, x2, y1, y2, y;
+
+    int nbIntersections = 0;
+    unsigned int i;
+    for (i=0; i+1<verticesInKleinModel.size(); i++)
+    {
+        w1 = verticesInKleinModel[i];
+        w2 = verticesInKleinModel[i+1];
+        x1 = real(w1);
+        y1 = imag(w1);
+        x2 = real(w2);
+        y2 = imag(w2);
+        if (x1 == x2)
+        {
+        }
+        else if (y1 > y && y2 > y)
+        {
+            if (x1 <= x && x2 > x || x1 > x && x2 <= x)
+            {
+                nbIntersections++;
+            }
+        }
+        else if (y1 > y || y2 > y)
+        {
+            if (x1 <= x && x2 > x || x1 > x && x2 <= x)
+            {
+                if ((-x1*y2 + y1*x2 + (y2 - y1)*x)/(x2 - x1) > y)
+                {
+                    nbIntersections++;
+                }
+            }
+        }
+
+    }
+
+    return nbIntersections % 2 == 1 ^ real(z1) > real(z2);
+
 }
 
 H2GeodesicArc H2Polygon::getSide(int index) const
@@ -224,8 +270,8 @@ double H2Polygon::norm2() const
     z1= vertices.front().getKleinCoordinate();
     z2 = vertices.back().getKleinCoordinate();
     complex u = conj(z2 - z1);
-
-
+    
+    
     unsigned int i;
     for (i=0 ; i <vertices.size()-1; i++)
     {
@@ -238,10 +284,10 @@ double H2Polygon::norm2() const
 double H2Polygon::norm3() const
 {
     double average = norm1()/vertices.size();
-
+    
     double diff = norm(vertices.front().getDiskCoordinate() - vertices.back().getDiskCoordinate()) - average;
     double res = diff*diff;
-
+    
     for (unsigned int i=1; i<vertices.size()-1; i++)
     {
         diff = norm(vertices[i+1].getDiskCoordinate() - vertices[i].getDiskCoordinate()) - average;
@@ -268,10 +314,10 @@ void H2Polygon::optimalMobius(H2Isometry &output) const
     complex T = 0.0;
     Circle Ck;
     PlanarLine Lk;
-
-
+    
+    
     std::vector<H2Geodesic> geodesics = getCompletedSides();
-
+    
     unsigned int k;
     for (k=0; k<geodesics.size(); k++)
     {
@@ -299,14 +345,14 @@ void H2Polygon::optimalMobius(H2Isometry &output) const
             std::cout << "ERROR in H2Polygon::optimalMobius(): geodesic is neither circle nor line ?!" << std::endl;
         }
     }
-
-
+    
+    
     complex Tu = T/abs(T);
     double u = -abs(T);
-
+    
     double B = 0.5*A/u;
     double delta = B*B - 1;
-
+    
     if (delta < 0)
     {
         //std::cout << "ERROR in Graphe<Circle>::optimal_mobius(): negative discriminant!" << std::endl;
@@ -340,14 +386,14 @@ bool H2Polygon::isInsideInKleinModel(const complex &z) const
 {
     unsigned int nbIntersections = 0;
     double xLeft, yLeft, xRight, yRight;
-
+    
     unsigned int n = verticesInKleinModel.size();
-
+    
     if (norm(z)>1.0)
     {
         return false;
     }
-
+    
     unsigned int i;
     for (i=0; i<n; i++)
     {
@@ -386,15 +432,15 @@ bool H2Polygon::isInsideInKleinModel(const complex &z) const
 std::vector<double> H2Polygon::getAngles() const
 {
     std::vector<double> res;
-
+    
     complex u, v;
-
+    
     u = (vertices.back().getDiskCoordinate() - vertices.front().getDiskCoordinate()) /
             (1.0 - conj(vertices.front().getDiskCoordinate())*vertices.back().getDiskCoordinate());
     v = (vertices[1].getDiskCoordinate() - vertices.front().getDiskCoordinate()) /
             (1.0 - conj(vertices.front().getDiskCoordinate())*vertices[1].getDiskCoordinate());
     res.push_back(Tools::mod2Pi(arg(v*conj(u))));
-
+    
     for (unsigned int i=1; i+1<vertices.size(); i++)
     {
         u = (vertices[i-1].getDiskCoordinate() - vertices[i].getDiskCoordinate()) /
@@ -403,13 +449,13 @@ std::vector<double> H2Polygon::getAngles() const
                 (1.0 - conj(vertices[i].getDiskCoordinate())*vertices[i+1].getDiskCoordinate());
         res.push_back(Tools::mod2Pi(arg(v*conj(u))));
     }
-
+    
     u = (vertices[vertices.size()-2].getDiskCoordinate() - vertices.back().getDiskCoordinate()) /
             (1.0 - conj(vertices.back().getDiskCoordinate())*vertices[vertices.size()-2].getDiskCoordinate());
     v = (vertices.front().getDiskCoordinate() - vertices.back().getDiskCoordinate()) /
             (1.0 - conj(vertices.back().getDiskCoordinate())*vertices.front().getDiskCoordinate());
     res.push_back(Tools::mod2Pi(arg(v*conj(u))));
-
+    
     return res;
 }
 

@@ -49,7 +49,7 @@ void H2Point::setKleinCoordinate(complex z)
     return;
 }
 
-double H2distance(const H2Point & p1, const H2Point & p2)
+double H2Point::H2distance(const H2Point & p1, const H2Point & p2)
 {
     double s;
     complex z1,z2;
@@ -60,7 +60,7 @@ double H2distance(const H2Point & p1, const H2Point & p2)
     return acosh(1.0 + s);
 }
 
-H2Point H2Midpoint(const H2Point &p1, const H2Point &p2)
+H2Point H2Point::H2MidPoint(const H2Point &p1, const H2Point &p2)
 {
     complex z1 = p1.getDiskCoordinate();
     complex z2 = p2.getDiskCoordinate();
