@@ -25,7 +25,7 @@ private:
 };
 
 double H2distance(const H2Point & p1, const H2Point & p2);
-
+H2Point H2Midpoint(const H2Point & p1, const H2Point & p2);
 
 
 #endif // H2POINT_H

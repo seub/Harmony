@@ -54,6 +54,18 @@ double H2distance(const H2Point & p1, const H2Point & p2)
     return acosh(1.0 + s);
 }
 
+H2Point H2Midpoint(const H2Point &p1, const H2Point &p2)
+{
+    complex z1 = p1.getDiskCoordinate();
+    complex z2 = p2.getDiskCoordinate();
+    H2Point p;
+    complex w1 = (z2 - z1)/(1.0 - conj(z1)*z2);
+    complex w2 = w1*sqrt((1.0 - sqrt(1.0 - norm(w1)))/(norm(w1)*(1.0 + sqrt(1.0 - norm(w1)))));
+    complex out = (w2 + z1)/(1.0 + conj(z1)*w2);
+    p.setDiskCoordinate(out);
+    return p;
+}
+
 std::ostream & operator<<(std::ostream & out, const H2Point &p)
 {
     out << "z= " << p.z;
