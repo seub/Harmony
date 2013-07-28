@@ -37,10 +37,9 @@ private:
 
 bool doIntersect(const H2Geodesic & L1, const H2Geodesic & L2);
 bool intersectionH2Geodesics(const H2Geodesic & L1, const H2Geodesic & L2, H2Point & p);
-bool commonPerpendicular(const H2Geodesic &  L1, const H2Geodesic & L2, H2Geodesic &output);
+bool commonPerpendicular(const H2Geodesic & L1, const H2Geodesic & L2, H2Geodesic &output);
 bool commonEndpointInDiskModel(const H2Geodesic & L1, const H2Geodesic & L2, complex & z);
 bool commonEndpoint(const H2Geodesic & L1, const H2Geodesic & L2);
-
 
 
 class H2GeodesicArc
@@ -48,6 +47,8 @@ class H2GeodesicArc
 public:
     H2GeodesicArc();
     H2GeodesicArc(const H2Point & p1, const H2Point & p2);
+
+    void setPoints(const H2Point & p1, const H2Point & p2);
 
     Circle getCircleInDiskModel() const;
     complex getCircleCenterInDiskModel() const;
@@ -63,8 +64,5 @@ public:
 private:
     H2Point p1, p2;
 };
-
-
-
 
 #endif // H2GEODESIC_H

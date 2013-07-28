@@ -48,6 +48,31 @@ void H2Buffer::addElement(const H2Polygon &polygon, const QColor &color, int wid
         addElement(polygon.getVertex(i));
     }
     return;
+}
+
+void H2Buffer::addElement(const H2Triangle &triangle, const QColor &color, int width)
+{
+    H2Point a,b,c;
+    triangle.getPoints(a,b,c);
+    H2GeodesicArc L;
+    L.setPoints(a,b);
+    addElement(L,color,width);
+    addElement(a);
+    L.setPoints(b,c);
+    addElement(L,color,width);
+    addElement(b);
+    L.setPoints(c,a);
+    addElement(L,color,width);
+    addElement(c);
+    return;
+}
+
+void H2Buffer::addElement(const std::vector<H2Triangle> &triangulation, const QColor &color, int width)
+{
+    for (unsigned int j=0; j<triangulation.size(); j++)
+    {
+        addElement(triangulation[j], color, width);
+    }
     return;
 }
 

@@ -43,6 +43,12 @@ void H2Point::setHyperboloidProjection(complex z)
     return;
 }
 
+void H2Point::setKleinCoordinate(complex z)
+{
+    this->z = z / (1.0 + sqrt(1.0 - norm(z)));
+    return;
+}
+
 double H2distance(const H2Point & p1, const H2Point & p2)
 {
     double s;

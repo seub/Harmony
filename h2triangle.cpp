@@ -8,7 +8,7 @@ H2Triangle::H2Triangle(const H2Point &a, const H2Point &b, const H2Point &c): a(
 {
 }
 
-void H2Triangle::setPoints(H2Point &a, H2Point &b, H2Point &c)
+void H2Triangle::setPoints(const H2Point &a, const H2Point &b, const H2Point &c)
 {
     this->a = a;
     this->b = b;

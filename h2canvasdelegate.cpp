@@ -86,6 +86,32 @@ void H2CanvasDelegate::drawH2Polygon(const H2Polygon &P, const QColor &color, in
     return;
 }
 
+void H2CanvasDelegate::drawH2Triangle(const H2Triangle &T, const QColor &color, int width)
+{
+    H2Point a,b,c;
+    T.getPoints(a,b,c);
+    H2GeodesicArc L;
+    L.setPoints(a,b);
+    drawH2GeodesicArc(L,color,width);
+    drawH2Point(a);
+    L.setPoints(b,c);
+    drawH2GeodesicArc(L,color,width);
+    drawH2Point(b);
+    L.setPoints(c,a);
+    drawH2GeodesicArc(L,color,width);
+    drawH2Point(c);
+    return;
+}
+
+void H2CanvasDelegate::drawH2Triangulatrion(const std::vector<H2Triangle> &triangleList, const QColor &color, int width)
+{
+    for(unsigned int j=0; j< triangleList.size(); j++)
+    {
+        drawH2Triangle(triangleList[j], color, width);
+    }
+    return;
+}
+
 void H2CanvasDelegate::redrawBuffer(const H2Isometry &mobius)
 {
     image->fill("white");

@@ -308,6 +308,13 @@ H2GeodesicArc::H2GeodesicArc(const H2Point &p1, const H2Point &p2) : p1(p1), p2(
 {
 }
 
+void H2GeodesicArc::setPoints(const H2Point &p1, const H2Point &p2)
+{
+    this->p1 = p1;
+    this->p2 = p2;
+    return;
+}
+
 H2Geodesic H2GeodesicArc::getGeodesic() const
 {
     complex c = getCircleCenterInDiskModel();
@@ -467,6 +474,13 @@ std::ostream & operator<<(std::ostream & out, const H2Geodesic & L)
     out << "{z1=" << L.z1 << ", z2=" << L.z2 << "}";
     return out;
 }
+
+
+
+
+
+
+
 
 
 

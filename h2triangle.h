@@ -9,7 +9,7 @@ public:
     H2Triangle();
     H2Triangle(const H2Point & a, const H2Point & b, const H2Point & c);
 
-    void setPoints(H2Point &a, H2Point &b, H2Point &c);
+    void setPoints(const H2Point &a, const H2Point &b, const H2Point &c);
 
     void getPoints(H2Point &a, H2Point &b, H2Point &c) const;
     void getSideLengths(double & A, double & B, double & C) const;

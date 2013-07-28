@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
     delegate.buffer.addElement(rho);
     H2Polygon Q = rho.generatePolygon(200);
     delegate.buffer.addElement(Q,"blue",2);
+    delegate.buffer.addElement(Q.triangulate(), "black", 1);
 
     /*int i,index;
     for(i=0; i<10; i++)

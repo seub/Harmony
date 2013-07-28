@@ -3,6 +3,7 @@
 
 #include "tools.h"
 #include "h2point.h"
+#include "h2triangle.h"
 
 class H2GeodesicArc;
 class H2Geodesic;
@@ -16,6 +17,7 @@ public:
 
     void addVertex(const H2Point & p);
     void removeLastVertex();
+    void clearVertices();
 
     int getNumberOfVertices() const;
     H2Point getVertex(int index) const;
@@ -43,6 +45,9 @@ public:
 
     void optimalMobius(H2Isometry &output) const;
     std::vector<double> getAngles() const;
+
+    std::vector<H2Triangle> triangulate() const;
+    void subdivideByBiggestAngles(H2Polygon & P1, H2Polygon & P2) const;
 
 private:
     std::vector<H2Point> vertices;

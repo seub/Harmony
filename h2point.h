@@ -19,6 +19,7 @@ public:
     void setUpperHalfPlaneCoordinate(complex z);
     void setDiskCoordinate(complex z);
     void setHyperboloidProjection(complex z);
+    void setKleinCoordinate(complex z);
 
 
 private:

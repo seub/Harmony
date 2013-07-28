@@ -24,6 +24,13 @@ void H2Polygon::removeLastVertex()
     return;
 }
 
+void H2Polygon::clearVertices()
+{
+    vertices.clear();
+    verticesInKleinModel.clear();
+    return;
+}
+
 int H2Polygon::getNumberOfVertices() const
 {
     return vertices.size();
@@ -403,10 +410,87 @@ std::vector<double> H2Polygon::getAngles() const
             (1.0 - conj(vertices.back().getDiskCoordinate())*vertices.front().getDiskCoordinate());
     res.push_back(Tools::mod2Pi(arg(v*conj(u))));
 
-
     return res;
 }
 
+
+std::vector<H2Triangle> H2Polygon::triangulate() const
+{
+    std::vector<H2Triangle> output;
+    if (vertices.size() < 3)
+    {
+        std::cout << "Can't triangulate a polygon with less than 3 sides, dumbass!" << std::endl;
+        return output;
+    }
+    else if (vertices.size() == 3)
+    {
+        H2Triangle T;
+        T.setPoints(vertices[0],vertices[1],vertices[2]);
+        output.push_back(T);
+        return output;
+    }
+    else
+    {
+        std::vector<H2Triangle> output2;
+        H2Polygon P1, P2;
+        subdivideByBiggestAngles(P1,P2);
+        output = P1.triangulate();
+        output2 = P2.triangulate();
+        output.insert(output.end(), output2.begin(), output2.end());
+        return output;
+    }
+}
+
+void H2Polygon::subdivideByBiggestAngles(H2Polygon &P1, H2Polygon &P2) const
+{
+    P1.clearVertices();
+    P2.clearVertices();
+    unsigned int biggestAngleIndex = 0, nextBiggestAngleIndex = 0;
+    double biggestAngle = 0.0, nextBiggestAngle = 0.0;
+    std::vector<double> angles = getAngles();
+    unsigned int j;
+    for (j=0; j< vertices.size(); j++)
+    {
+        if (biggestAngle < angles[j])
+        {
+            biggestAngle = angles[j];
+            biggestAngleIndex = j;
+        }
+    }
+    std::cout << "Here" << vertices.size() << std::endl;
+    for (j=0; j<vertices.size(); j++)
+    {
+        if ((biggestAngleIndex == 0 && j>1 && j<vertices.size()-1) ||
+                (biggestAngleIndex == vertices.size() && j>0 && j<vertices.size()-2) ||
+                (j!=biggestAngleIndex && j!=biggestAngleIndex-1 && j!=biggestAngleIndex+1))
+        {
+            if (nextBiggestAngle < angles[j])
+            {
+                nextBiggestAngle = angles[j];
+                nextBiggestAngleIndex = j;
+            }
+        }
+    }
+    unsigned int smallInd = nextBiggestAngleIndex, bigInd = biggestAngleIndex;
+    if (biggestAngleIndex < nextBiggestAngleIndex)
+    {
+        smallInd =  biggestAngleIndex;
+        bigInd = nextBiggestAngleIndex;
+    }
+    for (j=smallInd; j<=bigInd; j++)
+    {
+        P1.addVertex(vertices[j]);
+    }
+    for (j=bigInd; j<vertices.size(); j++)
+    {
+        P2.addVertex(vertices[j]);
+    }
+    for (j=0; j<= smallInd; j++)
+    {
+        P2.addVertex(vertices[j]);
+    }
+    return;
+}
 
 std::ostream & operator<<(std::ostream & out, const H2Polygon &P)
 {
