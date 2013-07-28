@@ -13,7 +13,7 @@ public:
 
     void getPoints(H2Point &a, H2Point &b, H2Point &c) const;
     void getSideLengths(double & A, double & B, double & C) const;
-    void getAngles(double & angA, double & angB, double & angC) const;
+    void getAngles(double & angA, double & angleB, double & angleC) const;
 
     std::vector<H2Triangle> triangulate() const;
 

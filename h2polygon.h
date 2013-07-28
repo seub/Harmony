@@ -42,6 +42,7 @@ public:
     std::vector<H2Geodesic> getCompletedSides() const;
 
     void optimalMobius(H2Isometry &output) const;
+    std::vector<double> getAngles() const;
 
 private:
     std::vector<H2Point> vertices;
