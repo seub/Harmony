@@ -9,6 +9,8 @@
 class QImage;
 class QPainter;
 class QPen;
+class QMouseEvent;
+class QKeyEvent;
 
 class H2Point;
 class Canvas;
@@ -42,9 +44,14 @@ public:
 
     virtual void redrawBuffer(const H2Isometry &mobius = H2Isometry::identity()) =0;
 
-    void setZoom(double coeff, int centerX, int centerY);
-    virtual void setMouse(int mouseX, int mouseY);
-    virtual void mouseMove(const int mouseX, const int mouseY) = 0;
+    void zoom(double coeff);
+    void zoom(double coeff, int centerX, int centerY);
+    void mouseShift(int x, int y);
+    void shift(int x, int y);
+
+    virtual void mousePress(QMouseEvent * mouseEvent) = 0;
+    virtual void mouseMove(QMouseEvent * mouseEvent) = 0;
+    virtual void keyPress(QKeyEvent * keyEvent) = 0;
 
 
 protected:
@@ -53,6 +60,7 @@ protected:
     int sizeX, sizeY;
     double scaleX, scaleY;
     double xMin, yMax;
+    double xMinSave, yMaxSave;
     int mouseX, mouseY;
 
     QPen *pen;
@@ -63,6 +71,9 @@ protected:
     void resetView();
     complex PixelToComplexCoordinates(int x, int y) const;
     void ComplexToPixelCoordinates(int & xOut, int & yOut, complex z) const;
+    void intersectsCanvasBoundary(const complex & center, double radius, double angle1, double angle2, complex & zOut1, complex &zOut2);
+    bool dealWithAlmostStraightArc(const complex &center, double radius, double angle1, double angle2,
+                            const QColor &color = "black", int width = 1);
 
 };
 

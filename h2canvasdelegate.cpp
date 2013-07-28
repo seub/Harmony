@@ -1,6 +1,8 @@
 #include "h2canvasdelegate.h"
 
 #include <QPen>
+#include <QMouseEvent>
+#include <QApplication>
 
 #include "h2point.h"
 #include "h2geodesic.h"
@@ -117,24 +119,99 @@ void H2CanvasDelegate::redrawBuffer(const H2Isometry &mobius)
 }
 
 
-void H2CanvasDelegate::setMouse(int mouseX, int mouseY)
+void H2CanvasDelegate::mousePress(QMouseEvent *mouseEvent)
 {
-    this->mouseX = mouseX;
-    this->mouseY = mouseY;
-    savedMobius = mobius;
+    if(mouseEvent->button()== Qt::LeftButton)
+    {
+        this->mouseX = mouseEvent->x();
+        this->mouseY = mouseEvent->y();
+        if (QApplication::keyboardModifiers() == Qt::ShiftModifier)
+        {
+            xMinSave = xMin;
+            yMaxSave = yMax;
+        }
+        else
+        {
+            savedMobius = mobius;
+        }
+    }
 
-    std::cout << "Point clicked: " << PixelToComplexCoordinates(mouseX, mouseY) << std::endl;
+    //std::cout << "Point clicked: " << PixelToComplexCoordinates(mouseX, mouseY) << std::endl;
     redrawBuffer();
 }
 
-void H2CanvasDelegate::mouseMove(int mouseX, int mouseY)
+void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
 {
-    H2Isometry mobiusChange;
-    complex mouseOld(PixelToComplexCoordinates(this->mouseX,this->mouseY));
-    complex mouseNew(PixelToComplexCoordinates(mouseX,mouseY));
 
-    mobiusChange.setByMappingPointInDiskModelNormalized(mouseOld, mouseNew);
-    mobius = mobiusChange*savedMobius;
-    redrawBuffer();
+    if (mouseEvent->buttons() == Qt::LeftButton)
+    {
+        if (QApplication::keyboardModifiers() == Qt::ShiftModifier)
+        {
+            mouseShift(mouseEvent->x(), mouseEvent->y());
+        }
+        else
+        {
+            H2Isometry mobiusChange;
+            complex mouseOld(PixelToComplexCoordinates(this->mouseX,this->mouseY));
+            complex mouseNew(PixelToComplexCoordinates(mouseEvent->x(), mouseEvent->y()));
+
+            mobiusChange.setByMappingPointInDiskModelNormalized(mouseOld, mouseNew);
+            mobius = mobiusChange*savedMobius;
+            redrawBuffer();
+        }
+    }
     return;
 }
+
+void H2CanvasDelegate::keyPress(QKeyEvent *keyEvent)
+{
+    //std::cout << "Entering H2CanvasDelegate::keyPress" << std::endl;
+
+    switch(keyEvent->key())
+    {
+    /*case Qt::Key_Control :
+    delegate->ctrl_pressed();
+    break;*/
+
+    case Qt::Key_Left :
+        xMinSave = xMin;
+        yMaxSave = yMax;
+        shift(-20, 0);
+        redrawBuffer();
+        break;
+
+    case Qt::Key_Right :
+        xMinSave = xMin;
+        yMaxSave = yMax;
+        shift(20, 0);
+        redrawBuffer();
+        break;
+
+    case Qt::Key_Up :
+        xMinSave = xMin;
+        yMaxSave = yMax;
+        shift(0, 20);
+        redrawBuffer();
+        break;
+
+    case Qt::Key_Down :
+        xMinSave = xMin;
+        yMaxSave = yMax;
+        shift(0, -20);
+        redrawBuffer();
+        break;
+
+    case Qt::Key_Plus :
+        zoom(2);
+        redrawBuffer();
+        break;
+
+    case Qt::Key_Minus :
+        zoom(0.5);
+        redrawBuffer();
+        break;
+
+    }
+    return;
+}
+

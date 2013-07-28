@@ -16,3 +16,7 @@ add rotations to mobiusing
 add shift (only keys ?)
 add zoom keys
 le zoom marche pas avec le complex to pixel...
+
+
+BUGS:
+parfois "there is no h2geodesic between point and itself" pendant l'affichage??

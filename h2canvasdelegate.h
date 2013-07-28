@@ -22,8 +22,9 @@ public:
 
     void drawGeneratorAxes(const IsomH2Representation & rho, const QColor & color = "black", int width = 2);
     void redrawBuffer(const H2Isometry &mobius = H2Isometry::identity());
-    void setMouse(int mouseX, int mouseY);
-    void mouseMove(int mouseX, int mouseY);
+    void mousePress(QMouseEvent * mouseEvent);
+    void mouseMove(QMouseEvent * mouseEvent);
+    void keyPress(QKeyEvent * keyEvent);
 
 //private:
     H2Buffer buffer;

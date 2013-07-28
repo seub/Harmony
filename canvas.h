@@ -22,6 +22,7 @@ public slots:
     void mousePressEvent(QMouseEvent * mouseEvent);
     void mouseMoveEvent(QMouseEvent * mouseEvent);
     void wheelEvent(QWheelEvent * wheelEvent);
+    void keyPressEvent(QKeyEvent *keyEvent);
 
 private:
     CanvasDelegate * delegate;
