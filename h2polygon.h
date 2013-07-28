@@ -29,6 +29,8 @@ public:
     void getExtremalCoordinatesInDiskModel(double& xMin, double& xMax, double& yMin, double & yMax) const;
     void getExtremalCoordinatesInHyperboloidProjection(double & xMin, double & xMax, double & yMin, double & yMax) const;
 
+    bool isPositivelyOriented() const;
+
     double norm0() const;
     double norm1() const;
     double norm2() const;
