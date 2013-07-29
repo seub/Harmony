@@ -7,6 +7,7 @@
 #include "h2polygon.h"
 #include "grouprepresentation.h"
 #include "h2mesh.h"
+#include "h2triangulation.h"
 #include <QColor>
 
 
@@ -24,12 +25,13 @@ public:
     void addElement(const H2GeodesicArc & geodesicArc, const QColor & color = "black", int width = 1);
     void addElement(const H2Polygon & polygon, const QColor & color = "black", int width = 1);
     void addElement(const H2Triangle & triangle, const QColor & color = "black", int width = 1);
-    void addElement(const std::vector<H2Triangle> & triangulation, const QColor & color = "black", int width = 1);
+    void addElement(const std::vector<H2Triangle> & triangles, const QColor & color = "black", int width = 1);
     void addElement(const H2Isometry & isometry, const QColor & color = "black", int width = 1);
     void addElement(const IsomH2Representation & rho, const QColor & color = "black", int width = 1);
     void addElement(const std::vector<H2Isometry> &V, const QColor & color = "black", int width = 1);
     void addElement(const std::vector<H2Polygon> &V, const QColor & color = "black", int width = 1);
     void addElement(const H2mesh & mesh, const QColor & color = "black", int width = 1);
+    void addElement(const H2Triangulation & triangulation, const QColor & color = "black", int width = 1);
 
 
 //private:

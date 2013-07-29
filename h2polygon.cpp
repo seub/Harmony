@@ -160,11 +160,11 @@ void H2Polygon::getExtremalCoordinatesInDiskModel(double &xMin, double &xMax, do
 bool H2Polygon::isPositivelyOriented() const
 {
     complex z1 = verticesInKleinModel.back();
-    complex z2 = k+1==verticesInKleinModel.front();
+    complex z2 = verticesInKleinModel.front();
     double x = 0.5*(real(z1) + real(z2)), y = 0.5*(imag(z1) + imag(z2));
 
     complex w1, w2;
-    double x1, x2, y1, y2, y;
+    double x1, x2, y1, y2;
 
     int nbIntersections = 0;
     unsigned int i;
@@ -181,14 +181,14 @@ bool H2Polygon::isPositivelyOriented() const
         }
         else if (y1 > y && y2 > y)
         {
-            if (x1 <= x && x2 > x || x1 > x && x2 <= x)
+            if ((x1 <= x && x2 > x) || (x1 > x && x2 <= x))
             {
                 nbIntersections++;
             }
         }
         else if (y1 > y || y2 > y)
         {
-            if (x1 <= x && x2 > x || x1 > x && x2 <= x)
+            if ((x1 <= x && x2 > x) || (x1 > x && x2 <= x))
             {
                 if ((-x1*y2 + y1*x2 + (y2 - y1)*x)/(x2 - x1) > y)
                 {
@@ -199,7 +199,7 @@ bool H2Polygon::isPositivelyOriented() const
 
     }
 
-    return nbIntersections % 2 == 1 ^ real(z1) > real(z2);
+    return (nbIntersections % 2 == 1) ^ (real(z1) > real(z2));
 
 }
 
@@ -459,6 +459,20 @@ std::vector<double> H2Polygon::getAngles() const
     return res;
 }
 
+std::vector<double> H2Polygon::getPositiveInteriorAngles() const
+{
+    std::vector<double> angles = getAngles();
+    if (isPositivelyOriented())
+    {
+        std::vector<double> output;
+        for (unsigned int j=0; j<angles.size(); j++)
+        {
+            output.push_back(2.0*M_PI - angles[j]);
+        }
+        angles = output;
+    }
+    return angles;
+}
 
 std::vector<H2Triangle> H2Polygon::triangulate() const
 {
@@ -493,13 +507,13 @@ void H2Polygon::subdivideByBiggestAngles(H2Polygon &P1, H2Polygon &P2) const
     P2.clearVertices();
     unsigned int biggestAngleIndex = 0, nextBiggestAngleIndex = 0;
     double biggestAngle = 0.0, nextBiggestAngle = 0.0;
-    std::vector<double> angles = getAngles();
+    std::vector<double> angles = getPositiveInteriorAngles();
     unsigned int j;
     for (j=0; j< vertices.size(); j++)
     {
-        if (biggestAngle < 2*M_PI - angles[j])
+        if (biggestAngle < angles[j])
         {
-            biggestAngle = 2*M_PI - angles[j];
+            biggestAngle = angles[j];
             biggestAngleIndex = j;
         }
     }
@@ -511,9 +525,9 @@ void H2Polygon::subdivideByBiggestAngles(H2Polygon &P1, H2Polygon &P2) const
                 (biggestAngleIndex>0 && biggestAngleIndex<vertices.size()-1 &&
                  j!=biggestAngleIndex-1 && j!=biggestAngleIndex+1 && j!=biggestAngleIndex))
         {
-            if (nextBiggestAngle < 2*M_PI - angles[j])
+            if (nextBiggestAngle < angles[j])
             {
-                nextBiggestAngle = 2*M_PI - angles[j];
+                nextBiggestAngle = angles[j];
                 nextBiggestAngleIndex = j;
             }
         }

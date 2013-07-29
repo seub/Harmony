@@ -21,7 +21,6 @@ public:
     void setHyperboloidProjection(complex z);
     void setKleinCoordinate(complex z);
 
-
     static double distance(const H2Point & p1, const H2Point & p2);
     static H2Point midpoint(const H2Point & p1, const H2Point & p2);
 

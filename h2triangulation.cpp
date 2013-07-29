@@ -1,8 +1,14 @@
 #include "h2triangulation.h"
 
-H2Triangulation::H2Triangulation(const H2Point * a, const H2Point * b, const H2Point * c, int depth, int maxDepth, int index, bool up) :
-    depth(depth), maxDepth(maxDepth), a(a), b(b), c(c), index(index), up(up)
+
+
+H2Triangulation::H2Triangulation(H2Point *a, H2Point *b, H2Point *c, int depth, int maxDepth, int index, bool up) :
+    a(a), b(b), c(c), depth(depth), maxDepth(maxDepth), index(index), up(up)
 {
+    if (maxDepth == -1)
+    {
+        maxDepth = depth;
+    }
     if (depth==0)
     {
         A = 0;
@@ -16,9 +22,9 @@ H2Triangulation::H2Triangulation(const H2Point * a, const H2Point * b, const H2P
         H2Point * midac = new H2Point();
         H2Point * midab = new H2Point();
 
-        *midbc = H2Point::midpoint(b, c);
-        *midac = H2Point::midpoint(a, c);
-        *midab = H2Point::midpoint(a, b);
+        *midbc = H2Point::midpoint(*b, *c);
+        *midac = H2Point::midpoint(*a, *c);
+        *midab = H2Point::midpoint(*a, *b);
 
         A = new H2Triangulation(a, midab, midac, depth - 1, maxDepth, 4*index + 1, up);
         B = new H2Triangulation(midab, b, midbc, depth - 1, maxDepth, 4*index + 2, up);
@@ -37,10 +43,16 @@ H2Triangulation::~H2Triangulation()
     {
         if (up)
         {
-            delete a;
+            if (3*index != Tools::exponentiation(4, maxDepth) -1)
+            {
+                delete a;
+            }
             if (bottom())
             {
-                delete c;
+                if (index != Tools::exponentiation(4, maxDepth) -1)
+                {
+                    delete c;
+                }
             }
         }
     }
@@ -61,3 +73,54 @@ bool H2Triangulation::bottom() const
     }
     return true;
 }
+
+H2Triangle H2Triangulation::getTriangle() const
+{
+    return H2Triangle(*a,*b,*c);
+}
+
+int H2Triangulation::getDepth() const
+{
+    return depth;
+}
+
+bool H2Triangulation::getUp() const
+{
+    return up;
+}
+
+H2Triangulation* H2Triangulation::getA() const
+{
+    return A;
+}
+
+H2Triangulation* H2Triangulation::getB() const
+{
+    return B;
+}
+
+H2Triangulation* H2Triangulation::getC() const
+{
+    return C;
+}
+
+H2Triangulation* H2Triangulation::getO() const
+{
+    return O;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

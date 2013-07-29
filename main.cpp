@@ -63,11 +63,26 @@ int main(int argc, char *argv[])
     std::cout << "time to construct mesh: " << (t1-t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     delegate.buffer.addElement(mesh, "red", 2);*/
 
-    H2Polygon Q = rho.generatePolygon(200);
-    delegate.buffer.addElement(rho);
-    delegate.buffer.addElement(Q,"blue",2);
-    delegate.buffer.addElement(triangulate(Q.triangulate()),"red",1);
+    //H2Polygon Q = rho.generatePolygon(200);
+    //delegate.buffer.addElement(rho);
+    //delegate.buffer.addElement(Q,"blue",2);
+    //std::vector<H2Triangle> triangleList = triangulate(Q.triangulate());
+    //delegate.buffer.addElement(triangleList,"red",1);
 
+    //H2Triangle T = Q.triangulate()[2];
+    H2Point aT,bT,cT;
+
+    //T.getPoints(aT,bT,cT);
+
+    aT.setDiskCoordinate(complex(0.0,0.8));
+    bT.setDiskCoordinate(complex(-0.5, -0.5));
+    cT.setDiskCoordinate(complex(0.5, -0.5));
+    clock_t t0 = clock();
+    H2Triangulation Ts(&aT,&bT,&cT,6);
+    clock_t t1 = clock();
+    std::cout << "time to construct triangulation: " << (t1-t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+
+    delegate.buffer.addElement(Ts);
 
     /*int i,index;
     for(i=0; i<10; i++)

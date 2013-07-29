@@ -67,11 +67,11 @@ void H2Buffer::addElement(const H2Triangle &triangle, const QColor &color, int w
     return;
 }
 
-void H2Buffer::addElement(const std::vector<H2Triangle> &triangulation, const QColor &color, int width)
+void H2Buffer::addElement(const std::vector<H2Triangle> &triangles, const QColor &color, int width)
 {
-    for (unsigned int j=0; j<triangulation.size(); j++)
+    for (unsigned int j=0; j<triangles.size(); j++)
     {
-        addElement(triangulation[j], color, width);
+        addElement(triangles[j], color, width);
     }
     return;
 }
@@ -150,7 +150,25 @@ void H2Buffer::addElement(const H2mesh &mesh, const QColor &color, int width)
     return;
 }
 
-
+void H2Buffer::addElement(const H2Triangulation &triangulation, const QColor &color, int width)
+{
+    int depth = triangulation.getDepth();
+    if (depth == 0)
+    {
+        if (triangulation.getUp())
+        {
+            addElement(triangulation.getTriangle(), color, width);
+        }
+    }
+    else
+    {
+        addElement(*triangulation.getA(), color, width);
+        addElement(*triangulation.getB(), color, width);
+        addElement(*triangulation.getC(), color, width);
+        addElement(*triangulation.getO(), color, width);
+    }
+    return;
+}
 
 
 

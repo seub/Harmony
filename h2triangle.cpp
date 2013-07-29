@@ -1,5 +1,6 @@
 #include "h2triangle.h"
 
+
 H2Triangle::H2Triangle()
 {
 }
@@ -59,9 +60,9 @@ void H2Triangle::getAngles(double &angleA, double &angleB, double &angleC) const
 std::vector<H2Triangle> H2Triangle::triangulate() const
 {
     H2Point midA, midB, midC;
-    midA = H2Midpoint(b,c);
-    midB = H2Midpoint(a,c);
-    midC = H2Midpoint(a,b);
+    midA = H2Point::midpoint(b,c);
+    midB = H2Point::midpoint(a,c);
+    midC = H2Point::midpoint(a,b);
     H2Triangle Ta(a,midB,midC);
     H2Triangle Tb(b,midA,midC);
     H2Triangle Tc(c,midA,midB);
