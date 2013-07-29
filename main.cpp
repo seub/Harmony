@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     //H3canvasDelegate windows(60, 0,"Test");
     //windows.show();
 
-    int g = 4;
+    int g = 2;
 
     std::vector<double> lengths;
     std::vector<double> twists;
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
     H2Polygon Q = rho.generatePolygon(200);
     delegate.buffer.addElement(rho);
     delegate.buffer.addElement(Q,"blue",2);
-    std::vector<H2Triangle> triangleList = triangulate(triangulate(Q.triangulate()));
+    std::vector<H2Triangle> triangleList = triangulate(triangulate(triangulate(Q.triangulate())));
     delegate.buffer.addElement(triangleList,"red",1);
 
     std::cout << "There are " << triangleList.size() << " triangles" << std::endl;
