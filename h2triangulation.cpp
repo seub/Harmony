@@ -33,11 +33,14 @@ H2Triangulation::H2Triangulation(H2Point *a, H2Point *b, H2Point *c, int depth, 
     }
 }
 
-H2Triangulation::H2Triangulation(const H2Triangle &T, int depth, int maxDepth)
+H2Triangulation::H2Triangulation(const H2Triangle &T, int depth)
 {
-    H2Point a0, b0, c0;
-    T.getPoints(a0,b0,c0);
-    H2Triangulation(&a0,&b0,&c0,depth,maxDepth);
+    H2Point * a0 = new H2Point();
+    H2Point * b0 = new H2Point();
+    H2Point * c0 = new H2Point();
+    // Memory leak!!
+    T.getPoints(*a0, *b0, *c0);
+    H2Triangulation(a0, b0, c0, depth);
 }
 
 H2Triangulation::~H2Triangulation()

@@ -9,7 +9,7 @@ class H2Triangulation
 {
 public:
     H2Triangulation(H2Point *a, H2Point *b, H2Point *c, int depth, int maxDepth = -1, int index = 0, bool up = true);
-    H2Triangulation(const H2Triangle & T, int depth, int maxDepth = -1);
+    H2Triangulation(const H2Triangle & T, int depth);
     ~H2Triangulation();
 
     bool bottom() const;

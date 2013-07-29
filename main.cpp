@@ -72,8 +72,9 @@ int main(int argc, char *argv[])
     H2Triangle T(3,3,4);
     delegate.buffer.addElement(T,"blue",3);
 
-    H2Triangulation Ts(T,4);
-    delegate.buffer.addElement(Ts,"red");
+/*    H2Triangulation Ts(T,4);
+    Ts.getTriangle();
+    //delegate.buffer.addElement(Ts,"red");*/
 
     H2Isometry id;
     id.setIdentity();
