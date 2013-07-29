@@ -26,9 +26,9 @@ void H2Triangle::getPoints(H2Point &a, H2Point &b, H2Point &c) const
 
 void H2Triangle::getSideLengths(double &A, double &B, double &C) const
 {
-    A = H2distance(b,c);
-    B = H2distance(a,c);
-    C = H2distance(a,b);
+    A = H2Point::distance(b,c);
+    B = H2Point::distance(a,c);
+    C = H2Point::distance(a,b);
     return;
 }
 

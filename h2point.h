@@ -22,8 +22,8 @@ public:
     void setKleinCoordinate(complex z);
 
 
-    static double H2distance(const H2Point & p1, const H2Point & p2);
-    static H2Point H2MidPoint(const H2Point & p1, const H2Point & p2);
+    static double distance(const H2Point & p1, const H2Point & p2);
+    static H2Point midpoint(const H2Point & p1, const H2Point & p2);
 
 private:
     complex z;
