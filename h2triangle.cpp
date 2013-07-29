@@ -9,6 +9,22 @@ H2Triangle::H2Triangle(const H2Point &a, const H2Point &b, const H2Point &c): a(
 {
 }
 
+H2Triangle::H2Triangle(double p, double q, double r)
+{
+    double angA = M_PI / p;
+    double angB = M_PI / q;
+    double angC = M_PI / r;
+    double cosSum = cos(.5*(angA + angB + angC));
+    double cosSumA = cos(.5*(-angA + angB + angC));
+    double cosSumB = cos(.5*(angA - angB + angC));
+    double cosSumC = cos(.5*(angA + angB - angC));
+
+    a.setDiskCoordinate(0.0);
+    b.setDiskCoordinate(sqrt(cosSum*cosSumC / (cosSumA*cosSumB)));
+    c.setDiskCoordinate((cos(angA) + I*sin(angA))*sqrt(cosSum*cosSumB / (cosSumA*cosSumC)));
+    return;
+}
+
 void H2Triangle::setPoints(const H2Point &a, const H2Point &b, const H2Point &c)
 {
     this->a = a;
@@ -27,9 +43,9 @@ void H2Triangle::getPoints(H2Point &a, H2Point &b, H2Point &c) const
 
 void H2Triangle::getSideLengths(double &A, double &B, double &C) const
 {
-    A = H2Point::H2distance(b,c);
-    B = H2Point::H2distance(a,c);
-    C = H2Point::H2distance(a,b);
+    A = H2Point::distance(b,c);
+    B = H2Point::distance(a,c);
+    C = H2Point::distance(a,b);
     return;
 }
 
@@ -60,9 +76,9 @@ void H2Triangle::getAngles(double &angleA, double &angleB, double &angleC) const
 std::vector<H2Triangle> H2Triangle::triangulate() const
 {
     H2Point midA, midB, midC;
-    midA = H2Point::H2Midpoint(b,c);
-    midB = H2Point::H2Midpoint(a,c);
-    midC = H2Point::H2Midpoint(a,b);
+    midA = H2Point::midpoint(b,c);
+    midB = H2Point::midpoint(a,c);
+    midC = H2Point::midpoint(a,b);
     H2Triangle Ta(a,midB,midC);
     H2Triangle Tb(b,midA,midC);
     H2Triangle Tc(c,midA,midB);

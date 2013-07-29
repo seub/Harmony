@@ -236,6 +236,15 @@ H2Polygon operator*(const H2Isometry &f, const H2Polygon &P)
     return res;
 }
 
+H2Triangle operator*(const H2Isometry &f, const H2Triangle &T)
+{
+    H2Triangle res;
+    H2Point a,b,c;
+    res.getPoints(a,b,c);
+    res.setPoints(f*a,f*b,f*c);
+    return res;
+}
+
 std::vector<H2Polygon> operator *(const std::vector<H2Isometry> & listOfIsoms, const H2Polygon & P)
 {
     std::vector<H2Polygon> listOfPolys;

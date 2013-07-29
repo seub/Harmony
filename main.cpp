@@ -20,17 +20,16 @@ int main(int argc, char *argv[])
 {
     std::cout << std::endl;
     QApplication a(argc, argv);
+    Canvas canvas;
+    H2CanvasDelegate delegate(&canvas);
+    canvas.setDelegate(&delegate);
 
-    //H3canvasDelegate windows(60, 0,"Test");
-    //windows.show();
-
-    int g = 2;
+/*    int g = 2;
 
     std::vector<double> lengths;
     std::vector<double> twists;
     for (int i=0; i<3*g-3; i++)
     {
-        //twists.push_back(1.0-.3*i);
         twists.push_back(-1.0 + i*.1);
     }
     for (int i=0; i<3*g-3; i++)
@@ -46,47 +45,35 @@ int main(int argc, char *argv[])
     //rho.setNiceRepresentation();
 
     rho.checkRelations();
-
-
-    Canvas canvas;
-    H2CanvasDelegate delegate(&canvas);
-    canvas.setDelegate(&delegate);
-
+*/
 
     //std::vector<H2Isometry> listOfIsoms = rho.getSidePairingsNormalizedAroundVerticesToDepth(1);
     //std::vector<H2Polygon> listOfPolys = listOfIsoms*P;
 
-    /*delegate.buffer.addElement(listOfPolys);
-    clock_t t0 = clock();
-    H2mesh mesh(5.0, rho);
-    clock_t t1 = clock();
-    std::cout << "time to construct mesh: " << (t1-t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
-    delegate.buffer.addElement(mesh, "red", 2);*/
-
-    H2Polygon Q = rho.generatePolygon(200);
+    /*H2Polygon Q = rho.generatePolygon(200);
     delegate.buffer.addElement(rho);
-    delegate.buffer.addElement(Q,"blue",2);
-    std::vector<H2Triangle> triangleList = triangulate(triangulate(triangulate(Q.triangulate())));
-    delegate.buffer.addElement(triangleList,"red",1);
+    delegate.buffer.addElement(Q,"blue",3);
+    std::vector<H2Triangle> triangleList = Q.triangulate();
 
-    std::cout << "There are " << triangleList.size() << " triangles" << std::endl;
+    H2Triangle T;
+    H2Point aT,bT,cT;
 
-    /*int i,index;
-    for(i=0; i<10; i++)
+    clock_t t0 = clock();
+    for (unsigned int  j=0; j<triangleList.size(); j++)
     {
-        index = mesh.getClosestMeshIndex(0.0 + (10*i+0.0)*(.02 + I*.03));
-        std::cout << mesh.getMeshPoints()[index] << std::endl;
-    }*/
+        T = triangleList[j];
+        T.getPoints(aT,bT,cT);
+        H2Triangulation Ts(&aT,&bT,&cT,5);
+        delegate.buffer.addElement(Ts);
+    }
+    clock_t t1 = clock();
+    std::cout << "time to construct triangulation: " << (t1-t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;*/
 
-    /*const complex * meshPoints = mesh.getMeshPoints();
-    int nbMeshPoints = mesh.getNbMeshPoints();
+    H2Triangle T(3,3,4);
+    delegate.buffer.addElement(T,"blue",3);
 
-    H2Point p;
-    for (int i=0; i<nbMeshPoints; i++)
-    {
-        p.setHyperboloidProjection(meshPoints[i]);
-        delegate.buffer.addElement(p, "black", 2);
-    }*/
+    H2Triangulation Ts(T,4);
+    delegate.buffer.addElement(Ts,"red");
 
     H2Isometry id;
     id.setIdentity();
