@@ -459,6 +459,20 @@ std::vector<double> H2Polygon::getAngles() const
     return res;
 }
 
+std::vector<double> H2Polygon::getPositiveInteriorAngles() const
+{
+    std::vector<double> angles = getAngles();
+    if (isPositivelyOriented())
+    {
+        std::vector<double> output;
+        for (unsigned int j=0; j<angles.size(); j++)
+        {
+            output.push_back(2.0*M_PI - angles[j]);
+        }
+        angles = output;
+    }
+    return angles;
+}
 
 std::vector<H2Triangle> H2Polygon::triangulate() const
 {
@@ -493,7 +507,7 @@ void H2Polygon::subdivideByBiggestAngles(H2Polygon &P1, H2Polygon &P2) const
     P2.clearVertices();
     unsigned int biggestAngleIndex = 0, nextBiggestAngleIndex = 0;
     double biggestAngle = 0.0, nextBiggestAngle = 0.0;
-    std::vector<double> angles = getAngles();
+    std::vector<double> angles = getPositiveInteriorAngles();
     unsigned int j;
     for (j=0; j< vertices.size(); j++)
     {

@@ -47,6 +47,7 @@ public:
 
     void optimalMobius(H2Isometry &output) const;
     std::vector<double> getAngles() const;
+    std::vector<double> getPositiveInteriorAngles() const;
 
     std::vector<H2Triangle> triangulate() const;
     void subdivideByBiggestAngles(H2Polygon & P1, H2Polygon & P2) const;
