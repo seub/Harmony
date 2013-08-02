@@ -1,5 +1,5 @@
 #include "h2triangle.h"
-
+#include "h2polygon.h"
 
 H2Triangle::H2Triangle()
 {
@@ -39,6 +39,15 @@ void H2Triangle::getPoints(H2Point &a, H2Point &b, H2Point &c) const
     b = this->b;
     c = this->c;
     return;
+}
+
+bool H2Triangle::isInside(const H2Point &p) const
+{
+    H2Polygon P;
+    P.addVertex(a);
+    P.addVertex(b);
+    P.addVertex(c);
+    return P.isInside(p);
 }
 
 void H2Triangle::getSideLengths(double &A, double &B, double &C) const

@@ -35,9 +35,9 @@ double Tools::mod2Pi(double t)
 
 int Tools::exponentiation(int base, int power)
 {
+    int res = 1;
     if (power >= 0)
     {
-        int res = 1;
         int pow = base;
         while (power > 0)
         {
@@ -48,10 +48,13 @@ int Tools::exponentiation(int base, int power)
             pow *= pow;
             power >>= 1;
         }
-        return res;
     }
-    std::cout << "ERROR in Tools::exponentiation: no negative exponents!" << std::endl;
-    throw(0);
+    else
+    {
+        std::cout << "ERROR in Tools::exponentiation: no negative exponents!" << std::endl;
+        //throw(0);
+    }
+    return res;
 }
 
 word Tools::contractWord(word &w)

@@ -52,8 +52,17 @@ int main(int argc, char *argv[])
     H2CanvasDelegate delegate(&canvas);
     canvas.setDelegate(&delegate);
 
-    H2Triangle T(3,3,4);
-    delegate.buffer.addElement(T,"blue",3);
+    H2Triangle T;
+    H2Point p1, p2, p3;
+    p1.setDiskCoordinate(complex(0.0, 0.9));
+    p2.setDiskCoordinate(complex(-0.7, -0.7));
+    p3.setDiskCoordinate(complex(0.7, -0.7));
+    T.setPoints(p1, p2, p3);
+
+    {//H2Triangulation Ts(&p1, &p2, &p3, 6);
+    H2Triangulation Ts(T, 6);
+
+    delegate.buffer.addElement(Ts);}
 
 
     H2Isometry id;

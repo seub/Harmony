@@ -240,7 +240,7 @@ H2Triangle operator*(const H2Isometry &f, const H2Triangle &T)
 {
     H2Triangle res;
     H2Point a,b,c;
-    res.getPoints(a,b,c);
+    T.getPoints(a,b,c);
     res.setPoints(f*a,f*b,f*c);
     return res;
 }
