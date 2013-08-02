@@ -9,6 +9,22 @@ H2Triangle::H2Triangle(const H2Point &a, const H2Point &b, const H2Point &c): a(
 {
 }
 
+H2Triangle::H2Triangle(double p, double q, double r)
+{
+    double angA = M_PI / p;
+    double angB = M_PI / q;
+    double angC = M_PI / r;
+    double cosSum = cos(.5*(angA + angB + angC));
+    double cosSumA = cos(.5*(-angA + angB + angC));
+    double cosSumB = cos(.5*(angA - angB + angC));
+    double cosSumC = cos(.5*(angA + angB - angC));
+
+    a.setDiskCoordinate(0.0);
+    b.setDiskCoordinate(sqrt(cosSum*cosSumC / (cosSumA*cosSumB)));
+    c.setDiskCoordinate((cos(angA) + I*sin(angA))*sqrt(cosSum*cosSumB / (cosSumA*cosSumC)));
+    return;
+}
+
 void H2Triangle::setPoints(const H2Point &a, const H2Point &b, const H2Point &c)
 {
     this->a = a;
