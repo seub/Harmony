@@ -5,8 +5,11 @@
 H2Triangulation::H2Triangulation(H2Point *a, H2Point *b, H2Point *c, int depth, int maxDepth, int index, bool up) :
     a(a), b(b), c(c), depth(depth), maxDepth(maxDepth), index(index), up(up)
 {
+    //std::cout << "Entering H2Triangulation::H2Triangulation(H2Point *a, ...) with depth" << std::endl;
+
     if (maxDepth == -1)
     {
+        this->maxDepth = depth;
         maxDepth = depth;
     }
     if (depth==0)
@@ -31,6 +34,14 @@ H2Triangulation::H2Triangulation(H2Point *a, H2Point *b, H2Point *c, int depth, 
         C = new H2Triangulation(midac, midbc, c, depth - 1, maxDepth, 4*index + 3, up);
         O = new H2Triangulation(midbc, midac, midab, depth - 1, maxDepth, 4*index + 4, !up);
     }
+
+    //std::cout << "Leaving H2Triangulation::H2Triangulation(H2Point *a, ...)" << std::endl;
+}
+
+H2Triangulation::H2Triangulation(H2Triangle &T, int depth)
+{
+    *this = H2Triangulation(&T.a, &T.b, &T.c, depth);
+    //std::cout << "Leaving H2Triangulation::H2Triangulation(H2Triangle &T, int depth)" << std::endl;
 }
 
 H2Triangulation::~H2Triangulation()

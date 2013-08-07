@@ -5,6 +5,8 @@
 
 class H2Triangle
 {
+    friend class H2Triangulation;
+
 public:
     H2Triangle();
     H2Triangle(const H2Point & a, const H2Point & b, const H2Point & c);

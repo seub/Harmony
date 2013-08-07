@@ -150,22 +150,24 @@ void H2Buffer::addElement(const H2mesh &mesh, const QColor &color, int width)
     return;
 }
 
-void H2Buffer::addElement(const H2Triangulation &triangulation, const QColor &color, int width)
+void H2Buffer::addElement(const H2Triangulation *triangulation, const QColor &color, int width)
 {
-    int depth = triangulation.getDepth();
+    std::cout << "Entering H2Buffer::addElement" << std::endl;
+    int depth = triangulation->getDepth();
+    std::cout << "depth = " << depth << std::endl;
     if (depth == 0)
     {
-        if (triangulation.getUp())
+        if (triangulation->getUp())
         {
-            addElement(triangulation.getTriangle(), color, width);
+            addElement(triangulation->getTriangle(), color, width);
         }
     }
     else
     {
-        addElement(*triangulation.getA(), color, width);
-        addElement(*triangulation.getB(), color, width);
-        addElement(*triangulation.getC(), color, width);
-        addElement(*triangulation.getO(), color, width);
+        addElement(triangulation->getA(), color, width);
+        addElement(triangulation->getB(), color, width);
+        addElement(triangulation->getC(), color, width);
+        addElement(triangulation->getO(), color, width);
     }
     return;
 }
