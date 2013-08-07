@@ -152,9 +152,7 @@ void H2Buffer::addElement(const H2mesh &mesh, const QColor &color, int width)
 
 void H2Buffer::addElement(const H2Triangulation *triangulation, const QColor &color, int width)
 {
-    std::cout << "Entering H2Buffer::addElement" << std::endl;
     int depth = triangulation->getDepth();
-    std::cout << "depth = " << depth << std::endl;
     if (depth == 0)
     {
         if (triangulation->getUp())

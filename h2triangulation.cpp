@@ -40,7 +40,7 @@ H2Triangulation::H2Triangulation(H2Point *a, H2Point *b, H2Point *c, int depth, 
 
 H2Triangulation::H2Triangulation(H2Triangle &T, int depth)
 {
-    *this = H2Triangulation(&T.a, &T.b, &T.c, depth);
+    *this = *(new H2Triangulation(&T.a, &T.b, &T.c, depth));
     //std::cout << "Leaving H2Triangulation::H2Triangulation(H2Triangle &T, int depth)" << std::endl;
 }
 
