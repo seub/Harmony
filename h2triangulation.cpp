@@ -8,7 +8,6 @@ H2Triangulation::H2Triangulation(H2Point *a, H2Point *b, H2Point *c, int depth, 
     if (maxDepth == -1)
     {
         maxDepth = depth;
-        this->maxDepth = maxDepth;
     }
     if (depth==0)
     {
@@ -32,11 +31,6 @@ H2Triangulation::H2Triangulation(H2Point *a, H2Point *b, H2Point *c, int depth, 
         C = new H2Triangulation(midac, midbc, c, depth - 1, maxDepth, 4*index + 3, up);
         O = new H2Triangulation(midbc, midac, midab, depth - 1, maxDepth, 4*index + 4, !up);
     }
-}
-
-H2Triangulation::H2Triangulation(H2Triangle &T, int depth)
-{
-    *this = *(new H2Triangulation(&T.a, &T.b, &T.c, depth));
 }
 
 H2Triangulation::~H2Triangulation()
@@ -90,7 +84,7 @@ int H2Triangulation::getDepth() const
     return depth;
 }
 
-bool H2Triangulation::isPointingUp() const
+bool H2Triangulation::getUp() const
 {
     return up;
 }
@@ -115,31 +109,6 @@ H2Triangulation* H2Triangulation::getO() const
     return O;
 }
 
-bool H2Triangulation::getTriangleContaining(const H2Point &p, int &outputIndex) const
-{
-
-    if (getTriangle().isInside(p))
-    {
-        if (depth == 0)
-        {
-            outputIndex = index;
-        }
-        else
-        {
-            if ((!A->getTriangleContaining(p, outputIndex)) && (!B->getTriangleContaining(p, outputIndex))
-                    && (!C->getTriangleContaining(p, outputIndex)) && (!O->getTriangleContaining(p, outputIndex)))
-            {
-                std::cout << "ERROR in H2Triangulation::getTriangleContaining: this is not supposed to happen" << std::endl;
-                return false;
-            }
-        }
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
 
 
 

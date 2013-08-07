@@ -9,21 +9,16 @@ class H2Triangulation
 {
 public:
     H2Triangulation(H2Point *a, H2Point *b, H2Point *c, int depth, int maxDepth = -1, int index = 0, bool up = true);
-    H2Triangulation(H2Triangle &T, int depth);
     ~H2Triangulation();
 
     bool bottom() const;
     H2Triangle getTriangle() const;
-
     int getDepth() const;
-    bool isPointingUp() const;
-
+    bool getUp() const;
     H2Triangulation* getA() const;
     H2Triangulation* getB() const;
     H2Triangulation* getC() const;
     H2Triangulation* getO() const;
-
-    bool getTriangleContaining(const H2Point & p, int & outputIndex) const;
 
 private:
 

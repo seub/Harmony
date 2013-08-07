@@ -21,23 +21,19 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
     QApplication a(argc, argv);
 
-    //H3canvasDelegate windows(60, 0,"Test");
-    //windows.show();
 
-    int g = 2;
+    int g = 4;
 
     std::vector<double> lengths;
     std::vector<double> twists;
     for (int i=0; i<3*g-3; i++)
     {
-        //twists.push_back(-1.0 + i*.1);
-        twists.push_back(0.0);
+        //twists.push_back(1.0-.3*i);
         twists.push_back(-1.0 + i*.1);
     }
     for (int i=0; i<3*g-3; i++)
     {
-        //lengths.push_back(1.0 + .3*i);
-        lengths.push_back(2.0);
+        lengths.push_back(1.0 + .3*i);
     }
 
     FenchelNielsenConstructor fn(lengths,twists);
@@ -45,6 +41,7 @@ int main(int argc, char *argv[])
     IsomH2Representation rho(&group);
 
     rho = fn.getRepresentation(&group);
+
     rho.checkRelations();
 
 
@@ -52,17 +49,19 @@ int main(int argc, char *argv[])
     H2CanvasDelegate delegate(&canvas);
     canvas.setDelegate(&delegate);
 
-    H2Triangle T;
-    H2Point p1, p2, p3;
-    p1.setDiskCoordinate(complex(0.0, 0.9));
-    p2.setDiskCoordinate(complex(-0.7, -0.7));
-    p3.setDiskCoordinate(complex(0.7, -0.7));
-    T.setPoints(p1, p2, p3);
+    H2Point aT,bT,cT;
 
-    {//H2Triangulation Ts(&p1, &p2, &p3, 6);
-    H2Triangulation Ts(T, 6);
+    //T.getPoints(aT,bT,cT);
 
-    delegate.buffer.addElement(Ts);}
+    aT.setDiskCoordinate(complex(0.0,0.8));
+    bT.setDiskCoordinate(complex(-0.5, -0.5));
+    cT.setDiskCoordinate(complex(0.5, -0.5));
+    clock_t t0 = clock();
+    H2Triangulation Ts(&aT,&bT,&cT,5);
+    clock_t t1 = clock();
+    std::cout << "time to construct triangulation: " << (t1-t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+
+    delegate.buffer.addElement(Ts);
 
 
     H2Isometry id;

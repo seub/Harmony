@@ -5,12 +5,9 @@
 
 class H2Triangle
 {
-    friend class H2Triangulation;
-
 public:
     H2Triangle();
     H2Triangle(const H2Point & a, const H2Point & b, const H2Point & c);
-    H2Triangle(double p, double q, double r);
 
     void setPoints(const H2Point &a, const H2Point &b, const H2Point &c);
 
@@ -18,7 +15,6 @@ public:
     void getSideLengths(double & A, double & B, double & C) const;
     void getAngles(double & angA, double & angleB, double & angleC) const;
 
-    bool isInside(const H2Point &p) const;
     std::vector<H2Triangle> triangulate() const;
 
 

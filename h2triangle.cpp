@@ -1,5 +1,5 @@
 #include "h2triangle.h"
-#include "h2polygon.h"
+
 
 H2Triangle::H2Triangle()
 {
@@ -7,22 +7,6 @@ H2Triangle::H2Triangle()
 
 H2Triangle::H2Triangle(const H2Point &a, const H2Point &b, const H2Point &c): a(a), b(b), c(c)
 {
-}
-
-H2Triangle::H2Triangle(double p, double q, double r)
-{
-    double angA = M_PI / p;
-    double angB = M_PI / q;
-    double angC = M_PI / r;
-    double cosSum = cos(.5*(angA + angB + angC));
-    double cosSumA = cos(.5*(-angA + angB + angC));
-    double cosSumB = cos(.5*(angA - angB + angC));
-    double cosSumC = cos(.5*(angA + angB - angC));
-
-    a.setDiskCoordinate(0.0);
-    b.setDiskCoordinate(sqrt(cosSum*cosSumC / (cosSumA*cosSumB)));
-    c.setDiskCoordinate((cos(angA) + I*sin(angA))*sqrt(cosSum*cosSumB / (cosSumA*cosSumC)));
-    return;
 }
 
 void H2Triangle::setPoints(const H2Point &a, const H2Point &b, const H2Point &c)
@@ -39,15 +23,6 @@ void H2Triangle::getPoints(H2Point &a, H2Point &b, H2Point &c) const
     b = this->b;
     c = this->c;
     return;
-}
-
-bool H2Triangle::isInside(const H2Point &p) const
-{
-    H2Polygon P;
-    P.addVertex(a);
-    P.addVertex(b);
-    P.addVertex(c);
-    return P.isInside(p);
 }
 
 void H2Triangle::getSideLengths(double &A, double &B, double &C) const
