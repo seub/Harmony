@@ -11,6 +11,7 @@ Canvas::Canvas(int width, int height, QWidget *parent) :
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
     setFocusPolicy(Qt::WheelFocus);
+    setMouseTracking(true);
 
     resize(width,height);
 }

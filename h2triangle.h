@@ -3,6 +3,8 @@
 #include "types.h"
 #include "h2point.h"
 
+class H2Polygon;
+
 class H2Triangle
 {
     friend class H2Triangulation;
@@ -16,6 +18,9 @@ public:
     void getPoints(H2Point &a, H2Point &b, H2Point &c) const;
     void getSideLengths(double & A, double & B, double & C) const;
     void getAngles(double & angA, double & angleB, double & angleC) const;
+
+    bool contains(const H2Point & point) const;
+    void getAsPolygon(H2Polygon & outputPolygon) const;
 
     std::vector<H2Triangle> triangulate() const;
 

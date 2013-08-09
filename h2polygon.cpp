@@ -366,23 +366,23 @@ void H2Polygon::optimalMobius(H2Isometry &output) const
     }
 }
 
-bool H2Polygon::isInsideInDiskModel(const complex &z) const
+bool H2Polygon::constainsInDiskModel(const complex &z) const
 {
     if (norm(z)>1.0)
     {
         return false;
     }
     complex w = 2.0*z/(1.0 + norm(z));
-    return isInsideInKleinModel(w);
+    return ContainsInKleinModel(w);
 }
 
-bool H2Polygon::isInside(const H2Point &point) const
+bool H2Polygon::contains(const H2Point &point) const
 {
     complex w = point.getKleinCoordinate();
-    return isInsideInKleinModel(w);
+    return ContainsInKleinModel(w);
 }
 
-bool H2Polygon::isInsideInKleinModel(const complex &z) const
+bool H2Polygon::ContainsInKleinModel(const complex &z) const
 {
     unsigned int nbIntersections = 0;
     double xLeft, yLeft, xRight, yRight;

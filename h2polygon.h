@@ -37,9 +37,9 @@ public:
     double norm3() const;
     double norm4() const;
 
-    bool isInsideInKleinModel(const complex & z) const;
-    bool isInsideInDiskModel(const complex & z) const;
-    bool isInside(const H2Point & point) const;
+    bool ContainsInKleinModel(const complex & z) const;
+    bool constainsInDiskModel(const complex & z) const;
+    bool contains(const H2Point & point) const;
 
     H2GeodesicArc getSide(int index) const;
     std::vector<H2GeodesicArc> getSides() const;

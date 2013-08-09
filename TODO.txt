@@ -20,3 +20,6 @@ le zoom marche pas avec le complex to pixel...
 
 BUGS:
 parfois "there is no h2geodesic between point and itself" pendant l'affichage??
+
+
+test memory leaks with valgrind

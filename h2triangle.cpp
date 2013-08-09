@@ -1,4 +1,5 @@
 #include "h2triangle.h"
+#include "h2polygon.h"
 
 
 H2Triangle::H2Triangle()
@@ -31,6 +32,21 @@ void H2Triangle::getSideLengths(double &A, double &B, double &C) const
     B = H2Point::distance(a,c);
     C = H2Point::distance(a,b);
     return;
+}
+
+bool H2Triangle::contains(const H2Point &point) const
+{
+    H2Polygon P;
+    getAsPolygon(P);
+    return P.contains(point);
+}
+
+void H2Triangle::getAsPolygon(H2Polygon & outputPolygon) const
+{
+    outputPolygon.clearVertices();
+    outputPolygon.addVertex(a);
+    outputPolygon.addVertex(b);
+    outputPolygon.addVertex(c);
 }
 
 void H2Triangle::getAngles(double &angleA, double &angleB, double &angleC) const

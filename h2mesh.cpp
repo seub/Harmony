@@ -59,7 +59,7 @@ void H2mesh::fillIsInside()
     for (int i=0; i<nbMeshPoints; i++)
     {
         p.setHyperboloidProjection(meshPoints[i]);
-        isInside[i] = polygon.isInside(p);
+        isInside[i] = polygon.contains(p);
     }
     return;
 }
@@ -87,12 +87,12 @@ void H2mesh::fillNeighbors()
 
             unsigned int j=0;
             pOut = pIn;
-            while (!polygon.isInside(pOut) && j<listOfIsoms.size())
+            while (!polygon.contains(pOut) && j<listOfIsoms.size())
             {
                 pOut = listOfIsoms[j]*pIn;
                 j++;
             }
-            if (!polygon.isInside(pOut))
+            if (!polygon.contains(pOut))
             {
                 std::cout << "Error in H2mesh::fillNeighbors: Leftmost neighbor was not found" << std::endl;
                 leftNeighborIndices[i] = -1;
@@ -125,12 +125,12 @@ void H2mesh::fillNeighbors()
 
             unsigned int j=0;
             pOut = pIn;
-            while (!polygon.isInside(pOut) && j<listOfIsoms.size())
+            while (!polygon.contains(pOut) && j<listOfIsoms.size())
             {
                 pOut = listOfIsoms[j]*pIn;
                 j++;
             }
-            if (!polygon.isInside(pOut))
+            if (!polygon.contains(pOut))
             {
                 std::cout << "Error in H2mesh::fillNeighbors: Rightmost neighbor was not found" << std::endl;
                 rightNeighborIndices[i] = -1;
@@ -162,12 +162,12 @@ void H2mesh::fillNeighbors()
 
             unsigned int j=0;
             pOut = pIn;
-            while (!polygon.isInside(pOut) && j<listOfIsoms.size())
+            while (!polygon.contains(pOut) && j<listOfIsoms.size())
             {
                 pOut = listOfIsoms[j]*pIn;
                 j++;
             }
-            if (!polygon.isInside(pOut))
+            if (!polygon.contains(pOut))
             {
                 std::cout << "Error in H2mesh::fillNeighbors: Upmost neighbor was not found" << std::endl;
                 upNeighborIndices[i] = -1;
@@ -199,12 +199,12 @@ void H2mesh::fillNeighbors()
 
             unsigned int j=0;
             pOut = pIn;
-            while (!polygon.isInside(pOut) && j<listOfIsoms.size())
+            while (!polygon.contains(pOut) && j<listOfIsoms.size())
             {
                 pOut = listOfIsoms[j]*pIn;
                 j++;
             }
-            if (!polygon.isInside(pOut))
+            if (!polygon.contains(pOut))
             {
                 std::cout << "Error in H2mesh::fillNeighbors: Downmost neighbor was not found" << std::endl;
                 downNeighborIndices[i] = -1;
@@ -273,7 +273,7 @@ int H2mesh::getClosestMeshIndex(const complex &z)
 
     H2Point p;
     p.setHyperboloidProjection(z);
-    if (!polygon.isInside(p))
+    if (!polygon.contains(p))
     {
         std::cout << "Error in H2mesh::getClosestMeshIndex: Point is not inside polygon" << std::endl;
         return index;
