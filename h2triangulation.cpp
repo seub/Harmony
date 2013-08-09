@@ -2,10 +2,10 @@
 
 
 
-H2Triangulation::H2Triangulation(H2Point *a, H2Point *b, H2Point *c, int depth, int maxDepth, int index, bool up) :
+H2Triangulation::H2Triangulation(const H2Point *a, const H2Point *b, const H2Point *c, int depth, int maxDepth, int index, bool up) :
     depth(depth), maxDepth(maxDepth), index(index), up(up)
 {
-    //std::cout << "Entering H2Triangulation::H2Triangulation(H2Point *a, ...) with depth" << std::endl;
+    //std::cout << "Entering H2Triangulation::H2Triangulation(H2Point *a, ...)" << std::endl;
 
     if (maxDepth == depth)
     {
@@ -34,9 +34,9 @@ H2Triangulation::H2Triangulation(H2Point *a, H2Point *b, H2Point *c, int depth, 
         H2Point *midac = new H2Point(H2Point::midpoint(*a, *c));
         H2Point *midab = new H2Point(H2Point::midpoint(*a, *b));
 
-        A = new H2Triangulation(a, midab, midac, depth - 1, maxDepth, 4*index + 1, up);
-        B = new H2Triangulation(midab, b, midbc, depth - 1, maxDepth, 4*index + 2, up);
-        C = new H2Triangulation(midac, midbc, c, depth - 1, maxDepth, 4*index + 3, up);
+        A = new H2Triangulation(this->a, midab, midac, depth - 1, maxDepth, 4*index + 1, up);
+        B = new H2Triangulation(midab, this->b, midbc, depth - 1, maxDepth, 4*index + 2, up);
+        C = new H2Triangulation(midac, midbc, this->c, depth - 1, maxDepth, 4*index + 3, up);
         O = new H2Triangulation(midbc, midac, midab, depth - 1, maxDepth, 4*index + 4, !up);
     }
 
@@ -46,6 +46,7 @@ H2Triangulation::H2Triangulation(H2Point *a, H2Point *b, H2Point *c, int depth, 
 H2Triangulation::H2Triangulation(const H2Triangulation &other) :
     depth(other.depth), maxDepth(other.maxDepth), index(other.index), up(other.up)
 {
+    //std::cout << "Entering H2Triangulation::H2Triangulation(const H2Triangulation &other)" << std::endl;
     if (depth==0)
     {
         A = 0;
@@ -77,10 +78,12 @@ H2Triangulation::H2Triangulation(const H2Triangulation &other) :
         b = B->b;
         c = C->c;
     }
+    //std::cout << "Leaving H2Triangulation::H2Triangulation(const H2Triangulation &other)" << std::endl;
 }
 
 void swap(H2Triangulation &first, H2Triangulation &second)
 {
+    //std::cout << "Entering swap(H2Triangulation &first, H2Triangulation &second)" << std::endl;
     using std::swap;
 
     swap(first.a, second.a);
@@ -97,36 +100,38 @@ void swap(H2Triangulation &first, H2Triangulation &second)
     swap(first.maxDepth, second.maxDepth);
     swap(first.up, second.up);
 
+    //std::cout << "Leaving swap(H2Triangulation &first, H2Triangulation &second)" << std::endl;
     return;
 }
 
 H2Triangulation& H2Triangulation::operator=(H2Triangulation other)
 {
+    //std::cout << "Entering H2Triangulation::operator=" << std::endl;
     swap(*this, other);
 
+    //std::cout << "Leaving H2Triangulation::operator=" << std::endl;
     return *this;
 }
 
-H2Triangulation::H2Triangulation(const H2Point &a, const H2Point &b, const H2Point &c, int depth)
+H2Triangulation::H2Triangulation(const H2Point &a, const H2Point &b, const H2Point &c, int depth) :
+    H2Triangulation(&a, &b, &c, depth, depth, 0, true)
 {
-    H2Point aTemp(a), bTemp(b), cTemp(c);
-    *this = H2Triangulation(&aTemp, &bTemp, &cTemp, depth, depth, 0, true);
 }
 
-H2Triangulation::H2Triangulation(const H2Triangle &T, int depth)
+H2Triangulation::H2Triangulation(const H2Triangle &T, int depth) :
+    H2Triangulation(T.a, T.b, T.c, depth)
 {
-    H2Point a, b, c;
-    T.getPoints(a, b, c);
-    *this = H2Triangulation(&a, &b, &c, depth, depth, 0, true);
 }
 
 H2Triangulation::~H2Triangulation()
 {
+    //std::cout << "Entering H2Triangulation::~H2Triangulation with this->depth = " << depth << std::endl;
     if (depth == 0)
     {
         if (up)
         {
             delete a;
+
             if (bottom())
             {
                 if (3*index == 2*Tools::exponentiation(4, maxDepth) -1)
@@ -144,6 +149,7 @@ H2Triangulation::~H2Triangulation()
         delete C;
         delete O;
     }
+    //std::cout << "Leaving H2Triangulation::~H2Triangulation" << std::endl;
 }
 
 bool H2Triangulation::bottom() const

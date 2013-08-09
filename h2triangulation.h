@@ -33,10 +33,10 @@ public:
     bool getTriangleContaining(const H2Point & point, int & outputIndex) const;
     bool getTriangleContaining(const H2Point &point, H2Triangle & outputTriangle) const;
 
-private:    
-    H2Triangulation(H2Point *a, H2Point *b, H2Point *c, int depth, int maxDepth, int index, bool up); // Base constructor
+//private:
+    H2Triangulation(const H2Point *a, const H2Point *b, const H2Point *c, int depth, int maxDepth, int index, bool up); // Default constructor
 
-    H2Point * a, * b, * c;
+    const H2Point * a, * b, * c;
 
     int depth, maxDepth;
     int index;

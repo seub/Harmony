@@ -57,8 +57,9 @@ int main(int argc, char *argv[])
     cT.setDiskCoordinate(complex(0.5, -0.5));
     H2Triangle T(aT, bT, cT);
     clock_t t0 = clock();
-    H2Triangulation Ts(T, 1);
+    //H2Triangulation Ts(T, 0);
     //H2Triangulation Ts(&aT, &bT, &cT, 1);
+    H2Triangulation Ts(&aT, &bT, &cT, 2, 2, 0, true);
     clock_t t1 = clock();
     std::cout << "time to construct triangulation: " << (t1-t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
 
@@ -66,7 +67,6 @@ int main(int argc, char *argv[])
 
     delegate.buffer.addElement(&Ts);
     }
-
 
     H2Isometry id;
     id.setIdentity();
