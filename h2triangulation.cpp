@@ -1,6 +1,9 @@
 #include "h2triangulation.h"
 
-
+H2Triangulation::H2Triangulation()
+{
+    empty = true;
+}
 
 H2Triangulation::H2Triangulation(const H2Point *a, const H2Point *b, const H2Point *c, int depth, int maxDepth, int index, bool up) :
     depth(depth), maxDepth(maxDepth), index(index), up(up)
@@ -40,6 +43,7 @@ H2Triangulation::H2Triangulation(const H2Point *a, const H2Point *b, const H2Poi
         O = new H2Triangulation(midbc, midac, midab, depth - 1, maxDepth, 4*index + 4, !up);
     }
 
+    empty = false;
     //std::cout << "Leaving H2Triangulation::H2Triangulation(H2Point *a, ...)" << std::endl;
 }
 
@@ -47,36 +51,43 @@ H2Triangulation::H2Triangulation(const H2Triangulation &other) :
     depth(other.depth), maxDepth(other.maxDepth), index(other.index), up(other.up)
 {
     //std::cout << "Entering H2Triangulation::H2Triangulation(const H2Triangulation &other)" << std::endl;
-    if (depth==0)
-    {
-        A = 0;
-        B = 0;
-        C = 0;
-        O = 0;
 
-        if (up)
+    empty = other.empty;
+    if (!empty)
+    {
+        if (depth==0)
         {
-            a = new H2Point(*other.a);
-            if (bottom())
+            A = 0;
+            B = 0;
+            C = 0;
+            O = 0;
+
+            if (up)
             {
-                if (3*index == 2*Tools::exponentiation(4, maxDepth) -1)
+                a = new H2Point(*other.a);
+                if (bottom())
                 {
-                    b = new H2Point(*other.b);
+                    if (3*index == 2*(Tools::exponentiation(4, maxDepth) -1))
+                    {
+                        b = new H2Point(*other.b);
+                    }
+                    c = new H2Point(*other.c);
                 }
-                c = new H2Point(*other.c);
             }
         }
-    }
-    else
-    {
-        A = new H2Triangulation(*other.A);
-        B = new H2Triangulation(*other.B);
-        C = new H2Triangulation(*other.C);
-        O = new H2Triangulation(*other.O);
+        else
+        {
 
-        a = A->a;
-        b = B->b;
-        c = C->c;
+            A = new H2Triangulation(*other.A);
+            B = new H2Triangulation(*other.B);
+            C = new H2Triangulation(*other.C);
+            O = new H2Triangulation(*other.O);
+
+            a = A->a;
+            b = B->b;
+            c = C->c;
+            
+        }
     }
     //std::cout << "Leaving H2Triangulation::H2Triangulation(const H2Triangulation &other)" << std::endl;
 }
@@ -99,6 +110,7 @@ void swap(H2Triangulation &first, H2Triangulation &second)
     swap(first.depth, second.depth);
     swap(first.maxDepth, second.maxDepth);
     swap(first.up, second.up);
+    swap(first.empty, second.empty);
 
     //std::cout << "Leaving swap(H2Triangulation &first, H2Triangulation &second)" << std::endl;
     return;
@@ -113,43 +125,63 @@ H2Triangulation& H2Triangulation::operator=(H2Triangulation other)
     return *this;
 }
 
-H2Triangulation::H2Triangulation(const H2Point &a, const H2Point &b, const H2Point &c, int depth) :
-    H2Triangulation(&a, &b, &c, depth, depth, 0, true)
+H2Triangulation::H2Triangulation(const H2Point &a, const H2Point &b, const H2Point &c, int depth)
+//: H2Triangulation(&a, &b, &c, depth, depth, 0, true)
 {
+    H2Triangulation temp(&a, &b, &c, depth, depth, 0, true);
+    empty = true;
+    *this = temp;
 }
 
-H2Triangulation::H2Triangulation(const H2Triangle &T, int depth) :
-    H2Triangulation(T.a, T.b, T.c, depth)
+H2Triangulation::H2Triangulation(const H2Triangle &T, int depth)
+// : H2Triangulation(T.a, T.b, T.c, depth)
 {
+    H2Triangulation temp(&T.a, &T.b, &T.c, depth, depth, 0, true);
+
+    empty = true;
+    *this = temp;
+
+
+    //empty = true;
+    //*this = H2Triangulation(&T.a, &T.b, &T.c, depth, depth, 0, true);
 }
 
 H2Triangulation::~H2Triangulation()
 {
     //std::cout << "Entering H2Triangulation::~H2Triangulation with this->depth = " << depth << std::endl;
-    if (depth == 0)
+    if (!empty)
     {
-        if (up)
-        {
-            delete a;
 
-            if (bottom())
+        if (depth == 0)
+        {
+            if (up)
             {
-                if (3*index == 2*Tools::exponentiation(4, maxDepth) -1)
+                delete a;
+
+                if (bottom())
                 {
-                    delete b;
+                    if (3*index == 2*(Tools::exponentiation(4, maxDepth) -1))
+                    {
+                        delete b;
+                    }
+                    delete c;
                 }
-                delete c;
             }
         }
-    }
-    else
-    {
-        delete A;
-        delete B;
-        delete C;
-        delete O;
+        else
+        {
+            delete A;
+            delete B;
+            delete C;
+            delete O;
+        }
     }
     //std::cout << "Leaving H2Triangulation::~H2Triangulation" << std::endl;
+}
+
+bool H2Triangulation::isEmpty() const
+{
+    return empty;
 }
 
 bool H2Triangulation::bottom() const
@@ -249,5 +281,10 @@ bool H2Triangulation::getTriangleContaining(const H2Point &point, H2Triangle &ou
 }
 
 
-
+std::ostream & operator<<(std::ostream & out, const H2Triangulation &T)
+{
+    out << "Triangulation of depth " << T.depth << " and maxDepth " << T.maxDepth << std::endl;
+    out << "a = " << *T.a << ", b = " << *T.b << ", c = " << *T.c << std::endl;
+    return out;
+}
 

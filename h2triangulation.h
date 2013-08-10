@@ -7,12 +7,13 @@
 
 class H2Triangulation
 {
+    friend std::ostream & operator<<(std::ostream & out, const H2Triangulation &T);
     friend void swap(H2Triangulation &first, H2Triangulation &second);
 
 public:
     H2Triangulation(const H2Triangulation &other); // Copy constructor
 
-
+    H2Triangulation(); // Dummy constructor;
     H2Triangulation(const H2Point &a, const H2Point &b, const H2Point &c, int depth); // Public derived constructor 1
     H2Triangulation(const H2Triangle &T, int depth); // Public derived constructor 2
 
@@ -22,6 +23,7 @@ public:
 
 
     bool bottom() const;
+    bool isEmpty() const;
     H2Triangle getTriangle() const;
     int getDepth() const;
     bool getUp() const;
@@ -33,14 +35,16 @@ public:
     bool getTriangleContaining(const H2Point & point, int & outputIndex) const;
     bool getTriangleContaining(const H2Point &point, H2Triangle & outputTriangle) const;
 
-//private:
+private:
     H2Triangulation(const H2Point *a, const H2Point *b, const H2Point *c, int depth, int maxDepth, int index, bool up); // Default constructor
 
+    static H2Triangulation constructTriangulation(const H2Point *a, const H2Point *b, const H2Point *c,
+                                                  int depth, int maxDepth, int index, bool up);
     const H2Point * a, * b, * c;
 
     int depth, maxDepth;
     int index;
-    bool up;
+    bool up, empty;
 
     H2Triangulation * A, * B, * C, * O;
 };

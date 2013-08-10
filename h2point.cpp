@@ -74,7 +74,7 @@ H2Point H2Point::midpoint(const H2Point &p1, const H2Point &p2)
 
 std::ostream & operator<<(std::ostream & out, const H2Point &p)
 {
-    out << "z= " << p.z;
+    out << "H2Point with disk coordinate " << p.z;
     return out;
 }
 

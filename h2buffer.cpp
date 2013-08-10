@@ -150,7 +150,13 @@ void H2Buffer::addElement(const H2mesh &mesh, const QColor &color, int width)
     return;
 }
 
-void H2Buffer::addElement(const H2Triangulation *triangulation, const QColor &color, int width)
+void H2Buffer::addElement(const H2Triangulation &triangulation, const QColor &color, int width)
+{
+    this->triangulation = triangulation;
+    addElement(&triangulation, color, width);
+}
+
+void H2Buffer::addElement(const H2Triangulation * triangulation, const QColor &color, int width)
 {
     int depth = triangulation->getDepth();
     if (depth == 0)
