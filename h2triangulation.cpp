@@ -5,10 +5,12 @@ H2Triangulation::H2Triangulation()
     empty = true;
 }
 
-H2Triangulation::H2Triangulation(const H2Point *a, const H2Point *b, const H2Point *c, int depth, int maxDepth, int index, bool up) :
-    depth(depth), maxDepth(maxDepth), index(index), up(up)
+void H2Triangulation::construct(const H2Point *a, const H2Point *b, const H2Point *c, int depth, int maxDepth, int index, bool up)
 {
-    //std::cout << "Entering H2Triangulation::H2Triangulation(H2Point *a, ...)" << std::endl;
+    this->depth = depth;
+    this->maxDepth = maxDepth;
+    this->index = index;
+    this->up = up;
 
     if (maxDepth == depth)
     {
@@ -37,56 +39,38 @@ H2Triangulation::H2Triangulation(const H2Point *a, const H2Point *b, const H2Poi
         H2Point *midac = new H2Point(H2Point::midpoint(*a, *c));
         H2Point *midab = new H2Point(H2Point::midpoint(*a, *b));
 
-        A = new H2Triangulation(this->a, midab, midac, depth - 1, maxDepth, 4*index + 1, up);
-        B = new H2Triangulation(midab, this->b, midbc, depth - 1, maxDepth, 4*index + 2, up);
-        C = new H2Triangulation(midac, midbc, this->c, depth - 1, maxDepth, 4*index + 3, up);
-        O = new H2Triangulation(midbc, midac, midab, depth - 1, maxDepth, 4*index + 4, !up);
+        A = new H2Triangulation;
+        B = new H2Triangulation;
+        C = new H2Triangulation;
+        O = new H2Triangulation;
+
+        A->construct(this->a, midab, midac, depth - 1, maxDepth, 4*index + 1, up);
+        B->construct(midab, this->b, midbc, depth - 1, maxDepth, 4*index + 2, up);
+        C->construct(midac, midbc, this->c, depth - 1, maxDepth, 4*index + 3, up);
+        O->construct(midbc, midac, midab, depth - 1, maxDepth, 4*index + 4, !up);
     }
 
     empty = false;
-    //std::cout << "Leaving H2Triangulation::H2Triangulation(H2Point *a, ...)" << std::endl;
+    return;
 }
 
-H2Triangulation::H2Triangulation(const H2Triangulation &other) :
-    depth(other.depth), maxDepth(other.maxDepth), index(other.index), up(other.up)
+H2Triangulation::H2Triangulation(const H2Triangulation &other) :empty(other.empty)
 {
     //std::cout << "Entering H2Triangulation::H2Triangulation(const H2Triangulation &other)" << std::endl;
 
-    empty = other.empty;
     if (!empty)
     {
-        if (depth==0)
+        if (depth != maxDepth)
         {
-            A = 0;
-            B = 0;
-            C = 0;
-            O = 0;
-
-            if (up)
-            {
-                a = new H2Point(*other.a);
-                if (bottom())
-                {
-                    if (3*index == 2*(Tools::exponentiation(4, maxDepth) -1))
-                    {
-                        b = new H2Point(*other.b);
-                    }
-                    c = new H2Point(*other.c);
-                }
-            }
+            std::cout << "WARNING in H2Triangulation copy constructor: being called for a non-root triangulation" << std::endl;
+            H2Point * aTemp = new H2Point(*(other.a));
+            H2Point * bTemp = new H2Point(*(other.b));
+            H2Point * cTemp = new H2Point(*(other.c));
+            construct(aTemp, bTemp, cTemp, other.depth, other.maxDepth, other.index, other.up);
         }
         else
         {
-
-            A = new H2Triangulation(*other.A);
-            B = new H2Triangulation(*other.B);
-            C = new H2Triangulation(*other.C);
-            O = new H2Triangulation(*other.O);
-
-            a = A->a;
-            b = B->b;
-            c = C->c;
-            
+            construct(other.a, other.b, other.c, other.depth, other.maxDepth, other.index, other.up);
         }
     }
     //std::cout << "Leaving H2Triangulation::H2Triangulation(const H2Triangulation &other)" << std::endl;
@@ -126,24 +110,13 @@ H2Triangulation& H2Triangulation::operator=(H2Triangulation other)
 }
 
 H2Triangulation::H2Triangulation(const H2Point &a, const H2Point &b, const H2Point &c, int depth)
-//: H2Triangulation(&a, &b, &c, depth, depth, 0, true)
 {
-    H2Triangulation temp(&a, &b, &c, depth, depth, 0, true);
-    empty = true;
-    *this = temp;
+    construct(&a, &b, &c, depth, depth, 0, true);
 }
 
 H2Triangulation::H2Triangulation(const H2Triangle &T, int depth)
-// : H2Triangulation(T.a, T.b, T.c, depth)
 {
-    H2Triangulation temp(&T.a, &T.b, &T.c, depth, depth, 0, true);
-
-    empty = true;
-    *this = temp;
-
-
-    //empty = true;
-    //*this = H2Triangulation(&T.a, &T.b, &T.c, depth, depth, 0, true);
+    construct(&T.a, &T.b, &T.c, depth, depth, 0, true);
 }
 
 H2Triangulation::~H2Triangulation()
