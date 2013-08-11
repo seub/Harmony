@@ -7,7 +7,7 @@
 #include "h2polygon.h"
 #include "grouprepresentation.h"
 #include "h2mesh.h"
-#include "h2triangulation.h"
+#include "h2trianglesubdivision.h"
 #include <QColor>
 
 
@@ -30,8 +30,7 @@ public:
     void addElement(const IsomH2Representation & rho, const QColor & color = "black", int width = 1);
     void addElement(const std::vector<H2Isometry> &V, const QColor & color = "black", int width = 1);
     void addElement(const std::vector<H2Polygon> &V, const QColor & color = "black", int width = 1);
-    void addElement(const H2mesh & mesh, const QColor & color = "black", int width = 1);
-    void addElement(const H2Triangulation &triangulation, const QColor & color = "black", int width = 1);
+    void addElement(const H2TriangleSubdivision &T, const QColor & color = "black", int width = 1);
 
 
 private:
@@ -47,10 +46,7 @@ private:
     std::vector<QColor> geodesicArcsColors;
     std::vector<int> geodesicArcsWidths;
 
-    H2Triangulation triangulation;
-
-
-    void addElement(const H2Triangulation *triangulation, const QColor & color = "black", int width = 1);
+    H2TriangleSubdivision subdivision;
 };
 
 #endif // H2BUFFER_H

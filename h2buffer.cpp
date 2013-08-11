@@ -117,63 +117,25 @@ void H2Buffer::addElement(const std::vector<H2Polygon> &V, const QColor &color, 
     return;
 }
 
-void H2Buffer::addElement(const H2mesh &mesh, const QColor &color, int width)
+void H2Buffer::addElement(const H2TriangleSubdivision &T, const QColor &color, int width)
 {
-    const complex * meshPoints = mesh.getMeshPoints();
-    const bool * isInside = mesh.getIsInside();
+    subdivision = T;
+    int L = T.nbOfLines();
+    std::vector<H2Point> Tpoints = T.getPoints();
 
-    int nbMeshPoints = mesh.getNbMeshPoints();
-
-    H2Point p;
-    for (int i=0; i<nbMeshPoints; i++)
+    H2Point a, b, c;
+    int i, j, m = 0;
+    for (i=0; i<L - 1; i++)
     {
-        p.setHyperboloidProjection(meshPoints[i]);
-        if (isInside[i])
+        m += i;
+        for (j=0; j<=i; j++)
         {
-            addElement(p, color, width);
-        }
-        /*else
-        {
-            addElement(p, "black", std::max(width/2, 1));
-        }*/
-    }
-
-    std::vector<int> specialPoints = mesh.getSpecialPoints();
-    for(unsigned int j=0; j<specialPoints.size(); j++)
-    {
-        p.setHyperboloidProjection(meshPoints[specialPoints[j]]);
-        addElement(p, "green", 5);
-    }
-
-    addElement(mesh.getPolygon(), "blue", 2);
-    addElement(mesh.getRho(), "red");
-    return;
-}
-
-void H2Buffer::addElement(const H2Triangulation &triangulation, const QColor &color, int width)
-{
-    this->triangulation = triangulation;
-    addElement(&triangulation, color, width);
-}
-
-void H2Buffer::addElement(const H2Triangulation * triangulation, const QColor &color, int width)
-{
-    int depth = triangulation->getDepth();
-    if (depth == 0)
-    {
-        if (triangulation->getUp())
-        {
-            addElement(triangulation->getTriangle(), color, width);
+            a = Tpoints[m + j];
+            b = Tpoints[m + j + i + 1];
+            c = Tpoints[m + j + i + 2];
+            addElement(H2Triangle(a, b, c), color, width);
         }
     }
-    else
-    {
-        addElement(triangulation->getA(), color, width);
-        addElement(triangulation->getB(), color, width);
-        addElement(triangulation->getC(), color, width);
-        addElement(triangulation->getO(), color, width);
-    }
-    return;
 }
 
 

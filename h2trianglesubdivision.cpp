@@ -7,6 +7,7 @@ H2TriangleSubdivision::H2TriangleSubdivision()
 
 H2TriangleSubdivision::H2TriangleSubdivision(const H2Triangle &T, int depth)
 {
+    empty = true;
     *this = H2TriangleSubdivision(T.a, T.b, T.c, depth);
 }
 
@@ -78,10 +79,12 @@ H2TriangleSubdivision & H2TriangleSubdivision::operator=(H2TriangleSubdivision o
 
 H2TriangleSubdivision::H2TriangleSubdivision(const H2Point &a, const H2Point &b, const H2Point &c, int depth)
 {
+    totalDepth = depth;
     int L = nbOfLines(), N = nbOfPoints();
     points = new std::vector<H2Point>;
     points->resize(N);
     std::vector<bool> filled;
+    filled.resize(N);
     std::fill(filled.begin(), filled.end(), false);
 
     int an = 0, ap = 0, bn = L - 1, bp = 0, cn = L - 1, cp = L - 1;
@@ -98,7 +101,7 @@ H2TriangleSubdivision::H2TriangleSubdivision(const H2Point &a, const H2Point &b,
 
     construct(aIndex, bIndex, cIndex, depth, depth, points, filled, an, bn, cn, ap, bp, cp);
 
-    // Filled count check
+    /*// Filled count check
     int counter = 0;
     for (unsigned int i=0; i<filled.size(); i++)
     {
@@ -108,7 +111,7 @@ H2TriangleSubdivision::H2TriangleSubdivision(const H2Point &a, const H2Point &b,
         }
     }
     std::cout << "nb of points filled: " << counter << std::endl;
-    std::cout << "nb of points in triangulation: " << N << std::endl;
+    std::cout << "nb of points in triangulation: " << N << std::endl;*/
 }
 
 void H2TriangleSubdivision::construct(int aIndex, int bIndex, int cIndex, int depth, int totalDepth, std::vector<H2Point> *points,
@@ -201,6 +204,11 @@ int H2TriangleSubdivision::nbOfLines() const
 H2Triangle H2TriangleSubdivision::getTriangle() const
 {
     return H2Triangle((*points)[aIndex], (*points)[bIndex], (*points)[cIndex]);
+}
+
+std::vector<H2Point> H2TriangleSubdivision::getPoints() const
+{
+    return *points;
 }
 
 std::ostream & operator<<(std::ostream & out, const H2TriangleSubdivision &T)
