@@ -8,6 +8,8 @@ class H2Polygon;
 class H2Triangle
 {
     friend class H2Triangulation;
+    friend class H2TriangleSubdivision;
+    friend std::ostream & operator<<(std::ostream &out, const H2Triangle &T);
 
 public:
     H2Triangle();

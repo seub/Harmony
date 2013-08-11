@@ -102,3 +102,9 @@ std::vector<H2Triangle> triangulate(const std::vector<H2Triangle> &triangleList)
     }
     return output;
 }
+
+std::ostream & operator<<(std::ostream &out, const H2Triangle &T)
+{
+    out << "Triangle with vertices a = " << T.a << ", b = " << T.b << ", c = " << T.c << std::endl;
+    return out;
+}

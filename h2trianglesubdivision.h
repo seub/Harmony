@@ -7,7 +7,7 @@
 
 class H2TriangleSubdivision
 {
-    friend std::ostream & operator<<(std::ostream & out, const H2Triangulation &T);
+    friend std::ostream & operator<<(std::ostream & out, const H2TriangleSubdivision &T);
     friend void swap(H2TriangleSubdivision &first, H2TriangleSubdivision &second);
 
 public:
@@ -18,16 +18,23 @@ public:
     H2TriangleSubdivision & operator=(H2TriangleSubdivision other); // Copy-assignement operator
     ~H2TriangleSubdivision();
 
+    int nbOfPoints() const;
     H2Triangle getTriangle() const;
 
     bool getTriangleContaining(const H2Point &point, int &outputIndex) const;
     bool getTriangleContaining(const H2Point &point, H2Triangle &outputTriangle) const;
 
 private:
+    void construct(int aIndex, int bIndex, int cIndex, int depth, int totalDepth, std::vector<H2Point> *points,
+                   std::vector<bool> &filled, int an, int bn, int cn, int ap, int bp, int cp); // Base (pseudo)constructor;
+    void copy(const H2TriangleSubdivision &other, std::vector<H2Point> *points);
+    int nbOfLines() const;
+
     H2TriangleSubdivision *A, *B, *C, *O;
-    std::vector<H2Point> *points;
     int aIndex, bIndex, cIndex;
     int depth, totalDepth;
+    std::vector<H2Point> *points;
+    bool empty;
 };
 
 #endif // H2TRIANGLESUBDIVISION_H
