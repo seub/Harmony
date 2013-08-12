@@ -3,7 +3,7 @@
 #include "grouprepresentation.h"
 #include "h2isometry.h"
 
-H2mesh::H2mesh(double step, const IsomH2Representation &rho): step(step), rho(rho)
+H2Mesh::H2Mesh(double step, const IsomH2Representation &rho): step(step), rho(rho)
 {
     polygon = rho.generatePolygon(100);
     polygon.getExtremalCoordinatesInHyperboloidProjection(xMin,xMax,yMin,yMax);
@@ -36,7 +36,7 @@ H2mesh::H2mesh(double step, const IsomH2Representation &rho): step(step), rho(rh
     fillNeighbors();
 }
 
-void H2mesh::fillMeshPoints()
+void H2Mesh::fillMeshPoints()
 {
     int i, j;
     double x = real(firstMeshPoint), y = imag(firstMeshPoint);
@@ -53,7 +53,7 @@ void H2mesh::fillMeshPoints()
     return;
 }
 
-void H2mesh::fillIsInside()
+void H2Mesh::fillIsInside()
 {
     H2Point p;
     for (int i=0; i<nbMeshPoints; i++)
@@ -64,7 +64,7 @@ void H2mesh::fillIsInside()
     return;
 }
 
-void H2mesh::fillNeighbors()
+void H2Mesh::fillNeighbors()
 {
     for (int i=0; i<nbMeshPoints; i++)
     {
@@ -217,7 +217,7 @@ void H2mesh::fillNeighbors()
     return;
 }
 
-H2mesh::~H2mesh()
+H2Mesh::~H2Mesh()
 {
     delete [] meshPoints;
     delete [] isInside;
@@ -227,37 +227,37 @@ H2mesh::~H2mesh()
     delete [] downNeighborIndices;
 }
 
-const complex * H2mesh::getMeshPoints() const
+const complex * H2Mesh::getMeshPoints() const
 {
     return meshPoints;
 }
 
-const bool * H2mesh::getIsInside() const
+const bool * H2Mesh::getIsInside() const
 {
     return isInside;
 }
 
-int H2mesh::getNbMeshPoints() const
+int H2Mesh::getNbMeshPoints() const
 {
     return nbMeshPoints;
 }
 
-H2Polygon H2mesh::getPolygon() const
+H2Polygon H2Mesh::getPolygon() const
 {
     return polygon;
 }
 
-IsomH2Representation H2mesh::getRho() const
+IsomH2Representation H2Mesh::getRho() const
 {
     return rho;
 }
 
-std::vector<int> H2mesh::getSpecialPoints() const
+std::vector<int> H2Mesh::getSpecialPoints() const
 {
     return specialPoints;
 }
 
-int H2mesh::getClosestMeshIndex(const complex &z)
+int H2Mesh::getClosestMeshIndex(const complex &z)
 {
     if (real(z) < xMin || real(z) > xMax  || imag(z) < yMin || imag(z) > yMax)
     {

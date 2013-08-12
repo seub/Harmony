@@ -104,6 +104,19 @@ void H2CanvasDelegate::redrawBuffer(const H2Isometry &mobius)
         drawH2Point(buffer.points[i], buffer.pointsColors[i], buffer.pointsWidths[i]);
     }
 
+    if (isTriangleHighlighted)
+    {
+        H2GeodesicArc L;
+        H2Point a, b, c;
+        buffer.triangleHighlighted.getPoints(a, b, c);
+        L.setPoints(a, b);
+        drawH2GeodesicArc(L, "red", 2);
+        L.setPoints(a, c);
+        drawH2GeodesicArc(L, "red", 2);
+        L.setPoints(b, c);
+        drawH2GeodesicArc(L, "red", 2);
+    }
+
 
     return;
 }
@@ -132,6 +145,7 @@ void H2CanvasDelegate::mousePress(QMouseEvent *mouseEvent)
 
 void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
 {
+    //std::cout << "Entering H2CanvasDelegate::mouseMove" << std::endl;
 
     if (mouseEvent->buttons() == Qt::LeftButton)
     {
@@ -148,6 +162,20 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
             mobiusChange.setByMappingPointInDiskModelNormalized(mouseOld, mouseNew);
             mobius = mobiusChange*savedMobius;
             redrawBuffer();
+        }
+    }
+
+    if (!buffer.subdivision.isEmpty())
+    {
+        H2Point point;
+        point.setDiskCoordinate(PixelToComplexCoordinates(mouseEvent->x(), mouseEvent->y()));
+        if (buffer.subdivision.getTriangleContaining(mobius.inverse()*point, buffer.triangleHighlighted))
+        {
+            isTriangleHighlighted = true;
+        }
+        else
+        {
+            isTriangleHighlighted = false;
         }
     }
     return;

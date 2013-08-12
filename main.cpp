@@ -52,9 +52,11 @@ int main(int argc, char *argv[])
 
     {
     H2Point aT,bT,cT;
-    aT.setDiskCoordinate(complex(0.0,0.8));
-    bT.setDiskCoordinate(complex(-0.5, -0.5));
-    cT.setDiskCoordinate(complex(0.5, -0.5));
+    complex z(0.0,0.9);
+    complex j(-0.5, 0.5*sqrt(3.0));
+    aT.setDiskCoordinate(z);
+    bT.setDiskCoordinate(j*z);
+    cT.setDiskCoordinate(j*j*z);
     H2Triangle T(aT, bT, cT);
     clock_t t0 = clock();
     H2TriangleSubdivision Ts(T, 4);

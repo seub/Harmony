@@ -47,6 +47,7 @@ private:
     std::vector<int> geodesicArcsWidths;
 
     H2TriangleSubdivision subdivision;
+    H2Triangle triangleHighlighted;
 };
 
 #endif // H2BUFFER_H

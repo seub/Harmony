@@ -56,6 +56,12 @@ void Canvas::mouseMoveEvent(QMouseEvent * mouseEvent)
     return;
 }
 
+/*void Canvas::enterEvent(QEvent *)
+{
+    setFocus();
+    return;
+}*/
+
 void Canvas::wheelEvent(QWheelEvent * wheelEvent)
 {
     double coeff = pow(1.2,wheelEvent->delta()/120);

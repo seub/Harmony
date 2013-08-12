@@ -28,6 +28,7 @@ public:
     H2Buffer buffer;
     H2Isometry mobius;
     H2Isometry savedMobius;
+    bool isTriangleHighlighted;
 };
 
 

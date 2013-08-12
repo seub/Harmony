@@ -190,6 +190,11 @@ H2TriangleSubdivision::~H2TriangleSubdivision()
     }
 }
 
+bool H2TriangleSubdivision::isEmpty() const
+{
+    return empty;
+}
+
 int H2TriangleSubdivision::nbOfPoints() const
 {
     int L = nbOfLines();
@@ -210,6 +215,36 @@ std::vector<H2Point> H2TriangleSubdivision::getPoints() const
 {
     return *points;
 }
+
+bool H2TriangleSubdivision::getTriangleContaining(const H2Point &point, H2Triangle &outputTriangle) const
+{
+    if (getTriangle().contains(point))
+    {
+        if (depth == 0)
+        {
+            outputTriangle = getTriangle();
+            return true;
+        }
+        else
+        {
+            if (A->getTriangleContaining(point, outputTriangle) || B->getTriangleContaining(point, outputTriangle)
+                    || C->getTriangleContaining(point, outputTriangle) || O->getTriangleContaining(point, outputTriangle))
+            {
+                return true;
+            }
+            else
+            {
+                std::cout << "ERROR in H2TriangleSubdivision::getTriangleContaining: not supposed to happen" << std::endl;
+                return false;
+            }
+        }
+    }
+    else
+    {
+        return false;
+    }
+}
+
 
 std::ostream & operator<<(std::ostream & out, const H2TriangleSubdivision &T)
 {

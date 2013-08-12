@@ -18,12 +18,12 @@ public:
     H2TriangleSubdivision & operator=(H2TriangleSubdivision other); // Copy-assignement operator
     ~H2TriangleSubdivision();
 
+    bool isEmpty() const;
     int nbOfLines() const;
     int nbOfPoints() const;
     H2Triangle getTriangle() const;
     std::vector<H2Point> getPoints() const;
 
-    bool getTriangleContaining(const H2Point &point, int &outputIndex) const;
     bool getTriangleContaining(const H2Point &point, H2Triangle &outputTriangle) const;
 
 private:
