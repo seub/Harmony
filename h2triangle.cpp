@@ -10,14 +10,6 @@ H2Triangle::H2Triangle(const H2Point &a, const H2Point &b, const H2Point &c): a(
 {
 }
 
-void H2Triangle::setPoints(const H2Point &a, const H2Point &b, const H2Point &c)
-{
-    this->a = a;
-    this->b = b;
-    this->c = c;
-    return;
-}
-
 void H2Triangle::getPoints(H2Point &a, H2Point &b, H2Point &c) const
 {
     a = this->a;
@@ -73,35 +65,6 @@ void H2Triangle::getAngles(double &angleA, double &angleB, double &angleC) const
     return;
 }
 
-std::vector<H2Triangle> H2Triangle::triangulate() const
-{
-    H2Point midA, midB, midC;
-    midA = H2Point::midpoint(b,c);
-    midB = H2Point::midpoint(a,c);
-    midC = H2Point::midpoint(a,b);
-    H2Triangle Ta(a,midB,midC);
-    H2Triangle Tb(b,midA,midC);
-    H2Triangle Tc(c,midA,midB);
-    H2Triangle Tmid(midA,midB,midC);
-    std::vector<H2Triangle> output;
-    output.push_back(Ta);
-    output.push_back(Tb);
-    output.push_back(Tc);
-    output.push_back(Tmid);
-    return output;
-}
-
-std::vector<H2Triangle> triangulate(const std::vector<H2Triangle> &triangleList)
-{
-    std::vector<H2Triangle> output;
-    std::vector<H2Triangle> temp;
-    for (unsigned int j=0; j<triangleList.size(); j++)
-    {
-        temp = triangleList[j].triangulate();
-        output.insert(output.end(),temp.begin(),temp.end());
-    }
-    return output;
-}
 
 std::ostream & operator<<(std::ostream &out, const H2Triangle &T)
 {

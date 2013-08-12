@@ -373,16 +373,16 @@ bool H2Polygon::constainsInDiskModel(const complex &z) const
         return false;
     }
     complex w = 2.0*z/(1.0 + norm(z));
-    return ContainsInKleinModel(w);
+    return containsInKleinModel(w);
 }
 
 bool H2Polygon::contains(const H2Point &point) const
 {
     complex w = point.getKleinCoordinate();
-    return ContainsInKleinModel(w);
+    return containsInKleinModel(w);
 }
 
-bool H2Polygon::ContainsInKleinModel(const complex &z) const
+bool H2Polygon::containsInKleinModel(const complex &z) const
 {
     unsigned int nbIntersections = 0;
     double xLeft, yLeft, xRight, yRight;
@@ -484,8 +484,7 @@ std::vector<H2Triangle> H2Polygon::triangulate() const
     }
     else if (vertices.size() == 3)
     {
-        H2Triangle T;
-        T.setPoints(vertices[0],vertices[1],vertices[2]);
+        H2Triangle T(vertices[0],vertices[1],vertices[2]);
         output.push_back(T);
         return output;
     }

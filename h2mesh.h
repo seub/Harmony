@@ -1,55 +1,44 @@
 #ifndef H2MESH_H
 #define H2MESH_H
 
-#include "types.h"
+#include "tools.h"
 #include "h2polygon.h"
 #include "grouprepresentation.h"
+#include "h2isometry.h"
+#include "h2trianglesubdivision.h"
 
-class H2mesh
+class H2MeshPoint
 {
 public:
-    ~H2mesh();
-
-    H2mesh(double step, const IsomH2Representation & rho);
-    const complex * getMeshPoints() const;
-    const bool * getIsInside() const;
-    int getNbMeshPoints() const;
-    H2Polygon getPolygon() const;
-    IsomH2Representation getRho() const;
-
-    int getClosestMeshIndex(const complex & z);
-
-    std::vector<int> getSpecialPoints() const;
 
 private:
-    double step;
+    int SubdivisionIndex;
+    int IndexInSubdivision;
+    std::vector<int> neighborsIndices;
 
-    int nbPointsX;
-    int nbPointsY;
-    int nbMeshPoints;
-
-
-    double xMin,xMax,yMin,yMax;
-    H2Polygon polygon;
-    IsomH2Representation rho;
-    std::vector<H2Isometry> listOfIsoms;
-
-    complex firstMeshPoint;
-
-    complex * meshPoints;
-    bool * isInside;
-
-    int * leftNeighborIndices;
-    int * rightNeighborIndices;
-    int * upNeighborIndices;
-    int * downNeighborIndices;
-
-
-    std::vector<int> specialPoints;
-
-    void fillMeshPoints();
-    void fillIsInside();
-    void fillNeighbors();
+    // For exterior points
+    bool exterior;
+    int SidePairingIndex;
 };
+
+
+class H2Mesh
+{
+public:
+    H2Mesh(const IsomH2Representation & rho, int depth);
+
+
+
+private:    
+    IsomH2Representation rho;
+    int depth;
+
+    H2Polygon fundamentalDomain;
+    std::vector<H2Isometry> sidePairings;
+
+    std::vector<H2TriangleSubdivision> subdivisions;
+    std::vector<H2MeshPoint> meshPoints;
+};
+
 
 #endif // H2MESH_H

@@ -37,7 +37,7 @@ public:
     double norm3() const;
     double norm4() const;
 
-    bool ContainsInKleinModel(const complex & z) const;
+    bool containsInKleinModel(const complex & z) const;
     bool constainsInDiskModel(const complex & z) const;
     bool contains(const H2Point & point) const;
 
