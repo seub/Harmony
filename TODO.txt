@@ -23,4 +23,5 @@ parfois "there is no h2geodesic between point and itself" pendant l'affichage??
 
 
 test memory leaks with valgrind
-retry to write h2triangulation copy constructor properly ?
+
+add steiner points

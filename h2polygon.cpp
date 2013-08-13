@@ -432,29 +432,14 @@ bool H2Polygon::containsInKleinModel(const complex &z) const
 std::vector<double> H2Polygon::getAngles() const
 {
     std::vector<double> res;
-    
-    complex u, v;
-    
-    u = (vertices.back().getDiskCoordinate() - vertices.front().getDiskCoordinate()) /
-            (1.0 - conj(vertices.front().getDiskCoordinate())*vertices.back().getDiskCoordinate());
-    v = (vertices[1].getDiskCoordinate() - vertices.front().getDiskCoordinate()) /
-            (1.0 - conj(vertices.front().getDiskCoordinate())*vertices[1].getDiskCoordinate());
-    res.push_back(Tools::mod2Pi(arg(v*conj(u))));
-    
+
+
+    res.push_back(H2Point::angle(vertices.back(), vertices.front(), vertices[1]));
     for (unsigned int i=1; i+1<vertices.size(); i++)
-    {
-        u = (vertices[i-1].getDiskCoordinate() - vertices[i].getDiskCoordinate()) /
-                (1.0 - conj(vertices[i].getDiskCoordinate())*vertices[i-1].getDiskCoordinate());
-        v = (vertices[i+1].getDiskCoordinate() - vertices[i].getDiskCoordinate()) /
-                (1.0 - conj(vertices[i].getDiskCoordinate())*vertices[i+1].getDiskCoordinate());
-        res.push_back(Tools::mod2Pi(arg(v*conj(u))));
-    }
-    
-    u = (vertices[vertices.size()-2].getDiskCoordinate() - vertices.back().getDiskCoordinate()) /
-            (1.0 - conj(vertices.back().getDiskCoordinate())*vertices[vertices.size()-2].getDiskCoordinate());
-    v = (vertices.front().getDiskCoordinate() - vertices.back().getDiskCoordinate()) /
-            (1.0 - conj(vertices.back().getDiskCoordinate())*vertices.front().getDiskCoordinate());
-    res.push_back(Tools::mod2Pi(arg(v*conj(u))));
+    {        
+        res.push_back(H2Point::angle(vertices[i-1], vertices[i], vertices[i+1]));
+    }    
+    res.push_back(H2Point::angle(vertices[vertices.size() - 2], vertices.back(), vertices.front()));
     
     return res;
 }
@@ -464,12 +449,10 @@ std::vector<double> H2Polygon::getPositiveInteriorAngles() const
     std::vector<double> angles = getAngles();
     if (isPositivelyOriented())
     {
-        std::vector<double> output;
         for (unsigned int j=0; j<angles.size(); j++)
         {
-            output.push_back(2.0*M_PI - angles[j]);
+            angles[j] = 2.0*M_PI - angles[j];
         }
-        angles = output;
     }
     return angles;
 }
@@ -479,13 +462,12 @@ std::vector<H2Triangle> H2Polygon::triangulate() const
     std::vector<H2Triangle> output;
     if (vertices.size() < 3)
     {
-        std::cout << "Can't triangulate a polygon with less than 3 sides, dumbass!" << std::endl;
+        std::cout << "ERRR in H2Polygon::triangulate(): Can't triangulate a polygon with less than 3 sides" << std::endl;
         return output;
     }
     else if (vertices.size() == 3)
     {
-        H2Triangle T(vertices[0],vertices[1],vertices[2]);
-        output.push_back(T);
+        output.push_back(H2Triangle(vertices[0],vertices[1],vertices[2]));
         return output;
     }
     else
