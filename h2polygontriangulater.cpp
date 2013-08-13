@@ -110,8 +110,19 @@ void H2PolygonTriangulater::splitIndicesList(const std::vector<int> &indices, in
     return;
 }
 
-void H2PolygonTriangulater::triangulateSubpolygon(const std::vector<int> &indices)
+void H2PolygonTriangulater::addCutsForSubpolygon(const std::vector<int> &indices)
 {
-    int cut1, cut2;
+    if (indices.size() > 3)
+    {
+        int cut1, cut2;
+        findCutInSubpolygon(indices, cut1, cut2);
+        cuts.push_back(cut1);
+        cuts.push_back(cut2);
+        std::vector<int> list1, list2;
+        splitIndicesList(indices, cut1, cut2, list1, list2);
+        addCutsForSubpolygon(list1);
+        addCutsForSubpolygon(list2);
+    }
+
     return;
 }

@@ -17,7 +17,7 @@ private:
 
     std::vector<double> subpolygonAngles(const std::vector<int> &indices) const;
     void findCutInSubpolygon(const std::vector<int> &indices, int &outputIndex1, int &outputIndex2) const;
-    void triangulateSubpolygon(const std::vector<int> &indices);
+    void addCutsForSubpolygon(const std::vector<int> &indices);
     void splitIndicesList(const std::vector<int> & indices, int cut1, int cut2,
                           std::vector<int> &outputList1, std::vector<int> &outputList2) const;
 
