@@ -15,6 +15,7 @@
 #include "fenchelnielsenconstructor.h"
 #include "circle.h"
 #include "h2trianglesubdivision.h"
+#include "h2polygontriangulater.h"
 
 int main(int argc, char *argv[])
 {
@@ -22,7 +23,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
 
-    int g = 4;
+    int g = 2;
 
     std::vector<double> lengths;
     std::vector<double> twists;
@@ -47,10 +48,16 @@ int main(int argc, char *argv[])
     Canvas canvas;
     H2CanvasDelegate delegate(&canvas);
     canvas.setDelegate(&delegate);
+    delegate.buffer.addElement(rho, "blue", 2);
+    H2Polygon P = rho.generatePolygon(100);
+    delegate.buffer.addElement(P, "red", 2);
 
 
+    H2PolygonTriangulater PT(&P);
+    delegate.buffer.addElement(PT.getTriangles());
 
-    {
+
+    /*{
     H2Point aT,bT,cT;
     complex z(0.0,0.9);
     complex j(-0.5, 0.5*sqrt(3.0));
@@ -65,12 +72,13 @@ int main(int argc, char *argv[])
 
 
     delegate.buffer.addElement(Ts);
-    }
+    }*/
 
     H2Isometry id;
     id.setIdentity();
     delegate.redrawBuffer(id);
     canvas.show();
+
 
 
     std::cout << std::endl;

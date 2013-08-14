@@ -4,28 +4,69 @@
 #include "tools.h"
 
 
+
+
+class TriangulationCut
+{
+    friend class H2PolygonTriangulater;
+
+private:
+    TriangulationCut() {}
+    TriangulationCut(int vertexIndex1, int vertexIndex2, int leftTriangleIndex, int rightTriangleIndex) :
+        vertexIndex1(vertexIndex1), vertexIndex2(vertexIndex2), leftTriangleIndex(leftTriangleIndex), rightTriangleIndex(rightTriangleIndex) {}
+
+    int vertexIndex1, vertexIndex2;
+    int leftTriangleIndex, rightTriangleIndex;
+};
+
+class TriangulationTriangle
+{
+    friend class H2PolygonTriangulater;
+public:
+    bool operator <(const TriangulationTriangle &other) const;
+
+private:
+    TriangulationTriangle() {}
+    TriangulationTriangle(int vertexIndex1, int vertexIndex2, int vertexIndex3) :
+        vertexIndex1(vertexIndex1), vertexIndex2(vertexIndex2), vertexIndex3(vertexIndex3) {}
+
+    void getVertices(int &i1, int &i2, int &i3) const;
+
+    int vertexIndex1, vertexIndex2, vertexIndex3;
+};
+
+
+
 class H2Polygon;
+class H2Triangle;
 
 class H2PolygonTriangulater
 {
-    friend class H2Polygon;
+public:
+    H2PolygonTriangulater(const H2Polygon * const polygon);
+    std::vector<H2Triangle> getTriangles() const;
 
 private:
-    H2PolygonTriangulater(const H2Polygon * const polygon);
     H2PolygonTriangulater(const H2PolygonTriangulater &);
     H2Polygon & operator=(H2PolygonTriangulater);
 
+
+    void triangulate();
     std::vector<double> subpolygonAngles(const std::vector<int> &indices) const;
     void findCutInSubpolygon(const std::vector<int> &indices, int &outputIndex1, int &outputIndex2) const;
-    void addCutsForSubpolygon(const std::vector<int> &indices);
+
+    void triangulateSubpolygon(const std::vector<int> &indices);
     void splitIndicesList(const std::vector<int> & indices, int cut1, int cut2,
                           std::vector<int> &outputList1, std::vector<int> &outputList2) const;
+    void sortTriangles();
+    void completeCutsAndSides();
 
 
     const H2Polygon * const polygon;
     bool orientation;
-    std::vector<int> cuts; // even number of entries: cuts = [i1, j1, i2, j2 ... ]
-
+    std::vector<TriangulationCut> cuts;
+    std::vector<TriangulationTriangle> triangles;
+    std::vector<int> sideTrianglesIndices;
 };
 
 #endif // H2POLYGONTRIANGULATER_H

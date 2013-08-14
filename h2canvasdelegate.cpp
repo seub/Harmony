@@ -18,6 +18,7 @@ H2CanvasDelegate::H2CanvasDelegate(Canvas *canvas) : CanvasDelegate(canvas)
     //std::cout << "Entering H2CanvasDelegate::CanvasDelegate" << std::endl;
     mobius.setIdentity();
     drawCircle(0, 1);
+    isTriangleHighlighted = false;
 
     //std::cout << "Leaving H2CanvasDelegate::CanvasDelegate" << std::endl;
 }
