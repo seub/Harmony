@@ -49,9 +49,6 @@ public:
     std::vector<double> getAngles() const;
     std::vector<double> getPositiveInteriorAngles() const;
 
-    std::vector<H2Triangle> triangulate() const;
-    void subdivideByBiggestAngles(H2Polygon & P1, H2Polygon & P2) const;
-
 private:
     std::vector<H2Point> vertices;
     std::vector<complex> verticesInKleinModel;

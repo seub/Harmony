@@ -4,8 +4,9 @@
 #include "tools.h"
 #include "h2polygon.h"
 #include "grouprepresentation.h"
-#include "h2isometry.h"
-#include "h2trianglesubdivision.h"
+
+class H2TriangleSubdivision;
+class H2Isometry;
 
 class H2MeshPoint
 {
@@ -18,7 +19,7 @@ private:
 
     // For exterior points
     bool exterior;
-    int SidePairingIndex;
+    int sidePairingIndex;
 };
 
 
