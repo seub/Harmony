@@ -295,57 +295,32 @@ std::vector< std::vector<int> > H2TriangleSubdivision::neighborsIndices() const
     std::vector< std::vector<int> > res;
     res.reserve(points->size());
 
-    //std::vector<int> neighbors = {1, 2};
-    std::vector<int> neighbors;
-    neighbors.push_back(1);
-    neighbors.push_back(2);
+    std::vector<int> neighbors = {1, 2};
     res.push_back(neighbors);
     int i, j, k = 0, L = nbOfLines(totalDepth);
     for (i=1; i<L-1; i++)
     {
         k += i;
-        neighbors.clear();
-        neighbors.push_back(k+1);
-        neighbors.push_back(k-i);
-        neighbors.push_back(k+i+1);
-        neighbors.push_back(k+i+2);
+        neighbors = {k+1, k-i, k+i+1, k+i+2};
         res.push_back(neighbors);
         for (j=k+1; j<k+i; j++)
         {
-            neighbors.clear();
-            neighbors.push_back(j+1);
-            neighbors.push_back(j-i);
-            neighbors.push_back(j-i-1);
-            neighbors.push_back(j-1);
-            neighbors.push_back(j+i+1);
-            neighbors.push_back(j+i+2);
+            neighbors = {j+1, j-i, j-i-1, j-1, j+i+1, j+i+2};
             res.push_back(neighbors);
         }
-        neighbors.clear();
-        neighbors.push_back(j-i-1);
-        neighbors.push_back(j-1);
-        neighbors.push_back(j+i+1);
-        neighbors.push_back(j+i+2);
+        neighbors = {j+1, j-1, j+i+1, j+i+2};
         res.push_back(neighbors);
     }
 
     k += i;
-    neighbors.clear();
-    neighbors.push_back(k+1);
-    neighbors.push_back(k-i);
+    neighbors = {k+1, k-i};
     res.push_back(neighbors);
     for (j=k+1; j<k+i; j++)
     {
-        neighbors.clear();
-        neighbors.push_back(j+1);
-        neighbors.push_back(j-i);
-        neighbors.push_back(j-i-1);
-        neighbors.push_back(j-1);
+        neighbors = {j+1, j-i, j-i-1, j-1};
         res.push_back(neighbors);
     }
-    neighbors.clear();
-    neighbors.push_back(j-i-1);
-    neighbors.push_back(j-1);
+    neighbors = {j-i-1, j-1};
     res.push_back(neighbors);
 
     return res;

@@ -381,9 +381,9 @@ void H3canvasDelegate::drawH3geodesic(const GLVector &v, const GLVector &w) cons
 
         GLVector vbis = matrix*v;
         GLVector wbis = matrix*w;
-        complex z1(vbis.x,vbis.y);
-        complex z2(wbis.x,wbis.y);
-        complex p1Klein, p2Klein;
+        Complex z1(vbis.x,vbis.y);
+        Complex z2(wbis.x,wbis.y);
+        Complex p1Klein, p2Klein;
         H2Point p1, p2;
         p1.setDiskCoordinate(z1);
         p2.setDiskCoordinate(z2);
@@ -392,7 +392,7 @@ void H3canvasDelegate::drawH3geodesic(const GLVector &v, const GLVector &w) cons
         PlanarLine L(p1Klein,p2Klein);
         Circle C(0.0,1.0);
         intersectCircleAndLine(C,L,z1,z2);
-        complex center = 2.0*(z1*z2)/(z1 + z2);
+        Complex center = 2.0*(z1*z2)/(z1 + z2);
         GLVector circlecenter = GLVector(center.real(),center.imag(),0.0d);
         circlecenter = matrixinv*circlecenter;
         std::cout << "vbis" << vbis << std::endl;

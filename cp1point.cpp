@@ -4,13 +4,13 @@ CP1Point::CP1Point()
 {
 }
 
-CP1Point::CP1Point(const complex &z)
+CP1Point::CP1Point(const Complex &z)
 {
     z1 = z;
     z2 = 1.0;
 }
 
-CP1Point::CP1Point(const complex &z1, const complex &z2) : z1(z1), z2(z2)
+CP1Point::CP1Point(const Complex &z1, const Complex &z2) : z1(z1), z2(z2)
 {
 }
 
@@ -19,7 +19,7 @@ bool CP1Point::isInfinity() const
     return z2 == 0.0;
 }
 
-complex CP1Point::getComplexCoordinate() const
+Complex CP1Point::getComplexCoordinate() const
 {
     if (!isInfinity())
     {
@@ -29,13 +29,13 @@ complex CP1Point::getComplexCoordinate() const
     {
         std::cout << "Infinity is not in C" << std::endl;
         //throw(0);
-        return complex(1.0/0.0);
+        return Complex(1.0/0.0);
     }
 }
 
 bool operator==(const CP1Point & p1, const CP1Point & p2)
 {
-    complex test = p1.z1*p2.z2 - p1.z2*p2.z1;
+    Complex test = p1.z1*p2.z2 - p1.z2*p2.z1;
     return test == 0.0;
 }
 

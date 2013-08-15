@@ -59,8 +59,8 @@ int main(int argc, char *argv[])
 
     {
     H2Point aT,bT,cT;
-    complex z(0.0,0.9);
-    complex j(-0.5, 0.5*sqrt(3.0));
+    Complex z(0.0,0.9);
+    Complex j(-0.5, 0.5*sqrt(3.0));
     aT.setDiskCoordinate(z);
     bT.setDiskCoordinate(j*z);
     cT.setDiskCoordinate(j*j*z);

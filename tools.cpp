@@ -1,6 +1,6 @@
 #include "tools.h"
 
-std::ostream & operator<<(std::ostream &out, const complex & z)
+std::ostream & operator<<(std::ostream &out, const Complex & z)
 {
     out << real(z) << " + " << imag(z) << "i";
     return out;

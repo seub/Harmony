@@ -41,7 +41,7 @@ void H2Isometry::setTranslationAxisAndLength(const H2Geodesic & axis, double len
 void H2Isometry::setTranslationLengthNormalized(double length)
 {
     double L = cosh(length);
-    a = -I*sqrt((L - 1.0)/(L + 1.0));
+    a = -complex(0.0, 1.0)*sqrt((L - 1.0)/(L + 1.0));
     if (length < 0)
     {
         a = -a;
@@ -52,7 +52,7 @@ void H2Isometry::setTranslationLengthNormalized(double length)
 
 void H2Isometry::setVerticalTranslation(double t)
 {
-    a = - I*t;
+    a = - complex(0.0, 1.0)*t;
     u = 1.0;
     return;
 }
@@ -61,7 +61,7 @@ void H2Isometry::setVerticalTranslation(double t1, double t2)
 {
     double t = (t1 + t2)/(1 + t1 * t2);
 
-    a = - I*t;
+    a = - complex(0.0, 1.0)*t;
     u = 1.0;
     return;
 }
@@ -70,7 +70,7 @@ void H2Isometry::setVerticalTranslation(double t1, double t2, double t3)
 {
     double t = (t1 + t2 + t3 + t1*t2*t3) / (1 + t1*t2 + t1*t3 + t2*t3);
 
-    a = - I*t;
+    a = - complex(0.0, 1.0)*t;
     u = 1.0;
     return;
 }
@@ -102,7 +102,7 @@ SL2CMatrix H2Isometry::getSU11Matrix() const
 
 SL2RMatrix H2Isometry::getSL2RMatrix() const
 {
-    SL2CMatrix A(1.0/sqrt(2.0),-I/sqrt(2.0),-I/sqrt(2.0),1.0/sqrt(2.0));
+    SL2CMatrix A(1.0/sqrt(2.0),-complex(0.0, 1.0)/sqrt(2.0),-complex(0.0, 1.0)/sqrt(2.0),1.0/sqrt(2.0));
     SL2CMatrix out = A*getSU11Matrix()*A.inverse();
     SL2RMatrix output;
     out.getRealPart(output);
@@ -122,8 +122,8 @@ void H2Isometry::setSL2Rmatrix(const SL2RMatrix &A)
 {
     double Aa,Ab,Ac,Ad;
     A.getCoefficients(Aa,Ab,Ac,Ad);
-    u = (Aa + Ad + I*(Ab - Ac))/(Aa + Ad - I*(Ab - Ac));
-    a = -(Ab + Ac + I*(Aa - Ad))/(Aa + Ad + I*(Ab - Ac));
+    u = (Aa + Ad + complex(0.0, 1.0)*(Ab - Ac))/(Aa + Ad - complex(0.0, 1.0)*(Ab - Ac));
+    a = -(Ab + Ac + complex(0.0, 1.0)*(Aa - Ad))/(Aa + Ad + complex(0.0, 1.0)*(Ab - Ac));
     return;
 }
 
@@ -287,7 +287,7 @@ void H2Isometry::setByMappingToVerticalUp(const H2Geodesic &L)
     complex a1,a2;
     L.getEndpointsInDiskModel(a1,a2);
     a = L.closestPointToOriginInDiskModel();
-    u = I*((conj(a)*(a1 + a2) - 2.0)/(a1 - a2));
+    u = complex(0.0, 1.0)*((conj(a)*(a1 + a2) - 2.0)/(a1 - a2));
     return;
 }
 
@@ -296,7 +296,7 @@ void H2Isometry::setByMappingToVerticalDown(const H2Geodesic &L)
     complex a1,a2;
     L.getEndpointsInDiskModel(a1,a2);
     a = L.closestPointToOriginInDiskModel();
-    u = -I*((conj(a)*(a1 + a2) - 2.0)/(a1 - a2));
+    u = -complex(0.0, 1.0)*((conj(a)*(a1 + a2) - 2.0)/(a1 - a2));
     return;
 }
 

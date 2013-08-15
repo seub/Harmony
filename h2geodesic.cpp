@@ -319,8 +319,8 @@ H2Geodesic H2GeodesicArc::getGeodesic() const
 {
     complex c = getCircleCenterInDiskModel();
     double r = getCircleRadiusInDiskModel();
-    complex z1 = (1.0 - I*r)/conj(c);
-    complex z2 = (1.0 + I*r)/conj(c);
+    complex z1 = complex(1.0, -r)/conj(c);
+    complex z2 = complex(1.0, r)/conj(c);
 
     H2Geodesic L;
     if (norm(z1 - p1.getDiskCoordinate()) < norm(z2 - p1.getDiskCoordinate()))
@@ -368,7 +368,7 @@ void H2GeodesicArc::getEndpointsInDiskModel(complex &output1, complex &output2) 
 Circle H2GeodesicArc::getCircleInDiskModel() const
 {
     complex z1 = p1.getDiskCoordinate(), z2 = p2.getDiskCoordinate();
-    complex c = (z2*(1.0+norm(z1)) - z1*(1.0+norm(z2)))/(2.0*I*imag(conj(z1)*z2));
+    complex c = (z2*(1.0+norm(z1)) - z1*(1.0+norm(z2)))/(2.0*complex(0.0, 1.0)*imag(conj(z1)*z2));
     double r = sqrt(norm(c) - 1);
     return Circle(c, r);
 }
@@ -376,7 +376,7 @@ Circle H2GeodesicArc::getCircleInDiskModel() const
 complex H2GeodesicArc::getCircleCenterInDiskModel() const
 {
     complex z1 = p1.getDiskCoordinate(), z2 = p2.getDiskCoordinate();
-    return (z2*(1.0+norm(z1)) - z1*(1.0+norm(z2)))/(2.0*I*imag(conj(z1)*z2));
+    return (z2*(1.0+norm(z1)) - z1*(1.0+norm(z2)))/(2.0*complex(0.0, 1.0)*imag(conj(z1)*z2));
 }
 
 double H2GeodesicArc::getCircleRadiusInDiskModel() const
@@ -425,7 +425,7 @@ void H2GeodesicArc::getExtremalCoordinatesInHyperboloidProjection(double &xMin, 
         m = Tx*l;
         x = l*a1 + m*b1;
         y = l*a2 + m*b2;
-        p.setHyperboloidProjection(x+I*y);
+        p.setHyperboloidProjection(x+complex(0.0, 1.0)*y);
         w = p.getKleinCoordinate();
 
         if (real(conj(w - bK)*(w - aK)) < 0.0)
@@ -449,7 +449,7 @@ void H2GeodesicArc::getExtremalCoordinatesInHyperboloidProjection(double &xMin, 
         m = Ty*l;
         x = l*a1 + m*b1;
         y = l*a2 + m*b2;
-        p.setHyperboloidProjection(x+I*y);
+        p.setHyperboloidProjection(complex(x, y));
         w = p.getKleinCoordinate();
 
         if (real(conj(w - bK)*(w - aK)) < 0.0)

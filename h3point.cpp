@@ -48,7 +48,7 @@ void H3Point::getHermitianCoordinates(SL2CMatrix & A) const
 {
     double x0,x1,x2,x3;
     getHyperboloidCoordinates(x0,x1,x2,x3);
-    A = SL2CMatrix(complex(x0+x1,0.0),complex(x2,x3),complex(x2,-x3),complex(x0-x1,0.0));
+    A = SL2CMatrix(Complex(x0+x1,0.0),Complex(x2,x3),Complex(x2,-x3),Complex(x0-x1,0.0));
     return;
 }
 
@@ -121,7 +121,7 @@ void H3Point::setHermitianCoordinates(const SL2CMatrix &A)
         std::cout << "WARNING in H3point::setHermitianCoordinates : A.adjoint != A" << std::endl;
         //throw(0);
     }
-    complex a,b,c,d;
+    Complex a,b,c,d;
     A.getCoefficients(a,b,c,d);
     double x0,x1,x2,x3;
     x0 = real((a + d) / 2.0);

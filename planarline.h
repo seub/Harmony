@@ -6,20 +6,20 @@ class PlanarLine
 {
 public:
     PlanarLine();
-    PlanarLine(const complex & p1, const complex & p2);
+    PlanarLine(const Complex & p1, const Complex & p2);
 
-    void getPointAndDirection(complex & point, complex & direction) const;
-    void setPointAndDirection(complex & point, complex & direction);
-    void setPerpendicularBisector(const complex & z1, const complex & z2);
-    complex getDirection() const;
+    void getPointAndDirection(Complex & point, Complex & direction) const;
+    void setPointAndDirection(Complex & point, Complex & direction);
+    void setPerpendicularBisector(const Complex & z1, const Complex & z2);
+    Complex getDirection() const;
 
-    bool contains(const complex & z) const;
+    bool contains(const Complex & z) const;
 
 private:
-    complex point;
-    complex direction;
+    Complex point;
+    Complex direction;
 };
 
-bool intersectionPlanarLines(const PlanarLine & l1, const PlanarLine & l2, complex & output);
+bool intersectionPlanarLines(const PlanarLine & l1, const PlanarLine & l2, Complex & output);
 
 #endif // PLANARLINE_H

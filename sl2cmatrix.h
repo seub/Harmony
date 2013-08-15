@@ -17,16 +17,16 @@ class SL2CMatrix
 
 public:
     SL2CMatrix();
-    SL2CMatrix(const complex & a, const complex & b, const complex & c, const complex & d);
+    SL2CMatrix(const Complex & a, const Complex & b, const Complex & c, const Complex & d);
 
 
-    void getCoefficients(complex & a1, complex & a2, complex & a3, complex & a4) const;
+    void getCoefficients(Complex & a1, Complex & a2, Complex & a3, Complex & a4) const;
     void setIdentity();
 
-    complex det() const;
-    complex trace() const;
-    void eigenvalues(complex & lambda1,complex & lambda2) const;
-    void fixedPoints(complex & z1, complex & z2) const;
+    Complex det() const;
+    Complex trace() const;
+    void eigenvalues(Complex & lambda1,Complex & lambda2) const;
+    void fixedPoints(Complex & z1, Complex & z2) const;
     bool isReal() const;
     double error() const;
 
@@ -39,7 +39,7 @@ public:
     void getRealPart(SL2RMatrix &output) const;
 
 private:
-    complex a, b, c, d;
+    Complex a, b, c, d;
 };
 
 #endif // SL2CMATRIX_H

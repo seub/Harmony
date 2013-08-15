@@ -43,11 +43,11 @@ void H2Triangle::getAsPolygon(H2Polygon & outputPolygon) const
 
 void H2Triangle::getAngles(double &angleA, double &angleB, double &angleC) const
 {
-    complex z1 = a.getDiskCoordinate();
-    complex z2 = b.getDiskCoordinate();
-    complex z3 = c.getDiskCoordinate();
+    Complex z1 = a.getDiskCoordinate();
+    Complex z2 = b.getDiskCoordinate();
+    Complex z3 = c.getDiskCoordinate();
 
-    complex u,v;
+    Complex u,v;
 
     u = (z3 - z1) / (1.0 - conj(z1)*z3);
     v = (z2 - z1) / (1.0 - conj(z1)*z2);

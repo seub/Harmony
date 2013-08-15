@@ -25,12 +25,12 @@ H2CanvasDelegate::H2CanvasDelegate(Canvas *canvas) : CanvasDelegate(canvas)
 
 void H2CanvasDelegate::drawH2Point(const H2Point &p, const QColor &color, int width)
 {
-    complex z = (mobius*p).getDiskCoordinate();
+    Complex z = (mobius*p).getDiskCoordinate();
     drawPoint(z, color, width);
     return;
 }
 
-void H2CanvasDelegate::drawComplexPointInDiskModel(const complex &z, const QColor &color, int width)
+void H2CanvasDelegate::drawComplexPointInDiskModel(const Complex &z, const QColor &color, int width)
 {
     H2Point P;
     P.setDiskCoordinate(z);
@@ -50,7 +50,7 @@ void H2CanvasDelegate::drawH2Geodesic(const H2Geodesic &L, const QColor &color, 
     }
     else
     {
-        complex z1, z2;
+        Complex z1, z2;
         tempGeodesic.getEndpointsInDiskModel(z1, z2);
         drawSegment(z1, z2, color, width);
     }
@@ -69,7 +69,7 @@ void H2CanvasDelegate::drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &c
     }
     else
     {
-        complex z1, z2;
+        Complex z1, z2;
         tempGeodesic.getEndpointsInDiskModel(z1, z2);
         drawSegment(z1, z2, color, width);
     }
@@ -157,8 +157,8 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
         else
         {
             H2Isometry mobiusChange;
-            complex mouseOld(PixelToComplexCoordinates(this->mouseX,this->mouseY));
-            complex mouseNew(PixelToComplexCoordinates(mouseEvent->x(), mouseEvent->y()));
+            Complex mouseOld(PixelToComplexCoordinates(this->mouseX,this->mouseY));
+            Complex mouseNew(PixelToComplexCoordinates(mouseEvent->x(), mouseEvent->y()));
 
             mobiusChange.setByMappingPointInDiskModelNormalized(mouseOld, mouseNew);
             mobius = mobiusChange*savedMobius;

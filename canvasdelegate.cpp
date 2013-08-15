@@ -167,8 +167,8 @@ void CanvasDelegate::drawSegment(const complex &endpoint1, const complex &endpoi
 void CanvasDelegate::drawCircle(const complex &center, double radius, const QColor &color, int width)
 {
     int x1, y1, x2, y2;
-    complex firstCorner = center + radius*(-1.0 + 1.0*I);
-    complex secondCorner = center + radius*(1.0 - 1.0*I);
+    complex firstCorner = center + radius*complex(-1.0,1.0);
+    complex secondCorner = center + radius*complex(1.0, - 1.0);
     ComplexToPixelCoordinates(x1, y1, firstCorner);
     ComplexToPixelCoordinates(x2, y2, secondCorner);
     pen->setColor(color);
@@ -217,6 +217,7 @@ void CanvasDelegate::intersectsCanvasBoundary(const complex &center, double radi
 
     double x, y, D;
 
+    complex I(0.0, 1.0);
     complex z1 = center + radius*exp(angle1*I);
     complex z2 = center + radius*exp(angle2*I);
 
@@ -369,8 +370,8 @@ void CanvasDelegate::drawArcCounterClockwise(const complex &center, double radiu
     else
     {
         int x1, y1, x2, y2;
-        complex firstCorner = center + radius*(-1.0 + 1.0*I);
-        complex secondCorner = center + radius*(1.0 - 1.0*I);
+        complex firstCorner = center + radius*complex(-1.0, 1.0);
+        complex secondCorner = center + radius*complex(1.0, -1.0);
         ComplexToPixelCoordinates(x1, y1, firstCorner);
         ComplexToPixelCoordinates(x2, y2, secondCorner);
         pen->setColor(color);

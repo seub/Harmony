@@ -20,7 +20,7 @@ void H3Isometry::fixedPointsOnCP1(CP1Point &p1, CP1Point &p2) const
     }
     else
     {
-        complex delta = sqrt(M.trace()*M.trace() - 4.0);
+        Complex delta = sqrt(M.trace()*M.trace() - 4.0);
         p1 = CP1Point((M.a - M.d + delta) / (2.0*M.c));
         p2 = CP1Point((M.a - M.d - delta) / (2.0*M.c));
     }
@@ -29,7 +29,7 @@ void H3Isometry::fixedPointsOnCP1(CP1Point &p1, CP1Point &p2) const
 
 bool H3Isometry::isElliptic() const
 {
-    complex tr = M.trace();
+    Complex tr = M.trace();
     return imag(tr)==0 && std::abs(real(tr)) < 2.0;
 }
 
@@ -45,19 +45,19 @@ double H3Isometry::error() const
 
 bool H3Isometry::isLoxodromic() const
 {
-    complex tr = M.trace();
+    Complex tr = M.trace();
     return imag(tr) != 0 || std::norm(tr) > 4.0;
 }
 
 bool H3Isometry::isParabolic() const
 {
-    complex tr = M.trace();
+    Complex tr = M.trace();
     return tr*tr == 4.0;
 }
 
 void H3Isometry::setByMappingThreeCP1PointsToZeroOneInfinity(const CP1Point &p1, const CP1Point &p2, const CP1Point &p3)
 {
-    complex a, b, c, d, z1, z2, z3;
+    Complex a, b, c, d, z1, z2, z3;
     if (p1==p2 || p2==p3 || p1==p2)
     {
         std::cout << "ERROR in H3Isometry::setByMappingThreeCP1PointsToZeroOneInfinity: the points are not distinct!" << std::endl;
@@ -102,7 +102,7 @@ void H3Isometry::setByMappingThreeCP1PointsToZeroOneInfinity(const CP1Point &p1,
             d = -z3*(z2 - z1);
         }
     }
-    complex delta = sqrt(a*d - b*c);
+    Complex delta = sqrt(a*d - b*c);
     M = SL2CMatrix(a/delta, b/delta, c/delta, d/delta);
 }
 

@@ -44,7 +44,7 @@ void PlanarLine::setPerpendicularBisector(const complex &z1, const complex &z2)
         throw(0);
     }
     point = (z1 + z2) / 2.0;
-    direction = I*(z1 - z2) / 2.0;
+    direction = complex(0.0, 1.0)*(z1 - z2) / 2.0;
     return;
 }
 

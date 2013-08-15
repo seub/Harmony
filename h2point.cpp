@@ -6,6 +6,7 @@ H2Point::H2Point()
 
 complex H2Point::getUpperHalfPlaneCoordinate() const
 {
+    complex I(0.0, 1.0);
     return -I*((z + I)/(z - I));
 }
 
@@ -27,6 +28,7 @@ complex H2Point::getHyperboloidProjection() const
 
 void H2Point::setUpperHalfPlaneCoordinate(complex z)
 {
+    complex I(0.0, 1.0);
     this->z = I*((z - I)/(z + I));
     return;
 }

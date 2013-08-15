@@ -28,7 +28,7 @@ double Circle::getRadius() const
 
 complex Circle::pointAtAngle(double angle) const
 {
-    return center + radius*exp(angle*I);
+    return center + radius*exp(angle*complex(0.0, 1.0));
 }
 
 bool Circle::contains(const complex & z) const

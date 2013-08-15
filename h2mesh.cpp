@@ -27,7 +27,7 @@ H2Mesh::H2Mesh(const IsomH2Representation &rho, int depth) : rho(rho), depth(dep
         {
             if (!boundary[i])
             {
-                H2MeshPoint p;
+                //H2MeshPoint p;
             }
         }
 

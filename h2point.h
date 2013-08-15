@@ -11,22 +11,22 @@ class H2Point
 public:
     H2Point();
 
-    complex getUpperHalfPlaneCoordinate() const;
-    complex getDiskCoordinate() const;
-    complex getKleinCoordinate() const;
-    complex getHyperboloidProjection() const;
+    Complex getUpperHalfPlaneCoordinate() const;
+    Complex getDiskCoordinate() const;
+    Complex getKleinCoordinate() const;
+    Complex getHyperboloidProjection() const;
 
-    void setUpperHalfPlaneCoordinate(complex z);
-    void setDiskCoordinate(complex z);
-    void setHyperboloidProjection(complex z);
-    void setKleinCoordinate(complex z);
+    void setUpperHalfPlaneCoordinate(Complex z);
+    void setDiskCoordinate(Complex z);
+    void setHyperboloidProjection(Complex z);
+    void setKleinCoordinate(Complex z);
 
     static double distance(const H2Point & p1, const H2Point & p2);
     static H2Point midpoint(const H2Point & p1, const H2Point & p2);
     static double angle(const H2Point &previous, const H2Point &point, const H2Point &next);
 
 private:
-    complex z;
+    Complex z;
 };
 
 

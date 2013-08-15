@@ -26,7 +26,7 @@ class H2Isometry
 public:
     H2Isometry();
 
-    void getDiskCoordinates(complex &u, complex &a) const;
+    void getDiskCoordinates(Complex &u, Complex &a) const;
 
     SL2CMatrix getSU11Matrix() const;
     SL2RMatrix getSL2RMatrix() const;
@@ -34,7 +34,7 @@ public:
     void setIdentity();
     void setSU11Matrix(const SL2CMatrix & A);
     void setSL2Rmatrix(const SL2RMatrix & A);
-    void setDiskCoordinates(const complex & u, const complex & a);
+    void setDiskCoordinates(const Complex & u, const Complex & a);
 
     void setByNormalizingPairOnLeftHandSide(const H2Isometry &f1, const H2Isometry &f1left);
     void setByNormalizingPairOnRightHandSide(const H2Isometry &f1, const H2Isometry &f1left);
@@ -45,7 +45,7 @@ public:
 
     bool axis(H2Geodesic &L) const;
 
-    complex hitComplexInDiskModel(const complex & z);
+    Complex hitComplexInDiskModel(const Complex & z);
 
     H2Isometry inverse() const;
     double traceSquared() const;
@@ -59,11 +59,11 @@ public:
 
     // We don't use these (for now?)...
     void setTranslationAxisAndLength(const H2Geodesic & axis, double length);
-    void setByMappingPointInDiskModelNormalized(const complex & zIn, const complex & zOut);
+    void setByMappingPointInDiskModelNormalized(const Complex & zIn, const Complex & zOut);
     void setByMappingGeodesic(const H2Geodesic & L1, const H2Geodesic & L2);
 
 //private:
-    complex u,a;
+    Complex u,a;
 
     void setTranslationLengthNormalized(double length);
 

@@ -22,9 +22,9 @@ public:
     int getNumberOfVertices() const;
     H2Point getVertex(int index) const;
     std::vector<H2Point> getVertices() const;
-    std::vector<complex> getVerticesInDiskModel() const;
-    std::vector<complex> getVerticesInKleinModel() const;
-    std::vector<complex> getVerticesInHyperboloidProjection() const;
+    std::vector<Complex> getVerticesInDiskModel() const;
+    std::vector<Complex> getVerticesInKleinModel() const;
+    std::vector<Complex> getVerticesInHyperboloidProjection() const;
 
     void getExtremalCoordinatesInDiskModel(double& xMin, double& xMax, double& yMin, double & yMax) const;
     void getExtremalCoordinatesInHyperboloidProjection(double & xMin, double & xMax, double & yMin, double & yMax) const;
@@ -37,8 +37,8 @@ public:
     double norm3() const;
     double norm4() const;
 
-    bool containsInKleinModel(const complex & z) const;
-    bool constainsInDiskModel(const complex & z) const;
+    bool containsInKleinModel(const Complex & z) const;
+    bool constainsInDiskModel(const Complex & z) const;
     bool contains(const H2Point & point) const;
 
     H2GeodesicArc getSide(int index) const;
@@ -51,7 +51,7 @@ public:
 
 private:
     std::vector<H2Point> vertices;
-    std::vector<complex> verticesInKleinModel;
+    std::vector<Complex> verticesInKleinModel;
 };
 
 #endif // H2POLYGON_H

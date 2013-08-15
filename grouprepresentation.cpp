@@ -492,8 +492,10 @@ template <> void IsomH2Representation::setNiceRepresentation()
     H2Point p1, p2;
     H2Geodesic L1, L2;
 
+    complex I(0.0, 1.0);
+
     complex z1 = 1.0/sqrt(sqrt(2.0));
-    complex u = (1.0 + I)/sqrt(2.0);
+    complex u = complex(1.0,1.0)/sqrt(2.0);
 
     p1.setDiskCoordinate(z1);
     p2.setDiskCoordinate(u*z1);

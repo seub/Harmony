@@ -333,11 +333,11 @@ void H2Polygon::optimalMobius(H2Isometry &output) const
             complex direction = Lk.getDirection();
             if (imag(nextVertex*conj(direction))<0)
             {
-                T += I*direction;
+                T += complex(0.0, 1.0)*direction;
             }
             else
             {
-                T += -I*direction;
+                T += -complex(0.0, 1.0)*direction;
             }
         }
         else

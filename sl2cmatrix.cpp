@@ -6,16 +6,16 @@ SL2CMatrix::SL2CMatrix()
     setIdentity();
 }
 
-SL2CMatrix::SL2CMatrix(const complex &a, const complex &b, const complex &c, const complex &d) : a(a), b(b), c(c), d(d)
+SL2CMatrix::SL2CMatrix(const Complex &a, const Complex &b, const Complex &c, const Complex &d) : a(a), b(b), c(c), d(d)
 {
-    if (norm(det() - complex(1.0,0.0)) > ERROR)
+    if (norm(det() - Complex(1.0,0.0)) > ERROR)
     {
         std::cout << "WARNING in SL2Cmatrix::SL2Cmatrix: the determinant is not 1 (it is equal to " << det() <<" )" << std::endl;
         //throw(0);
     }
 }
 
-void SL2CMatrix::getCoefficients(complex & a, complex & b, complex & c, complex & d) const
+void SL2CMatrix::getCoefficients(Complex & a, Complex & b, Complex & c, Complex & d) const
 {
     a = this->a;
     b = this->b;
@@ -34,20 +34,20 @@ void SL2CMatrix::setIdentity()
 }
 
 
-complex SL2CMatrix::det() const
+Complex SL2CMatrix::det() const
 {
     return a*d - b*c;
 }
 
-complex SL2CMatrix::trace() const
+Complex SL2CMatrix::trace() const
 {
     return a + d;
 }
 
-void SL2CMatrix::eigenvalues(complex & lambda1, complex & lambda2) const
+void SL2CMatrix::eigenvalues(Complex & lambda1, Complex & lambda2) const
 {
-    complex t = trace();
-    complex delta = sqrt(t*t - 4.0);
+    Complex t = trace();
+    Complex delta = sqrt(t*t - 4.0);
     lambda1 = .5*(t + delta);
     lambda2 = .5*(t - delta);
 

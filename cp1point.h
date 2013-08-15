@@ -13,14 +13,14 @@ class CP1Point
 
 public:
     CP1Point();
-    CP1Point(const complex & z);
-    CP1Point(const complex & z1, const complex &z2);
+    CP1Point(const Complex & z);
+    CP1Point(const Complex & z1, const Complex &z2);
 
-    complex getComplexCoordinate() const;
+    Complex getComplexCoordinate() const;
     bool isInfinity() const;
 
 private:
-    complex z1, z2;
+    Complex z1, z2;
 };
 
 #endif // CP1POINT_H

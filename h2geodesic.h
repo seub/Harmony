@@ -14,31 +14,31 @@ public:
 
     H2Geodesic();
 
-    void setEndpointsInDiskModel(const complex & z1, const complex & z2);
+    void setEndpointsInDiskModel(const Complex & z1, const Complex & z2);
     void setPassingThroughTwoPoints(const H2Point & p1, const H2Point & p2);
 
-    void getEndpointsInDiskModel(complex & z1, complex & z2) const;
+    void getEndpointsInDiskModel(Complex & z1, Complex & z2) const;
 
     bool isCircleInDiskModel() const;
     bool getCircleInDiskModel(Circle & output) const;
     bool getLineInDiskModel(PlanarLine & output) const;
     bool getCircleAndAnglesInDiskModel(Circle & outC, double & outAngle1, double & outAngle2) const;
     bool contains(const H2Point & p) const;
-    complex closestPointToOriginInDiskModel() const;
+    Complex closestPointToOriginInDiskModel() const;
     H2Geodesic swapOrientation() const;
 
     static bool closestPoints(const H2Geodesic & L1, const H2Geodesic &  L2, H2Point & p1, H2Point & p2);
     static bool closestPoint(const H2Geodesic & L1, const H2Geodesic &  L2, H2Point & p1);
 
 private:
-    complex z1, z2;
+    Complex z1, z2;
 
 };
 
 bool doIntersect(const H2Geodesic & L1, const H2Geodesic & L2);
 bool intersectionH2Geodesics(const H2Geodesic & L1, const H2Geodesic & L2, H2Point & p);
 bool commonPerpendicular(const H2Geodesic & L1, const H2Geodesic & L2, H2Geodesic &output);
-bool commonEndpointInDiskModel(const H2Geodesic & L1, const H2Geodesic & L2, complex & z);
+bool commonEndpointInDiskModel(const H2Geodesic & L1, const H2Geodesic & L2, Complex & z);
 bool commonEndpoint(const H2Geodesic & L1, const H2Geodesic & L2);
 
 
@@ -51,7 +51,7 @@ public:
     void setPoints(const H2Point & p1, const H2Point & p2);
 
     Circle getCircleInDiskModel() const;
-    complex getCircleCenterInDiskModel() const;
+    Complex getCircleCenterInDiskModel() const;
     double getCircleRadiusInDiskModel() const;
 
     void getExtremalCoordinatesInHyperboloidProjection(double & xMin, double & xMax, double & yMin, double & yMax);
@@ -59,7 +59,7 @@ public:
     H2Geodesic getGeodesic() const;
     bool isLineSegmentInDiskModel() const;
     bool getCircleAndAnglesInDiskModel(Circle & outC, double & outAngle1, double & outAngle2) const;
-    void getEndpointsInDiskModel(complex &output1, complex &output2) const;
+    void getEndpointsInDiskModel(Complex &output1, Complex &output2) const;
 
 private:
     H2Point p1, p2;
