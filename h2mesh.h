@@ -10,9 +10,12 @@ class H2Isometry;
 
 class H2MeshPoint
 {
+    friend class H2Mesh;
 public:
 
 private:
+    H2MeshPoint(int SubdivisionIndex, int IndexInSubdivision, const std::vector<int> &neighborsIndices, bool exterior) :
+        SubdivisionIndex(SubdivisionIndex), IndexInSubdivision(IndexInSubdivision), neighborsIndices(neighborsIndices), exterior(exterior) {}
     int SubdivisionIndex;
     int IndexInSubdivision;
     std::vector<int> neighborsIndices;

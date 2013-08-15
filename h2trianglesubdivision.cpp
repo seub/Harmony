@@ -80,7 +80,7 @@ H2TriangleSubdivision & H2TriangleSubdivision::operator=(H2TriangleSubdivision o
 H2TriangleSubdivision::H2TriangleSubdivision(const H2Point &a, const H2Point &b, const H2Point &c, int depth)
 {
     totalDepth = depth;
-    int L = nbOfLines(), N = nbOfPoints();
+    int L = nbOfLines(depth), N = nbOfPoints(depth);
     points = new std::vector<H2Point>;
     points->resize(N);
     std::vector<bool> filled;
@@ -195,15 +195,20 @@ bool H2TriangleSubdivision::isEmpty() const
     return empty;
 }
 
-int H2TriangleSubdivision::nbOfPoints() const
+int H2TriangleSubdivision::nbOfPoints(int depth)
 {
-    int L = nbOfLines();
+    int L = nbOfLines(depth);
     return L*(L+1)/2;
 }
 
-int H2TriangleSubdivision::nbOfLines() const
+int H2TriangleSubdivision::nbOfLines(int depth)
 {
-    return 1 + Tools::exponentiation(2, totalDepth);
+    return 1 + Tools::exponentiation(2, depth);
+}
+
+int H2TriangleSubdivision::getTotalDepth() const
+{
+    return totalDepth;
 }
 
 H2Triangle H2TriangleSubdivision::getTriangle() const
@@ -216,7 +221,7 @@ std::vector<H2Point> H2TriangleSubdivision::getPoints() const
     return *points;
 }
 
-bool H2TriangleSubdivision::getTriangleContaining(const H2Point &point, H2Triangle &outputTriangle) const
+bool H2TriangleSubdivision::triangleContaining(const H2Point &point, H2Triangle &outputTriangle) const
 {
     if (getTriangle().contains(point))
     {
@@ -227,8 +232,8 @@ bool H2TriangleSubdivision::getTriangleContaining(const H2Point &point, H2Triang
         }
         else
         {
-            if (A->getTriangleContaining(point, outputTriangle) || B->getTriangleContaining(point, outputTriangle)
-                    || C->getTriangleContaining(point, outputTriangle) || O->getTriangleContaining(point, outputTriangle))
+            if (A->triangleContaining(point, outputTriangle) || B->triangleContaining(point, outputTriangle)
+                    || C->triangleContaining(point, outputTriangle) || O->triangleContaining(point, outputTriangle))
             {
                 return true;
             }
@@ -245,9 +250,111 @@ bool H2TriangleSubdivision::getTriangleContaining(const H2Point &point, H2Triang
     }
 }
 
+std::vector<bool> H2TriangleSubdivision::areBoundaryPoints() const
+{
+    if (depth != totalDepth)
+    {
+        std::cout << "WARNING in H2TriangleSubdivision::areBoundaryPoints : not a root subdivision" << std::endl;
+    }
+    if (empty)
+    {
+        std::cout << "ERROR in H2TriangleSubdivision::areBoundaryPoints : empty subdivision" << std::endl;
+    }
+
+    std::vector<bool> res(points->size());
+    std::fill(res.begin(), res.end(), false);
+
+
+    int i, k=0, L = nbOfLines(totalDepth);
+    res[0] = true;
+    for (i=1; i<L-1; i++)
+    {
+        k++;
+        res[k] = true;
+        k += i;
+        res[k] = true;
+    }
+
+    k++;
+    std::fill(res.begin() + k, res.end(), true);
+
+    return res;
+}
+
+std::vector< std::vector<int> > H2TriangleSubdivision::neighborsIndices() const
+{
+    if (depth != totalDepth)
+    {
+        std::cout << "WARNING in H2TriangleSubdivision::areBoundaryPoints : not a root subdivision" << std::endl;
+    }
+    if (empty)
+    {
+        std::cout << "ERROR in H2TriangleSubdivision::areBoundaryPoints : empty subdivision" << std::endl;
+    }
+
+    std::vector< std::vector<int> > res;
+    res.reserve(points->size());
+
+    //std::vector<int> neighbors = {1, 2};
+    std::vector<int> neighbors;
+    neighbors.push_back(1);
+    neighbors.push_back(2);
+    res.push_back(neighbors);
+    int i, j, k = 0, L = nbOfLines(totalDepth);
+    for (i=1; i<L-1; i++)
+    {
+        k += i;
+        neighbors.clear();
+        neighbors.push_back(k+1);
+        neighbors.push_back(k-i);
+        neighbors.push_back(k+i+1);
+        neighbors.push_back(k+i+2);
+        res.push_back(neighbors);
+        for (j=k+1; j<k+i; j++)
+        {
+            neighbors.clear();
+            neighbors.push_back(j+1);
+            neighbors.push_back(j-i);
+            neighbors.push_back(j-i-1);
+            neighbors.push_back(j-1);
+            neighbors.push_back(j+i+1);
+            neighbors.push_back(j+i+2);
+            res.push_back(neighbors);
+        }
+        neighbors.clear();
+        neighbors.push_back(j-i-1);
+        neighbors.push_back(j-1);
+        neighbors.push_back(j+i+1);
+        neighbors.push_back(j+i+2);
+        res.push_back(neighbors);
+    }
+
+    k += i;
+    neighbors.clear();
+    neighbors.push_back(k+1);
+    neighbors.push_back(k-i);
+    res.push_back(neighbors);
+    for (j=k+1; j<k+i; j++)
+    {
+        neighbors.clear();
+        neighbors.push_back(j+1);
+        neighbors.push_back(j-i);
+        neighbors.push_back(j-i-1);
+        neighbors.push_back(j-1);
+        res.push_back(neighbors);
+    }
+    neighbors.clear();
+    neighbors.push_back(j-i-1);
+    neighbors.push_back(j-1);
+    res.push_back(neighbors);
+
+    return res;
+}
+
 
 std::ostream & operator<<(std::ostream & out, const H2TriangleSubdivision &T)
 {
     out << "Triangle subdivision of " << T.getTriangle() << " with depth " << T.depth << std::endl;
     return out;
 }
+

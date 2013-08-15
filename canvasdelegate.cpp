@@ -212,7 +212,9 @@ void CanvasDelegate::intersectsCanvasBoundary(const complex &center, double radi
     std::vector<complex> intersectionsTemp, intersections;
     double xMax = xMin + sizeX/scaleX;
     double yMin = yMax - sizeY/scaleY;
+
     double c1 = real(center), c2 = imag(center);
+
     double x, y, D;
 
     complex z1 = center + radius*exp(angle1*I);

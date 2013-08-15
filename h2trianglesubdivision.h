@@ -18,18 +18,23 @@ public:
     H2TriangleSubdivision & operator=(H2TriangleSubdivision other); // Copy-assignement operator
     ~H2TriangleSubdivision();
 
+    int getTotalDepth() const;
     bool isEmpty() const;
-    int nbOfLines() const;
-    int nbOfPoints() const;
+    static int nbOfLines(int depth);
+    static int nbOfPoints(int depth);
     H2Triangle getTriangle() const;
     std::vector<H2Point> getPoints() const;
 
-    bool getTriangleContaining(const H2Point &point, H2Triangle &outputTriangle) const;
+    bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle) const;
+
+    std::vector< std::vector<int> > neighborsIndices() const;
+    std::vector<bool> areBoundaryPoints() const;
 
 private:
     void construct(int aIndex, int bIndex, int cIndex, int depth, int totalDepth, std::vector<H2Point> *points,
                    std::vector<bool> &filled, int an, int bn, int cn, int ap, int bp, int cp); // Base (pseudo)constructor;
     void copy(const H2TriangleSubdivision &other, std::vector<H2Point> *points);
+
 
 
     H2TriangleSubdivision *A, *B, *C, *O;

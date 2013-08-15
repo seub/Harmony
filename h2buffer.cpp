@@ -120,7 +120,7 @@ void H2Buffer::addElement(const std::vector<H2Polygon> &V, const QColor &color, 
 void H2Buffer::addElement(const H2TriangleSubdivision &T, const QColor &color, int width)
 {
     subdivision = T;
-    int L = T.nbOfLines();
+    int L = T.nbOfLines(T.getTotalDepth());
     std::vector<H2Point> Tpoints = T.getPoints();
 
     H2Point a, b, c;

@@ -49,15 +49,15 @@ int main(int argc, char *argv[])
     H2CanvasDelegate delegate(&canvas);
     canvas.setDelegate(&delegate);
     delegate.buffer.addElement(rho, "blue", 2);
-    H2Polygon P = rho.generatePolygon(100);
+    /*H2Polygon P = rho.generatePolygon(100);
     delegate.buffer.addElement(P, "red", 2);
 
 
     H2PolygonTriangulater PT(&P);
-    delegate.buffer.addElement(PT.getTriangles());
+    delegate.buffer.addElement(PT.getTriangles());*/
 
 
-    /*{
+    {
     H2Point aT,bT,cT;
     complex z(0.0,0.9);
     complex j(-0.5, 0.5*sqrt(3.0));
@@ -66,13 +66,15 @@ int main(int argc, char *argv[])
     cT.setDiskCoordinate(j*j*z);
     H2Triangle T(aT, bT, cT);
     clock_t t0 = clock();
-    H2TriangleSubdivision Ts(T, 4);
+    H2TriangleSubdivision Ts(T, 3);
     clock_t t1 = clock();
     std::cout << "time to construct triangulation: " << (t1-t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
 
 
+    std::cout << Ts.neighborsIndices() << std::endl;
+
     delegate.buffer.addElement(Ts);
-    }*/
+    }
 
     H2Isometry id;
     id.setIdentity();

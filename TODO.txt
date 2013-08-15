@@ -25,3 +25,10 @@ parfois "there is no h2geodesic between point and itself" pendant l'affichage??
 test memory leaks with valgrind
 
 add steiner points
+
+use v.at(i) instead of v[i] where necessary
+
+passer à C++11
+utiliser V = {1, 2}
+utiliser for(auto i : V) ou for(auto &i : V)
+utiliser std::vector<int> V(3);

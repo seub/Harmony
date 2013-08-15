@@ -170,7 +170,7 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
     {
         H2Point point;
         point.setDiskCoordinate(PixelToComplexCoordinates(mouseEvent->x(), mouseEvent->y()));
-        if (buffer.subdivision.getTriangleContaining(mobius.inverse()*point, buffer.triangleHighlighted))
+        if (buffer.subdivision.triangleContaining(mobius.inverse()*point, buffer.triangleHighlighted))
         {
             isTriangleHighlighted = true;
         }
