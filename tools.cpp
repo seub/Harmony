@@ -60,11 +60,11 @@ word Tools::contractWord(word &w)
     word result;
     int index = w[0].first;
     int power=0;
-    for(int i=0; w.size(); i++)
+    for(auto x : w)
     {
-        if(w[i].first==index)
+        if(x.first==index)
         {
-            power+=w[i].second;
+            power+=x.second;
         }
         else
         {
@@ -74,8 +74,8 @@ word Tools::contractWord(word &w)
                 l.second = power;
                 result.push_back(l);
             }
-            index = w[i].first;
-            power = w[i].second;
+            index = x.first;
+            power = x.second;
         }
     }
     return result;

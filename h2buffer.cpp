@@ -41,7 +41,7 @@ void H2Buffer::addElement(const H2GeodesicArc &geodesicArc, const QColor &color,
 }
 void H2Buffer::addElement(const H2Polygon &polygon, const QColor &color, int width)
 {
-    int sizePoly = polygon.getNumberOfVertices();
+    int sizePoly = polygon.nbVertices();
     for (int i=0; i<sizePoly ; i++)
     {
         addElement(polygon.getSide(i),color,width);

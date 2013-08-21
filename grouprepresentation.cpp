@@ -161,7 +161,7 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int TilingSize) cons
     H2Point p;
     H2Polygon polygon, bestPolygon;
     double currentNorm, bestNorm = 1.0/ERROR;
-    complex z;
+    Complex z;
 
     double x = -1.0, y = -1.0;
     for(int i=1; i<2*TilingSize; i++)
@@ -171,10 +171,10 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int TilingSize) cons
         for (int j=1; j<2*TilingSize; j++)
         {
             y += step;
-            z = complex(x,y);
+            z = Complex(x,y);
             if (norm(z) < 1.0)
             {
-                p.setDiskCoordinate(complex(x, y));
+                p.setDiskCoordinate(Complex(x, y));
                 polygon = generatePolygon(p);
                 currentNorm = polygon.norm4();
                 if (currentNorm < bestNorm)
@@ -438,18 +438,18 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
         generatorImages.clear();
         H2Isometry f;
 
-        complex W, Z, A, U;
+        Complex W, Z, A, U;
 
-        Z = complex(-C1*S3 , -C3*C1 - C2*C3*C3 + S2*S3*S3);
-        W = complex(-C3*S2*S3 + S3*C1 + S3*C2*C3 , -C1*C3 - C2);
+        Z = Complex(-C1*S3 , -C3*C1 - C2*C3*C3 + S2*S3*S3);
+        W = Complex(-C3*S2*S3 + S3*C1 + S3*C2*C3 , -C1*C3 - C2);
         U = Z/conj(Z);
         A = W/Z;
 
         f.setDiskCoordinates(U, A);
         generatorImages.push_back(f);
 
-        Z = complex(-C2*S3 , -C1-C2*C3);
-        W = complex(-S2*S3 , -C2*C3-C1);
+        Z = Complex(-C2*S3 , -C1-C2*C3);
+        W = Complex(-S2*S3 , -C2*C3-C1);
         U = Z/conj(Z);
         A = W/Z;
 
@@ -457,7 +457,7 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
         generatorImages.push_back(f);
 
         U = 1.0;
-        A = complex(0.0, -S3/C3);
+        A = Complex(0.0, -S3/C3);
 
         f.setDiskCoordinates(U, A);
         generatorImages.push_back(f);
@@ -492,10 +492,10 @@ template <> void IsomH2Representation::setNiceRepresentation()
     H2Point p1, p2;
     H2Geodesic L1, L2;
 
-    complex I(0.0, 1.0);
+    Complex I(0.0, 1.0);
 
-    complex z1 = 1.0/sqrt(sqrt(2.0));
-    complex u = complex(1.0,1.0)/sqrt(2.0);
+    Complex z1 = 1.0/sqrt(sqrt(2.0));
+    Complex u = Complex(1.0,1.0)/sqrt(2.0);
 
     p1.setDiskCoordinate(z1);
     p2.setDiskCoordinate(u*z1);

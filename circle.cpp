@@ -4,19 +4,19 @@ Circle::Circle()
 {
 }
 
-Circle::Circle(complex center, double radius): center(center), radius(radius)
+Circle::Circle(Complex center, double radius): center(center), radius(radius)
 {
 }
 
 
-void Circle::getCenterAndRadius(complex & center, double & radius) const
+void Circle::getCenterAndRadius(Complex & center, double & radius) const
 {
     center = this->center;
     radius = this->radius;
     return;
 }
 
-complex Circle::getCenter() const
+Complex Circle::getCenter() const
 {
     return center;
 }
@@ -26,19 +26,19 @@ double Circle::getRadius() const
     return radius;
 }
 
-complex Circle::pointAtAngle(double angle) const
+Complex Circle::pointAtAngle(double angle) const
 {
-    return center + radius*exp(angle*complex(0.0, 1.0));
+    return center + radius*exp(angle*I);
 }
 
-bool Circle::contains(const complex & z) const
+bool Circle::contains(const Complex & z) const
 {
     return (norm(center - z) == radius*radius);
 }
 
-bool intersectCircles(Circle &C1, Circle &C2, complex & out1, complex & out2)
+bool intersectCircles(Circle &C1, Circle &C2, Complex & out1, Complex & out2)
 {
-    complex c1, c2;
+    Complex c1, c2;
     double r1, r2;
     C1.getCenterAndRadius(c1,r1);
     C2.getCenterAndRadius(c2,r2);
@@ -52,9 +52,9 @@ bool intersectCircles(Circle &C1, Circle &C2, complex & out1, complex & out2)
     return true;
 }
 
-bool intersectCircleAndLine(Circle &C, PlanarLine &L, complex &out1, complex &out2)
+bool intersectCircleAndLine(Circle &C, PlanarLine &L, Complex &out1, Complex &out2)
 {
-    complex center, point, direction;
+    Complex center, point, direction;
     double radius, c1,c2,d1,d2,p1,p2;
     C.getCenterAndRadius(center,radius);
     L.getPointAndDirection(point,direction);

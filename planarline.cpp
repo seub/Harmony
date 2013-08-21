@@ -4,7 +4,7 @@ PlanarLine::PlanarLine()
 {
 }
 
-PlanarLine::PlanarLine(const complex & p1, const complex & p2)
+PlanarLine::PlanarLine(const Complex & p1, const Complex & p2)
 {
     if (p1 == p2)
     {
@@ -17,14 +17,14 @@ PlanarLine::PlanarLine(const complex & p1, const complex & p2)
 }
 
 
-void PlanarLine::getPointAndDirection(complex & point, complex & direction) const
+void PlanarLine::getPointAndDirection(Complex & point, Complex & direction) const
 {
     point = this->point;
     direction = this->direction;
     return;
 }
 
-void PlanarLine::setPointAndDirection(complex & point, complex & direction)
+void PlanarLine::setPointAndDirection(Complex & point, Complex & direction)
 {
     if (direction == 0.0)
     {
@@ -36,7 +36,7 @@ void PlanarLine::setPointAndDirection(complex & point, complex & direction)
     return;
 }
 
-void PlanarLine::setPerpendicularBisector(const complex &z1, const complex &z2)
+void PlanarLine::setPerpendicularBisector(const Complex &z1, const Complex &z2)
 {
     if  (z1 == z2)
     {
@@ -44,23 +44,23 @@ void PlanarLine::setPerpendicularBisector(const complex &z1, const complex &z2)
         throw(0);
     }
     point = (z1 + z2) / 2.0;
-    direction = complex(0.0, 1.0)*(z1 - z2) / 2.0;
+    direction = I*(z1 - z2) / 2.0;
     return;
 }
 
-bool PlanarLine::contains(const complex & z) const
+bool PlanarLine::contains(const Complex & z) const
 {
     return (imag((z - point) / direction) == 0);
 }
 
-complex PlanarLine::getDirection() const
+Complex PlanarLine::getDirection() const
 {
     return direction;
 }
 
-bool intersectionPlanarLines(const PlanarLine & l1, const PlanarLine & l2, complex & output)
+bool intersectionPlanarLines(const PlanarLine & l1, const PlanarLine & l2, Complex & output)
 {
-    complex p1, p2, d1, d2;
+    Complex p1, p2, d1, d2;
     l1.getPointAndDirection(p1,d1);
     l2.getPointAndDirection(p2,d2);
     if (imag(d1 / d2) == 0.0 && !l2.contains(p1))

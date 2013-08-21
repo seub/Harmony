@@ -7,6 +7,8 @@
 
 class H2TriangleSubdivision
 {
+    friend class H2Mesh;
+    friend class H2MeshConstructor;
     friend std::ostream & operator<<(std::ostream & out, const H2TriangleSubdivision &T);
     friend void swap(H2TriangleSubdivision &first, H2TriangleSubdivision &second);
 
@@ -20,18 +22,25 @@ public:
 
     int getTotalDepth() const;
     bool isEmpty() const;
+
     static int nbOfLines(int depth);
     static int nbOfPoints(int depth);
+    static int nbOfInteriorPoints(int depth);
+    static int nbOfBoundaryPoints(int depth);
+    std::vector<int> sidePointsIndices(int vertexIndex1, int vertexIndex2) const;
+
     H2Triangle getTriangle() const;
     std::vector<H2Point> getPoints() const;
 
     bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle) const;
 
+
+
     std::vector< std::vector<int> > neighborsIndices() const;
     std::vector<bool> areBoundaryPoints() const;
 
 private:
-    void construct(int aIndex, int bIndex, int cIndex, int depth, int totalDepth, std::vector<H2Point> *points,
+    void construct(int aIndex, int bIndex, int cIndex, int depth, int totalDepth, std::vector<H2Point> *points, std::vector<int> *meshIndices,
                    std::vector<bool> &filled, int an, int bn, int cn, int ap, int bp, int cp); // Base (pseudo)constructor;
     void copy(const H2TriangleSubdivision &other, std::vector<H2Point> *points);
 
@@ -41,6 +50,7 @@ private:
     int aIndex, bIndex, cIndex;
     int depth, totalDepth;
     std::vector<H2Point> *points;
+    std::vector<int> *meshIndices;
     bool empty;
 };
 

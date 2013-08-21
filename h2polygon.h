@@ -19,7 +19,7 @@ public:
     void removeLastVertex();
     void clearVertices();
 
-    int getNumberOfVertices() const;
+    int nbVertices() const;
     H2Point getVertex(int index) const;
     std::vector<H2Point> getVertices() const;
     std::vector<Complex> getVerticesInDiskModel() const;

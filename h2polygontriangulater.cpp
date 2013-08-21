@@ -162,8 +162,9 @@ void TriangulationTriangle::getVertices(int &i1, int &i2, int &i3) const
 
 void H2PolygonTriangulater::completeCutsAndSides()
 {
-    int N = polygon->getNumberOfVertices();
+    int N = polygon->nbVertices();
     sideTrianglesIndices.resize(N);
+    sideTrianglesBoundarySideIndices.resize(N);
 
     std::vector<int> left;
     std::vector<int> right;
@@ -193,6 +194,7 @@ void H2PolygonTriangulater::completeCutsAndSides()
                 std::cout << "ERROR in H2PolygonTriangulater::completeCutsAndSides: side already affected" << std::endl;
             }
             sideTrianglesIndices[i1] = i;
+            sideTrianglesBoundarySideIndices[i1] = 0;
             filledSides[i1] = true;
         }
         else
@@ -211,6 +213,7 @@ void H2PolygonTriangulater::completeCutsAndSides()
                 std::cout << "ERROR in H2PolygonTriangulater::completeCutsAndSides: side already affected" << std::endl;
             }
             sideTrianglesIndices[i2] = i;
+            sideTrianglesBoundarySideIndices[i2] = 1;
             filledSides[i2] = true;
         }
         else
@@ -229,6 +232,7 @@ void H2PolygonTriangulater::completeCutsAndSides()
                 std::cout << "ERROR in H2PolygonTriangulater::completeCutsAndSides: side already affected" << std::endl;
             }
             sideTrianglesIndices[N-1] = i;
+            sideTrianglesBoundarySideIndices[N-1] = 2;
             filledSides[N-1] = true;
         }
         else
@@ -282,7 +286,7 @@ void H2PolygonTriangulater::completeCutsAndSides()
 void H2PolygonTriangulater::triangulate()
 {
     std::vector<int> indices;
-    int i, N = polygon->getNumberOfVertices();
+    int i, N = polygon->nbVertices();
     indices.resize(N);
     for (i=0; i<N; i++)
     {
@@ -306,4 +310,56 @@ std::vector<H2Triangle> H2PolygonTriangulater::getTriangles() const
         res.push_back(H2Triangle(polygon->getVertex(i1), polygon->getVertex(i2), polygon->getVertex(i3)));
     }
     return res;
+}
+
+std::vector<TriangulationCut> H2PolygonTriangulater::getCuts() const
+{
+    return cuts;
+}
+
+void H2PolygonTriangulater::adjacentSidesIndices(int cutIndex, int &outputIndexLeft1, int &outputIndexLeft2,
+                                                    int &outputIndexRight1, int &outputIndexRight2) const
+{
+    bool failLeft = true;
+
+    TriangulationCut cut = cuts[cutIndex];
+    TriangulationTriangle triangleLeft = triangles[cut.leftTriangleIndex];
+    TriangulationTriangle triangleRight = triangles[cut.rightTriangleIndex];
+    if (triangleLeft.vertexIndex1 == cut.vertexIndex1)
+    {
+        outputIndexLeft1 = 0;
+        if (triangleLeft.vertexIndex3 == cut.vertexIndex2)
+        {
+            outputIndexLeft2 = 2;
+            failLeft = false;
+        }
+    }
+
+
+    bool failRight = true;
+
+    if (triangleRight.vertexIndex1 == cut.vertexIndex1)
+    {
+        outputIndexRight1 = 0;
+        if (triangleRight.vertexIndex2 == cut.vertexIndex2)
+        {
+            outputIndexRight2 = 1;
+            failRight = false;
+        }
+    }
+    else if (triangleRight.vertexIndex2 == cut.vertexIndex1)
+    {
+        outputIndexRight1 = 1;
+        if (triangleRight.vertexIndex3 == cut.vertexIndex2)
+        {
+            outputIndexRight2 = 2;
+            failRight = false;
+        }
+    }
+
+    if (failLeft || failRight)
+    {
+        std::cout << "ERROR in H2PolygonTriangulater::getAdjacentSidesIndices: failed" << std::endl;
+    }
+    return;
 }

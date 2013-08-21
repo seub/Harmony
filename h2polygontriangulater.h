@@ -9,6 +9,7 @@
 class TriangulationCut
 {
     friend class H2PolygonTriangulater;
+    friend class H2MeshConstructor;
 
 private:
     TriangulationCut() {}
@@ -42,9 +43,12 @@ class H2Triangle;
 
 class H2PolygonTriangulater
 {
+    friend class H2MeshConstructor;
+
 public:
     H2PolygonTriangulater(const H2Polygon * const polygon);
     std::vector<H2Triangle> getTriangles() const;
+    std::vector<TriangulationCut> getCuts() const;
 
 private:
     H2PolygonTriangulater(const H2PolygonTriangulater &);
@@ -61,12 +65,15 @@ private:
     void sortTriangles();
     void completeCutsAndSides();
 
+    void adjacentSidesIndices(int cutIndex, int &outputIndexLeft1, int &outputIndexLeft2, int &outputIndexRight1, int &outputIndexRight2) const;
+
 
     const H2Polygon * const polygon;
     bool orientation;
     std::vector<TriangulationCut> cuts;
     std::vector<TriangulationTriangle> triangles;
     std::vector<int> sideTrianglesIndices;
+    std::vector<int> sideTrianglesBoundarySideIndices;
 };
 
 #endif // H2POLYGONTRIANGULATER_H

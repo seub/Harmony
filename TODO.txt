@@ -32,3 +32,5 @@ passer à C++11
 utiliser V = {1, 2}
 utiliser for(auto i : V) ou for(auto &i : V)
 utiliser std::vector<int> V(3);
+
+écrire classe h2meshconstructor

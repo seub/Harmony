@@ -11,26 +11,40 @@ class H2Isometry;
 class H2MeshPoint
 {
     friend class H2Mesh;
+    friend class H2MeshConstructor;
+
 public:
+    H2MeshPoint(int subdivisionIndex, int indexInSubdivision, bool cutPoint = false, int subdivisionIndexRight = -1,
+                int indexInSubdivisionRight = -1, bool boundaryPoint = false, int side = -1, bool vertexPoint = false, int vertexIndex = -1);
 
 private:
-    H2MeshPoint(int SubdivisionIndex, int IndexInSubdivision, const std::vector<int> &neighborsIndices, bool exterior) :
-        SubdivisionIndex(SubdivisionIndex), IndexInSubdivision(IndexInSubdivision), neighborsIndices(neighborsIndices), exterior(exterior) {}
-    int SubdivisionIndex;
-    int IndexInSubdivision;
+    int subdivisionIndex;
+    int indexInSubdivision;
     std::vector<int> neighborsIndices;
 
-    // For exterior points
-    bool exterior;
-    int sidePairingIndex;
+    // For points on cuts
+    bool cutPoint;
+    int subdivisionIndexRight;
+    int indexInSubdivisionRight;
+
+    // For boundary points
+    bool boundaryPoint;
+    int side;
+    std::vector<bool> isNeighborOutside;
+    std::vector<int> neighborsSidePairings;
+
+    // For vertex points
+    bool vertexPoint;
+    int vertexIndex;
 };
 
 
 class H2Mesh
 {
+    friend class H2MeshConstructor;
+
 public:
     H2Mesh(const IsomH2Representation & rho, int depth);
-
 
 
 private:    
@@ -41,6 +55,7 @@ private:
     std::vector<H2Isometry> sidePairings;
 
     std::vector<H2TriangleSubdivision> subdivisions;
+
     std::vector<H2MeshPoint> meshPoints;
 };
 

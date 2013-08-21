@@ -88,7 +88,7 @@ void CanvasDelegate::resetView()
     return;
 }
 
-void CanvasDelegate::ComplexToPixelCoordinates(int &xOut, int &yOut, complex z) const
+void CanvasDelegate::ComplexToPixelCoordinates(int &xOut, int &yOut, Complex z) const
 {
     double x = real(z), y = imag(z);
     xOut = Tools::intRound((x - xMin)*scaleX);
@@ -96,11 +96,11 @@ void CanvasDelegate::ComplexToPixelCoordinates(int &xOut, int &yOut, complex z) 
     return;
 }
 
-complex CanvasDelegate::PixelToComplexCoordinates(int x, int y) const
+Complex CanvasDelegate::PixelToComplexCoordinates(int x, int y) const
 {
     double a = xMin + (x/scaleX);
     double b = yMax - (y/scaleY);
-    return complex(a,b);
+    return Complex(a,b);
 }
 
 
@@ -141,7 +141,7 @@ void CanvasDelegate::shift(int x, int y)
     return;
 }
 
-void CanvasDelegate::drawPoint(const complex &z, const QColor &color, int width)
+void CanvasDelegate::drawPoint(const Complex &z, const QColor &color, int width)
 {
     int x, y;
     ComplexToPixelCoordinates(x, y, z);
@@ -152,7 +152,7 @@ void CanvasDelegate::drawPoint(const complex &z, const QColor &color, int width)
     return;
 }
 
-void CanvasDelegate::drawSegment(const complex &endpoint1, const complex &endpoint2, const QColor &color, int width)
+void CanvasDelegate::drawSegment(const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width)
 {
     int x1, y1, x2, y2;
     ComplexToPixelCoordinates(x1, y1, endpoint1);
@@ -164,11 +164,11 @@ void CanvasDelegate::drawSegment(const complex &endpoint1, const complex &endpoi
     return;
 }
 
-void CanvasDelegate::drawCircle(const complex &center, double radius, const QColor &color, int width)
+void CanvasDelegate::drawCircle(const Complex &center, double radius, const QColor &color, int width)
 {
     int x1, y1, x2, y2;
-    complex firstCorner = center + radius*complex(-1.0,1.0);
-    complex secondCorner = center + radius*complex(1.0, - 1.0);
+    Complex firstCorner = center + radius*Complex(-1.0,1.0);
+    Complex secondCorner = center + radius*Complex(1.0, - 1.0);
     ComplexToPixelCoordinates(x1, y1, firstCorner);
     ComplexToPixelCoordinates(x2, y2, secondCorner);
     pen->setColor(color);
@@ -180,19 +180,19 @@ void CanvasDelegate::drawCircle(const complex &center, double radius, const QCol
 
 void CanvasDelegate::drawCircle(const Circle &C, const QColor &color, int width)
 {
-    complex center;
+    Complex center;
     double radius;
     C.getCenterAndRadius(center, radius);
     drawCircle(center, radius, color, width);
     return;
 }
 
-bool CanvasDelegate::dealWithAlmostStraightArc(const complex &center, double radius, double angle1, double angle2, const QColor &color, int width)
+bool CanvasDelegate::dealWithAlmostStraightArc(const Complex &center, double radius, double angle1, double angle2, const QColor &color, int width)
 {
     double angleMin = M_PI/(180*16);
     double scale = scaleX > scaleY ? scaleX : scaleY;
     int pixelError = 8.0;
-    complex z1, z2;
+    Complex z1, z2;
     if(radius*scale*angleMin > pixelError)
     {
         intersectsCanvasBoundary(center, radius, angle1, angle2, z1, z2);
@@ -205,11 +205,11 @@ bool CanvasDelegate::dealWithAlmostStraightArc(const complex &center, double rad
     }
 }
 
-void CanvasDelegate::intersectsCanvasBoundary(const complex &center, double radius, double angle1, double angle2, complex &zOut1, complex &zOut2)
+void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radius, double angle1, double angle2, Complex &zOut1, Complex &zOut2)
 {
     //std::cout << "Entering CanvasDelegate::intersectsCanvasBoundary" << std::endl;
 
-    std::vector<complex> intersectionsTemp, intersections;
+    std::vector<Complex> intersectionsTemp, intersections;
     double xMax = xMin + sizeX/scaleX;
     double yMin = yMax - sizeY/scaleY;
 
@@ -217,9 +217,9 @@ void CanvasDelegate::intersectsCanvasBoundary(const complex &center, double radi
 
     double x, y, D;
 
-    complex I(0.0, 1.0);
-    complex z1 = center + radius*exp(angle1*I);
-    complex z2 = center + radius*exp(angle2*I);
+    Complex I(0.0, 1.0);
+    Complex z1 = center + radius*exp(angle1*I);
+    Complex z2 = center + radius*exp(angle2*I);
 
     x = xMin;
     D = radius*radius - (x-c1)*(x-c1);
@@ -229,14 +229,14 @@ void CanvasDelegate::intersectsCanvasBoundary(const complex &center, double radi
         y = c2 + D;
         if (y > yMin && y < yMax)
         {
-            intersectionsTemp.push_back(complex(x,y));
+            intersectionsTemp.push_back(Complex(x,y));
         }
         else
         {
             y = c2 - D;
             if (y > yMin && y < yMax)
             {
-                intersectionsTemp.push_back(complex(x,y));
+                intersectionsTemp.push_back(Complex(x,y));
             }
         }
     }
@@ -249,14 +249,14 @@ void CanvasDelegate::intersectsCanvasBoundary(const complex &center, double radi
         y = c2 + D;
         if (y > yMin && y < yMax)
         {
-            intersectionsTemp.push_back(complex(x,y));
+            intersectionsTemp.push_back(Complex(x,y));
         }
         else
         {
             y = c2 - D;
             if (y > yMin && y < yMax)
             {
-                intersectionsTemp.push_back(complex(x,y));
+                intersectionsTemp.push_back(Complex(x,y));
             }
         }
     }
@@ -269,14 +269,14 @@ void CanvasDelegate::intersectsCanvasBoundary(const complex &center, double radi
         x = c1 + D;
         if (x > xMin && x < xMax)
         {
-            intersectionsTemp.push_back(complex(x,y));
+            intersectionsTemp.push_back(Complex(x,y));
         }
         else
         {
             x = c1 - D;
             if (x > xMin && x < xMax)
             {
-                intersectionsTemp.push_back(complex(x,y));
+                intersectionsTemp.push_back(Complex(x,y));
             }
         }
     }
@@ -289,20 +289,20 @@ void CanvasDelegate::intersectsCanvasBoundary(const complex &center, double radi
         x = c1 + D;
         if (x > xMin && x < xMax)
         {
-            intersectionsTemp.push_back(complex(x,y));
+            intersectionsTemp.push_back(Complex(x,y));
         }
         else
         {
             x = c1 - D;
             if (x > xMin && x < xMax)
             {
-                intersectionsTemp.push_back(complex(x,y));
+                intersectionsTemp.push_back(Complex(x,y));
             }
         }
     }
 
     unsigned int i;
-    complex u = z1 - center, v = z2 - center, w, w2;
+    Complex u = z1 - center, v = z2 - center, w, w2;
     for (i=0; i<intersectionsTemp.size(); i++)
     {
         w = intersectionsTemp[i] - center;
@@ -361,7 +361,7 @@ void CanvasDelegate::intersectsCanvasBoundary(const complex &center, double radi
     return;
 }
 
-void CanvasDelegate::drawArcCounterClockwise(const complex &center, double radius, double angle1, double angle2, const QColor &color, int width)
+void CanvasDelegate::drawArcCounterClockwise(const Complex &center, double radius, double angle1, double angle2, const QColor &color, int width)
 {
     if (dealWithAlmostStraightArc(center, radius, angle1, angle2, color, width))
     {
@@ -370,8 +370,8 @@ void CanvasDelegate::drawArcCounterClockwise(const complex &center, double radiu
     else
     {
         int x1, y1, x2, y2;
-        complex firstCorner = center + radius*complex(-1.0, 1.0);
-        complex secondCorner = center + radius*complex(1.0, -1.0);
+        Complex firstCorner = center + radius*Complex(-1.0, 1.0);
+        Complex secondCorner = center + radius*Complex(1.0, -1.0);
         ComplexToPixelCoordinates(x1, y1, firstCorner);
         ComplexToPixelCoordinates(x2, y2, secondCorner);
         pen->setColor(color);
@@ -384,7 +384,7 @@ void CanvasDelegate::drawArcCounterClockwise(const complex &center, double radiu
     return;
 }
 
-void CanvasDelegate::drawSmallerArc(const complex &center, double radius, double angle1,
+void CanvasDelegate::drawSmallerArc(const Complex &center, double radius, double angle1,
                                     double angle2, const QColor &color, int width)
 {
     double d = angle2 - angle1;
@@ -402,7 +402,7 @@ void CanvasDelegate::drawSmallerArc(const complex &center, double radius, double
 
 void CanvasDelegate::drawSmallerArc(const Circle &C, double angle1, double angle2, const QColor &color, int width)
 {
-    complex center;
+    Complex center;
     double radius;
     C.getCenterAndRadius(center, radius);
     drawSmallerArc(center, radius, angle1, angle2, color, width);
@@ -412,7 +412,7 @@ void CanvasDelegate::drawSmallerArc(const Circle &C, double angle1, double angle
 void CanvasDelegate::drawArcCounterClockwise(const Circle &C, double angle1, double angle2, const QColor &color, int width)
 {
     //std::cout << "Entering CanvasDelegate::drawArc" << std::endl;
-    complex center;
+    Complex center;
     double radius;
     C.getCenterAndRadius(center, radius);
     drawArcCounterClockwise(center, radius, angle1, angle2, color, width);

@@ -83,6 +83,8 @@ H2TriangleSubdivision::H2TriangleSubdivision(const H2Point &a, const H2Point &b,
     int L = nbOfLines(depth), N = nbOfPoints(depth);
     points = new std::vector<H2Point>;
     points->resize(N);
+    meshIndices = new std::vector<int>;
+    meshIndices->resize(N);
     std::vector<bool> filled;
     filled.resize(N);
     std::fill(filled.begin(), filled.end(), false);
@@ -99,7 +101,7 @@ H2TriangleSubdivision::H2TriangleSubdivision(const H2Point &a, const H2Point &b,
     filled[bIndex] = true;
     filled[cIndex] = true;
 
-    construct(aIndex, bIndex, cIndex, depth, depth, points, filled, an, bn, cn, ap, bp, cp);
+    construct(aIndex, bIndex, cIndex, depth, depth, points, meshIndices, filled, an, bn, cn, ap, bp, cp);
 
     /*// Filled count check
     int counter = 0;
@@ -115,7 +117,7 @@ H2TriangleSubdivision::H2TriangleSubdivision(const H2Point &a, const H2Point &b,
 }
 
 void H2TriangleSubdivision::construct(int aIndex, int bIndex, int cIndex, int depth, int totalDepth, std::vector<H2Point> *points,
-                                      std::vector<bool> &filled, int an, int bn, int cn, int ap, int bp, int cp)
+                                      std::vector<int> *meshIndices, std::vector<bool> &filled, int an, int bn, int cn, int ap, int bp, int cp)
 {
     this->aIndex = aIndex;
     this->bIndex = bIndex;
@@ -123,6 +125,7 @@ void H2TriangleSubdivision::construct(int aIndex, int bIndex, int cIndex, int de
     this->depth = depth;
     this->totalDepth = totalDepth;
     this->points = points;
+    this->meshIndices = meshIndices;
 
     if (depth == 0)
     {
@@ -160,10 +163,10 @@ void H2TriangleSubdivision::construct(int aIndex, int bIndex, int cIndex, int de
         C = new H2TriangleSubdivision;
         O = new H2TriangleSubdivision;
 
-        A->construct(aIndex, midabIndex, midacIndex, depth - 1, totalDepth, points, filled, an, midabn, midacn, ap, midabp, midacp);
-        B->construct(midabIndex, bIndex, midbcIndex, depth - 1, totalDepth, points, filled, midabn, bn, midbcn, midabp, bp, midbcp);
-        C->construct(midacIndex, midbcIndex, cIndex, depth - 1, totalDepth, points, filled, midacn, midbcn, cn, midacp, midbcp, cp);
-        O->construct(midbcIndex, midacIndex, midabIndex, depth - 1, totalDepth, points, filled, midbcn, midacn, midabn, midbcp, midacp, midabp);
+        A->construct(aIndex, midabIndex, midacIndex, depth - 1, totalDepth, points, meshIndices, filled, an, midabn, midacn, ap, midabp, midacp);
+        B->construct(midabIndex, bIndex, midbcIndex, depth - 1, totalDepth, points, meshIndices, filled, midabn, bn, midbcn, midabp, bp, midbcp);
+        C->construct(midacIndex, midbcIndex, cIndex, depth - 1, totalDepth, points, meshIndices, filled, midacn, midbcn, cn, midacp, midbcp, cp);
+        O->construct(midbcIndex, midacIndex, midabIndex, depth - 1, totalDepth, points, meshIndices, filled, midbcn, midacn, midabn, midbcp, midacp, midabp);
     }
 
     empty = false;
@@ -199,6 +202,16 @@ int H2TriangleSubdivision::nbOfPoints(int depth)
 {
     int L = nbOfLines(depth);
     return L*(L+1)/2;
+}
+
+int H2TriangleSubdivision::nbOfBoundaryPoints(int depth)
+{
+    return 3*(nbOfLines(depth) - 1);
+}
+
+int H2TriangleSubdivision::nbOfInteriorPoints(int depth)
+{
+    return nbOfPoints(depth) - nbOfBoundaryPoints(depth);
 }
 
 int H2TriangleSubdivision::nbOfLines(int depth)
@@ -322,6 +335,81 @@ std::vector< std::vector<int> > H2TriangleSubdivision::neighborsIndices() const
     }
     neighbors = {j-i-1, j-1};
     res.push_back(neighbors);
+
+    return res;
+}
+
+std::vector<int> H2TriangleSubdivision::sidePointsIndices(int vertexIndex1, int vertexIndex2) const
+{
+    if (depth != totalDepth)
+    {
+        std::cout << "WARNING in H2TriangleSubdivision::SidePointsIndices: not a root subdivision" << std::endl;
+    }
+
+    std::vector<int> res;
+    int L = nbOfLines(totalDepth);
+    res.resize(L);
+
+    int i, k;
+    if (vertexIndex1 == 0 && vertexIndex2 == 1)
+    {
+        k = 0;
+        for (i=0; i<L; i++)
+        {
+            k += i;
+            res[i] = k;
+        }
+    }
+    else if (vertexIndex1 == 1 && vertexIndex2 == 0)
+    {
+        k = 0;
+        for (i=0; i<L; i++)
+        {
+            k += i;
+            res[L-1-i] = k;
+        }
+    }
+    else if (vertexIndex1 == 0 && vertexIndex2 == 2)
+    {
+        k = -1;
+        for (i=0; i<L; i++)
+        {
+            k += i + 1;
+            res[i] = k;
+        }
+    }
+    else if (vertexIndex1 == 2 && vertexIndex2 == 0)
+    {
+        k = -1;
+        for (i=0; i<L; i++)
+        {
+            k += i + 1;
+            res[L-1-i] = k;
+        }
+    }
+    else if (vertexIndex1 == 1 && vertexIndex2 == 2)
+    {
+        k = ((L-1)*L)/2;
+        for (i=0; i<L; i++)
+        {
+            res[i] = k;
+            k++;
+        }
+    }
+    else if (vertexIndex1 == 2 && vertexIndex2 == 1)
+    {
+        k = ((L-1)*L)/2;
+        for (i=0; i<L; i++)
+        {
+            res[L-1-i] = k;
+            k++;
+        }
+    }
+    else
+    {
+        std::cout << "ERROR in H2TriangleSubdivision::SidePointsIndices: wrong indices "
+                  << vertexIndex1 << " and " << vertexIndex2 << std::endl;
+    }
 
     return res;
 }

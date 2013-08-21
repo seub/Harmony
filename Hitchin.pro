@@ -41,7 +41,8 @@ SOURCES += main.cpp \
     h2mesh.cpp \
     h2triangle.cpp \
     h2trianglesubdivision.cpp \
-    h2polygontriangulater.cpp
+    h2polygontriangulater.cpp \
+    h2meshconstructor.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -69,7 +70,8 @@ HEADERS += \
     h2mesh.h \
     h2triangle.h \
     h2trianglesubdivision.h \
-    h2polygontriangulater.h
+    h2polygontriangulater.h \
+    h2meshconstructor.h
 
 OTHER_FILES += \
     TODO.txt
