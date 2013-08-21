@@ -12,6 +12,8 @@ class H2Isometry;
 class H2Polygon
 {
     friend std::ostream & operator<<(std::ostream & out, const H2Polygon &P);
+    friend class GroupRepresentation<H2Isometry>;
+
 public:
     H2Polygon();
 
@@ -24,10 +26,8 @@ public:
     std::vector<H2Point> getVertices() const;
     std::vector<Complex> getVerticesInDiskModel() const;
     std::vector<Complex> getVerticesInKleinModel() const;
-    std::vector<Complex> getVerticesInHyperboloidProjection() const;
 
     void getExtremalCoordinatesInDiskModel(double& xMin, double& xMax, double& yMin, double & yMax) const;
-    void getExtremalCoordinatesInHyperboloidProjection(double & xMin, double & xMax, double & yMin, double & yMax) const;
 
     bool isPositivelyOriented() const;
 
@@ -40,6 +40,7 @@ public:
     bool containsInKleinModel(const Complex & z) const;
     bool constainsInDiskModel(const Complex & z) const;
     bool contains(const H2Point & point) const;
+    bool isConvex() const;
 
     H2GeodesicArc getSide(int index) const;
     std::vector<H2GeodesicArc> getSides() const;
@@ -47,11 +48,12 @@ public:
 
     void optimalMobius(H2Isometry &output) const;
     std::vector<double> getAngles() const;
-    std::vector<double> getPositiveInteriorAngles() const;
+    std::vector<double> getPositiveInteriorAngles() const;    
 
 private:
+    void replaceVertex(int index, const H2Point &newVertex);
+
     std::vector<H2Point> vertices;
-    std::vector<Complex> verticesInKleinModel;
 };
 
 #endif // H2POLYGON_H

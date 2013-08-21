@@ -26,7 +26,7 @@ std::string convertToString(int i);
 std::vector<int> findStringInList(const std::string &s, const std::vector<std::string> & list);
 bool containsDuplicates(const std::vector<std::string> & list);
 bool haveCommonElements(const std::vector<std::string> & list1, const std::vector<std::string> & list2);
-
+template <typename T> int sgn(T val) {return (T(0) < val) - (val < T(0));}
 }
 
 std::ostream & operator<<(std::ostream &out, const Complex &z);

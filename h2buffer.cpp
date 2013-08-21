@@ -119,7 +119,6 @@ void H2Buffer::addElement(const std::vector<H2Polygon> &V, const QColor &color, 
 
 void H2Buffer::addElement(const H2TriangleSubdivision &T, const QColor &color, int width)
 {
-    subdivision = T;
     int L = T.nbOfLines(T.getTotalDepth());
     std::vector<H2Point> Tpoints = T.getPoints();
 
@@ -138,7 +137,15 @@ void H2Buffer::addElement(const H2TriangleSubdivision &T, const QColor &color, i
     }
 }
 
-
+void H2Buffer::addElement(const H2Mesh &mesh, const QColor &color, int width)
+{
+    this->mesh = mesh;
+    const std::vector<H2TriangleSubdivision> & subdivisions = mesh.getSubdivisions();
+    for (const auto &S : subdivisions)
+    {
+        addElement(S, color, width);
+    }
+}
 
 
 

@@ -7,27 +7,24 @@
 H2Polygon::H2Polygon()
 {
     vertices.clear();
-    vertices.reserve(12);
+    vertices.reserve(18);
 }
 
 void H2Polygon::addVertex(const H2Point &p)
 {
     vertices.push_back(p);
-    verticesInKleinModel.push_back(p.getKleinCoordinate());
     return;
 }
 
 void H2Polygon::removeLastVertex()
 {
     vertices.pop_back();
-    verticesInKleinModel.pop_back();
     return;
 }
 
 void H2Polygon::clearVertices()
 {
     vertices.clear();
-    verticesInKleinModel.clear();
     return;
 }
 
@@ -48,80 +45,28 @@ std::vector<H2Point> H2Polygon::getVertices() const
 
 std::vector<Complex> H2Polygon::getVerticesInDiskModel() const
 {
-    int sizeList = nbVertices();
-    std::vector<Complex> complexList(sizeList);
-    for(int j=0;j<=sizeList - 1;j++)
+    int j, N = vertices.size();
+    std::vector<Complex> res(N);
+
+    for(j=0; j<N; ++j)
     {
-        complexList[j] = vertices[j].getDiskCoordinate();
+        res[j] = vertices[j].getDiskCoordinate();
     }
-    return complexList;
+    return res;
 }
 
 std::vector<Complex> H2Polygon::getVerticesInKleinModel() const
 {
-    return verticesInKleinModel;
+    unsigned int i, N = vertices.size();
+    std::vector<Complex> res(N);
+
+    for (i=0; i<N; i++)
+    {
+        res[i] = vertices[i].getKleinCoordinate();
+    }
+    return res;
 }
 
-std::vector<Complex> H2Polygon::getVerticesInHyperboloidProjection() const
-{
-    std::vector<Complex> output;
-    for (unsigned int i=0; i<vertices.size(); i++)
-    {
-        output.push_back(vertices[i].getHyperboloidProjection());
-    }
-    return output;
-}
-
-/*void H2Polygon::getExtremalCoordinatesInHyperboloidProjection(double &xMin, double &yMin, double &xMax, double &yMax) const
-{
-    complex z = vertices[0].getHyperboloidProjection();
-    xMin = real(z);
-    xMax = real(z);
-    yMin = imag(z);
-    yMax = imag(z);
-    double xmin,xmax,ymin,ymax;
-    std::vector<H2GeodesicArc> sides = getSides();
-    for (unsigned int j=0; j<vertices.size(); j++)
-    {
-        sides[j].getExtremalCoordinatesInHyperboloidProjection(xmin,xmax,ymin,ymax);
-        xMin = std::min(xmin,xMin);
-        yMin = std::min(ymin,yMin);
-        xMax = std::max(xmax,xMax);
-        yMax = std::max(ymax,yMax);
-    }
-    re*/
-
-void H2Polygon::getExtremalCoordinatesInHyperboloidProjection(double &xMin, double &xMax, double &yMin, double &yMax) const
-{
-    Complex z = vertices[0].getHyperboloidProjection();
-    xMin = real(z);
-    xMax = real(z);
-    yMin = imag(z);
-    yMax = imag(z);
-    for (unsigned int j=1; j<vertices.size(); j++)
-    {
-        z = vertices[j].getHyperboloidProjection();
-        //std::cout << "z = " << z << std::endl;
-        if (real(z) < xMin)
-        {
-            xMin = real(z);
-        }
-        if (imag(z) < yMin)
-        {
-            yMin = imag(z);
-        }
-        if (real(z) > xMax)
-        {
-            xMax = real(z);
-        }
-        if (imag(z) > yMax)
-        {
-            yMax = imag(z);
-        }
-        //std::cout << "xMin, xMax, yMin, yMax: " << xMin << ", " << xMax << ", " << yMin << ", " << yMax << std::endl;
-    }
-    return;
-}
 
 void H2Polygon::getExtremalCoordinatesInDiskModel(double &xMin, double &xMax, double &yMin, double &yMax) const
 {
@@ -132,9 +77,9 @@ void H2Polygon::getExtremalCoordinatesInDiskModel(double &xMin, double &xMax, do
     
     double x, y;
     Complex z;
-    for (unsigned int i=0; i<vertices.size(); i++)
+    for (const auto &p : vertices)
     {
-        z = vertices[i].getDiskCoordinate();
+        z = p.getDiskCoordinate();
         x = real(z);
         y = imag(z);
         if (x < xMin)
@@ -157,8 +102,11 @@ void H2Polygon::getExtremalCoordinatesInDiskModel(double &xMin, double &xMax, do
     return;
 }
 
+
 bool H2Polygon::isPositivelyOriented() const
 {
+    std::vector<Complex> verticesInKleinModel = getVerticesInKleinModel();
+
     Complex z1 = verticesInKleinModel.back();
     Complex z2 = verticesInKleinModel.front();
     double x = 0.5*(real(z1) + real(z2)), y = 0.5*(imag(z1) + imag(z2));
@@ -167,8 +115,8 @@ bool H2Polygon::isPositivelyOriented() const
     double x1, x2, y1, y2;
 
     int nbIntersections = 0;
-    unsigned int i;
-    for (i=0; i+1<verticesInKleinModel.size(); i++)
+    int i, N = verticesInKleinModel.size();
+    for (i=0; i+1<N; ++i)
     {
         w1 = verticesInKleinModel[i];
         w2 = verticesInKleinModel[i+1];
@@ -196,59 +144,70 @@ bool H2Polygon::isPositivelyOriented() const
                 }
             }
         }
-
     }
 
     return (nbIntersections % 2 == 1) ^ (real(z1) > real(z2));
-
 }
 
 H2GeodesicArc H2Polygon::getSide(int index) const
 {
-    int sizeList = nbVertices();
-    if(index < sizeList - 1)
+    int N = vertices.size();
+    if(index + 1 < N)
     {
         return H2GeodesicArc(vertices[index],vertices[index + 1]);
     }
-    else if(index == sizeList - 1)
+    else if(index + 1 == N)
     {
         return H2GeodesicArc(vertices[index],vertices[0]);
     }
     else
     {
-        std::cout << "Whoa this polygon doesn't have that many sides!" << std::endl;
+        std::cout << "ERROR in H2Polygon::isPositivelyOriented: wrong index" << std::endl;
         throw(0);
     }
 }
 
 std::vector<H2GeodesicArc> H2Polygon::getSides() const
 {
-    int sizeList = nbVertices();
-    std::vector<H2GeodesicArc> arcList(sizeList);
-    for(int j=0;j<=sizeList - 1;j++)
+    int i, N = nbVertices();
+
+    H2Point current, next = vertices[0];
+    std::vector<H2GeodesicArc> res(N);
+
+    for(i=0; i+1<N; ++i)
     {
-        arcList[j] = getSide(j);
+        current = next;
+        next = vertices[i+1];
+        res[i] = H2GeodesicArc(current, next);
     }
-    return arcList;
+
+    current = next;
+    next = vertices.front();
+    res[i] = H2GeodesicArc(current, next);
+
+    return res;
 }
 
 std::vector<H2Geodesic> H2Polygon::getCompletedSides() const
 {
-    int sizeList = nbVertices();
-    std::vector<H2Geodesic> arcList(sizeList);
-    for(int j=0;j<=sizeList - 1;j++)
+    std::vector<H2GeodesicArc> sides = getSides();
+    std::vector<H2Geodesic> res(sides.size());
+
+    int i=0;
+    for(const auto &s : sides)
     {
-        arcList[j] = getSide(j).getGeodesic();
+        res[i] = s.getGeodesic();
+        ++i;
     }
-    return arcList;
+    return res;
 }
 
 double H2Polygon::norm0() const
 {
     double res = 0;
-    for (unsigned int i=0; i<vertices.size(); i++)
+    for (const auto &v : vertices)
     {
-        res += norm(vertices[i].getDiskCoordinate());
+        res += norm(v.getDiskCoordinate());
     }
     return res;
 }
@@ -256,27 +215,27 @@ double H2Polygon::norm0() const
 double H2Polygon::norm1() const
 {
     double res = norm(vertices.front().getDiskCoordinate() - vertices.back().getDiskCoordinate());
-    for (unsigned int i=0; i<vertices.size()-1; i++)
+    for (unsigned int i=0; i+1<vertices.size(); ++i)
     {
         res += norm(vertices[i+1].getDiskCoordinate() - vertices[i].getDiskCoordinate());
     }
     return res;
 }
 
+
 double H2Polygon::norm2() const
 {
+    std::vector<Complex> verticesInKleinModel = getVerticesInKleinModel();
     double res = 0;
     Complex z1, z2, z3;
-    z1= vertices.front().getKleinCoordinate();
-    z2 = vertices.back().getKleinCoordinate();
+    z1= verticesInKleinModel.front();
+    z2 = verticesInKleinModel.back();
     Complex u = conj(z2 - z1);
     
-    
-    unsigned int i;
-    for (i=0 ; i <vertices.size()-1; i++)
+
+    for (const auto &z : verticesInKleinModel)
     {
-        z3 = vertices[i].getKleinCoordinate();
-        res += std::abs(imag((z3 - z1) *  u));
+        res += std::abs(imag((z - z1) *  u));
     }
     return 2.0/res;
 }
@@ -284,13 +243,16 @@ double H2Polygon::norm2() const
 double H2Polygon::norm3() const
 {
     double average = norm1()/vertices.size();
-    
-    double diff = norm(vertices.front().getDiskCoordinate() - vertices.back().getDiskCoordinate()) - average;
+
+    Complex current = vertices.back().getDiskCoordinate(), next = vertices[0].getDiskCoordinate();
+    double diff = norm(next - current) - average;
     double res = diff*diff;
     
-    for (unsigned int i=1; i<vertices.size()-1; i++)
+    for (unsigned int i=0; i+1<vertices.size(); ++i)
     {
-        diff = norm(vertices[i+1].getDiskCoordinate() - vertices[i].getDiskCoordinate()) - average;
+        current = next;
+        next = vertices[i+1].getDiskCoordinate();
+        diff = norm(next - current) - average;
         res += diff*diff;
     }
     return res;
@@ -299,9 +261,9 @@ double H2Polygon::norm3() const
 double H2Polygon::norm4() const
 {
     double res = 0;
-    for (unsigned int i=0; i<vertices.size(); i++)
+    for (const auto &v : vertices)
     {
-        res += 1.0/(1.0-norm(vertices[i].getDiskCoordinate()));
+        res += 1.0/(1.0-norm(v.getDiskCoordinate()));
     }
     return res;
 }
@@ -313,8 +275,7 @@ void H2Polygon::optimalMobius(H2Isometry &output) const
     double A = 0.0;
     Complex T = 0.0;
     Circle Ck;
-    PlanarLine Lk;
-    
+    PlanarLine Lk;    
     
     std::vector<H2Geodesic> geodesics = getCompletedSides();
     
@@ -372,14 +333,12 @@ bool H2Polygon::constainsInDiskModel(const Complex &z) const
     {
         return false;
     }
-    Complex w = 2.0*z/(1.0 + norm(z));
-    return containsInKleinModel(w);
+    return containsInKleinModel(2.0*z/(1.0 + norm(z)));
 }
 
 bool H2Polygon::contains(const H2Point &point) const
 {
-    Complex w = point.getKleinCoordinate();
-    return containsInKleinModel(w);
+    return containsInKleinModel(point.getKleinCoordinate());
 }
 
 bool H2Polygon::containsInKleinModel(const Complex &z) const
@@ -387,6 +346,7 @@ bool H2Polygon::containsInKleinModel(const Complex &z) const
     unsigned int nbIntersections = 0;
     double xLeft, yLeft, xRight, yRight;
     
+    std::vector<Complex> verticesInKleinModel = getVerticesInKleinModel();
     unsigned int n = verticesInKleinModel.size();
     
     if (norm(z)>1.0)
@@ -395,12 +355,12 @@ bool H2Polygon::containsInKleinModel(const Complex &z) const
     }
     
     unsigned int i;
-    for (i=0; i<n; i++)
+    for (i=0; i<n; ++i)
     {
         xLeft = real(verticesInKleinModel[i] - z);
         yLeft = imag(verticesInKleinModel[i]- z);
-        xRight = real(verticesInKleinModel[(i+1)%n] - z);
-        yRight = imag(verticesInKleinModel[(i+1)%n] - z);
+        xRight = real(verticesInKleinModel[i+1==n? 0 : i+1] - z);
+        yRight = imag(verticesInKleinModel[i+1==n? 0 : i+1] - z);
         if (xLeft*xRight<0)
         {
             if (yLeft + xLeft*(yRight - yLeft)/(xLeft - xRight) > 0)
@@ -433,7 +393,6 @@ std::vector<double> H2Polygon::getAngles() const
 {
     std::vector<double> res;
 
-
     res.push_back(H2Point::angle(vertices.back(), vertices.front(), vertices[1]));
     for (unsigned int i=1; i+1<vertices.size(); i++)
     {        
@@ -449,19 +408,47 @@ std::vector<double> H2Polygon::getPositiveInteriorAngles() const
     std::vector<double> angles = getAngles();
     if (isPositivelyOriented())
     {
-        for (unsigned int j=0; j<angles.size(); j++)
+        for (auto &x : angles)
         {
-            angles[j] = 2.0*M_PI - angles[j];
+            x = 2.0*M_PI - x;
         }
     }
     return angles;
 }
 
+bool H2Polygon::isConvex() const
+{
+    std::vector<Complex> verticesInKleinModel = getVerticesInKleinModel();
+    int i, N = verticesInKleinModel.size();
+
+    Complex previous = verticesInKleinModel.back() - verticesInKleinModel.front(), next = verticesInKleinModel[1] - verticesInKleinModel.front();
+    int sign = Tools::sgn(imag(next*conj(previous)));
+
+    for (i=1; i+1<N; i++)
+    {
+        previous = -next;
+        next = verticesInKleinModel[i+1] - verticesInKleinModel[i];
+        if (Tools::sgn(imag(next*conj(previous))) != sign) return false;
+    }
+
+    previous = -next;
+    next = verticesInKleinModel.front() - verticesInKleinModel.back();
+    if (Tools::sgn(imag(next*conj(previous))) != sign) return false;
+
+    return true;
+}
+
+void H2Polygon::replaceVertex(int index, const H2Point &newVertex)
+{
+    vertices[index] = newVertex;
+    return;
+}
+
 std::ostream & operator<<(std::ostream & out, const H2Polygon &P)
 {
-    for(unsigned int i=0; i<(P.vertices).size();i++)
+    for(const auto &v : P.vertices)
     {
-        out << (P.vertices)[i] << std::endl;
+        out << v << std::endl;
     }
     return out;
 }

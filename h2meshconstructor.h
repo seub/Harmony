@@ -18,6 +18,7 @@ private:
     void createInteriorNeighbors();
     void createCutNeighbors();
     void createSideNeighbors();
+    void createExteriorNeighbors();
 
 
     H2Mesh *mesh;

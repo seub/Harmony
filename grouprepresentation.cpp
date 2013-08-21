@@ -1,6 +1,9 @@
 #include "grouprepresentation.h"
 #include "topologicalsurface.h"
 
+template<typename T> GroupRepresentation<T>::GroupRepresentation() : Gamma(0)
+{
+}
 
 template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *Gamma) : Gamma(Gamma)
 {
@@ -123,7 +126,7 @@ template<> GroupRepresentation<SL2CMatrix> GroupRepresentation<SL2CMatrix>::bar(
     return r;
 }
 
-template <> H2Polygon IsomH2Representation::generatePolygon(const H2Point &basePoint) const
+template<> H2Polygon IsomH2Representation::generatePolygon(const H2Point &basePoint) const
 {
     H2Polygon res;
     if (Gamma->isClosedSurfaceGroup())
@@ -148,39 +151,79 @@ template <> H2Polygon IsomH2Representation::generatePolygon(const H2Point &baseP
     }
     else
     {
-        std::cout << "WARNING in IsomH2Representation::generateFundmentalDomainForNormalizedSurfaceGroup:"
-                     " not a closed surface group representation" << std::endl;
+        std::cout << "WARNING in IsomH2Representation::generatePolygon(const H2Point &basePoint):"
+                  << " not a closed surface group representation" << std::endl;
     }
+
+    if (!res.isConvex())
+    {
+        std::cout << "WARNING in IsomH2Representation::generatePolygon(const H2Point &basePoint):"
+                  << " polygon is not convex" << std::endl;
+    }
+
     return res;
 }
 
-template <> H2Polygon IsomH2Representation::generatePolygon(int TilingSize) const
+template <> void IsomH2Representation::generatePolygon(const H2Point &basePoint, H2Polygon &polygon) const
 {
-    double step = 1.0/TilingSize;
+        polygon.replaceVertex(0, basePoint);
+        int genus = generatorImages.size()/2;
+        H2Isometry f = H2Isometry::identity();
+
+        int i, k=0;
+        for (i = 0; i+1<genus; ++i)
+        {
+            f = f*generatorImages[2*i];
+            polygon.replaceVertex(k++, f*basePoint);
+            f = f*generatorImages[2*i+1];
+            polygon.replaceVertex(k++, f*basePoint);
+            f = f*generatorImages[2*i].inverse();
+            polygon.replaceVertex(k++, f*basePoint);
+            f = f*generatorImages[2*i+1].inverse();
+            polygon.replaceVertex(k++, f*basePoint);
+        }
+
+        f = f*generatorImages[2*i];
+        polygon.replaceVertex(k++, f*basePoint);
+        f = f*generatorImages[2*i+1];
+        polygon.replaceVertex(k++, f*basePoint);
+        f = f*generatorImages[2*i].inverse();
+        polygon.replaceVertex(k++, f*basePoint);
+
+    return;
+}
+
+template <> H2Polygon IsomH2Representation::generatePolygon(int tilingSize) const
+{
+    double step = 1.0/tilingSize;
 
     H2Point p;
     H2Polygon polygon, bestPolygon;
+    polygon.vertices.resize(2*generatorImages.size());
     double currentNorm, bestNorm = 1.0/ERROR;
     Complex z;
 
     double x = -1.0, y = -1.0;
-    for(int i=1; i<2*TilingSize; i++)
+    for(int i=1; i<2*tilingSize; i++)
     {
         x += step;
         y = -1.0;
-        for (int j=1; j<2*TilingSize; j++)
+        for (int j=1; j<2*tilingSize; j++)
         {
             y += step;
             z = Complex(x,y);
             if (norm(z) < 1.0)
             {
                 p.setDiskCoordinate(Complex(x, y));
-                polygon = generatePolygon(p);
-                currentNorm = polygon.norm4();
-                if (currentNorm < bestNorm)
+                generatePolygon(p, polygon);
+                if (polygon.isConvex())
                 {
-                    bestNorm = currentNorm;
-                    bestPolygon = polygon;
+                    currentNorm = polygon.norm4();
+                    if (currentNorm < bestNorm)
+                    {
+                        bestNorm = currentNorm;
+                        bestPolygon = polygon;
+                    }
                 }
             }
         }

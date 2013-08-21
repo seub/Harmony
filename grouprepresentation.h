@@ -13,8 +13,10 @@
 template <typename T> class GroupRepresentation
 {    
     template<typename T2> friend std::ostream & operator<<(std::ostream & out, const GroupRepresentation<T2> & rho);
+    friend class FenchelNielsenConstructor;
 
 public:
+    GroupRepresentation();
     GroupRepresentation(DiscreteGroup* Gamma);
     GroupRepresentation(DiscreteGroup* Gamma, std::vector<T> generatorImages);
 
@@ -37,7 +39,7 @@ public:
 
     //Specialization to GroupRepresentation<H2ISometry> for closed surface group (i.e. IsomH2Representation)
     H2Polygon generatePolygon(const H2Point & basePoint) const;
-    H2Polygon generatePolygon(int TilingSize) const;
+    H2Polygon generatePolygon(int tilingSize) const;
 
     std::vector<H2Isometry> getSidePairingsForNormalizedFundamentalDomain() const;
     std::vector<H2Isometry> getSidePairingsNormalizedToDepth(int n) const;
@@ -68,14 +70,17 @@ public:
                                                           const H2Isometry & conjugator);
 
 
-    //private:
+private:
     DiscreteGroup* Gamma;
     std::vector<T> generatorImages;
+
+    void generatePolygon(const H2Point &basePoint, H2Polygon &polygon) const;
 
     static bool checkCompatibilityOfFNcoordinates(const std::vector<double> & lengths, const std::vector<double> & twists);
     static std::vector<IsomH2Representation> getPantsRepresentations(const std::vector<double> & lengths,
                                                                      const std::vector<double> & twists,
                                                                      const std::vector<DiscreteGroup*> & outputDiscreteGroups);
+
 };
 
 

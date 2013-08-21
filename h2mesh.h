@@ -44,8 +44,11 @@ class H2Mesh
     friend class H2MeshConstructor;
 
 public:
-    H2Mesh(const IsomH2Representation & rho, int depth);
+    H2Mesh();
+    H2Mesh(const IsomH2Representation &rho, int depth);
 
+    bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle) const;
+    const std::vector<H2TriangleSubdivision> &getSubdivisions() const;
 
 private:    
     IsomH2Representation rho;

@@ -166,7 +166,7 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
         }
     }
 
-    if (!buffer.subdivision.isEmpty())
+    /*if (!buffer.subdivision.isEmpty())
     {
         H2Point point;
         point.setDiskCoordinate(PixelToComplexCoordinates(mouseEvent->x(), mouseEvent->y()));
@@ -178,7 +178,7 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
         {
             isTriangleHighlighted = false;
         }
-    }
+    }*/
     return;
 }
 

@@ -19,6 +19,7 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     createSideMeshPoints();
     createInteriorNeighbors();
     createSideNeighbors();
+    createExteriorNeighbors();
 }
 
 
@@ -246,8 +247,14 @@ void H2MeshConstructor::createSideNeighbors()
 
         (*meshPoints)[nextIndex].neighborsIndices.push_back(index);
     }
+
+    return;
 }
 
+void H2MeshConstructor::createExteriorNeighbors()
+{
+    return;
+}
 
 
 

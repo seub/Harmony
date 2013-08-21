@@ -17,11 +17,12 @@ H2TriangleSubdivision::H2TriangleSubdivision(const H2TriangleSubdivision &other)
     if (!empty)
     {
         points = new std::vector<H2Point>(*other.points);
-        copy(other, points);
+        meshIndices = new std::vector<int>(*other.meshIndices);
+        copy(other, points, meshIndices);
     }
 }
 
-void H2TriangleSubdivision::copy(const H2TriangleSubdivision &other, std::vector<H2Point> *points)
+void H2TriangleSubdivision::copy(const H2TriangleSubdivision &other, std::vector<H2Point> *points, std::vector<int> *meshIndices)
 {
     aIndex = other.aIndex;
     bIndex = other.bIndex;
@@ -29,6 +30,7 @@ void H2TriangleSubdivision::copy(const H2TriangleSubdivision &other, std::vector
     depth = other.depth;
     totalDepth = other.totalDepth;
     this->points = points;
+    this->meshIndices = meshIndices;
     empty = false;
 
     if (depth == 0)
@@ -45,10 +47,10 @@ void H2TriangleSubdivision::copy(const H2TriangleSubdivision &other, std::vector
         C = new H2TriangleSubdivision;
         O = new H2TriangleSubdivision;
 
-        A->copy(*other.A, points);
-        B->copy(*other.B, points);
-        C->copy(*other.C, points);
-        O->copy(*other.O, points);
+        A->copy(*other.A, points, meshIndices);
+        B->copy(*other.B, points, meshIndices);
+        C->copy(*other.C, points, meshIndices);
+        O->copy(*other.O, points, meshIndices);
     }
 
     return;
@@ -68,6 +70,7 @@ void swap(H2TriangleSubdivision &first, H2TriangleSubdivision &second)
     std::swap(first.depth, second.depth);
     std::swap(first.totalDepth, second.totalDepth);
     std::swap(first.points, second.points);
+    std::swap(first.meshIndices, second.meshIndices);
     std::swap(first.empty, second.empty);
 }
 

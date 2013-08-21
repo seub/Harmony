@@ -42,7 +42,7 @@ public:
 private:
     void construct(int aIndex, int bIndex, int cIndex, int depth, int totalDepth, std::vector<H2Point> *points, std::vector<int> *meshIndices,
                    std::vector<bool> &filled, int an, int bn, int cn, int ap, int bp, int cp); // Base (pseudo)constructor;
-    void copy(const H2TriangleSubdivision &other, std::vector<H2Point> *points);
+    void copy(const H2TriangleSubdivision &other, std::vector<H2Point> *points, std::vector<int> *meshIndices);
 
 
 

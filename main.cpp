@@ -4,18 +4,10 @@
 
 
 #include "tools.h"
-
-#include "canvas.h"
-#include "canvasdelegate.h"
-#include "h2canvasdelegate.h"
-#include "discretegroup.h"
-#include "h3canvasdelegate.h"
-#include "grouprepresentation.h"
-#include "h2isometry.h"
+#include "h2mesh.h"
 #include "fenchelnielsenconstructor.h"
-#include "circle.h"
-#include "h2trianglesubdivision.h"
-#include "h2polygontriangulater.h"
+#include "h2canvasdelegate.h"
+#include "canvas.h"
 
 int main(int argc, char *argv[])
 {
@@ -23,14 +15,14 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
 
-    int g = 2;
+    int g = 3;
 
     std::vector<double> lengths;
     std::vector<double> twists;
     for (int i=0; i<3*g-3; i++)
     {
         //twists.push_back(1.0-.3*i);
-        twists.push_back(-1.0 + i*.1);
+        twists.push_back(0.2);
     }
     for (int i=0; i<3*g-3; i++)
     {
@@ -44,41 +36,20 @@ int main(int argc, char *argv[])
     rho = fn.getRepresentation(&group);
     rho.checkRelations();
 
+    clock_t start = clock();
+    H2Mesh mesh(rho, 2);
+    clock_t end = clock();
+    std::cout << "Time to construct mesh: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+
 
     Canvas canvas;
     H2CanvasDelegate delegate(&canvas);
     canvas.setDelegate(&delegate);
     delegate.buffer.addElement(rho, "blue", 2);
-    /*H2Polygon P = rho.generatePolygon(100);
-    delegate.buffer.addElement(P, "red", 2);
+    delegate.buffer.addElement(mesh);
 
 
-    H2PolygonTriangulater PT(&P);
-    delegate.buffer.addElement(PT.getTriangles());*/
-
-
-    {
-    H2Point aT,bT,cT;
-    Complex z(0.0,0.9);
-    Complex j(-0.5, 0.5*sqrt(3.0));
-    aT.setDiskCoordinate(z);
-    bT.setDiskCoordinate(j*z);
-    cT.setDiskCoordinate(j*j*z);
-    H2Triangle T(aT, bT, cT);
-    clock_t t0 = clock();
-    H2TriangleSubdivision Ts(T, 3);
-    clock_t t1 = clock();
-    std::cout << "time to construct triangulation: " << (t1-t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
-
-
-    std::cout << Ts.neighborsIndices() << std::endl;
-
-    delegate.buffer.addElement(Ts);
-    }
-
-    H2Isometry id;
-    id.setIdentity();
-    delegate.redrawBuffer(id);
+    delegate.redrawBuffer();
     canvas.show();
 
 

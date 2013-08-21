@@ -1,6 +1,9 @@
 #ifndef H2BUFFER_H
 #define H2BUFFER_H
 
+
+#include <QColor>
+
 #include "tools.h"
 #include "h2point.h"
 #include "h2geodesic.h"
@@ -8,7 +11,7 @@
 #include "grouprepresentation.h"
 #include "h2mesh.h"
 #include "h2trianglesubdivision.h"
-#include <QColor>
+
 
 
 class H2Buffer
@@ -31,7 +34,7 @@ public:
     void addElement(const std::vector<H2Isometry> &V, const QColor & color = "black", int width = 1);
     void addElement(const std::vector<H2Polygon> &V, const QColor & color = "black", int width = 1);
     void addElement(const H2TriangleSubdivision &T, const QColor & color = "black", int width = 1);
-
+    void addElement(const H2Mesh &mesh, const QColor & color = "black", int width = 1);
 
 private:
     std::vector<H2Point> points;
@@ -46,7 +49,7 @@ private:
     std::vector<QColor> geodesicArcsColors;
     std::vector<int> geodesicArcsWidths;
 
-    H2TriangleSubdivision subdivision;
+    H2Mesh mesh;
     H2Triangle triangleHighlighted;
 };
 
