@@ -23,6 +23,7 @@ CanvasDelegate::CanvasDelegate(Canvas *canvas) : canvas(canvas)
     painter->eraseRect(0, 0, canvas->width(), canvas->height());
     painter->setPen(*pen);
 
+    detectionRadius = 20;
     resetView();
 
     //std::cout << "Leaving CanvasDelegate::CanvasDelegate" << std::endl;

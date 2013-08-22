@@ -18,6 +18,7 @@ H2MeshPoint::H2MeshPoint(int subdivisionIndex, int indexInSubdivision, bool cutP
 
 }
 
+
 H2Mesh::H2Mesh(const IsomH2Representation &rho, int depth) : rho(rho), depth(depth)
 {
     clock_t start = clock();
@@ -43,4 +44,33 @@ bool H2Mesh::triangleContaining(const H2Point &point, H2Triangle &outputTriangle
         }
     }
     return false;
+}
+
+bool H2Mesh::triangleContaining(const H2Point &point, H2Triangle &outputTriangle,
+                                             int &meshIndex1, int &meshIndex2, int &meshIndex3) const
+{
+    for(const auto &S : subdivisions)
+    {
+        if (S.triangleContaining(point, outputTriangle, meshIndex1, meshIndex2, meshIndex3))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+const H2Point & H2Mesh::getH2Point(int index) const
+{
+    return subdivisions[meshPoints[index].subdivisionIndex].points->at(meshPoints[index].indexInSubdivision);
+}
+
+std::vector<H2Point> H2Mesh::getNeighbors(int index) const
+{
+    std::vector<int> neighborIndices = meshPoints.at(index).neighborsIndices;
+    std::vector<H2Point> res;
+    for (auto k : neighborIndices)
+    {
+        res.push_back(getH2Point(k));
+    }
+    return res;
 }

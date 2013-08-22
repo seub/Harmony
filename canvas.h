@@ -11,7 +11,7 @@ class Canvas : public QWidget
 {
     Q_OBJECT
 public:
-    explicit Canvas(int width = 600, int height = 600, QWidget *parent = 0);
+    explicit Canvas(int width = 700, int height = 700, QWidget *parent = 0);
 
     void setDelegate(CanvasDelegate * delegate);
 

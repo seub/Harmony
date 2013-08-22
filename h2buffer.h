@@ -49,7 +49,10 @@ private:
 
     H2Mesh mesh;    
     bool isMeshEmpty;
+
     H2Triangle triangleHighlighted;
+    H2Point pointHighlighted;
+    std::vector<H2Point> pointsHighlighted;
 };
 
 #endif // H2BUFFER_H

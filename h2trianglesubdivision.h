@@ -33,6 +33,7 @@ public:
     std::vector<H2Point> getPoints() const;
 
     bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle) const;
+    bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle, int &meshIndex1, int&meshIndex2, int &meshIndex3) const;
 
 
 

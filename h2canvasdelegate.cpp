@@ -19,6 +19,8 @@ H2CanvasDelegate::H2CanvasDelegate(Canvas *canvas) : CanvasDelegate(canvas)
     mobius.setIdentity();
     drawCircle(0, 1);
     isTriangleHighlighted = false;
+    isPointHighlighted = false;
+    arePointsHighlighted = false;
 
     //std::cout << "Leaving H2CanvasDelegate::CanvasDelegate" << std::endl;
 }
@@ -122,6 +124,18 @@ void H2CanvasDelegate::redrawBuffer(const H2Isometry &mobius)
         drawH2GeodesicArc(L, "red", 2);
     }
 
+    if (isPointHighlighted)
+    {
+        drawH2Point(buffer.pointHighlighted, "red", 10);
+    }
+    if (arePointsHighlighted)
+    {
+        for (const auto &p : buffer.pointsHighlighted)
+        {
+            drawH2Point(p, "blue", 10);
+        }
+    }
+
 
     return;
 }
@@ -174,13 +188,37 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
     {
         H2Point point;
         point.setDiskCoordinate(PixelToComplexCoordinates(mouseEvent->x(), mouseEvent->y()));
-        if (buffer.mesh.triangleContaining(mobius.inverse()*point, buffer.triangleHighlighted))
+        int meshIndex1, meshIndex2, meshIndex3, meshIndex;
+        point = mobius.inverse()*point;
+        if (buffer.mesh.triangleContaining(point, buffer.triangleHighlighted, meshIndex1, meshIndex2, meshIndex3))
         {
             isTriangleHighlighted = true;
+            int vertexIndex;
+            double detectionRadiusSquared = detectionRadius/scaleX;
+            detectionRadiusSquared *= detectionRadiusSquared;
+            if (buffer.triangleHighlighted.isVertexCloseInDiskModel(point, detectionRadiusSquared, buffer.pointHighlighted, vertexIndex))
+            {
+                isPointHighlighted = true;
+                arePointsHighlighted = true;
+                meshIndex = meshIndex1*(vertexIndex == 0) + meshIndex2*(vertexIndex == 1) + meshIndex3*(vertexIndex == 2);
+                std::cout << "meshIndex = " << meshIndex << std::endl;
+
+                std::cout << "point highlighted: " << buffer.pointHighlighted << std::endl;
+                std::cout << "in mesh: " << buffer.mesh.getH2Point(meshIndex) << std::endl;
+
+                buffer.pointsHighlighted = buffer.mesh.getNeighbors(meshIndex);
+            }
+            else
+            {
+                isPointHighlighted = false;
+                arePointsHighlighted = false;
+            }
         }
         else
         {
             isTriangleHighlighted = false;
+            isPointHighlighted = false;
+            arePointsHighlighted = false;
         }
     }
     return;

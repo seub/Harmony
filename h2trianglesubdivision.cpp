@@ -266,6 +266,41 @@ bool H2TriangleSubdivision::triangleContaining(const H2Point &point, H2Triangle 
     }
 }
 
+bool H2TriangleSubdivision::triangleContaining(const H2Point &point, H2Triangle &outputTriangle,
+                                               int &meshIndex1, int &meshIndex2, int &meshIndex3) const
+{
+    if (getTriangle().contains(point))
+    {
+        if (depth == 0)
+        {
+            outputTriangle = getTriangle();
+            meshIndex1 = meshIndices->at(aIndex);
+            meshIndex2 = meshIndices->at(bIndex);
+            meshIndex3 = meshIndices->at(cIndex);
+            return true;
+        }
+        else
+        {
+            if (A->triangleContaining(point, outputTriangle, meshIndex1, meshIndex2, meshIndex3) ||
+                    B->triangleContaining(point, outputTriangle, meshIndex1, meshIndex2, meshIndex3) ||
+                    C->triangleContaining(point, outputTriangle, meshIndex1, meshIndex2, meshIndex3) ||
+                    O->triangleContaining(point, outputTriangle, meshIndex1, meshIndex2, meshIndex3))
+            {
+                return true;
+            }
+            else
+            {
+                std::cout << "ERROR in H2TriangleSubdivision::getTriangleContaining: not supposed to happen" << std::endl;
+                return false;
+            }
+        }
+    }
+    else
+    {
+        return false;
+    }
+}
+
 std::vector<bool> H2TriangleSubdivision::areBoundaryPoints() const
 {
     if (depth != totalDepth)

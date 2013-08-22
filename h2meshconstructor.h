@@ -11,6 +11,8 @@ public:
     H2MeshConstructor(H2Mesh *mesh);
 
 private:
+    void createPoints();
+    void createNeighbors();
     void createSubdivisions();
     void createInteriorMeshPoints();
     void createCutMeshPoints();
@@ -33,6 +35,7 @@ private:
     int nextIndex;
     std::vector< std::vector<bool> > boundaryPointInSubdivisions;
     std::vector<bool> vertexAdded;
+    std::vector<int> vertexMeshIndex;
     std::vector< std::vector< std::vector<int> > > neighborsInSubdivisions;
 };
 

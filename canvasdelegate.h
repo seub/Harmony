@@ -65,6 +65,8 @@ protected:
     double xMinSave, yMaxSave;
     int mouseX, mouseY;
 
+    int detectionRadius;
+
     QPen *pen;
     QImage *image;
     QPainter *painter;

@@ -13,11 +13,10 @@ class H2MeshPoint
     friend class H2Mesh;
     friend class H2MeshConstructor;
 
-public:
+private:
     H2MeshPoint(int subdivisionIndex, int indexInSubdivision, bool cutPoint = false, int subdivisionIndexRight = -1,
                 int indexInSubdivisionRight = -1, bool boundaryPoint = false, int side = -1, bool vertexPoint = false, int vertexIndex = -1);
 
-private:
     int subdivisionIndex;
     int indexInSubdivision;
     std::vector<int> neighborsIndices;
@@ -48,7 +47,12 @@ public:
     H2Mesh(const IsomH2Representation &rho, int depth);
 
     bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle) const;
+    bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle, int &meshIndex1, int &meshIndex2, int &meshIndex3) const;
+
+    const H2Point & getH2Point(int index) const;
     const std::vector<H2TriangleSubdivision> &getSubdivisions() const;
+    std::vector<H2Point> getNeighbors(int index) const;
+
 
 private:    
     IsomH2Representation rho;

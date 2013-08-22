@@ -20,6 +20,7 @@ public:
 
     bool contains(const H2Point & point) const;
     void getAsPolygon(H2Polygon & outputPolygon) const;
+    bool isVertexCloseInDiskModel(const H2Point &point, double detectionRadiusSquared, H2Point &vertex, int &vertexIndex) const;
 
 
 private:

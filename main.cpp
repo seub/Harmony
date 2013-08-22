@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
 
-    int g = 3;
+    int g = 2;
 
     std::vector<double> lengths;
     std::vector<double> twists;
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     rho.checkRelations();
 
     clock_t start = clock();
-    H2Mesh mesh(rho, 2);
+    H2Mesh mesh(rho, 1);
     clock_t end = clock();
     std::cout << "Time to construct mesh: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
 
