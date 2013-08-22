@@ -20,6 +20,7 @@ public:
     void addVertex(const H2Point & p);
     void removeLastVertex();
     void clearVertices();
+    void setVertices(const std::vector<H2Point> & newVertices);
 
     int nbVertices() const;
     H2Point getVertex(int index) const;
@@ -51,8 +52,6 @@ public:
     std::vector<double> getPositiveInteriorAngles() const;    
 
 private:
-    void replaceVertex(int index, const H2Point &newVertex);
-
     std::vector<H2Point> vertices;
 };
 

@@ -46,7 +46,9 @@ void H2CanvasDelegate::drawH2Geodesic(const H2Geodesic &L, const QColor &color, 
         Circle C;
         double angle1, angle2;
         tempGeodesic.getCircleAndAnglesInDiskModel(C, angle1, angle2);
-        drawSmallerArc(C, angle1, angle2, color, width);
+        Complex endpoint1, endpoint2;
+        tempGeodesic.getEndpointsInDiskModel(endpoint1, endpoint2);
+        drawSmallerArc(C, angle1, angle2, endpoint1, endpoint2, color, width);
     }
     else
     {
@@ -65,7 +67,9 @@ void H2CanvasDelegate::drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &c
         Circle C;
         double angle1, angle2;
         tempGeodesic.getCircleAndAnglesInDiskModel(C, angle1, angle2);
-        drawSmallerArc(C, angle1, angle2, color, width);
+        Complex endpoint1, endpoint2;
+        tempGeodesic.getEndpointsInDiskModel(endpoint1, endpoint2);
+        drawSmallerArc(C, angle1, angle2, endpoint1, endpoint2, color, width);
     }
     else
     {
@@ -166,11 +170,11 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
         }
     }
 
-    /*if (!buffer.subdivision.isEmpty())
+    if (!buffer.isMeshEmpty)
     {
         H2Point point;
         point.setDiskCoordinate(PixelToComplexCoordinates(mouseEvent->x(), mouseEvent->y()));
-        if (buffer.subdivision.triangleContaining(mobius.inverse()*point, buffer.triangleHighlighted))
+        if (buffer.mesh.triangleContaining(mobius.inverse()*point, buffer.triangleHighlighted))
         {
             isTriangleHighlighted = true;
         }
@@ -178,7 +182,7 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
         {
             isTriangleHighlighted = false;
         }
-    }*/
+    }
     return;
 }
 

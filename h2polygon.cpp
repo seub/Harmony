@@ -28,6 +28,12 @@ void H2Polygon::clearVertices()
     return;
 }
 
+void H2Polygon::setVertices(const std::vector<H2Point> &newVertices)
+{
+    vertices = newVertices;
+    return;
+}
+
 int H2Polygon::nbVertices() const
 {
     return vertices.size();
@@ -436,12 +442,6 @@ bool H2Polygon::isConvex() const
     if (Tools::sgn(imag(next*conj(previous))) != sign) return false;
 
     return true;
-}
-
-void H2Polygon::replaceVertex(int index, const H2Point &newVertex)
-{
-    vertices[index] = newVertex;
-    return;
 }
 
 std::ostream & operator<<(std::ostream & out, const H2Polygon &P)

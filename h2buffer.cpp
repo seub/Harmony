@@ -2,18 +2,7 @@
 
 H2Buffer::H2Buffer()
 {
-}
-
-void H2Buffer::reset()
-{
-    points.clear();
-    pointsColors.clear();
-    pointsWidths.clear();
-
-    geodesics.clear();
-    geodesicsColors.clear();
-    geodesicsWidths.clear();
-    return;
+    isMeshEmpty = true;
 }
 
 void H2Buffer::addElement(const H2Point &point, const QColor &color, int width)
@@ -140,6 +129,8 @@ void H2Buffer::addElement(const H2TriangleSubdivision &T, const QColor &color, i
 void H2Buffer::addElement(const H2Mesh &mesh, const QColor &color, int width)
 {
     this->mesh = mesh;
+    isMeshEmpty = false;
+
     const std::vector<H2TriangleSubdivision> & subdivisions = mesh.getSubdivisions();
     for (const auto &S : subdivisions)
     {

@@ -187,7 +187,8 @@ void CanvasDelegate::drawCircle(const Circle &C, const QColor &color, int width)
     return;
 }
 
-bool CanvasDelegate::dealWithAlmostStraightArc(const Complex &center, double radius, double angle1, double angle2, const QColor &color, int width)
+bool CanvasDelegate::dealWithAlmostStraightArc(const Complex &center, double radius,
+                                               const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width)
 {
     double angleMin = M_PI/(180*16);
     double scale = scaleX > scaleY ? scaleX : scaleY;
@@ -195,7 +196,7 @@ bool CanvasDelegate::dealWithAlmostStraightArc(const Complex &center, double rad
     Complex z1, z2;
     if(radius*scale*angleMin > pixelError)
     {
-        intersectsCanvasBoundary(center, radius, angle1, angle2, z1, z2);
+        intersectsCanvasBoundary(center, radius, endpoint1, endpoint2, z1, z2);
         drawSegment(z1,z2,color,width);
         return true;
     }
@@ -205,7 +206,8 @@ bool CanvasDelegate::dealWithAlmostStraightArc(const Complex &center, double rad
     }
 }
 
-void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radius, double angle1, double angle2, Complex &zOut1, Complex &zOut2)
+void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radius,
+                                              const Complex &endpoint1, const Complex &endpoint2, Complex &zOut1, Complex &zOut2)
 {
     //std::cout << "Entering CanvasDelegate::intersectsCanvasBoundary" << std::endl;
 
@@ -217,9 +219,6 @@ void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radi
 
     double x, y, D;
 
-    Complex I(0.0, 1.0);
-    Complex z1 = center + radius*exp(angle1*I);
-    Complex z2 = center + radius*exp(angle2*I);
 
     x = xMin;
     D = radius*radius - (x-c1)*(x-c1);
@@ -302,7 +301,7 @@ void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radi
     }
 
     unsigned int i;
-    Complex u = z1 - center, v = z2 - center, w, w2;
+    Complex u = endpoint1 - center, v = endpoint2 - center, w, w2;
     for (i=0; i<intersectionsTemp.size(); i++)
     {
         w = intersectionsTemp[i] - center;
@@ -316,20 +315,20 @@ void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radi
     switch (intersections.size())
     {
     case 0:
-        zOut1 = z1;
-        zOut2 = z2;
+        zOut1 = endpoint1;
+        zOut2 = endpoint2;
         break;
 
     case 1:
-        if (real(z1) > xMin && real(z1) < xMax && imag(z1) > yMin && imag(z1) < yMax)
+        if (real(endpoint1) > xMin && real(endpoint1) < xMax && imag(endpoint1) > yMin && imag(endpoint1) < yMax)
         {
-            zOut1 = z1;
-            zOut2 = z1 + 2.0 * (intersections[0] - z1);
+            zOut1 = endpoint1;
+            zOut2 = endpoint1 + 2.0 * (intersections[0] - endpoint1);
         }
-        else if (real(z2) > xMin && real(z2) < xMax && imag(z2) > yMin && imag(z2) < yMax)
+        else if (real(endpoint2) > xMin && real(endpoint2) < xMax && imag(endpoint2) > yMin && imag(endpoint2) < yMax)
         {
-            zOut1 = z2 + 2.0 * (intersections[0] - z2);
-            zOut2 = z2;
+            zOut1 = endpoint2 + 2.0 * (intersections[0] - endpoint2);
+            zOut2 = endpoint2;
         }
         else
         {
@@ -361,9 +360,10 @@ void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radi
     return;
 }
 
-void CanvasDelegate::drawArcCounterClockwise(const Complex &center, double radius, double angle1, double angle2, const QColor &color, int width)
+void CanvasDelegate::drawArcCounterClockwise(const Complex &center, double radius, double angle1, double angle2,
+                                             const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width)
 {
-    if (dealWithAlmostStraightArc(center, radius, angle1, angle2, color, width))
+    if (dealWithAlmostStraightArc(center, radius, endpoint1, endpoint2, color, width))
     {
 
     }
@@ -384,37 +384,39 @@ void CanvasDelegate::drawArcCounterClockwise(const Complex &center, double radiu
     return;
 }
 
-void CanvasDelegate::drawSmallerArc(const Complex &center, double radius, double angle1,
-                                    double angle2, const QColor &color, int width)
+void CanvasDelegate::drawSmallerArc(const Complex &center, double radius, double angle1, double angle2,
+                                    const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width)
 {
     double d = angle2 - angle1;
     d = Tools::mod2Pi(d);
     if (d>M_PI)
     {
-        drawArcCounterClockwise(center, radius, angle2, angle1, color, width);
+        drawArcCounterClockwise(center, radius, angle2, angle1, endpoint1, endpoint2, color, width);
     }
     else
     {
-        drawArcCounterClockwise(center, radius, angle1, angle2, color, width);
+        drawArcCounterClockwise(center, radius, angle1, angle2, endpoint1, endpoint2, color, width);
     }
     return;
 }
 
-void CanvasDelegate::drawSmallerArc(const Circle &C, double angle1, double angle2, const QColor &color, int width)
+void CanvasDelegate::drawSmallerArc(const Circle &C, double angle1, double angle2,
+                                    const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width)
 {
     Complex center;
     double radius;
     C.getCenterAndRadius(center, radius);
-    drawSmallerArc(center, radius, angle1, angle2, color, width);
+    drawSmallerArc(center, radius, angle1, angle2, endpoint1, endpoint2, color, width);
     return;
 }
 
-void CanvasDelegate::drawArcCounterClockwise(const Circle &C, double angle1, double angle2, const QColor &color, int width)
+void CanvasDelegate::drawArcCounterClockwise(const Circle &C, double angle1, double angle2,
+                                             const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width)
 {
     //std::cout << "Entering CanvasDelegate::drawArc" << std::endl;
     Complex center;
     double radius;
     C.getCenterAndRadius(center, radius);
-    drawArcCounterClockwise(center, radius, angle1, angle2, color, width);
+    drawArcCounterClockwise(center, radius, angle1, angle2, endpoint1, endpoint2, color, width);
     return;
 }

@@ -60,6 +60,7 @@ public:
     bool isLineSegmentInDiskModel() const;
     bool getCircleAndAnglesInDiskModel(Circle & outC, double & outAngle1, double & outAngle2) const;
     void getEndpointsInDiskModel(Complex &output1, Complex &output2) const;
+    void getEndpoints(H2Point &output1, H2Point &output2) const;
 
 private:
     H2Point p1, p2;

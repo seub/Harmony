@@ -365,6 +365,13 @@ void H2GeodesicArc::getEndpointsInDiskModel(Complex &output1, Complex &output2) 
     return;
 }
 
+void H2GeodesicArc::getEndpoints(H2Point &output1, H2Point &output2) const
+{
+    output1 = p1;
+    output2 = p2;
+    return;
+}
+
 Circle H2GeodesicArc::getCircleInDiskModel() const
 {
     Complex z1 = p1.getDiskCoordinate(), z2 = p2.getDiskCoordinate();

@@ -166,29 +166,33 @@ template<> H2Polygon IsomH2Representation::generatePolygon(const H2Point &basePo
 
 template <> void IsomH2Representation::generatePolygon(const H2Point &basePoint, H2Polygon &polygon) const
 {
-        polygon.replaceVertex(0, basePoint);
-        int genus = generatorImages.size()/2;
-        H2Isometry f = H2Isometry::identity();
+    std::vector<H2Point> newVertices(polygon.nbVertices());
 
-        int i, k=0;
-        for (i = 0; i+1<genus; ++i)
-        {
-            f = f*generatorImages[2*i];
-            polygon.replaceVertex(k++, f*basePoint);
-            f = f*generatorImages[2*i+1];
-            polygon.replaceVertex(k++, f*basePoint);
-            f = f*generatorImages[2*i].inverse();
-            polygon.replaceVertex(k++, f*basePoint);
-            f = f*generatorImages[2*i+1].inverse();
-            polygon.replaceVertex(k++, f*basePoint);
-        }
+    newVertices[0] = basePoint;
+    int genus = generatorImages.size()/2;
+    H2Isometry f = H2Isometry::identity();
 
+    int i, k=0;
+    for (i = 0; i+1<genus; ++i)
+    {
         f = f*generatorImages[2*i];
-        polygon.replaceVertex(k++, f*basePoint);
+        newVertices[k++] = f*basePoint;
         f = f*generatorImages[2*i+1];
-        polygon.replaceVertex(k++, f*basePoint);
+        newVertices[k++] = f*basePoint;
         f = f*generatorImages[2*i].inverse();
-        polygon.replaceVertex(k++, f*basePoint);
+        newVertices[k++] = f*basePoint;
+        f = f*generatorImages[2*i+1].inverse();
+        newVertices[k++] = f*basePoint;
+    }
+
+    f = f*generatorImages[2*i];
+    newVertices[k++] = f*basePoint;
+    f = f*generatorImages[2*i+1];
+    newVertices[k++] = f*basePoint;
+    f = f*generatorImages[2*i].inverse();
+    newVertices[k++] = f*basePoint;
+
+    polygon.setVertices(newVertices);
 
     return;
 }

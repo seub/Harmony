@@ -20,7 +20,11 @@ H2MeshPoint::H2MeshPoint(int subdivisionIndex, int indexInSubdivision, bool cutP
 
 H2Mesh::H2Mesh(const IsomH2Representation &rho, int depth) : rho(rho), depth(depth)
 {
-    fundamentalDomain = rho.generatePolygon(150);
+    clock_t start = clock();
+    fundamentalDomain = rho.generatePolygon(100);
+    clock_t end = clock();
+    std::cout << "Time to generate fundamental domain: " << (end - start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+
     H2MeshConstructor(this);
 }
 

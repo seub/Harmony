@@ -21,8 +21,6 @@ class H2Buffer
 public:
     H2Buffer();
 
-    void reset();
-
     void addElement(const H2Point & point, const QColor & color = "black", int width = 3);
     void addElement(const H2Geodesic & geodesic, const QColor & color = "black", int width = 1);
     void addElement(const H2GeodesicArc & geodesicArc, const QColor & color = "black", int width = 1);
@@ -49,7 +47,8 @@ private:
     std::vector<QColor> geodesicArcsColors;
     std::vector<int> geodesicArcsWidths;
 
-    H2Mesh mesh;
+    H2Mesh mesh;    
+    bool isMeshEmpty;
     H2Triangle triangleHighlighted;
 };
 

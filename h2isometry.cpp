@@ -211,9 +211,7 @@ H2Isometry operator *(const H2Isometry & f1, const H2Isometry & f2)
 {
     H2Isometry fOut;
     Complex temp = 1.0 + f1.a*conj(f2.u*f2.a);
-    Complex u = f1.u*f2.u*(temp*temp)/norm(temp);
-    Complex a = (f2.a + (f1.a*conj(f2.u)))/temp;
-    fOut.setDiskCoordinates(u,a);
+    fOut.setDiskCoordinates(f1.u*f2.u*(temp*temp)/norm(temp), (f2.a + (f1.a*conj(f2.u)))/temp);
     return fOut;
 }
 

@@ -34,13 +34,15 @@ public:
     void drawCircle(const Complex &center, double radius, const QColor &color = "black", int width = 1);
     void drawCircle(const Circle &C, const QColor &color = "black", int width = 1);
 
-    void drawArcCounterClockwise(const Complex &center, double radius, double angleStart, double angleEnd, const QColor &color = "black", int width = 1);
-    void drawArcCounterClockwise(const Circle &C, double angle1, double angle2, const QColor &color = "black", int width = 1);
+    void drawArcCounterClockwise(const Complex &center, double radius, double angleStart, double angleEnd,
+                                 const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1);
+    void drawArcCounterClockwise(const Circle &C, double angle1, double angle2,
+                                 const Complex &endpoint1, const Complex &endpoint2,const QColor &color = "black", int width = 1);
 
     void drawSmallerArc(const Complex &center, double radius, double angle1, double angle2,
-                        const QColor &color = "black", int width = 1);
+                        const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1);
     void drawSmallerArc(const Circle &C, double angle1, double angle2,
-                        const QColor &color = "black", int width = 1);
+                        const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1);
 
     virtual void redrawBuffer(const H2Isometry &mobius = H2Isometry::identity()) =0;
 
@@ -71,9 +73,10 @@ protected:
     void resetView();
     Complex PixelToComplexCoordinates(int x, int y) const;
     void ComplexToPixelCoordinates(int & xOut, int & yOut, Complex z) const;
-    void intersectsCanvasBoundary(const Complex & center, double radius, double angle1, double angle2, Complex & zOut1, Complex &zOut2);
-    bool dealWithAlmostStraightArc(const Complex &center, double radius, double angle1, double angle2,
-                            const QColor &color = "black", int width = 1);
+    void intersectsCanvasBoundary(const Complex & center, double radius,
+                                  const Complex &endpoint1, const Complex &endpoint2, Complex & zOut1, Complex &zOut2);
+    bool dealWithAlmostStraightArc(const Complex &center, double radius,
+                                   const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1);
 
 };
 
