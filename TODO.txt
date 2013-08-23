@@ -20,7 +20,7 @@ le zoom marche pas avec le complex to pixel...
 
 BUGS:
 parfois "there is no h2geodesic between point and itself" pendant l'affichage??
-
+mesh constructor fails for depth 11
 
 test memory leaks with valgrind
 

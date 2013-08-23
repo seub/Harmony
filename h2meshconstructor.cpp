@@ -16,6 +16,8 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     createSubdivisions();
     createPoints();
     createNeighbors();
+
+    runTests();
 }
 
 void H2MeshConstructor::createPoints()
@@ -31,6 +33,7 @@ void H2MeshConstructor::createNeighbors()
     createInteriorNeighbors();
     createCutNeighbors();
     createSideNeighbors();
+    createRemainingNeighbors();
     createExteriorNeighbors();
     return;
 }
@@ -225,7 +228,6 @@ void H2MeshConstructor::createCutNeighbors()
         triangulater.adjacentSidesIndices(i, vertexIndexLeft1, vertexIndexLeft2, vertexIndexRight1, vertexIndexRight2);
         indicesLeft = (*subdivisions)[cut.leftTriangleIndex].sidePointsIndices(vertexIndexLeft1, vertexIndexLeft2);
 
-        std::cout << "alice" << std::endl;
         index = (*((*subdivisions)[cut.leftTriangleIndex].meshIndices))[indicesLeft[0]];
         nextIndex = (*((*subdivisions)[cut.leftTriangleIndex].meshIndices))[indicesLeft[1]];
 
@@ -286,12 +288,141 @@ void H2MeshConstructor::createSideNeighbors()
     return;
 }
 
+void H2MeshConstructor::createRemainingNeighbors()
+{
+    if (depth != 0)
+    {
+        int index1, index2;
+        for (int i=0; i != nbSubdivisions; ++i)
+        {
+            index1 = (*(*subdivisions)[i].meshIndices)[1];
+            index2 = (*(*subdivisions)[i].meshIndices)[2];
+            (*meshPoints)[index1].neighborsIndices.push_back(index2);
+            (*meshPoints)[index2].neighborsIndices.push_back(index1);
+
+            index1 = (*(*subdivisions)[i].meshIndices)[((nbSubdivisionLines-1)*(nbSubdivisionLines-2))/2];
+            index2 = (*(*subdivisions)[i].meshIndices)[(nbSubdivisionLines*(nbSubdivisionLines-1))/2 + 1];
+            (*meshPoints)[index1].neighborsIndices.push_back(index2);
+            (*meshPoints)[index2].neighborsIndices.push_back(index1);
+
+            index1 = (*(*subdivisions)[i].meshIndices)[nbSubdivisionPoints - nbSubdivisionLines - 1];
+            index2 = (*(*subdivisions)[i].meshIndices)[nbSubdivisionPoints - 2];
+            (*meshPoints)[index1].neighborsIndices.push_back(index2);
+            (*meshPoints)[index2].neighborsIndices.push_back(index1);
+        }
+    }
+    return;
+}
+
 void H2MeshConstructor::createExteriorNeighbors()
 {
     return;
 }
 
+bool H2MeshConstructor::checkForNumberOfMeshPoints() const
+{
+    int expected = 0, nbPoints = meshPoints->size();
+    expected += nbSubdivisions * (nbSubdivisionPoints - 3*(nbSubdivisionLines -1));
+    expected += triangulater.cuts.size() * (nbSubdivisionLines - 2);
+    expected += nbVertices * (nbSubdivisionLines - 1);
+    if (expected != nbPoints)
+    {
+        std::cout << "ERROR in H2MeshConstructor::checkForNumberOfMeshPoints: test failed (expected: " << expected
+                  << " , found: " << meshPoints->size() << ")" << std::endl;
+        return false;
+    }
+    else
+    {
+        std::cout << "H2MeshConstructor::checkForNumberOfMeshPoints: passed" << std::endl;
+        return true;
+    }
+}
 
+bool H2MeshConstructor::checkForDuplicateNeighbors() const
+{
+    for (const auto &m : *meshPoints)
+    {
+        if (Tools::containsDuplicates(m.neighborsIndices))
+        {
+            std::cout << "ERROR in H2MeshConstructor::checkForDuplicateNeighbors: test failed" << std::endl;
+            return false;
+        }
+    }
 
+    std::cout << "H2MeshConstructor::checkForDuplicateNeighbors: passed" << std::endl;
+    return true;
+}
 
+bool H2MeshConstructor::checkForNeighborsReciprocity() const
+{
+    int i, N=meshPoints->size();
+    for (i=0; i<N; ++i)
+    {
+        for (auto k : (*meshPoints)[i].neighborsIndices)
+        {
+            if (!Tools::isInList(i, (*meshPoints)[k].neighborsIndices))
+            {
+                std::cout << "ERROR in H2MeshConstructor::checkForNeighborsReciprocity: test failed for indices "
+                          << i << " and " << k << std::endl;
+                return false;
+            }
+        }
+    }
+
+    std::cout << "H2MeshConstructor::checkForNeighborsReciprocity: passed" << std::endl;
+    return true;
+}
+
+bool H2MeshConstructor::checkForNumberOfNeighbors() const
+{
+    std::vector<int> nbCutsFromVertex = triangulater.nbCutsFromVertex();
+    unsigned int expected;
+
+    for (const auto &m : *meshPoints)
+    {
+        if (m.cutPoint)
+        {
+            if (m.vertexPoint)
+            {
+                expected = 2 + nbCutsFromVertex[m.vertexIndex];
+
+            }
+            else if (m.boundaryPoint)
+            {
+                std::cout << "ERROR in H2MeshConstructor::checkNumberOfNeighbors: not supposed to happen" << std::endl;
+                return false;
+            }
+            else
+            {
+                expected = 6;
+            }
+        }
+        else if (m.vertexPoint)
+        {
+            expected = 2;
+        }
+        else if (m.boundaryPoint)
+        {
+            expected = 4;
+        }
+        else
+        {
+            expected = 6;
+        }
+
+        if (m.neighborsIndices.size() != expected)
+        {
+            std::cout << "ERROR in H2MeshConstructor::checkNumberOfNeighbors: test failed" << std::endl;
+            return false;
+        }
+    }
+
+    std::cout << "H2MeshConstructor::checkNumberOfNeighbors: passed" << std::endl;
+    return true;
+}
+
+bool H2MeshConstructor::runTests() const
+{
+    return checkForNumberOfMeshPoints() && checkForDuplicateNeighbors() && checkForNeighborsReciprocity() && checkForDuplicateNeighbors();
+}
 

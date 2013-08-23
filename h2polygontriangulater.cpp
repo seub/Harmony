@@ -160,6 +160,17 @@ void TriangulationTriangle::getVertices(int &i1, int &i2, int &i3) const
     return;
 }
 
+std::vector<int> H2PolygonTriangulater::nbCutsFromVertex() const
+{
+    std::vector<int> res(polygon->nbVertices());
+    for (const auto &cut : cuts)
+    {
+        ++res[cut.vertexIndex1];
+        ++res[cut.vertexIndex2];
+    }
+    return res;
+}
+
 void H2PolygonTriangulater::completeCutsAndSides()
 {
     int N = polygon->nbVertices();

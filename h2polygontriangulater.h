@@ -48,7 +48,8 @@ class H2PolygonTriangulater
 public:
     H2PolygonTriangulater(const H2Polygon * const polygon);
     std::vector<H2Triangle> getTriangles() const;
-    std::vector<TriangulationCut> getCuts() const;
+    std::vector<TriangulationCut> getCuts() const;    
+    std::vector<int> nbCutsFromVertex() const;
 
 private:
     H2PolygonTriangulater(const H2PolygonTriangulater &);

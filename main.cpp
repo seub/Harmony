@@ -36,21 +36,26 @@ int main(int argc, char *argv[])
     rho = fn.getRepresentation(&group);
     rho.checkRelations();
 
-    clock_t start = clock();
-    H2Mesh mesh(rho, 1);
-    clock_t end = clock();
-    std::cout << "Time to construct mesh: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+    for (int k=0; k<12; k++)
+    {
+        std::cout << "depth = " << k << std::endl;
+        clock_t start = clock();
+        H2Mesh mesh(rho, k);
+        clock_t end = clock();
+        std::cout << "Time to construct mesh: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+        std::cout << std::endl;
+    }
 
 
     Canvas canvas;
     H2CanvasDelegate delegate(&canvas);
     canvas.setDelegate(&delegate);
     delegate.buffer.addElement(rho, "blue", 2);
-    delegate.buffer.addElement(mesh);
+    //delegate.buffer.addElement(mesh);
 
 
     delegate.redrawBuffer();
-    canvas.show();
+    //canvas.show();
 
 
 

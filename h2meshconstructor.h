@@ -20,7 +20,14 @@ private:
     void createInteriorNeighbors();
     void createCutNeighbors();
     void createSideNeighbors();
+    void createRemainingNeighbors();
     void createExteriorNeighbors();
+
+    bool runTests() const;
+    bool checkForNumberOfMeshPoints() const;
+    bool checkForDuplicateNeighbors() const;
+    bool checkForNeighborsReciprocity() const;
+    bool checkForNumberOfNeighbors() const;
 
 
     H2Mesh *mesh;

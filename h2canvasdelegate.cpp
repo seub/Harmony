@@ -201,11 +201,6 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
                 isPointHighlighted = true;
                 arePointsHighlighted = true;
                 meshIndex = meshIndex1*(vertexIndex == 0) + meshIndex2*(vertexIndex == 1) + meshIndex3*(vertexIndex == 2);
-                std::cout << "meshIndex = " << meshIndex << std::endl;
-
-                std::cout << "point highlighted: " << buffer.pointHighlighted << std::endl;
-                std::cout << "in mesh: " << buffer.mesh.getH2Point(meshIndex) << std::endl;
-
                 buffer.pointsHighlighted = buffer.mesh.getNeighbors(meshIndex);
             }
             else
