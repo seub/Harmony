@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
 
-    int g = 2;
+    int g = 5;
 
     std::vector<double> lengths;
     std::vector<double> twists;
@@ -36,27 +36,28 @@ int main(int argc, char *argv[])
     rho = fn.getRepresentation(&group);
     rho.checkRelations();
 
-    for (int k=0; k<12; k++)
-    {
-        std::cout << "depth = " << k << std::endl;
-        clock_t start = clock();
-        H2Mesh mesh(rho, k);
-        clock_t end = clock();
-        std::cout << "Time to construct mesh: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
-        std::cout << std::endl;
-    }
+    H2Mesh mesh;
+    int k = 5;
+    //for (k=0; k<10; ++k)
+    //{
+    std::cout << "depth = " << k << std::endl;
+    clock_t start = clock();
+    mesh = H2Mesh(rho, k);
+    clock_t end = clock();
+    std::cout << "Time to construct mesh: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+    std::cout << std::endl;
+    //}
 
 
     Canvas canvas;
     H2CanvasDelegate delegate(&canvas);
     canvas.setDelegate(&delegate);
     delegate.buffer.addElement(rho, "blue", 2);
-    //delegate.buffer.addElement(mesh);
+    delegate.buffer.addElement(mesh);
 
 
     delegate.redrawBuffer();
-    //canvas.show();
-
+    canvas.show();
 
 
     std::cout << std::endl;

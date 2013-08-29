@@ -17,6 +17,7 @@ class H3Isometry
 
 public:
     H3Isometry();
+    H3Isometry(int i);
     H3Isometry(const SL2CMatrix &M);
 
 

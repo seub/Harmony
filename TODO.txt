@@ -33,4 +33,7 @@ utiliser V = {1, 2}
 utiliser for(auto i : V) ou for(auto &i : V)
 utiliser std::vector<int> V(3);
 
-écrire classe h2meshconstructor
+y a un petit truc qui déconne dans la détection
+repenser l'implémentation des meshpoints et du mesh ?
+
+faire des mots avec des exposants et de l'exponentiation rapide

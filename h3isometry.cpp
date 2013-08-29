@@ -6,6 +6,12 @@ H3Isometry::H3Isometry()
     setIdentity();
 }
 
+H3Isometry::H3Isometry(int i)
+{
+    assert(i==1);
+    setIdentity();
+}
+
 H3Isometry::H3Isometry(const SL2CMatrix &M)
 {
     this->M = M;

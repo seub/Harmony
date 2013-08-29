@@ -50,6 +50,7 @@ public:
     std::vector<H2Triangle> getTriangles() const;
     std::vector<TriangulationCut> getCuts() const;    
     std::vector<int> nbCutsFromVertex() const;
+    void verticesIndices(std::vector< std::vector<int> > &triangleIndices, std::vector< std::vector<int> > &indicesInTriangles) const;
 
 private:
     H2PolygonTriangulater(const H2PolygonTriangulater &);

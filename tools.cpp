@@ -33,32 +33,7 @@ double Tools::mod2Pi(double t)
     }
 }
 
-word Tools::contractWord(word &w)
-{
-    letter l;
-    word result;
-    int index = w[0].first;
-    int power=0;
-    for(auto x : w)
-    {
-        if(x.first==index)
-        {
-            power+=x.second;
-        }
-        else
-        {
-            if (power!=0)
-            {
-                l.first = index;
-                l.second = power;
-                result.push_back(l);
-            }
-            index = x.first;
-            power = x.second;
-        }
-    }
-    return result;
-}
+
 
 std::string Tools::convertToString(int i)
 {
@@ -68,4 +43,3 @@ std::string Tools::convertToString(int i)
     s = out.str();
     return s;
 }
-

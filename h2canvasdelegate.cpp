@@ -126,13 +126,17 @@ void H2CanvasDelegate::redrawBuffer(const H2Isometry &mobius)
 
     if (isPointHighlighted)
     {
-        drawH2Point(buffer.pointHighlighted, "red", 10);
+        drawH2Point(buffer.pointHighlighted, "red", 8);
     }
     if (arePointsHighlighted)
     {
-        for (const auto &p : buffer.pointsHighlighted)
+        for (const auto &p : buffer.pointsHighlightedGreen)
         {
-            drawH2Point(p, "blue", 10);
+            drawH2Point(p, "green", 6);
+        }
+        for (const auto &p : buffer.pointsHighlightedBlue)
+        {
+            drawH2Point(p, "blue", 6);
         }
     }
 
@@ -196,12 +200,14 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
             int vertexIndex;
             double detectionRadiusSquared = detectionRadius/scaleX;
             detectionRadiusSquared *= detectionRadiusSquared;
-            if (buffer.triangleHighlighted.isVertexCloseInDiskModel(point, detectionRadiusSquared, buffer.pointHighlighted, vertexIndex))
+            if ((mobius*buffer.triangleHighlighted).isVertexCloseInDiskModel(mobius*point, detectionRadiusSquared, vertexIndex))
             {
+                buffer.pointHighlighted = buffer.triangleHighlighted.getVertex(vertexIndex);
                 isPointHighlighted = true;
                 arePointsHighlighted = true;
                 meshIndex = meshIndex1*(vertexIndex == 0) + meshIndex2*(vertexIndex == 1) + meshIndex3*(vertexIndex == 2);
-                buffer.pointsHighlighted = buffer.mesh.getNeighbors(meshIndex);
+                buffer.pointsHighlightedBlue = buffer.mesh.getH2Neighbors(meshIndex);
+                buffer.pointsHighlightedGreen = buffer.mesh.getKickedH2Neighbors(meshIndex);
             }
             else
             {

@@ -22,13 +22,13 @@ public:
 
 
     bool checkRelations() const;
-    T evaluateRepresentation(const word & w) const;
+    T evaluateRepresentation(const Word & w) const;
     std::vector<T> getGeneratorImages() const;
     bool getGeneratorImage(const generatorName &a, T &output) const;
     void rotateGenerators(int shift);
     DiscreteGroup getDiscreteGroup() const;
 
-    std::vector<T> evaluateRepresentation(const std::vector<word> & listOfWords);
+    std::vector<T> evaluateRepresentation(const std::vector<Word> & listOfWords) const;
 
     GroupRepresentation<T> conjugate(const T & A) const;
 
@@ -41,6 +41,7 @@ public:
     H2Polygon generatePolygon(const H2Point & basePoint) const;
     H2Polygon generatePolygon(int tilingSize) const;
 
+    std::vector<Word> getWordSidePairings() const;
     std::vector<H2Isometry> getSidePairingsForNormalizedFundamentalDomain() const;
     std::vector<H2Isometry> getSidePairingsNormalizedToDepth(int n) const;
     std::vector<H2Isometry> getSidePairingsNormalizedAroundVertex() const;

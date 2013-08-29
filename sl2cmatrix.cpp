@@ -6,6 +6,12 @@ SL2CMatrix::SL2CMatrix()
     setIdentity();
 }
 
+SL2CMatrix::SL2CMatrix(int i)
+{
+    assert(i==1);
+    setIdentity();
+}
+
 SL2CMatrix::SL2CMatrix(const Complex &a, const Complex &b, const Complex &c, const Complex &d) : a(a), b(b), c(c), d(d)
 {
     if (norm(det() - Complex(1.0,0.0)) > ERROR)

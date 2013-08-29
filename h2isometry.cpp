@@ -7,6 +7,12 @@ H2Isometry::H2Isometry()
 {
 }
 
+H2Isometry::H2Isometry(int i)
+{
+    assert(i==1);
+    setIdentity();
+}
+
 void H2Isometry::setIdentity()
 {
     u = 1.0;

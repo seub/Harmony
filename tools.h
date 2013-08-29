@@ -19,28 +19,30 @@ namespace Tools
 
 int intRound(double x);
 double mod2Pi(double t);
+
 template <typename T> T exponentiation(T base, int power)
-{
+{    
+    T res = 1;
     if (power >= 0)
     {
-        int res = 1;
-        int pow = base;
+        T pow = base;
         while (power > 0)
         {
             if (power & 1)
             {
-                res*=pow;
+                res = res*pow;
             }
-            pow *= pow;
+            pow = pow*pow;
             power >>= 1;
         }
-        return res;
     }
-    std::cout << "ERROR in Tools::exponentiation: no negative exponents!" << std::endl;
-    throw(0);
+    else
+    {
+        std::cerr << "ERROR in Tools::exponentiation: no negative exponents!" << std::endl;
+    }
+    return res;
 }
 
-word contractWord(word & w);
 std::string convertToString(int i);
 
 template <typename T> std::vector<int> findInList(const T &x, const std::vector<T> &V)
@@ -112,9 +114,9 @@ std::ostream & operator<<(std::ostream &out, const Complex &z);
 template<typename T> std::ostream & operator<<(std::ostream &out, const std::vector<T> &V)
 {
     out << "[";
-    for (auto it = V.begin(); it + 1 != V.end(); ++it)
+    for (unsigned int i = 0; i+1 < V.size(); ++i)
     {
-        out << *it << ", ";
+        out << V[i] << ", ";
     }
     if (!V.empty())
     {
@@ -131,5 +133,7 @@ template<typename T> std::vector<T> operator+(std::vector<T> V, T &x)
     }
     return V;
 }
+
+
 
 #endif // TOOLS_H

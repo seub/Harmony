@@ -27,7 +27,7 @@ template <typename T> DiscreteGroup GroupRepresentation<T>::getDiscreteGroup() c
 template<typename T> bool GroupRepresentation<T>::checkRelations() const
 {
     bool res = true;
-    std::vector<word> relations = Gamma -> getRelations();
+    std::vector<Word> relations = Gamma -> getRelations();
     T identity;
     identity.setIdentity();
     for (unsigned int i=0;i<relations.size();i++)
@@ -64,30 +64,33 @@ template <typename T> bool GroupRepresentation<T>::getGeneratorImage(const gener
     return false;
 }
 
-template<typename T> T GroupRepresentation<T>::evaluateRepresentation(const word & w) const
+template<typename T> T GroupRepresentation<T>::evaluateRepresentation(const Word & w) const
 {
     T store;
     store.setIdentity();
-    for (unsigned int j=0;j<w.size();j++)
+    Word wc  = Word::contract(w);
+    std::vector<letter> letters = wc.getLetters();
+    for (const auto &l : letters)
     {
-        if(w[j].second == 1)
+        if(l.second >= 0)
         {
-            store = store*generatorImages[w[j].first];
+            store = store*Tools::exponentiation(generatorImages[l.first], l.second);
         }
-        else if (w[j].second == -1)
+        else
         {
-            store = store*generatorImages[w[j].first].inverse();
+            store = store*Tools::exponentiation(generatorImages[l.first], -l.second).inverse();
         }
     }
     return store;
 }
 
-template<typename T> std::vector<T> GroupRepresentation<T>::evaluateRepresentation(const std::vector<word> & listOfWords)
+template<typename T> std::vector<T> GroupRepresentation<T>::evaluateRepresentation(const std::vector<Word> & listOfWords) const
 {
     std::vector<T> output;
-    for(unsigned int i=0; i<listOfWords.size(); i++)
+    output.reserve(listOfWords.size());
+    for(const auto & word : listOfWords)
     {
-        output.push_back(evaluateRepresentation(listOfWords[i]));
+        output.push_back(evaluateRepresentation(word));
     }
     return output;
 }
@@ -95,12 +98,12 @@ template<typename T> std::vector<T> GroupRepresentation<T>::evaluateRepresentati
 template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conjugate(const T & A) const
 {
     std::vector<T> list;
-    for (unsigned int i=0;i<generatorImages.size();i++)
+    list.reserve(generatorImages.size());
+    for (const auto &genim : generatorImages)
     {
-        list.push_back(A*generatorImages[i]*A.inverse());
+        list.push_back(A*genim*A.inverse());
     }
-    GroupRepresentation<T> r(Gamma,list);
-    return r;
+    return GroupRepresentation<T>(Gamma,list);
 
 }
 
@@ -176,21 +179,21 @@ template <> void IsomH2Representation::generatePolygon(const H2Point &basePoint,
     for (i = 0; i+1<genus; ++i)
     {
         f = f*generatorImages[2*i];
-        newVertices[k++] = f*basePoint;
+        newVertices[++k] = f*basePoint;
         f = f*generatorImages[2*i+1];
-        newVertices[k++] = f*basePoint;
+        newVertices[++k] = f*basePoint;
         f = f*generatorImages[2*i].inverse();
-        newVertices[k++] = f*basePoint;
+        newVertices[++k] = f*basePoint;
         f = f*generatorImages[2*i+1].inverse();
-        newVertices[k++] = f*basePoint;
+        newVertices[++k] = f*basePoint;
     }
 
     f = f*generatorImages[2*i];
-    newVertices[k++] = f*basePoint;
+    newVertices[++k] = f*basePoint;
     f = f*generatorImages[2*i+1];
-    newVertices[k++] = f*basePoint;
+    newVertices[++k] = f*basePoint;
     f = f*generatorImages[2*i].inverse();
-    newVertices[k++] = f*basePoint;
+    newVertices[++k] = f*basePoint;
 
     polygon.setVertices(newVertices);
 
@@ -237,37 +240,31 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int tilingSize) cons
 }
 
 
+template <> std::vector<Word> IsomH2Representation::getWordSidePairings() const
+{
+    assert(Gamma->isClosedSurfaceGroup());
+
+    std::vector<Word> res;
+    int genus = Gamma->getGenerators().size()/2;
+    res.resize(4*genus);
+    Word store, extra;
+    for (int i=0; i!=genus; ++i)
+    {
+        extra = store*Word({letter(2*i,1),letter(2*i+1,1),letter(2*i,-1)})*store.inverse();
+        res[4*i] = extra;
+        res[4*i + 2] = extra.inverse();
+        extra = store*Word({letter(2*i,1),letter(2*i+1,1),
+                letter(2*i,-1), letter(2*i+1,-1), letter(2*i,-1)})*store.inverse();
+        res[4*i + 1] = extra;
+        res[4*i + 3] = extra.inverse();
+        store = store*Word({letter(2*i,1), letter(2*i+1,1), letter(2*i,-1), letter(2*i+1,-1)});
+    }
+    return res;
+}
+
 template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsForNormalizedFundamentalDomain() const
 {
-    std::vector<H2Isometry> output;
-    if (Gamma->isClosedSurfaceGroup())
-    {
-        int genus = generatorImages.size()/2;
-        H2Isometry store,extra;
-        store.setIdentity();
-
-        for (int i = 0; i<genus; i++)
-        {
-            extra = store*generatorImages[2*i]*
-                    generatorImages[2*i+1]*
-                    generatorImages[2*i].inverse()*store.inverse();
-            output.push_back(extra);
-            output.push_back(extra.inverse());
-            extra = store*generatorImages[2*i]*generatorImages[2*i+1]*
-                    generatorImages[2*i].inverse()*
-                    generatorImages[2*i+1].inverse()*generatorImages[2*i].inverse()*store.inverse();
-            output.push_back(extra);
-            output.push_back(extra.inverse());
-            store = store*generatorImages[2*i]*generatorImages[2*i+1]*
-                    generatorImages[2*i].inverse()*generatorImages[2*i+1].inverse();
-        }
-    }
-    else
-    {
-        std::cout << "WARNING in RealRepresentation::getSidePairingsForNormalizedFundamentalDomain: not a closed surface group representation"
-                  << std::endl;
-    }
-    return output;
+    return evaluateRepresentation(getWordSidePairings());
 }
 
 template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormalizedToDepth(int n) const
@@ -386,8 +383,8 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormali
     store.reserve(aroundVertices.size());
     output.reserve(Tools::exponentiation(4*genus,n));
     output = aroundVertices;
-    std::vector<word> words = (Gamma->getWordsOfNonRepeatingLettersLengthLessThan(n));
-    shortWords = evaluateRepresentation(words);
+    std::vector<Word> Words = (Gamma->getWordsOfNonRepeatingLettersLengthLessThan(n));
+    shortWords = evaluateRepresentation(Words);
     for (unsigned int i=0; i<shortWords.size(); i++)
     {
         store = shortWords[i]*aroundVertices;
@@ -591,12 +588,7 @@ template <> void IsomH2Representation::setNiceRepresentation()
     p1.setDiskCoordinate(-z1);
 
 
-    generatorImages.clear();
-    generatorImages.push_back(a1);
-    generatorImages.push_back(b1);
-    generatorImages.push_back(a2);
-    generatorImages.push_back(b2);
-
+    generatorImages = {a1, b1, a2, b2};
     return;
 }
 

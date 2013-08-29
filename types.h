@@ -14,7 +14,6 @@
 typedef std::string generatorName;
 typedef int generatorIndex;
 typedef std::pair<generatorIndex, int> letter;
-typedef std::vector<letter> word;
 typedef std::complex<double> Complex;
 
 

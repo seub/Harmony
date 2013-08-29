@@ -10,15 +10,6 @@ H2Mesh::H2Mesh()
 
 }
 
-H2MeshPoint::H2MeshPoint(int subdivisionIndex, int indexInSubdivision, bool cutPoint, int subdivisionIndexRight,
-                         int indexInSubdivisionRight, bool boundaryPoint, int side, bool vertexPoint, int vertexIndex) :
-    subdivisionIndex(subdivisionIndex), indexInSubdivision(indexInSubdivision), cutPoint(cutPoint), subdivisionIndexRight(subdivisionIndexRight),
-    indexInSubdivisionRight(indexInSubdivisionRight), boundaryPoint(boundaryPoint), side(side), vertexPoint(vertexPoint), vertexIndex(vertexIndex)
-{
-
-}
-
-
 H2Mesh::H2Mesh(const IsomH2Representation &rho, int depth) : rho(rho), depth(depth)
 {
     clock_t start = clock();
@@ -61,16 +52,42 @@ bool H2Mesh::triangleContaining(const H2Point &point, H2Triangle &outputTriangle
 
 const H2Point & H2Mesh::getH2Point(int index) const
 {
-    return subdivisions[meshPoints[index].subdivisionIndex].points->at(meshPoints[index].indexInSubdivision);
+    return subdivisions[meshPoints[index]->subdivisionIndex].points->at(meshPoints[index]->indexInSubdivision);
 }
 
-std::vector<H2Point> H2Mesh::getNeighbors(int index) const
+std::vector<H2Point> H2Mesh::getH2Neighbors(int index) const
 {
-    std::vector<int> neighborIndices = meshPoints.at(index).neighborsIndices;
+    std::vector<int> neighborIndices = meshPoints.at(index)->neighborsIndices;
     std::vector<H2Point> res;
     for (auto k : neighborIndices)
     {
         res.push_back(getH2Point(k));
     }
+    return res;
+}
+
+std::vector<H2Point> H2Mesh::getKickedH2Neighbors(int index) const
+{
+    H2MeshPoint* point = meshPoints.at(index);
+    std::vector<int> neighborIndices = point->neighborsIndices;
+    std::vector<H2Point> res = getH2Neighbors(index);
+
+    if (point->isBoundaryPoint())
+    {
+        std::vector<H2Isometry> isometries = ((H2MeshBoundaryPoint*) point)->neighborsIsometries;
+        for (unsigned int i=0; i<neighborIndices.size(); ++i)
+        {
+            res[i] = isometries[i]*res[i];
+        }
+    }
+    else if (point->isVertexPoint())
+    {
+        std::vector<H2Isometry> isometries = ((H2MeshVertexPoint*) point)->neighborsIsometries;
+        for (unsigned int i=0; i<neighborIndices.size(); ++i)
+        {
+            res[i] = isometries[i]*res[i];
+        }
+    }
+
     return res;
 }

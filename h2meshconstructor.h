@@ -14,36 +14,46 @@ private:
     void createPoints();
     void createNeighbors();
     void createSubdivisions();
-    void createInteriorMeshPoints();
-    void createCutMeshPoints();
-    void createSideMeshPoints();
+
+    void createRegularPoints();
+    void createCutPoints();
+    void createBoundaryPoints();
+    void createVertexPoints();
+
     void createInteriorNeighbors();
     void createCutNeighbors();
     void createSideNeighbors();
     void createRemainingNeighbors();
     void createExteriorNeighbors();
+    void createExteriorVertexNeighbors();
 
     bool runTests() const;
-    bool checkForNumberOfMeshPoints() const;
+    bool checkNumberOfMeshPoints() const;
     bool checkForDuplicateNeighbors() const;
-    bool checkForNeighborsReciprocity() const;
-    bool checkForNumberOfNeighbors() const;
+    bool checkNumberOfNeighbors() const;
+    bool checkPartnerPoints() const;
+
+    std::vector<int> meshPointsIndicesAlongSide(int side) const;
 
 
     H2Mesh *mesh;
 
     int depth;
-    std::vector<H2Isometry> *sidePairings;
     std::vector<H2TriangleSubdivision> *subdivisions;
-    std::vector<H2MeshPoint> *meshPoints;
+    std::vector<H2MeshPoint*> *points;
+    std::vector<H2MeshPoint> *regularPoints;
+    std::vector<H2MeshCutPoint> *cutPoints;
+    std::vector<H2MeshBoundaryPoint> *boundaryPoints;
+    std::vector<H2MeshVertexPoint> *vertexPoints;
+
 
     H2PolygonTriangulater triangulater;
     int nbVertices, nbSubdivisions, nbSubdivisionLines, nbSubdivisionPoints;
     int nextIndex;
     std::vector< std::vector<bool> > boundaryPointInSubdivisions;
-    std::vector<bool> vertexAdded;
     std::vector<int> vertexMeshIndex;
     std::vector< std::vector< std::vector<int> > > neighborsInSubdivisions;
+    std::vector<H2Isometry> sidePairings;
 };
 
 #endif // H2MESHCONSTRUCTOR_H

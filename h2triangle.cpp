@@ -1,6 +1,6 @@
 #include "h2triangle.h"
 #include "h2polygon.h"
-
+#include "h2isometry.h"
 
 H2Triangle::H2Triangle()
 {
@@ -65,28 +65,45 @@ void H2Triangle::getAngles(double &angleA, double &angleB, double &angleC) const
     return;
 }
 
-bool H2Triangle::isVertexCloseInDiskModel(const H2Point &point, double detectionRadiusSquared, H2Point &vertex, int &vertexIndex) const
+bool H2Triangle::isVertexCloseInDiskModel(const H2Point &point, double detectionRadiusSquared, int &vertexIndex) const
 {
     Complex z = point.getDiskCoordinate();
     if (norm(z - a.getDiskCoordinate()) < detectionRadiusSquared)
     {
-        vertex = a;
         vertexIndex = 0;
         return true;
     }
     else if (norm(z - b.getDiskCoordinate()) < detectionRadiusSquared)
     {
-        vertex = b;
         vertexIndex = 1;
         return true;
     }
     else if (norm(z - c.getDiskCoordinate()) < detectionRadiusSquared)
     {
-        vertex = c;
         vertexIndex = 2;
         return true;
     }
     return false;
+}
+
+H2Point H2Triangle::getVertex(int index) const
+{
+    switch (index)
+    {
+    case 0:
+        return a;
+        break;
+    case 1:
+        return b;
+        break;
+    case 2:
+        return c;
+        break;
+    default:
+        std::cerr << "ERROR in H2Triangle::getVertex: wrong index" << std::endl;
+        return a;
+        break;
+    }
 }
 
 
@@ -94,4 +111,9 @@ std::ostream & operator<<(std::ostream &out, const H2Triangle &T)
 {
     out << "Triangle with vertices a = " << T.a << ", b = " << T.b << ", c = " << T.c << std::endl;
     return out;
+}
+
+H2Triangle operator*(const H2Isometry &f, const H2Triangle &T)
+{
+    return H2Triangle(f*(T.a), f*(T.b), f*(T.c));
 }

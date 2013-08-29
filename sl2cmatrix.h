@@ -17,6 +17,7 @@ class SL2CMatrix
 
 public:
     SL2CMatrix();
+    SL2CMatrix(int i);
     SL2CMatrix(const Complex & a, const Complex & b, const Complex & c, const Complex & d);
 
 

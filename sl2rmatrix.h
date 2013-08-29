@@ -15,6 +15,7 @@ class SL2RMatrix
 
 public:
     SL2RMatrix();
+    SL2RMatrix(int i);
     SL2RMatrix(double a, double b, double c, double d);
 
     double det() const;

@@ -374,3 +374,28 @@ void H2PolygonTriangulater::adjacentSidesIndices(int cutIndex, int &outputIndexL
     }
     return;
 }
+
+void H2PolygonTriangulater::verticesIndices(std::vector< std::vector<int> > &triangleIndices,
+                                            std::vector< std::vector<int> > &indicesInTriangles) const
+{
+    int i, nbTriangles = triangles.size();
+    int N = polygon->nbVertices();
+    triangleIndices.resize(N);
+    indicesInTriangles.resize(N);
+
+    TriangulationTriangle T;
+    for (i=0; i!=nbTriangles; ++i)
+    {
+        T = triangles[i];
+
+        triangleIndices[T.vertexIndex1].push_back(i);
+        indicesInTriangles[T.vertexIndex1].push_back(0);
+
+        triangleIndices[T.vertexIndex2].push_back(i);
+        indicesInTriangles[T.vertexIndex2].push_back(1);
+
+        triangleIndices[T.vertexIndex3].push_back(i);
+        indicesInTriangles[T.vertexIndex3].push_back(2);
+    }
+    return;
+}

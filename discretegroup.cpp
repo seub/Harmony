@@ -5,7 +5,7 @@ DiscreteGroup::DiscreteGroup()
     closedSurfaceGroup = false;
 }
 
-DiscreteGroup::DiscreteGroup(const std::vector<generatorName> &generators, const std::vector<word> &relations)
+DiscreteGroup::DiscreteGroup(const std::vector<generatorName> &generators, const std::vector<Word> &relations)
 {
     closedSurfaceGroup = false;
     this->generators = generators;
@@ -51,7 +51,7 @@ DiscreteGroup::DiscreteGroup(const TopologicalSurface &S)
 
     generators = generatorsList;
 
-    std::vector<word> relationsList;
+    std::vector<Word> relationsList;
 
     std::vector<letter> relation;
     letter l;
@@ -86,29 +86,29 @@ DiscreteGroup::DiscreteGroup(const TopologicalSurface &S)
     closedSurfaceGroup = (numberOfPunctures == 0);
 }
 
-std::vector<word> DiscreteGroup::getWordsOfLengthLessThan(int n) const
+std::vector<Word> DiscreteGroup::getWordsOfLengthLessThan(int n) const
 {
-    std::vector<word> words,wordsStore;
-    word w;
+    std::vector<Word> Words,WordsStore;
+    Word w;
 
     for (int j=0; j<n ; j++)
     {
-        wordsStore = getWordsOfLengthEqualTo(j);
-        words.insert(words.end(), wordsStore.begin(), wordsStore.end());
+        WordsStore = getWordsOfLengthEqualTo(j);
+        Words.insert(Words.end(), WordsStore.begin(), WordsStore.end());
     }
-    return words;
+    return Words;
 }
 
-std::vector<word> DiscreteGroup::getWordsOfLengthEqualTo(int n) const
+std::vector<Word> DiscreteGroup::getWordsOfLengthEqualTo(int n) const
 {
 
-    std::vector<word> output;
+    std::vector<Word> output;
     letter l;
-    word w,wNew;
+    Word w,wNew;
     int numberOfGenerators = generators.size();
     if (n <= 0)
     {
-        std::cout << "There are no words of negative length" << std::endl;
+        std::cout << "There are no Words of negative length" << std::endl;
         throw(0);
     }
     if (n==1)
@@ -128,7 +128,7 @@ std::vector<word> DiscreteGroup::getWordsOfLengthEqualTo(int n) const
     }
     w.reserve(n-1);
     wNew.reserve(n);
-    std::vector<word> outPrevious = getWordsOfLengthEqualTo(n-1);
+    std::vector<Word> outPrevious = getWordsOfLengthEqualTo(n-1);
     int previousSize = outPrevious.size();
     for (int j=0; j<previousSize; j++)
     {
@@ -157,16 +157,16 @@ std::vector<word> DiscreteGroup::getWordsOfLengthEqualTo(int n) const
     return output;
 }
 
-std::vector<word> DiscreteGroup::getWordsOfNonRepeatingLettersLengthEqualTo(int n) const
+std::vector<Word> DiscreteGroup::getWordsOfNonRepeatingLettersLengthEqualTo(int n) const
 {
 
-    std::vector<word> output;
+    std::vector<Word> output;
     letter l;
-    word w,wNew;
+    Word w,wNew;
     int numberOfGenerators = generators.size();
     if (n <= 0)
     {
-        std::cout << "There are no words of negative length" << std::endl;
+        std::cout << "There are no Words of negative length" << std::endl;
         throw(0);
     }
     if (n==1)
@@ -186,7 +186,7 @@ std::vector<word> DiscreteGroup::getWordsOfNonRepeatingLettersLengthEqualTo(int 
     }
     w.reserve(n-1);
     wNew.reserve(n);
-    std::vector<word> outPrevious = getWordsOfLengthEqualTo(n-1);
+    std::vector<Word> outPrevious = getWordsOfLengthEqualTo(n-1);
     int previousSize = outPrevious.size();
     for (int j=0; j<previousSize; j++)
     {
@@ -211,17 +211,17 @@ std::vector<word> DiscreteGroup::getWordsOfNonRepeatingLettersLengthEqualTo(int 
     return output;
 }
 
-std::vector<word> DiscreteGroup::getWordsOfNonRepeatingLettersLengthLessThan(int n) const
+std::vector<Word> DiscreteGroup::getWordsOfNonRepeatingLettersLengthLessThan(int n) const
 {
-    std::vector<word> words,wordsStore;
-    word w;
+    std::vector<Word> Words,WordsStore;
+    Word w;
 
     for (int j=1; j<n ; j++)
     {
-        wordsStore = getWordsOfNonRepeatingLettersLengthEqualTo(j);
-        words.insert(words.end(), wordsStore.begin(), wordsStore.end());
+        WordsStore = getWordsOfNonRepeatingLettersLengthEqualTo(j);
+        Words.insert(Words.end(), WordsStore.begin(), WordsStore.end());
     }
-    return words;
+    return Words;
 }
 
 std::vector<generatorName> DiscreteGroup::getGenerators() const
@@ -234,12 +234,12 @@ bool DiscreteGroup::isClosedSurfaceGroup() const
     return closedSurfaceGroup;
 }
 
-std::vector<word> DiscreteGroup::getRelations() const
+std::vector<Word> DiscreteGroup::getRelations() const
 {
     return relations;
 }
 
-std::vector<word> DiscreteGroup::getCusps() const
+std::vector<Word> DiscreteGroup::getCusps() const
 {
     return cusps;
 }
@@ -260,7 +260,7 @@ std::ostream & operator<<(std::ostream &out, const DiscreteGroup & Gamma)
         out << ", " << generators[i];
     }
     out << " | ";
-    std::vector<word> relations = Gamma.relations;
+    std::vector<Word> relations = Gamma.relations;
     out << Gamma.getWordAsString(relations[0]);
     for(unsigned int i=1; i<relations.size(); i++)
     {
@@ -286,7 +286,7 @@ std::string DiscreteGroup::getLetterAsString(const letter & l) const
 }
 
 
-std::string DiscreteGroup::getWordAsString(const word & w) const
+std::string DiscreteGroup::getWordAsString(const Word & w) const
 {
     std::string res;
     unsigned int i;
@@ -361,19 +361,19 @@ DiscreteGroup DiscreteGroup::amalgamateOverInverse(const DiscreteGroup &Gamma1, 
     }
 
     std::vector<generatorName> outputGenerators;
-    std::vector<word> outputRelations;
+    std::vector<Word> outputRelations;
 
     if(checkCompatibilityForAmalgamation(Gamma1, Gamma2))
     {
         std::vector<generatorName> generators1 = Gamma1.getGenerators();
         std::vector<generatorName> generators2 = Gamma2.getGenerators();
-        std::vector<word> relations1 = Gamma1.getRelations();
-        std::vector<word> relations2 = Gamma2.getRelations();
+        std::vector<Word> relations1 = Gamma1.getRelations();
+        std::vector<Word> relations2 = Gamma2.getRelations();
 
         outputGenerators = generators1;
         outputGenerators.insert(outputGenerators.end(), generators2.begin(), generators2.end());
 
-        word w;
+        Word w;
         outputRelations = relations1;
 
         for (unsigned int i=0; i< relations2.size(); i++)
@@ -405,7 +405,7 @@ DiscreteGroup DiscreteGroup::doHNNextensionOverInverse(const DiscreteGroup & Gam
     }
 
     std::vector<generatorName> outputGenerators;
-    std::vector<word> outputRelations;
+    std::vector<Word> outputRelations;
 
     if (checkCompatibilityforHNNextension(Gamma))
     {
@@ -414,7 +414,7 @@ DiscreteGroup DiscreteGroup::doHNNextensionOverInverse(const DiscreteGroup & Gam
         int N = outputGenerators.size();
 
         outputRelations = Gamma.getRelations();
-        word w;
+        Word w;
         w.push_back(letter(j1, 1));
         w.push_back(letter(N-1, -1));
         w.push_back(letter(i1, 1));
@@ -439,7 +439,7 @@ void DiscreteGroup::setPairOfPants(generatorName c1, generatorName c2, generator
     generators.push_back(c1);
     generators.push_back(c2);
     generators.push_back(c3);
-    word w;
+    Word w;
     w.push_back(letter(2, 1));
     w.push_back(letter(1, 1));
     w.push_back(letter(0, 1));
@@ -463,7 +463,7 @@ void DiscreteGroup::rotateGenerators(int shift)
     return;
 }
 
-void DiscreteGroup::rotateWord(word &w, int shift)
+void DiscreteGroup::rotateWord(Word &w, int shift)
 {
     int n = generators.size();
     for (unsigned int i=0; i<w.size(); i++)

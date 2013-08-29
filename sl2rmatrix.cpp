@@ -5,6 +5,12 @@ SL2RMatrix::SL2RMatrix()
     setIdentity();
 }
 
+SL2RMatrix::SL2RMatrix(int i)
+{
+    assert(i==1);
+    setIdentity();
+}
+
 
 SL2RMatrix::SL2RMatrix(double a, double b, double c, double d) : a(a), b(b), c(c), d(d)
 {
