@@ -59,7 +59,9 @@ private:
 
     void triangulate();
     std::vector<double> subpolygonAngles(const std::vector<int> &indices) const;
-    void findCutInSubpolygon(const std::vector<int> &indices, int &outputIndex1, int &outputIndex2) const;
+    void findCutInSubpolygon1(const std::vector<int> &indices, int &outputIndex1, int &outputIndex2) const;
+    void findCutInSubpolygon2(const std::vector<int> &indices, int &outputIndex1, int &outputIndex2) const;
+    void findCutInSubpolygon3(const std::vector<int> &indices, int &outputIndex1, int &outputIndex2) const;
 
     void triangulateSubpolygon(const std::vector<int> &indices);
     void splitIndicesList(const std::vector<int> & indices, int cut1, int cut2,
@@ -69,6 +71,9 @@ private:
 
     void adjacentSidesIndices(int cutIndex, int &outputIndexLeft1, int &outputIndexLeft2, int &outputIndexRight1, int &outputIndexRight2) const;
 
+    double minAngleOfCutInSubpolygon(const std::vector<int> & indices, unsigned int cut1, unsigned int cut2) const;
+
+    double minTriangleAngle() const;
 
     const H2Polygon * const polygon;
     bool orientation;
@@ -76,6 +81,8 @@ private:
     std::vector<TriangulationTriangle> triangles;
     std::vector<int> sideTrianglesIndices;
     std::vector<int> sideTrianglesBoundarySideIndices;
+
+
 };
 
 #endif // H2POLYGONTRIANGULATER_H

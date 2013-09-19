@@ -44,7 +44,9 @@ SOURCES += main.cpp \
     h2polygontriangulater.cpp \
     h2meshconstructor.cpp \
     h2meshpoint.cpp \
-    word.cpp
+    word.cpp \
+    h2meshfunction.cpp \
+    h2meshvectorfield.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -75,7 +77,9 @@ HEADERS += \
     h2polygontriangulater.h \
     h2meshconstructor.h \
     h2meshpoint.h \
-    word.h
+    word.h \
+    h2meshfunction.h \
+    h2meshvectorfield.h
 
 OTHER_FILES += \
     TODO.txt

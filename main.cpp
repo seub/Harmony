@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
 
-    int g = 5;
+    int g = 2;
 
     std::vector<double> lengths;
     std::vector<double> twists;
@@ -34,10 +34,12 @@ int main(int argc, char *argv[])
     IsomH2Representation rho(&group);
 
     rho = fn.getRepresentation(&group);
+
+    rho.setNiceRepresentation();
     rho.checkRelations();
 
     H2Mesh mesh;
-    int k = 5;
+    int k = 4;
     //for (k=0; k<10; ++k)
     //{
     std::cout << "depth = " << k << std::endl;
@@ -58,6 +60,10 @@ int main(int argc, char *argv[])
 
     delegate.redrawBuffer();
     canvas.show();
+
+    std::cout << "random : " << rand() % 100 << std::endl;
+
+
 
 
     std::cout << std::endl;

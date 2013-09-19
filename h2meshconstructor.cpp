@@ -440,6 +440,8 @@ bool H2MeshConstructor::checkNumberOfMeshPoints() const
 
 bool H2MeshConstructor::checkForDuplicateNeighbors() const
 {
+    if(depth > 1)
+    {
     for (const auto &m : *points)
     {
         if (Tools::containsDuplicates(m->neighborsIndices))
@@ -448,9 +450,10 @@ bool H2MeshConstructor::checkForDuplicateNeighbors() const
             return false;
         }
     }
-
+    }
     std::cout << "H2MeshConstructor::checkForDuplicateNeighbors: passed" << std::endl;
     return true;
+
 }
 
 
@@ -589,10 +592,10 @@ bool H2MeshConstructor::checkPartnerPoints() const
             max = d > max ? d : max;
             if (d > 0.01)
             {
-                std::cout << "ERROR in H2MeshConstructor::checkForPartnerPoints(): test failed" << std::endl;
+                /*std::cout << "ERROR in H2MeshConstructor::checkForPartnerPoints(): test failed" << std::endl;
                 std::cout << "For point #" << i << ", partner point is supposed to be #" << ((H2MeshBoundaryPoint*) m)->partnerPointIndex
                           << std::endl;
-                std::cout << "Following points are supposed to be the same: p1 = " << p1 << " and p2 = " << p2 << std::endl;
+                std::cout << "Following points are supposed to be the same: p1 = " << p1 << " and p2 = " << p2 << std::endl;*/
                 ++failed;
             }
             else
@@ -605,6 +608,10 @@ bool H2MeshConstructor::checkPartnerPoints() const
     if (failed ==0)
     {
         std::cout << "H2MeshConstructor::checkForPartnerPoints(): passed (max error = " << max << ")" << std::endl;
+    }
+    else
+    {
+        std::cout << "H2MeshConstructor::checkForPartnerPoints(): failed (max error = " << max << ")" << std::endl;
     }
     return failed == 0;
 }

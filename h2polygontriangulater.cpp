@@ -6,7 +6,34 @@ H2PolygonTriangulater::H2PolygonTriangulater(const H2Polygon * const polygon) : 
 {
     orientation = polygon->isPositivelyOriented();
     triangulate();
+    std::cout << "min angle = " << minTriangleAngle() << std::endl;
+    std::vector<double> polygonAngles = polygon->getPositiveInteriorAngles();
+    double minPolygonAngle = *std::min_element(polygonAngles.begin(), polygonAngles.end());
+    std::cout << "min angle in polygon = " << minPolygonAngle << std::endl;
 }
+
+double H2PolygonTriangulater::minAngleOfCutInSubpolygon(const std::vector<int> & indices, unsigned int cut1, unsigned int cut2) const
+{
+    std::vector<double> angles(4);
+    angles[1] = H2Point::angle(polygon->getVertex(indices[cut1==0?indices.size()-1:cut1-1]),
+            polygon->getVertex(indices[cut1]), polygon->getVertex(indices[cut2]));
+    angles[2] = H2Point::angle(polygon->getVertex(indices[cut2==0?indices.size()-1:cut2-1]),
+                    polygon->getVertex(indices[cut2]), polygon->getVertex(indices[cut1]));
+    angles[3] = H2Point::angle(polygon->getVertex(indices[cut2]),
+                    polygon->getVertex(indices[cut1]), polygon->getVertex(indices[cut1+1 >= indices.size()?0:cut1+1]));
+    angles[0] = H2Point::angle(polygon->getVertex(indices[cut1]),
+                    polygon->getVertex(indices[cut2]), polygon->getVertex(indices[cut2+1 >= indices.size()?0:cut2+1]));
+    if(orientation)
+    {
+        for(auto &a : angles)
+        {
+            a = 2.0*M_PI - a;
+        }
+    }
+
+    return *std::min_element(angles.begin(),angles.end());
+}
+
 
 std::vector<double> H2PolygonTriangulater::subpolygonAngles(const std::vector<int> &indices) const
 {
@@ -35,7 +62,8 @@ std::vector<double> H2PolygonTriangulater::subpolygonAngles(const std::vector<in
     return res;
 }
 
-void H2PolygonTriangulater::findCutInSubpolygon(const std::vector<int> &indices, int &outputIndex1, int &outputIndex2) const
+
+void H2PolygonTriangulater::findCutInSubpolygon1(const std::vector<int> &indices, int &outputIndex1, int &outputIndex2) const
 {
     std::vector<double> angles = subpolygonAngles(indices);
 
@@ -83,6 +111,69 @@ void H2PolygonTriangulater::findCutInSubpolygon(const std::vector<int> &indices,
     return;
 }
 
+void H2PolygonTriangulater::findCutInSubpolygon2(const std::vector<int> &indices, int &outputIndex1, int &outputIndex2) const
+{
+    unsigned int i,j;
+    double max = 0, angle;
+    for(j=2;j<indices.size()-1;++j)
+    {
+        angle = minAngleOfCutInSubpolygon(indices,0,j);
+        if(angle>max)
+        {
+            max = angle;
+            outputIndex1 = 0;
+            outputIndex2 = j;
+        }
+    }
+    for(i = 1;i+2<indices.size();++i)
+    {
+        for(j=i+2;j<indices.size();++j)
+        {
+            angle = minAngleOfCutInSubpolygon(indices,i,j);
+            if(angle>max)
+            {
+                max = angle;
+                outputIndex1 = i;
+                outputIndex2 = j;
+            }
+        }
+    }
+    return;
+}
+
+void H2PolygonTriangulater::findCutInSubpolygon3(const std::vector<int> &indices, int &outputIndex1, int &outputIndex2) const
+{
+    std::vector<double> angles = subpolygonAngles(indices);
+
+    double min = angles.front();
+    int minAngleVertex = 0;
+    int i, N = indices.size();
+    for (i=1; i<N; i++)
+    {
+        if (angles[i] < min)
+        {
+            min = angles[i];
+            minAngleVertex = i;
+        }
+    }
+
+    if(minAngleVertex == 0)
+    {
+        outputIndex1=1;
+        outputIndex2 = N -1;
+    }
+    else if(minAngleVertex == N-1)
+    {
+        outputIndex1=0;
+        outputIndex2 = N -2;
+    }
+    else
+    {
+        outputIndex1 = minAngleVertex -1;
+        outputIndex2 = minAngleVertex +1;
+    }
+    return;
+}
 
 void H2PolygonTriangulater::splitIndicesList(const std::vector<int> &indices, int cut1, int cut2,
                                              std::vector<int> &outputList1, std::vector<int> &outputList2) const
@@ -128,7 +219,7 @@ void H2PolygonTriangulater::triangulateSubpolygon(const std::vector<int> &indice
     {
         int cut1, cut2;
 
-        findCutInSubpolygon(indices, cut1, cut2);
+        findCutInSubpolygon2(indices, cut1, cut2);
         std::vector<int> list1, list2;
         splitIndicesList(indices, cut1, cut2, list1, list2);
 
@@ -398,4 +489,20 @@ void H2PolygonTriangulater::verticesIndices(std::vector< std::vector<int> > &tri
         indicesInTriangles[T.vertexIndex3].push_back(2);
     }
     return;
+}
+
+double H2PolygonTriangulater::minTriangleAngle() const
+{
+    std::vector<double> triangleAngles;
+    double angle, minAngle = 10.0;
+    for (const auto &T : triangles)
+    {
+        triangleAngles = subpolygonAngles({T.vertexIndex1, T.vertexIndex2, T.vertexIndex3});
+        angle = *std::min_element(triangleAngles.begin(), triangleAngles.end());
+        if (angle < minAngle)
+        {
+            minAngle = angle;
+        }
+    }
+    return minAngle;
 }

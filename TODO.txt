@@ -37,3 +37,5 @@ y a un petit truc qui déconne dans la détection
 repenser l'implémentation des meshpoints et du mesh ?
 
 faire des mots avec des exposants et de l'exponentiation rapide
+
+gérer les copy constructor et cie pour les classes gérant des ressources
