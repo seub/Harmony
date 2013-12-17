@@ -26,7 +26,7 @@ public:
     std::vector<H2Point> getKickedH2Neighbors(int index) const;
 
 
-private:    
+private:
     IsomH2Representation rho;
     int depth;
 

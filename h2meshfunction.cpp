@@ -6,7 +6,7 @@ H2MeshFunction::H2MeshFunction(const H2Mesh *const mesh, const IsomH2Representat
 
 void H2MeshFunction::initializePL(const H2Point &basePoint)
 {
-    int nbVertices = mesh->fundamentalDomain.nbVertices();
+    /*int nbVertices = mesh->fundamentalDomain.nbVertices();
     std::vector<H2Point> verticesImages(nbVertices);
 
     std::vector<Word> wordSidePairings = mesh->rho.getWordSidePairings();
@@ -31,5 +31,5 @@ void H2MeshFunction::initializePL(const H2Point &basePoint)
 
 
     int nbSubdivisions = mesh->subdivisions.size();
-    std::vector<H2TriangleSubdivision> subdivisions(nbSubdivisions);
+    std::vector<H2TriangleSubdivision> subdivisions(nbSubdivisions);*/
 }
