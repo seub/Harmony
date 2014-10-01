@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     delegate.redrawBuffer();
     canvas.show();
 
-    std::cout << "random : " << rand() % 100 << std::endl;
+    std::cout << "random bob: " << rand() % 100 << std::endl;
 
 
 
