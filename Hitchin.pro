@@ -35,7 +35,7 @@ SOURCES += main.cpp \
     h2isometry.cpp \
     h3isometry.cpp \
     tools.cpp \
-    h3canvasdelegate.cpp\
+#    h3canvasdelegate.cpp\
     fenchelnielsenconstructor.cpp \
     h2buffer.cpp \
     h2mesh.cpp \
@@ -68,7 +68,7 @@ HEADERS += \
     h3isometry.h \
     tools.h \
     types.h \
-    h3canvasdelegate.h\
+#    h3canvasdelegate.h\
     fenchelnielsenconstructor.h \
     h2buffer.h \
     h2mesh.h \
