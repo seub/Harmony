@@ -19,7 +19,6 @@ Canvas::Canvas(int width, int height, QWidget *parent) :
 void Canvas::setDelegate(CanvasDelegate *delegate)
 {
     this->delegate = delegate;
-    return;
 }
 
 void Canvas::paintEvent(QPaintEvent *)
@@ -32,13 +31,11 @@ void Canvas::paintEvent(QPaintEvent *)
     canvas_painter.drawImage(0, 0, *(delegate->getImage()));
 
     //std::cout << "Leaving Canvas::paintEvent" << std::endl;
-    return;
 }
 
 void Canvas::mousePressEvent(QMouseEvent *mouseEvent)
 {
     delegate->mousePress(mouseEvent);
-    return;
 }
 
 void Canvas::resizeEvent(QResizeEvent *resizeEvent)
@@ -46,14 +43,12 @@ void Canvas::resizeEvent(QResizeEvent *resizeEvent)
     QSize newSize = resizeEvent->size();
     delegate->rescale(newSize.width(), newSize.height());
     //update();
-    return;
 }
 
-void Canvas::mouseMoveEvent(QMouseEvent * mouseEvent)
+void Canvas::mouseMoveEvent(QMouseEvent *mouseEvent)
 {
     delegate->mouseMove(mouseEvent);
     update();
-    return;
 }
 
 /*void Canvas::enterEvent(QEvent *)
@@ -62,7 +57,7 @@ void Canvas::mouseMoveEvent(QMouseEvent * mouseEvent)
     return;
 }*/
 
-void Canvas::wheelEvent(QWheelEvent * wheelEvent)
+void Canvas::wheelEvent(QWheelEvent *wheelEvent)
 {
     double coeff = pow(1.2,wheelEvent->delta()/120);
     delegate->zoom(coeff,wheelEvent->x(),wheelEvent->y());
@@ -73,5 +68,4 @@ void Canvas::keyPressEvent(QKeyEvent *keyEvent)
 {
     delegate->keyPress(keyEvent);
     update();
-    return;
 }

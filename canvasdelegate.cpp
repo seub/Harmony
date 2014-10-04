@@ -10,7 +10,7 @@
 #include "circle.h"
 #include "tools.h"
 
-CanvasDelegate::CanvasDelegate(Canvas *canvas) : canvas(canvas)
+CanvasDelegate::CanvasDelegate(const Canvas *canvas) : canvas(canvas)
 {
     //std::cout << "Entering CanvasDelegate::CanvasDelegate" << std::endl;
 
@@ -36,7 +36,7 @@ CanvasDelegate::~CanvasDelegate()
     delete pen;
 }
 
-QImage * CanvasDelegate::getImage() const
+const QImage *CanvasDelegate::getImage() const
 {
     return image;
 }
@@ -45,21 +45,13 @@ void CanvasDelegate::rescale(int sizeX, int sizeY)
 {
     //std::cout << "Entering CanvasDelegate::rescale" << std::endl;
 
-    //QImage * oldImage = image;
-    QImage * newImage = new QImage(sizeX, sizeY, QImage::Format_RGB32);
+    delete painter;
+    *image = QImage(sizeX, sizeY, QImage::Format_RGB32);
+    painter = new QPainter(image);
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->eraseRect(0, 0, sizeX, sizeY);
+    painter->setPen(*pen);
 
-    //QPainter * oldPainter = painter;
-    QPainter * newPainter = new QPainter(newImage);
-    newPainter->setRenderHint(QPainter::Antialiasing, true);
-    newPainter->eraseRect(0, 0, sizeX, sizeY);
-    newPainter->setPen(*pen);
-
-    image = newImage;
-    painter = newPainter;
-
-    // Memory leak!
-    //delete oldImage;
-    //delete oldPainter;
 
     double xFactor = (sizeX *1.0/ this->sizeX);
     double yFactor = (sizeY *1.0/ this->sizeY);

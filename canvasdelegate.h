@@ -22,10 +22,10 @@ class CanvasDelegate
     friend class Canvas;
 
 public:
-    CanvasDelegate(Canvas *canvas);
+    CanvasDelegate(const Canvas *canvas);
     ~CanvasDelegate();
 
-    QImage * getImage() const;
+    const QImage * getImage() const;
 
 
     void drawPoint(const Complex &z, const QColor &color = "black", int width = 3);
@@ -44,7 +44,7 @@ public:
     void drawSmallerArc(const Circle &C, double angle1, double angle2,
                         const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1);
 
-    virtual void redrawBuffer(const H2Isometry &mobius = H2Isometry::identity()) =0;
+    virtual void redrawBuffer(const H2Isometry &mobius = H2Isometry::identity()) = 0;
 
     void zoom(double coeff);
     void zoom(double coeff, int centerX, int centerY);
@@ -57,7 +57,7 @@ public:
 
 
 protected:
-    Canvas *canvas;
+    const Canvas *canvas;
 
     int sizeX, sizeY;
     double scaleX, scaleY;
@@ -75,8 +75,8 @@ protected:
     void resetView();
     Complex PixelToComplexCoordinates(int x, int y) const;
     void ComplexToPixelCoordinates(int & xOut, int & yOut, Complex z) const;
-    void intersectsCanvasBoundary(const Complex & center, double radius,
-                                  const Complex &endpoint1, const Complex &endpoint2, Complex & zOut1, Complex &zOut2);
+    void intersectsCanvasBoundary(const Complex &center, double radius,
+                                  const Complex &endpoint1, const Complex &endpoint2, Complex &zOut1, Complex &zOut2);
     bool dealWithAlmostStraightArc(const Complex &center, double radius,
                                    const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1);
 

@@ -12,9 +12,9 @@ public:
 
     Complex getCenter() const;
     double getRadius() const;
-    void getCenterAndRadius(Complex & center, double & radius) const;
+    void getCenterAndRadius(Complex &center, double &radius) const;
 
-    bool contains(const Complex & z) const;
+    bool contains(const Complex &z) const;
     Complex pointAtAngle(double angle) const;
 
 

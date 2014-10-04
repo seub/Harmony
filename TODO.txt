@@ -1,3 +1,5 @@
+******************************** MISC ********************************
+
 Think about ERROR:
 -size
 -rel error
@@ -18,20 +20,24 @@ add zoom keys
 le zoom marche pas avec le complex to pixel...
 
 
-BUGS:
+******************************** BUGS: ********************************
 parfois "there is no h2geodesic between point and itself" pendant l'affichage??
 mesh constructor fails for depth 11
 
 test memory leaks with valgrind
 
+******************************** MISC 2 ********************************
+
+
 add steiner points
 
 use v.at(i) instead of v[i] where necessary
 
-passer à C++11
-utiliser V = {1, 2}
-utiliser for(auto i : V) ou for(auto &i : V)
-utiliser std::vector<int> V(3);
+Move on to C++11:
+- use V = {1, 2}
+- use for(auto i : V) or for(auto &i : V)
+- use std::vector<int> V(3);
+- ?
 
 y a un petit truc qui déconne dans la détection
 repenser l'implémentation des meshpoints et du mesh ?
@@ -39,3 +45,21 @@ repenser l'implémentation des meshpoints et du mesh ?
 faire des mots avec des exposants et de l'exponentiation rapide
 
 gérer les copy constructor et cie pour les classes gérant des ressources
+
+
+
+******************************** Update 3 Oct 2014 ********************************
+
+Even though Such says it's bad practice to comment the code everywhere, I'm going to do it a little bit now,
+in order to remember what we might have forgotten.
+
+Notes:
+1. I'm not sure why we made the constructor of Canvas. Anyway, it might not be a totally stupid idea to make all constructors explicit.
+2. Are there "const" everywhere there needs to be?
+3. I've decided to remove the "return;" line for void functions
+4. Why are the events "public slots" in Canvas, except paintEvent which is "private"?
+
+******************************** BUGS: ********************************
+
+(Figure out why program doesn't like it when the canvas is closed by user)
+
