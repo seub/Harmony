@@ -5,9 +5,6 @@ Think about ERROR:
 -rel error
 -needed at all?
 
-Cleanup code
-
-
 different coordinates for complex numbers?
 disk model : z = (1 - exp(u)) e^(it)
 upper half plane model : z = x + i e^u
@@ -42,16 +39,11 @@ Move on to C++11:
 y a un petit truc qui déconne dans la détection
 repenser l'implémentation des meshpoints et du mesh ?
 
-faire des mots avec des exposants et de l'exponentiation rapide
-
 gérer les copy constructor et cie pour les classes gérant des ressources
 
 
 
 ******************************** Update 3 Oct 2014 ********************************
-
-Even though Such says it's bad practice to comment the code everywhere, I'm going to do it a little bit now,
-in order to remember what we might have forgotten.
 
 Notes:
 1. I'm not sure why we made the constructor of Canvas. Anyway, it might not be a totally stupid idea to make all constructors explicit.
@@ -60,6 +52,12 @@ Notes:
 4. Why are the events "public slots" in Canvas, except paintEvent which is "private"?
 
 What is the function template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormalizedAroundVerticesToDepth(int n) good for?
+What about IsomH2Representation::getSidePairingsNormalizedToDepth(int n) const ?
+
+use assert and exceptions everywhere instead of if() cout error... as in assert(("Length can't possibly be negative! Tell jsmith", length >= 0));
+"The rule of thumb is that you should use assertions when you are trying to catch your own errors,
+and exceptions when trying to catch other people's errors.
+In other words, you should use exceptions to check the preconditions for the public API functions, and whenever you get any data that are external to your system. You should use asserts for the functions or data that are internal to your system.
 
 ******************************** BUGS: ********************************
 

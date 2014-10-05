@@ -22,17 +22,15 @@ public:
 
 
     bool checkRelations() const;
-    T evaluateRepresentation(const Word & w) const;
     std::vector<T> getGeneratorImages() const;
     bool getGeneratorImage(const generatorName &a, T &output) const;
-    void rotateGenerators(int shift);
     DiscreteGroup getDiscreteGroup() const;
 
+    T evaluateRepresentation(const Word & w) const;
     std::vector<T> evaluateRepresentation(const std::vector<Word> & listOfWords) const;
 
-    GroupRepresentation<T> conjugate(const T & A) const;
-
-
+    void rotateGenerators(int shift);
+    GroupRepresentation<T> conjugate(const T &conjugator) const;
 
     // Specialization to GroupRepresentation<SL2CMatrix>
     GroupRepresentation<SL2CMatrix> bar() const;
@@ -58,6 +56,10 @@ public:
                                                 double S1, double S2, double S3,
                                                 generatorName normalized);
     void setNiceRepresentation();
+
+
+
+
 
     static IsomH2Representation amalgamateOverInverse(DiscreteGroup *outputDiscreteGroup,
                                                       const IsomH2Representation & rho1, const generatorName &a1,

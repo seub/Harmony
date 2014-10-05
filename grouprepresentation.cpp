@@ -30,16 +30,19 @@ template<typename T> bool GroupRepresentation<T>::checkRelations() const
     std::vector<Word> relations = Gamma -> getRelations();
     T identity;
     identity.setIdentity();
-    for (unsigned int i=0;i<relations.size();i++)
+
+    unsigned int i;
+    for (const auto &r : relations)
     {
-        T test = evaluateRepresentation(relations[i]);
+        T test = evaluateRepresentation(r);
         if(!(test == identity))
         {
             std::cout << "WARNING in GroupRepresentation<T>::checkRelations(): failed" << std::endl;
-            std::cout << "In relation #" << i << "( " << Gamma->getWordAsString(relations[i]) << "), error: ";
+            std::cout << "In relation #" << i << "( " << Gamma->getWordAsString(r) << "), error: ";
             std::cout << test.error() << std::endl;
             res = false;
         }
+        ++i;
     }
     return res;
 }
@@ -49,16 +52,18 @@ template <typename T> std::vector<T> GroupRepresentation<T>::getGeneratorImages(
     return generatorImages;
 }
 
-template <typename T> bool GroupRepresentation<T>::getGeneratorImage(const generatorName &a, T & output) const
+template <typename T> bool GroupRepresentation<T>::getGeneratorImage(const generatorName &a, T &output) const
 {
     std::vector<generatorName> generators = Gamma->getGenerators();
-    for (unsigned int i=0; i<generators.size(); i++)
+    unsigned int i=0;
+    for (const auto &g : generators)
     {
-        if (generators[i] == a)
+        if (g == a)
         {
             output = generatorImages[i];
             return true;
         }
+        ++i;
     }
     std::cout << "could not find generator name " << a << " in " << *this << std::endl;
     return false;
@@ -66,22 +71,21 @@ template <typename T> bool GroupRepresentation<T>::getGeneratorImage(const gener
 
 template<typename T> T GroupRepresentation<T>::evaluateRepresentation(const Word & w) const
 {
-    T store;
-    store.setIdentity();
+    T res = 1;
     Word wc  = Word::contract(w);
     std::vector<letter> letters = wc.getLetters();
     for (const auto &l : letters)
     {
         if(l.second >= 0)
         {
-            store = store*Tools::exponentiation(generatorImages[l.first], l.second);
+            res = res*Tools::exponentiation(generatorImages[l.first], l.second);
         }
         else
         {
-            store = store*Tools::exponentiation(generatorImages[l.first], -l.second).inverse();
+            res = res*Tools::exponentiation(generatorImages[l.first], -l.second).inverse();
         }
     }
-    return store;
+    return res;
 }
 
 template<typename T> std::vector<T> GroupRepresentation<T>::evaluateRepresentation(const std::vector<Word> & listOfWords) const
@@ -95,13 +99,13 @@ template<typename T> std::vector<T> GroupRepresentation<T>::evaluateRepresentati
     return output;
 }
 
-template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conjugate(const T & A) const
+template<typename T> GroupRepresentation<T> GroupRepresentation<T>::conjugate(const T &conjugator) const
 {
     std::vector<T> list;
     list.reserve(generatorImages.size());
     for (const auto &genim : generatorImages)
     {
-        list.push_back(A*genim*A.inverse());
+        list.push_back(conjugator*genim*conjugator.inverse());
     }
     return GroupRepresentation<T>(Gamma,list);
 
@@ -272,7 +276,6 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormali
     int genus = generatorImages.size()/2;
     std::vector<H2Isometry> output;
     output.reserve(Tools::exponentiation(4*genus,n));
-    H2Isometry f;
     if (n<=0)
     {
         std::cout << "Error in IsomH2Representation::getSidePairingsNormalizedToDepth: Side pairings of 'negative'' depth" << std::endl;
@@ -286,12 +289,11 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormali
     std::vector<H2Isometry> previous = getSidePairingsNormalizedToDepth(n-1);
     output = previous;
 
-    for (unsigned int j=0; j<previous.size(); j++)
+    for (const auto &f : previous)
     {
-        f = previous[j];
-        for (unsigned int k=0; k<previous.size(); k++)
+        for (const auto &g : previous)
         {
-            output.push_back(f*previous[k]);
+            output.push_back(f*g);
         }
     }
     return output;
@@ -304,7 +306,7 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormali
     output.reserve(4*genus);
     H2Isometry f,store,ai,bi;
     store.setIdentity();
-    for (int i=0; i<genus; i++)
+    for (int i=0; i<genus; ++i)
     {
         ai = generatorImages[2*i];
         bi = generatorImages[2*i+1];
@@ -332,7 +334,7 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormali
     previous.push_back(store);
     output = previous;
 
-    for (int i=0; i<genus-1; i++)
+    for (int i=0; i<genus-1; ++i)
     {
         ai = generatorImages[2*i];
         bi = generatorImages[2*i+1];
@@ -420,28 +422,21 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
         b = (-(C1 + C2*C3 - S2*S3)*(C3 + S3))/S3;
         c = ((C1 + C2*C3 + S2*S3)*(C3 - S3))/S3;
         d = (-C1*S3 -C1*C3 - C2)/S3;
-        SL2RMatrix M1(a, b, c, d);
+        H2Isometry f1(SL2RMatrix(a, b, c, d));
 
         a = (-C2*S3 + C2*C3 + C1)/S3;
         b = (-C1 - C2*C3 + S2*S3)/S3;
         c = (C1 + C2*C3 + S2*S3)/S3;
         d = (-C2*S3 -C2*C3 - C1)/S3;
-        SL2RMatrix M2(a, b, c, d);
+        H2Isometry f2(SL2RMatrix(a, b, c, d));
 
         a = -C3 -S3;
         b = 0;
         c = 0;
         d =-C3 +S3;
-        SL2RMatrix M3(a, b, c, d);
+        H2Isometry f3(SL2RMatrix(a, b, c, d));
 
-        generatorImages.clear();
-        H2Isometry f;
-        f.setSL2Rmatrix(M1);
-        generatorImages.push_back(f);
-        f.setSL2Rmatrix(M2);
-        generatorImages.push_back(f);
-        f.setSL2Rmatrix(M3);
-        generatorImages.push_back(f);
+        generatorImages = {f1, f2, f3};
         return;
     }
     else if (normalized == c1)
@@ -631,7 +626,7 @@ template <> std::vector<IsomH2Representation> IsomH2Representation::getPantsRepr
         TopologicalSurface S(g, 0);
         std::vector<DiscreteGroup> V = S.getPantsDecomposition();
 
-        for (unsigned int k=0; k<V.size(); k++)
+        for (unsigned int k=0; k<V.size(); ++k)
         {
             rhos.push_back(IsomH2Representation(outputDiscreteGroups[k]));
         }
@@ -641,7 +636,7 @@ template <> std::vector<IsomH2Representation> IsomH2Representation::getPantsRepr
                 lengths[0], lengths[1], lengths[0],
                 generators[1]);
 
-        for (int j = 0; j<g-2; j++)
+        for (int j = 0; j<g-2; ++j)
         {
             generators = V[2*j+1].getGenerators();
             rhos[2*j+1].setNormalizedPairOfPantsRepresentation(generators[0], generators[1], generators[2],

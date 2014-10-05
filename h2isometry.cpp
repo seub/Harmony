@@ -13,6 +13,11 @@ H2Isometry::H2Isometry(int i)
     setIdentity();
 }
 
+H2Isometry::H2Isometry(const SL2RMatrix &A)
+{
+    setSL2Rmatrix(A);
+}
+
 void H2Isometry::setIdentity()
 {
     u = 1.0;
@@ -416,7 +421,7 @@ double H2Isometry::geodesicNormalizer(const H2Geodesic &L)
 
     double delta = sqrt(b*b - 1);
 
-    double t1 = -b -delta;
+    double t1 = -b - delta;
     double t2 = -b + delta;
     return std::abs(t1) < std::abs(t2) ? -t1 : -t2;
 }

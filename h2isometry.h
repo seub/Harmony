@@ -26,6 +26,7 @@ class H2Isometry
 public:
     H2Isometry();
     H2Isometry(int i);
+    H2Isometry(const SL2RMatrix &A);
 
     void getDiskCoordinates(Complex &u, Complex &a) const;
 
