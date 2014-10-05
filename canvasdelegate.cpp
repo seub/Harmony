@@ -63,8 +63,6 @@ void CanvasDelegate::rescale(int sizeX, int sizeY)
     scaleY = yFactor * scaleY;
 
     //std::cout << "Leaving CanvasDelegate::rescale" << std::endl;
-
-    return;
 }
 
 void CanvasDelegate::resetView()
@@ -75,10 +73,8 @@ void CanvasDelegate::resetView()
     sizeX = canvas->width();
     sizeY = canvas->height();
 
-
     scaleX = sizeX/2.2;
     scaleY = sizeY/2.2;
-    return;
 }
 
 void CanvasDelegate::ComplexToPixelCoordinates(int &xOut, int &yOut, Complex z) const
@@ -86,7 +82,6 @@ void CanvasDelegate::ComplexToPixelCoordinates(int &xOut, int &yOut, Complex z) 
     double x = real(z), y = imag(z);
     xOut = Tools::intRound((x - xMin)*scaleX);
     yOut = Tools::intRound((yMax - y)*scaleY);
-    return;
 }
 
 Complex CanvasDelegate::PixelToComplexCoordinates(int x, int y) const
@@ -116,7 +111,6 @@ void CanvasDelegate::zoom(double coeff, int centerX, int centerY)
     scaleY *= coeff;
 
     //redrawBuffer();
-    return;
 }
 
 void CanvasDelegate::mouseShift(int x, int y)
@@ -124,14 +118,12 @@ void CanvasDelegate::mouseShift(int x, int y)
     //std::cout << "Entering CanvasDelegate::shift" << std::endl;
     xMin = xMinSave + (mouseX - x)/scaleX;
     yMax = yMaxSave - (mouseY - y)/scaleY;
-    return;
 }
 
 void CanvasDelegate::shift(int x, int y)
 {
     xMin += x/scaleX;
     yMax += y/scaleY;
-    return;
 }
 
 void CanvasDelegate::drawPoint(const Complex &z, const QColor &color, int width)
@@ -142,7 +134,6 @@ void CanvasDelegate::drawPoint(const Complex &z, const QColor &color, int width)
     pen->setColor(color);
     painter->setPen(*pen);
     painter->drawPoint(x,y);
-    return;
 }
 
 void CanvasDelegate::drawSegment(const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width)
@@ -154,7 +145,6 @@ void CanvasDelegate::drawSegment(const Complex &endpoint1, const Complex &endpoi
     pen->setColor(color);
     painter->setPen(*pen);
     painter->drawLine(x1, y1, x2, y2);
-    return;
 }
 
 void CanvasDelegate::drawCircle(const Complex &center, double radius, const QColor &color, int width)
@@ -168,7 +158,6 @@ void CanvasDelegate::drawCircle(const Complex &center, double radius, const QCol
     pen->setWidth(width);
     painter->setPen(*pen);
     painter->drawEllipse(x1, y1, x2 - x1, y2 - y1);
-    return;
 }
 
 void CanvasDelegate::drawCircle(const Circle &C, const QColor &color, int width)
@@ -177,7 +166,6 @@ void CanvasDelegate::drawCircle(const Circle &C, const QColor &color, int width)
     double radius;
     C.getCenterAndRadius(center, radius);
     drawCircle(center, radius, color, width);
-    return;
 }
 
 bool CanvasDelegate::dealWithAlmostStraightArc(const Complex &center, double radius,
@@ -293,14 +281,14 @@ void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radi
         }
     }
 
-    unsigned int i;
     Complex u = endpoint1 - center, v = endpoint2 - center, w, w2;
-    for (i=0; i<intersectionsTemp.size(); i++)
+
+    for (const auto & interTemp : intersectionsTemp)
     {
-        w = intersectionsTemp[i] - center;
+        w = interTemp - center;
         if (imag(w*conj(u))*imag(w*conj(v)) < 0)
         {
-            intersections.push_back(intersectionsTemp[i]);
+            intersections.push_back(interTemp);
         }
     }
 
@@ -350,7 +338,6 @@ void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radi
     }
 
     //std::cout << "Leaving CanvasDelegate::intersectsCanvasBoundary" << std::endl;
-    return;
 }
 
 void CanvasDelegate::drawArcCounterClockwise(const Complex &center, double radius, double angle1, double angle2,
@@ -374,7 +361,6 @@ void CanvasDelegate::drawArcCounterClockwise(const Complex &center, double radiu
         int QtSpan = Tools::intRound(Tools::mod2Pi(angle2 - angle1)*16*360/(2*M_PI));
         painter->drawArc(x1, y1, x2 - x1, y2 - y1, QtAngle1, QtSpan);
     }
-    return;
 }
 
 void CanvasDelegate::drawSmallerArc(const Complex &center, double radius, double angle1, double angle2,
@@ -390,7 +376,6 @@ void CanvasDelegate::drawSmallerArc(const Complex &center, double radius, double
     {
         drawArcCounterClockwise(center, radius, angle1, angle2, endpoint1, endpoint2, color, width);
     }
-    return;
 }
 
 void CanvasDelegate::drawSmallerArc(const Circle &C, double angle1, double angle2,
@@ -400,7 +385,6 @@ void CanvasDelegate::drawSmallerArc(const Circle &C, double angle1, double angle
     double radius;
     C.getCenterAndRadius(center, radius);
     drawSmallerArc(center, radius, angle1, angle2, endpoint1, endpoint2, color, width);
-    return;
 }
 
 void CanvasDelegate::drawArcCounterClockwise(const Circle &C, double angle1, double angle2,
@@ -411,5 +395,4 @@ void CanvasDelegate::drawArcCounterClockwise(const Circle &C, double angle1, dou
     double radius;
     C.getCenterAndRadius(center, radius);
     drawArcCounterClockwise(center, radius, angle1, angle2, endpoint1, endpoint2, color, width);
-    return;
 }

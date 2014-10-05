@@ -54,7 +54,6 @@ void Canvas::mouseMoveEvent(QMouseEvent *mouseEvent)
 /*void Canvas::enterEvent(QEvent *)
 {
     setFocus();
-    return;
 }*/
 
 void Canvas::wheelEvent(QWheelEvent *wheelEvent)

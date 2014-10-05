@@ -133,6 +133,31 @@ letter Word::operator[](std::vector<letter>::size_type i) const
     return letters[i];
 }
 
+std::ostream & operator <<(std::ostream &out, const Word &w)
+{
+    std::string s;
+
+    letter l = w.letters.front();
+
+    {
+        out << "g" << l.first;
+        if (l.second != 1)
+        {
+            out << "^" << l.second;
+        }
+    }
+    for(unsigned int i=1; i<w.letters.size(); ++i)
+    {
+        l = w.letters[i];
+        out << " g" << l.first;
+        if (l.second != 1)
+        {
+            out << "^" << l.second;
+        }
+    }
+    return out;
+}
+
 const std::vector<letter> & Word::getLetters() const
 {
     return letters;

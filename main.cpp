@@ -37,6 +37,10 @@ int main(int argc, char *argv[])
 
     rho.setNiceRepresentation();
     rho.checkRelations();
+    std::cout << group << std::endl;
+
+    std::cout << group.getRelations().front() << std::endl;
+
 
     H2Mesh mesh;
     int k = 4;

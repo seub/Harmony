@@ -35,7 +35,7 @@ use v.at(i) instead of v[i] where necessary
 
 Move on to C++11:
 - use V = {1, 2}
-- use for(auto i : V) or for(auto &i : V)
+- use for(auto i : V) or for([const] auto &i : V)
 - use std::vector<int> V(3);
 - ?
 
@@ -58,6 +58,8 @@ Notes:
 2. Are there "const" everywhere there needs to be?
 3. I've decided to remove the "return;" line for void functions
 4. Why are the events "public slots" in Canvas, except paintEvent which is "private"?
+
+What is the function template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormalizedAroundVerticesToDepth(int n) good for?
 
 ******************************** BUGS: ********************************
 

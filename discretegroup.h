@@ -12,8 +12,8 @@ class DiscreteGroup
 
 public:
     DiscreteGroup();
-    DiscreteGroup(const std::vector<generatorName> & generators, const std::vector<Word> &relations);
-    DiscreteGroup(const TopologicalSurface & S);
+    DiscreteGroup(const std::vector<generatorName> &generators, const std::vector<Word> &relations);
+    DiscreteGroup(const TopologicalSurface &S);
 
     std::vector<generatorName> getGenerators() const;
     std::vector<Word> getRelations() const;
@@ -30,7 +30,7 @@ public:
     bool isClosedSurfaceGroup() const;
 
     void setPairOfPants(generatorName c1, generatorName c2, generatorName c3);
-    void rotateGenerators(int shift);
+    void rotateGenerators(int rightshift);
 
     static DiscreteGroup amalgamateOverInverse(const DiscreteGroup & Gamma1, const generatorName &a1,
                                                const DiscreteGroup & Gamma2, const generatorName &a1inverse);
@@ -45,9 +45,9 @@ private:
     bool closedSurfaceGroup;
 
     void reset();
-    void rotateWord(Word & w, int shift);
-    static bool checkCompatibilityForAmalgamation(const DiscreteGroup & Gamma1, const DiscreteGroup & Gamma2);
-    static bool checkCompatibilityforHNNextension(const DiscreteGroup & Gamma);
+    void rotateWord(Word &w, int shift);
+    static bool checkCompatibilityForAmalgamation(const DiscreteGroup &Gamma1, const DiscreteGroup &Gamma2);
+    static bool checkCompatibilityforHNNextension(const DiscreteGroup &Gamma);
     bool findGeneratorIndex(int & outputIndex, const generatorName &a) const;
 };
 

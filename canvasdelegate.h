@@ -22,7 +22,7 @@ class CanvasDelegate
     friend class Canvas;
 
 public:
-    CanvasDelegate(const Canvas *canvas);
+    explicit CanvasDelegate(const Canvas *canvas);
     ~CanvasDelegate();
 
     const QImage * getImage() const;
