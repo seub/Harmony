@@ -26,7 +26,6 @@ void SL2RMatrix::getCoefficients(double &a, double &b, double &c, double &d) con
     b = this->b;
     c = this->c;
     d = this->d;
-    return;
 }
 
 double SL2RMatrix::det() const
@@ -50,7 +49,6 @@ void SL2RMatrix::setIdentity()
     b = 0.0;
     c = 0.0;
     d = 1.0;
-    return;
 }
 
 SL2RMatrix SL2RMatrix::inverse() const
@@ -58,7 +56,7 @@ SL2RMatrix SL2RMatrix::inverse() const
     return SL2RMatrix(d,-b,-c,a);
 }
 
-SL2RMatrix operator *(const SL2RMatrix & A1, const SL2RMatrix & A2)
+SL2RMatrix operator *(const SL2RMatrix &A1, const SL2RMatrix &A2)
 {
 
     return SL2RMatrix(

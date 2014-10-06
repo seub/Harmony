@@ -64,7 +64,7 @@ public:
     void setByMappingPointInDiskModelNormalized(const Complex & zIn, const Complex & zOut);
     void setByMappingGeodesic(const H2Geodesic & L1, const H2Geodesic & L2);
 
-//private:
+private:
     Complex u,a;
 
     void setTranslationLengthNormalized(double length);

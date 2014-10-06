@@ -22,21 +22,18 @@ void H2Isometry::setIdentity()
 {
     u = 1.0;
     a = 0.0;
-    return;
 }
 
 void H2Isometry::getDiskCoordinates(Complex &u, Complex &a) const
 {
     u = this->u;
     a = this->a;
-    return;
 }
 
 void H2Isometry::setDiskCoordinates(const Complex &u, const Complex &a)
 {
     this->u=u;
     this->a=a;
-    return;
 }
 
 void H2Isometry::setTranslationAxisAndLength(const H2Geodesic & axis, double length)
@@ -46,7 +43,6 @@ void H2Isometry::setTranslationAxisAndLength(const H2Geodesic & axis, double len
     H2Isometry f;
     f.setByMappingToVerticalUp(axis);
     *this = f.inverse()*f0*f;
-    return;
 }
 
 void H2Isometry::setTranslationLengthNormalized(double length)
@@ -58,14 +54,12 @@ void H2Isometry::setTranslationLengthNormalized(double length)
         a = -a;
     }
     u = 1.0;
-    return;
 }
 
 void H2Isometry::setVerticalTranslation(double t)
 {
     a = - I*t;
     u = 1.0;
-    return;
 }
 
 void H2Isometry::setVerticalTranslation(double t1, double t2)
@@ -74,7 +68,6 @@ void H2Isometry::setVerticalTranslation(double t1, double t2)
 
     a = - I*t;
     u = 1.0;
-    return;
 }
 
 void H2Isometry::setVerticalTranslation(double t1, double t2, double t3)
@@ -83,7 +76,6 @@ void H2Isometry::setVerticalTranslation(double t1, double t2, double t3)
 
     a = - I*t;
     u = 1.0;
-    return;
 }
 
 void H2Isometry::setByMappingPointInDiskModelNormalized(const Complex &zIn, const Complex &zOut)
@@ -91,7 +83,6 @@ void H2Isometry::setByMappingPointInDiskModelNormalized(const Complex &zIn, cons
     double n1 = norm(zIn), n2 = norm(zOut);
     u = 1.0;
     a = (zIn*(1 - n2) - zOut*(1 - n1)) / (1 - n1*n2);
-    return;
 }
 
 void H2Isometry::setByMappingGeodesic(const H2Geodesic &L1, const H2Geodesic &L2)
@@ -100,7 +91,6 @@ void H2Isometry::setByMappingGeodesic(const H2Geodesic &L1, const H2Geodesic &L2
     f1.setByMappingToVerticalUp(L1);
     f2.setByMappingToVerticalUp(L2);
     *this = f2.inverse()*f1;
-    return;
 }
 
 
@@ -126,7 +116,6 @@ void H2Isometry::setSU11Matrix(const SL2CMatrix &A)
     A.getCoefficients(alpha,alphaBar,beta,betaBar);
     u = alpha / alphaBar;
     a = -beta / alpha;
-    return;
 }
 
 void H2Isometry::setSL2Rmatrix(const SL2RMatrix &A)
@@ -135,7 +124,6 @@ void H2Isometry::setSL2Rmatrix(const SL2RMatrix &A)
     A.getCoefficients(Aa,Ab,Ac,Ad);
     u = (Aa + Ad + I*(Ab - Ac))/(Aa + Ad - I*(Ab - Ac));
     a = -(Ab + Ac + I*(Aa - Ad))/(Aa + Ad + I*(Ab - Ac));
-    return;
 }
 
 bool H2Isometry::isElliptic() const
@@ -186,7 +174,6 @@ void H2Isometry::fixedPointsInDiskModel(CP1Point &c1, CP1Point &c2) const
     Complex D = sqrt((u - 1.0)*(u - 1.0) + 4.0*norm(a)*u);
     c1 = CP1Point((1.0 - u + D),(2.0*conj(a)));
     c2 = CP1Point((1.0 - u - D),(2.0*conj(a)));
-    return;
 }
 
 bool H2Isometry::axis(H2Geodesic & L) const
@@ -194,7 +181,8 @@ bool H2Isometry::axis(H2Geodesic & L) const
     if (!isHyperbolic())
     {
         return false;
-    } else
+    }
+    else
     {
         Complex c1,c2;
         CP1Point C1,C2;
@@ -205,7 +193,8 @@ bool H2Isometry::axis(H2Geodesic & L) const
         {
             L.setEndpointsInDiskModel(c2,c1);
             return true;
-        } else
+        }
+        else
         {
             L.setEndpointsInDiskModel(c1,c2);
             return true;
@@ -218,7 +207,7 @@ Complex H2Isometry::hitComplexInDiskModel(const Complex &z)
     return u*(z - a)/(1.0 - conj(a)*z);
 }
 
-H2Isometry operator *(const H2Isometry & f1, const H2Isometry & f2)
+H2Isometry operator *(const H2Isometry &f1, const H2Isometry &f2)
 {
     H2Isometry fOut;
     Complex temp = 1.0 + f1.a*conj(f2.u*f2.a);
@@ -386,7 +375,7 @@ std::ostream & operator<<(std::ostream & out, const H2Isometry &f)
     if (f.isParabolic())
     {
         CP1Point Z1,Z2;
-        Complex z1,z2;
+        Complex z1;
         f.fixedPointsInDiskModel(Z1,Z2);
         z1 = Z1.getComplexCoordinate();
         out << "Parabolic, fixed point = " << z1;

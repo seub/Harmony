@@ -59,6 +59,15 @@ use assert and exceptions everywhere instead of if() cout error... as in assert(
 and exceptions when trying to catch other people's errors.
 In other words, you should use exceptions to check the preconditions for the public API functions, and whenever you get any data that are external to your system. You should use asserts for the functions or data that are internal to your system.
 
+classes à relire :
+h2mesh***
+fenchelnielsenconstructor
+h2polygontrangulator
+h2trianglesubdivision
+h3***
+
+track down code duplication
+
 ******************************** BUGS: ********************************
 
 (Figure out why program doesn't like it when the canvas is closed by user)

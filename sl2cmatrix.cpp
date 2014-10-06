@@ -36,7 +36,6 @@ void SL2CMatrix::setIdentity()
     b = 0.0;
     c = 0.0;
     d = 1.0;
-    return;
 }
 
 
@@ -56,8 +55,6 @@ void SL2CMatrix::eigenvalues(Complex & lambda1, Complex & lambda2) const
     Complex delta = sqrt(t*t - 4.0);
     lambda1 = .5*(t + delta);
     lambda2 = .5*(t - delta);
-
-    return;
 }
 
 
