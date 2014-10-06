@@ -11,18 +11,21 @@ class Canvas : public QWidget
 {
     Q_OBJECT
 public:
-    explicit Canvas(int width = 700, int height = 700, QWidget *parent = 0);
+    explicit Canvas(CanvasDelegateType delegateType, int width = 700, int height = 700, QWidget *parent = 0);
+    ~Canvas();
 
-    void setDelegate(CanvasDelegate *delegate);
+    void changeDelegate(CanvasDelegateType delegateType);
+    CanvasDelegateType getDelegateType() const;
 
 signals:
 
 
-private:
+//private:
+public:
     CanvasDelegate *delegate;
 
     void paintEvent(QPaintEvent *event);
-//public slots: (?)
+//public slots:
     void resizeEvent(QResizeEvent *resizeEvent);
     void mousePressEvent(QMouseEvent *mouseEvent);
     void mouseMoveEvent(QMouseEvent *mouseEvent);

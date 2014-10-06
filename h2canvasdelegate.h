@@ -12,7 +12,7 @@
 class H2CanvasDelegate : public CanvasDelegate
 {
 public:
-    H2CanvasDelegate(Canvas *canvas);
+    explicit H2CanvasDelegate(int sizeX, int sizeY);
 
     void drawComplexPointInDiskModel(const Complex &z, const QColor &color = "black", int width = 1);
     void drawH2Point(const H2Point &p, const QColor &color = "black", int width = 4);

@@ -26,6 +26,7 @@ const Complex I(0.0, 1.0);
 const double ERROR(0.00000001);
 
 enum drawElementType {POINT, GEODESIC, GEODESICARC, POLYGON, GENERATORAXES, LISTOFAXES};
+enum CanvasDelegateType {H2DELEGATE, H3DELEGATE};
 
 
 

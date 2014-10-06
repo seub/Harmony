@@ -3,9 +3,9 @@
 #include <QWheelEvent>
 #include "canvas.h"
 #include "canvasdelegate.h"
+#include "h2canvasdelegate.h"
 
-
-Canvas::Canvas(int width, int height, QWidget *parent) :
+Canvas::Canvas(CanvasDelegateType delegateType, int width, int height, QWidget *parent) :
     QWidget(parent)
 {
     setBackgroundRole(QPalette::Base);
@@ -14,12 +14,34 @@ Canvas::Canvas(int width, int height, QWidget *parent) :
     setMouseTracking(true);
 
     resize(width,height);
+
+    delegate = 0;
+    changeDelegate(delegateType);
 }
 
-void Canvas::setDelegate(CanvasDelegate *delegate)
+Canvas::~Canvas()
 {
-    this->delegate = delegate;
+    delete delegate;
 }
+
+void Canvas::changeDelegate(CanvasDelegateType delegateType)
+{
+    delete delegate;
+
+    switch(delegateType)
+    {
+    case H2DELEGATE:
+        delegate = new H2CanvasDelegate(width(), height());
+        break;
+
+    case H3DELEGATE:
+        break;
+
+    default:
+        std::cout << "ERROR in Canvas::changeDelegate: delegate type undefined" << std::endl;
+    }
+}
+
 
 void Canvas::paintEvent(QPaintEvent *)
 {

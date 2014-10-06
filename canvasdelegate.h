@@ -22,8 +22,8 @@ class CanvasDelegate
     friend class Canvas;
 
 public:
-    explicit CanvasDelegate(const Canvas *canvas);
-    ~CanvasDelegate();
+    explicit CanvasDelegate(int sizeX, int sizeY);
+    virtual ~CanvasDelegate();
 
     const QImage * getImage() const;
 
@@ -57,7 +57,7 @@ public:
 
 
 protected:
-    const Canvas *canvas;
+    CanvasDelegateType delegateType;
 
     int sizeX, sizeY;
     double scaleX, scaleY;
@@ -72,7 +72,7 @@ protected:
     QPainter *painter;
 
     void rescale(int sizeX, int sizeY);
-    void resetView();
+    void resetView(int sizeX, int sizeY);
     Complex PixelToComplexCoordinates(int x, int y) const;
     void ComplexToPixelCoordinates(int & xOut, int & yOut, Complex z) const;
     void intersectsCanvasBoundary(const Complex &center, double radius,

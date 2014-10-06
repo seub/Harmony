@@ -55,14 +55,11 @@ int main(int argc, char *argv[])
     //}
 
 
-    Canvas canvas;
-    H2CanvasDelegate delegate(&canvas);
-    canvas.setDelegate(&delegate);
-    delegate.buffer.addElement(rho, "blue", 2);
-    delegate.buffer.addElement(mesh);
+    Canvas canvas(H2DELEGATE);
+    ((H2CanvasDelegate *) canvas.delegate)->buffer.addElement(rho, "blue", 2);
+    ((H2CanvasDelegate *) canvas.delegate)->buffer.addElement(mesh);
+    ((H2CanvasDelegate *) canvas.delegate)->redrawBuffer();
 
-
-    delegate.redrawBuffer();
     canvas.show();
 
     std::cout << "random fucking shit: " << rand() % 100 << std::endl;

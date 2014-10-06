@@ -17,7 +17,7 @@ public:
     H2TriangleSubdivision(const H2TriangleSubdivision &other); // Copy constructor
     H2TriangleSubdivision(const H2Point &a, const H2Point &b, const H2Point &c, int depth);
     H2TriangleSubdivision(const H2Triangle &T, int depth);
-    H2TriangleSubdivision & operator=(H2TriangleSubdivision other); // Copy-assignement operator
+    H2TriangleSubdivision & operator=(H2TriangleSubdivision other); // Copy-assignment operator
     ~H2TriangleSubdivision();
 
     int getTotalDepth() const;

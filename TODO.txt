@@ -67,6 +67,9 @@ h2trianglesubdivision
 h3***
 
 track down code duplication
+ma fonction swap pour H2TriangleSubdivision ne marche pas (?)
+H2Polygon & operator=(H2PolygonTriangulater); c'est quoi cette merde ??
+niquer les //private
 
 ******************************** BUGS: ********************************
 

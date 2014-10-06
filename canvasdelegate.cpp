@@ -10,30 +10,30 @@
 #include "circle.h"
 #include "tools.h"
 
-CanvasDelegate::CanvasDelegate(const Canvas *canvas) : canvas(canvas)
+CanvasDelegate::CanvasDelegate(int sizeX, int sizeY)
 {
     //std::cout << "Entering CanvasDelegate::CanvasDelegate" << std::endl;
 
     pen = new QPen;
 
-    image = new QImage(canvas->width(), canvas->height(), QImage::Format_RGB32);
+    image = new QImage(sizeX, sizeY, QImage::Format_RGB32);
 
     painter = new QPainter(image);
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->eraseRect(0, 0, canvas->width(), canvas->height());
+    painter->eraseRect(0, 0, sizeX, sizeY);
     painter->setPen(*pen);
 
     detectionRadius = 20;
-    resetView();
+    resetView(sizeX, sizeY);
 
     //std::cout << "Leaving CanvasDelegate::CanvasDelegate" << std::endl;
 }
 
 CanvasDelegate::~CanvasDelegate()
 {
-    delete image;
-    delete painter;
     delete pen;
+    delete painter;
+    delete image;
 }
 
 const QImage *CanvasDelegate::getImage() const
@@ -65,13 +65,13 @@ void CanvasDelegate::rescale(int sizeX, int sizeY)
     //std::cout << "Leaving CanvasDelegate::rescale" << std::endl;
 }
 
-void CanvasDelegate::resetView()
+void CanvasDelegate::resetView(int sizeX, int sizeY)
 {
     xMin = -1.1;
     yMax = 1.1;
 
-    sizeX = canvas->width();
-    sizeY = canvas->height();
+    this->sizeX = sizeX;
+    this->sizeY = sizeY;
 
     scaleX = sizeX/2.2;
     scaleY = sizeY/2.2;

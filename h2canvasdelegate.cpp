@@ -13,9 +13,10 @@
 #include "h2isometry.h"
 #include "grouprepresentation.h"
 
-H2CanvasDelegate::H2CanvasDelegate(Canvas *canvas) : CanvasDelegate(canvas)
+H2CanvasDelegate::H2CanvasDelegate(int sizeX, int sizeY) : CanvasDelegate(sizeX, sizeY)
 {
     //std::cout << "Entering H2CanvasDelegate::CanvasDelegate" << std::endl;
+    delegateType = H2DELEGATE;
     mobius.setIdentity();
     drawCircle(0, 1);
     isTriangleHighlighted = false;
