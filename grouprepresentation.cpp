@@ -31,7 +31,7 @@ template<typename T> bool GroupRepresentation<T>::checkRelations() const
     T identity;
     identity.setIdentity();
 
-    unsigned int i;
+    unsigned int i = 0;
     for (const auto &r : relations)
     {
         T test = evaluateRepresentation(r);

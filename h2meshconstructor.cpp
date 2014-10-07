@@ -349,10 +349,10 @@ void H2MeshConstructor::createExteriorNeighbors()
             m2 = (H2MeshBoundaryPoint *)(*points)[indices2[nbSubdivisionLines-1-k]];
             m1->partnerPointIndex = indices2[nbSubdivisionLines-1-k];
             m2->partnerPointIndex = indices1[k];
-            if(indices1[k]==33)
+            /*if(indices1[k]==33)
             {
                 k = k;
-            }
+            }*/
             neighbors1 = m1->neighborsIndices;
             neighbors2 = m2->neighborsIndices;
             
