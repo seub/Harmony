@@ -414,6 +414,11 @@ std::vector<H2Triangle> H2PolygonTriangulater::getTriangles() const
     return res;
 }
 
+std::vector<TriangulationTriangle> H2PolygonTriangulater::getTriangulationTriangles() const
+{
+    return triangles;
+}
+
 std::vector<TriangulationCut> H2PolygonTriangulater::getCuts() const
 {
     return cuts;

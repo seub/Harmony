@@ -25,13 +25,14 @@ class TriangulationTriangle
     friend class H2PolygonTriangulater;
 public:
     bool operator <(const TriangulationTriangle &other) const;
+    void getVertices(int &i1, int &i2, int &i3) const;
 
 private:
     TriangulationTriangle() {}
     TriangulationTriangle(int vertexIndex1, int vertexIndex2, int vertexIndex3) :
         vertexIndex1(vertexIndex1), vertexIndex2(vertexIndex2), vertexIndex3(vertexIndex3) {}
 
-    void getVertices(int &i1, int &i2, int &i3) const;
+
 
     int vertexIndex1, vertexIndex2, vertexIndex3;
 };
@@ -48,7 +49,8 @@ class H2PolygonTriangulater
 public:
     H2PolygonTriangulater(const H2Polygon * const polygon);
     std::vector<H2Triangle> getTriangles() const;
-    std::vector<TriangulationCut> getCuts() const;    
+    std::vector<TriangulationTriangle> getTriangulationTriangles() const;
+    std::vector<TriangulationCut> getCuts() const;
     std::vector<int> nbCutsFromVertex() const;
     void verticesIndices(std::vector< std::vector<int> > &triangleIndices, std::vector< std::vector<int> > &indicesInTriangles) const;
 

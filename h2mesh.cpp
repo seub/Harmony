@@ -3,6 +3,7 @@
 #include "h2isometry.h"
 #include "h2trianglesubdivision.h"
 #include "h2meshconstructor.h"
+//#include "h2polygontriangulater.h"
 
 
 H2Mesh::H2Mesh()
@@ -92,7 +93,7 @@ std::vector<H2Point> H2Mesh::getKickedH2Neighbors(int index) const
     return res;
 }
 
-const IsomH2Representation & H2Mesh::getRepresentation() const
+IsomH2Representation H2Mesh::getRepresentation() const
 {
     return rho;
 }

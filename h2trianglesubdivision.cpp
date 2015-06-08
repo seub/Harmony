@@ -237,6 +237,11 @@ std::vector<H2Point> H2TriangleSubdivision::getPoints() const
     return *points;
 }
 
+H2Point H2TriangleSubdivision::getPoint(int index) const
+{
+    return (*points)[index];
+}
+
 bool H2TriangleSubdivision::triangleContaining(const H2Point &point, H2Triangle &outputTriangle) const
 {
     if (getTriangle().contains(point))

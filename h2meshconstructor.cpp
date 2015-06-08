@@ -52,6 +52,8 @@ void H2MeshConstructor::createNeighbors()
 void H2MeshConstructor::createSubdivisions()
 {
     std::vector<H2Triangle> triangles = triangulater.getTriangles();
+    mesh->triangles = triangulater.getTriangulationTriangles();
+
     for (const auto &T : triangles)
     {
         subdivisions->push_back(H2TriangleSubdivision(T, depth));

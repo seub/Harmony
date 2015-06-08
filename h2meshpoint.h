@@ -9,6 +9,7 @@ class H2MeshPoint
 {
     friend class H2Mesh;
     friend class H2MeshConstructor;
+    friend class H2MeshFunction;
 
 protected:
     virtual bool isCutPoint() const {return false;}

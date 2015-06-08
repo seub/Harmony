@@ -5,13 +5,16 @@
 #include "h2polygon.h"
 #include "grouprepresentation.h"
 #include "h2meshpoint.h"
+#include "h2polygontriangulater.h"
 
 class H2TriangleSubdivision;
 class H2Isometry;
+//class TriangulationTriangle;
 
 class H2Mesh
 {
     friend class H2MeshConstructor;
+    friend class H2MeshFunction;
 
 public:
     H2Mesh();
@@ -24,7 +27,7 @@ public:
     const std::vector<H2TriangleSubdivision> &getSubdivisions() const;
     std::vector<H2Point> getH2Neighbors(int index) const;
     std::vector<H2Point> getKickedH2Neighbors(int index) const;
-    const IsomH2Representation & getRepresentation() const;
+    IsomH2Representation getRepresentation() const;
 
 private:
     IsomH2Representation rho;
@@ -33,12 +36,14 @@ private:
     H2Polygon fundamentalDomain;
 
     std::vector<H2TriangleSubdivision> subdivisions;
+    std::vector<TriangulationTriangle> triangles;
 
     std::vector<H2MeshPoint*> meshPoints;
     std::vector<H2MeshPoint> regularPoints;
     std::vector<H2MeshCutPoint> cutPoints;
     std::vector<H2MeshBoundaryPoint> boundaryPoints;
     std::vector<H2MeshVertexPoint> vertexPoints;
+
 };
 
 

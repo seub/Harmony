@@ -1,4 +1,6 @@
 #include "h2meshfunction.h"
+#include "h2polygontriangulater.h"
+#include "h2trianglesubdivision.h"
 
 H2MeshFunction::H2MeshFunction(const H2Mesh *const mesh, const IsomH2Representation &rhoImage) : mesh(mesh), rhoImage(rhoImage)
 {
@@ -6,30 +8,32 @@ H2MeshFunction::H2MeshFunction(const H2Mesh *const mesh, const IsomH2Representat
 
 void H2MeshFunction::initializePL(const H2Point &basePoint)
 {
-    /*int nbVertices = mesh->fundamentalDomain.nbVertices();
-    std::vector<H2Point> verticesImages(nbVertices);
+    std::vector<H2Point> vertexImages;
+    int nbVertices = mesh->fundamentalDomain.nbVertices();
+    vertexImages.reserve(nbVertices);
+    IsomH2Representation rhoDomain = mesh->getRepresentation();
+    std::vector<Word> vertexPairings = rhoDomain.getVertexPairings();
 
-    std::vector<Word> wordSidePairings = mesh->rho.getWordSidePairings();
-
-    int i, genus = nbVertices/4;
-    std::vector<Word> neighborsWordIsometriesTemp;
-    Word f;
-    std::vector<int> neighborsTemp;
-    for (i=0; i<genus; ++i)
+    for (const auto & pairing : vertexPairings)
     {
-        // choppe les voisins de 4i
-
-        f = f*wordSidePairings[4*i].inverse();
-        // choppe les voisins de sommet[4i+3]
-        f = f*wordSidePairings[4*i+3].inverse();
-        // choppe les voisins de sommet[4i+2]
-        f= f*wordSidePairings[4*i+2].inverse();
-        // choppe les voisins de 4i+1
-        f = f*wordSidePairings[4*i+1].inverse();
+        vertexImages.push_back(rhoImage.evaluateRepresentation(pairing)*basePoint);
     }
 
+    std::vector<TriangulationTriangle> triangles = mesh->triangles;
+    std::vector<H2TriangleSubdivision> subdivisionImages;
+    subdivisionImages.reserve(triangles.size());
 
+    int i,j,k, depth=mesh->depth;
+    for(const auto & triangle : triangles)
+    {
+        triangle.getVertices(i,j,k);
+        subdivisionImages.push_back(H2TriangleSubdivision(vertexImages[i],vertexImages[j],vertexImages[k],depth));
+    }
 
-    int nbSubdivisions = mesh->subdivisions.size();
-    std::vector<H2TriangleSubdivision> subdivisions(nbSubdivisions);*/
+    int l=0;
+    for(const auto & meshpoint : mesh->meshPoints)
+    {
+        values[l]= subdivisionImages[meshpoint->subdivisionIndex].getPoint(meshpoint->indexInSubdivision);
+        ++l;
+    }
 }
