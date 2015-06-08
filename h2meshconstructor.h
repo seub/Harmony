@@ -53,7 +53,7 @@ private:
     std::vector< std::vector<bool> > boundaryPointInSubdivisions;
     std::vector<int> vertexMeshIndex;
     std::vector< std::vector< std::vector<int> > > neighborsInSubdivisions;
-    std::vector<H2Isometry> sidePairings;
+    std::vector<Word> sidePairings;
 };
 
 #endif // H2MESHCONSTRUCTOR_H

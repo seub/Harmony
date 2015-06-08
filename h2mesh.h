@@ -15,6 +15,7 @@ class H2Mesh
 {
     friend class H2MeshConstructor;
     friend class H2MeshFunction;
+    friend class H2MeshFunctionIterator;
 
 public:
     H2Mesh();

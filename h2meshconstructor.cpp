@@ -14,7 +14,7 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     nbSubdivisionLines = H2TriangleSubdivision::nbOfLines(depth);
     nbSubdivisionPoints = H2TriangleSubdivision::nbOfPoints(depth);
     nextIndex = 0;
-    sidePairings = mesh->rho.getSidePairingsForNormalizedFundamentalDomain();
+    sidePairings = mesh->rho.getWordSidePairings();
 
     createSubdivisions();
     createPoints();
@@ -339,7 +339,7 @@ void H2MeshConstructor::createExteriorNeighbors()
     int side=0, k;
     std::vector<int> indices1, indices2, neighbors1, neighbors2;
     H2MeshBoundaryPoint *m1, *m2;
-    H2Isometry id = H2Isometry::identity();
+    Word id;
     while(side < nbVertices)
     {
         indices1 = meshPointsIndicesAlongSide(side);
@@ -358,10 +358,10 @@ void H2MeshConstructor::createExteriorNeighbors()
             neighbors1 = m1->neighborsIndices;
             neighbors2 = m2->neighborsIndices;
             
-            m1->neighborsIsometries.resize(neighbors1.size());
-            std::fill(m1->neighborsIsometries.begin(),m1->neighborsIsometries.end(),id);
-            m2->neighborsIsometries.resize(neighbors2.size());
-            std::fill(m2->neighborsIsometries.begin(),m2->neighborsIsometries.end(),id);
+            m1->neighborsPairings.resize(neighbors1.size());
+            std::fill(m1->neighborsPairings.begin(),m1->neighborsPairings.end(),id);
+            m2->neighborsPairings.resize(neighbors2.size());
+            std::fill(m2->neighborsPairings.begin(),m2->neighborsPairings.end(),id);
             
             for (auto neighbor : m1->neighborsIndices)
             {
@@ -369,7 +369,7 @@ void H2MeshConstructor::createExteriorNeighbors()
                         ((H2MeshBoundaryPoint *) (*points)[neighbor])->side != side ))
                 {
                     neighbors2.push_back(neighbor);
-                    m2->neighborsIsometries.push_back(sidePairings[side]);
+                    m2->neighborsPairings.push_back(sidePairings[side]);
                 }
             }
 
@@ -379,7 +379,7 @@ void H2MeshConstructor::createExteriorNeighbors()
                          ((H2MeshBoundaryPoint *)(*points)[neighbor])->side != side + 2 ))
                 {
                     neighbors1.push_back(neighbor);
-                    m1->neighborsIsometries.push_back(sidePairings[side+2]);
+                    m1->neighborsPairings.push_back(sidePairings[side+2]);
                 }
             }
             
@@ -545,22 +545,22 @@ void H2MeshConstructor::createExteriorVertexNeighbors()
 
         (*points)[vertexMeshIndex[4*i]]->neighborsIndices = neighborsTemp;
         neighborsWordIsometriesTemp = Word::contract(neighborsWordIsometriesTemp);
-        ((H2MeshVertexPoint *) ((*points)[vertexMeshIndex[4*i]]))->neighborsIsometries = mesh->rho.evaluateRepresentation(neighborsWordIsometriesTemp);
+        ((H2MeshVertexPoint *) ((*points)[vertexMeshIndex[4*i]]))->neighborsPairings = neighborsWordIsometriesTemp;
 
         (*points)[vertexMeshIndex[4*i+3]]->neighborsIndices = neighborsTemp;
         neighborsWordIsometriesTemp = wordSidePairings[4*i]*neighborsWordIsometriesTemp;
         neighborsWordIsometriesTemp = Word::contract(neighborsWordIsometriesTemp);
-        ((H2MeshVertexPoint *) ((*points)[vertexMeshIndex[4*i+3]]))->neighborsIsometries = mesh->rho.evaluateRepresentation(neighborsWordIsometriesTemp);
+        ((H2MeshVertexPoint *) ((*points)[vertexMeshIndex[4*i+3]]))->neighborsPairings = neighborsWordIsometriesTemp;
 
         (*points)[vertexMeshIndex[4*i+2]]->neighborsIndices = neighborsTemp;
         neighborsWordIsometriesTemp = wordSidePairings[4*i+3]*neighborsWordIsometriesTemp;
         neighborsWordIsometriesTemp = Word::contract(neighborsWordIsometriesTemp);
-        ((H2MeshVertexPoint *) ((*points)[vertexMeshIndex[4*i+2]]))->neighborsIsometries = mesh->rho.evaluateRepresentation(neighborsWordIsometriesTemp);
+        ((H2MeshVertexPoint *) ((*points)[vertexMeshIndex[4*i+2]]))->neighborsPairings = neighborsWordIsometriesTemp;
 
         (*points)[vertexMeshIndex[4*i+1]]->neighborsIndices = neighborsTemp;
         neighborsWordIsometriesTemp = wordSidePairings[4*i+2]*neighborsWordIsometriesTemp;
         neighborsWordIsometriesTemp = Word::contract(neighborsWordIsometriesTemp);
-        ((H2MeshVertexPoint *) ((*points)[vertexMeshIndex[4*i+1]]))->neighborsIsometries = mesh->rho.evaluateRepresentation(neighborsWordIsometriesTemp);
+        ((H2MeshVertexPoint *) ((*points)[vertexMeshIndex[4*i+1]]))->neighborsPairings = neighborsWordIsometriesTemp;
 
         neighborsWordIsometriesTemp = wordSidePairings[4*i+1]*neighborsWordIsometriesTemp;
     }
@@ -588,7 +588,7 @@ bool H2MeshConstructor::checkPartnerPoints() const
         m = (*points)[i];
         if (m->isBoundaryPoint())
         {
-            p1 = sidePairings[((H2MeshBoundaryPoint*) m)->side]*(mesh->getH2Point(i));
+            p1 = mesh->rho.evaluateRepresentation(sidePairings[((H2MeshBoundaryPoint*) m)->side])*(mesh->getH2Point(i));
             p2 = mesh->getH2Point(((H2MeshBoundaryPoint*) m)->partnerPointIndex);
             d = H2Point::distance(p1, p2);
             max = d > max ? d : max;

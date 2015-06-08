@@ -10,6 +10,7 @@ class H2MeshPoint
     friend class H2Mesh;
     friend class H2MeshConstructor;
     friend class H2MeshFunction;
+    friend class H2MeshFunctionIterator;
 
 protected:
     virtual bool isCutPoint() const {return false;}
@@ -51,7 +52,7 @@ private:
 
     int side;
     int partnerPointIndex;
-    std::vector<H2Isometry> neighborsIsometries;
+    std::vector<Word> neighborsPairings;
 };
 
 
@@ -68,7 +69,7 @@ private:
     bool isVertexPoint() const {return true;}
 
     int vertexIndex;
-    std::vector<H2Isometry> neighborsIsometries;
+    std::vector<Word> neighborsPairings;
     std::vector<int> subdivisionIndices, indicesInSubdivisions;
 };
 

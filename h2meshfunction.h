@@ -6,6 +6,8 @@
 
 class H2MeshFunction
 {
+    friend class H2MeshFunctionIterator;
+
 public:
     H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation &rhoImage);
     void initializePL(const H2Point &basePoint);

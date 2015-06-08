@@ -75,7 +75,7 @@ std::vector<H2Point> H2Mesh::getKickedH2Neighbors(int index) const
 
     if (point->isBoundaryPoint())
     {
-        std::vector<H2Isometry> isometries = ((H2MeshBoundaryPoint*) point)->neighborsIsometries;
+        std::vector<H2Isometry> isometries = rho.evaluateRepresentation(((H2MeshBoundaryPoint*) point)->neighborsPairings);
         for (unsigned int i=0; i<neighborIndices.size(); ++i)
         {
             res[i] = isometries[i]*res[i];
@@ -83,7 +83,7 @@ std::vector<H2Point> H2Mesh::getKickedH2Neighbors(int index) const
     }
     else if (point->isVertexPoint())
     {
-        std::vector<H2Isometry> isometries = ((H2MeshVertexPoint*) point)->neighborsIsometries;
+        std::vector<H2Isometry> isometries = rho.evaluateRepresentation(((H2MeshVertexPoint*) point)->neighborsPairings);
         for (unsigned int i=0; i<neighborIndices.size(); ++i)
         {
             res[i] = isometries[i]*res[i];
