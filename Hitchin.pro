@@ -45,8 +45,7 @@ SOURCES += main.cpp \
     h2meshconstructor.cpp \
     h2meshpoint.cpp \
     word.cpp \
-    h2meshfunction.cpp \
-    h2meshvectorfield.cpp
+    h2meshfunction.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -78,8 +77,7 @@ HEADERS += \
     h2meshconstructor.h \
     h2meshpoint.h \
     word.h \
-    h2meshfunction.h \
-    h2meshvectorfield.h
+    h2meshfunction.h
 
 OTHER_FILES += \
     TODO.txt

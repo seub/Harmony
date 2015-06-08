@@ -26,6 +26,15 @@ Complex H2Point::getHyperboloidProjection() const
     return 2.0*z / (1.0 - norm(z));
 }
 
+void H2Point::getHyperboloidCoordinate(double &x, double &y, double &z) const
+{
+    double s = 1.0 - norm(this->z);
+    z = (2.0 / s) - 1.0;
+    x = (2.0*real(this->z) / s);
+    y = (2.0*imag(this->z) / s);
+    return;
+}
+
 void H2Point::setUpperHalfPlaneCoordinate(Complex z)
 {
     Complex I(0.0, 1.0);
@@ -89,3 +98,33 @@ bool operator ==(H2Point & p1, H2Point & p2)
 {
     return p1.z == p2.z;
 }
+
+H2Point H2Point::centroid(const std::vector<H2Point> &points, const std::vector<double> &weights)
+{
+    //assert sum weights = 1
+    std::vector<double> X,Y,Z;
+    double a,b,c,xout=0.0,yout=0.0,zout=0.0;
+    H2Point out;
+    X.reserve(points.size());
+    Y.reserve(points.size());
+    Z.reserve(points.size());
+    for(const auto & p: points)
+    {
+        p.getHyperboloidCoordinate(a,b,c);
+        X.push_back(a);
+        Y.push_back(b);
+        Z.push_back(c);
+    }
+    for(unsigned int j=0; j<points.size(); ++j)
+    {
+        xout += weights[j]*X[j];
+        yout += weights[j]*Y[j];
+        zout += weights[j]*Z[j];
+    }
+    double s = 1/ sqrt(zout*zout - xout*xout - yout*yout);
+    xout = s*xout;
+    yout = s*yout;
+    out.setHyperboloidProjection(Complex(xout,yout));
+    return out;
+}
+

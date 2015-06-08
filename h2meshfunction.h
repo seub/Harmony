@@ -7,12 +7,12 @@
 class H2MeshFunction
 {
 public:
-    H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation &rho);
+    H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation &rhoImage);
     void initializePL(const H2Point &basePoint);
 
 private:
     const H2Mesh * const mesh;
-    IsomH2Representation rho;
+    IsomH2Representation rhoImage;
     std::vector<H2Point> values;
 };
 

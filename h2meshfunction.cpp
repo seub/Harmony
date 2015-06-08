@@ -1,6 +1,6 @@
 #include "h2meshfunction.h"
 
-H2MeshFunction::H2MeshFunction(const H2Mesh *const mesh, const IsomH2Representation &rho) : mesh(mesh), rho(rho)
+H2MeshFunction::H2MeshFunction(const H2Mesh *const mesh, const IsomH2Representation &rhoImage) : mesh(mesh), rhoImage(rhoImage)
 {
 }
 

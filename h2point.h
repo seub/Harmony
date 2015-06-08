@@ -15,6 +15,7 @@ public:
     Complex getDiskCoordinate() const;
     Complex getKleinCoordinate() const;
     Complex getHyperboloidProjection() const;
+    void getHyperboloidCoordinate(double & x, double & y, double & z) const;
 
     void setUpperHalfPlaneCoordinate(Complex z);
     void setDiskCoordinate(Complex z);
@@ -24,6 +25,7 @@ public:
     static double distance(const H2Point & p1, const H2Point & p2);
     static H2Point midpoint(const H2Point & p1, const H2Point & p2);
     static double angle(const H2Point &previous, const H2Point &point, const H2Point &next);
+    static H2Point centroid(const std::vector<H2Point> & points, const std::vector<double> & weights);
 
 private:
     Complex z;

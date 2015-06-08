@@ -40,6 +40,7 @@ public:
     H2Polygon generatePolygon(int tilingSize) const;
 
     std::vector<Word> getWordSidePairings() const;
+    std::vector<Word> getVertexPairings() const;
     std::vector<H2Isometry> getSidePairingsForNormalizedFundamentalDomain() const;
     std::vector<H2Isometry> getSidePairingsNormalizedToDepth(int n) const;
     std::vector<H2Isometry> getSidePairingsNormalizedAroundVertex() const;

@@ -27,17 +27,17 @@ void H3Point::getHalfSpaceCoordinates(double & x, double & y, double & z) const
 
 void H3Point::getHyperboloidCoordinates(double & x0, double & x1, double & x2, double & x3) const
 {
-    double s = 1 - X*X - Y*Y - Z*Z;
-    x0 = (2 / s) - 1;
-    x1 = (2*X / s);
-    x2 = (2*Y / s);
-    x3 = (2*Z / s);
+    double s = 1.0 - X*X - Y*Y - Z*Z;
+    x0 = (2.0 / s) - 1.0;
+    x1 = (2.0*X / s);
+    x2 = (2.0*Y / s);
+    x3 = (2.0*Z / s);
     return;
 }
 
 void H3Point::getKleinCoordinates(double & x, double & y, double & z) const
 {
-    double s = 1 + X*X + Y*Y + Z*Z;
+    double s = 1.0 + X*X + Y*Y + Z*Z;
     x = (2.0*X / s);
     y = (2.0*Y / s);
     z = (2.0*Z / s);

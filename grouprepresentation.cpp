@@ -266,6 +266,29 @@ template <> std::vector<Word> IsomH2Representation::getWordSidePairings() const
     return res;
 }
 
+template <> std::vector<Word> IsomH2Representation::getVertexPairings() const
+{
+    assert(Gamma->isClosedSurfaceGroup());
+
+    std::vector<Word> res;
+    int genus = Gamma->getGenerators().size()/2;
+    res.reserve(4*genus);
+    Word store;
+    for(int j=0; j!=genus; ++j)
+    {
+        res.push_back(store);
+        store=store*Word({letter(2*i,1)});
+        res.push_back(store);
+        store=store*Word({letter(2*i+1,1)});
+        res.push_back(store);
+        store=store*Word({letter(2*i,-1)});
+        res.push_back(store);
+        store=store*Word({letter(2*i+1,-1)});
+        res.push_back(store);
+    }
+    return res;
+}
+
 template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsForNormalizedFundamentalDomain() const
 {
     return evaluateRepresentation(getWordSidePairings());
