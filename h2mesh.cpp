@@ -91,3 +91,8 @@ std::vector<H2Point> H2Mesh::getKickedH2Neighbors(int index) const
 
     return res;
 }
+
+const IsomH2Representation & H2Mesh::getRepresentation() const
+{
+    return rho;
+}

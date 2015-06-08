@@ -277,13 +277,13 @@ template <> std::vector<Word> IsomH2Representation::getVertexPairings() const
     for(int j=0; j!=genus; ++j)
     {
         res.push_back(store);
-        store=store*Word({letter(2*i,1)});
+        store=store*Word({letter(2*j,1)});
         res.push_back(store);
-        store=store*Word({letter(2*i+1,1)});
+        store=store*Word({letter(2*j+1,1)});
         res.push_back(store);
-        store=store*Word({letter(2*i,-1)});
+        store=store*Word({letter(2*j,-1)});
         res.push_back(store);
-        store=store*Word({letter(2*i+1,-1)});
+        store=store*Word({letter(2*j+1,-1)});
         res.push_back(store);
     }
     return res;

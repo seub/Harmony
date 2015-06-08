@@ -24,7 +24,7 @@ public:
     const std::vector<H2TriangleSubdivision> &getSubdivisions() const;
     std::vector<H2Point> getH2Neighbors(int index) const;
     std::vector<H2Point> getKickedH2Neighbors(int index) const;
-
+    const IsomH2Representation & getRepresentation() const;
 
 private:
     IsomH2Representation rho;
