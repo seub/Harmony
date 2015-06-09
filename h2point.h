@@ -2,6 +2,7 @@
 #define H2POINT_H
 
 #include "tools.h"
+#include <tuple>
 
 class H2Point
 {
@@ -27,10 +28,18 @@ public:
     static double angle(const H2Point &previous, const H2Point &point, const H2Point &next);
     static H2Point centroid(const std::vector<H2Point> & points, const std::vector<double> & weights);
 
+    bool compareAngles(const H2Point &p1, const H2Point &p2);
+    void counterclockwiseOrder(std::vector<H2Point> & points);
+
 private:
     Complex z;
 };
 
+typedef std::tuple<H2Point, H2Point, int> triple;
+//typedef std::tuple<H2Point, H2Point, int, std::vector<Word>> quadruple;
+
+bool compareTriples(const triple & t1, const triple & t2);
+//bool compareQuadruples(const quadruple & q1, const quadruple & q2);
 
 
 #endif // H2POINT_H

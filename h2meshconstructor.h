@@ -27,6 +27,8 @@ private:
     void createExteriorNeighbors();
     void createExteriorVertexNeighbors();
 
+    void reorganizeNeighbors();
+
     bool runTests() const;
     bool checkNumberOfMeshPoints() const;
     bool checkForDuplicateNeighbors() const;

@@ -20,6 +20,8 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     createPoints();
     createNeighbors();
 
+    reorganizeNeighbors();
+
     runTests();
 }
 
@@ -366,7 +368,7 @@ void H2MeshConstructor::createExteriorNeighbors()
             for (auto neighbor : m1->neighborsIndices)
             {
                 if (!((*points)[neighbor]->isVertexPoint()) && (!(*points)[neighbor]->isBoundaryPoint() ||
-                        ((H2MeshBoundaryPoint *) (*points)[neighbor])->side != side ))
+                                                                ((H2MeshBoundaryPoint *) (*points)[neighbor])->side != side ))
                 {
                     neighbors2.push_back(neighbor);
                     m2->neighborsPairings.push_back(sidePairings[side]);
@@ -376,7 +378,7 @@ void H2MeshConstructor::createExteriorNeighbors()
             for (auto neighbor : m2->neighborsIndices)
             {
                 if (!((*points)[neighbor]->isVertexPoint()) && (!(*points)[neighbor]->isBoundaryPoint() ||
-                         ((H2MeshBoundaryPoint *)(*points)[neighbor])->side != side + 2 ))
+                                                                ((H2MeshBoundaryPoint *)(*points)[neighbor])->side != side + 2 ))
                 {
                     neighbors1.push_back(neighbor);
                     m1->neighborsPairings.push_back(sidePairings[side+2]);
@@ -393,6 +395,82 @@ void H2MeshConstructor::createExteriorNeighbors()
     }
 
     return;
+}
+
+void H2MeshConstructor::reorganizeNeighbors()
+{
+    std::vector<triple> trip;
+    int index,i;
+    std::vector<int> indicesOld, indicesNew;
+    for (auto & cutpoint : *cutPoints)
+    {
+        i=0;
+        index = (subdivisions->at(cutpoint.subdivisionIndex)).meshIndices->at(cutpoint.indexInSubdivision);
+        indicesOld = cutpoint.neighborsIndices;
+        for (const auto & neighbor : mesh->getH2Neighbors(index))
+        {
+            trip.push_back(triple(mesh->getH2Point(index), neighbor, i));
+            ++i;
+        }
+        std::sort(trip.begin(),trip.end(),compareTriples);
+        for (const auto & trap : trip)
+        {
+            indicesNew.push_back(indicesOld[std::get<2>(trap)]);
+        }
+        cutpoint.neighborsIndices = indicesNew;
+        trip.clear();
+        indicesNew.clear();
+    }
+
+    std::vector<Word> neighborsPairingsOld, neighborsPairingsNew;
+    for (auto & boundarypoint : *boundaryPoints)
+    {
+        i=0;
+        index = (subdivisions->at(boundarypoint.subdivisionIndex)).meshIndices->at(boundarypoint.indexInSubdivision);
+        indicesOld = boundarypoint.neighborsIndices;
+        neighborsPairingsOld = boundarypoint.neighborsPairings;
+        for (const auto & neighbor : mesh->getKickedH2Neighbors(index))
+        {
+            trip.push_back(triple(mesh->getH2Point(index), neighbor, i));
+            ++i;
+        }
+        std::sort(trip.begin(),trip.end(),compareTriples);
+        for (const auto & trap : trip)
+        {
+            indicesNew.push_back(indicesOld[std::get<2>(trap)]);
+            neighborsPairingsNew.push_back(neighborsPairingsOld[std::get<2>(trap)]);
+        }
+        boundarypoint.neighborsIndices = indicesNew;
+        boundarypoint.neighborsPairings = neighborsPairingsNew;
+        trip.clear();
+        indicesNew.clear();
+        neighborsPairingsNew.clear();
+    }
+
+
+    for (auto & vertexpoint : *vertexPoints)
+    {
+        i=0;
+        index = (subdivisions->at(vertexpoint.subdivisionIndex)).meshIndices->at(vertexpoint.indexInSubdivision);
+        indicesOld = vertexpoint.neighborsIndices;
+        neighborsPairingsOld = vertexpoint.neighborsPairings;
+        for (const auto & neighbor : mesh->getKickedH2Neighbors(index))
+        {
+            trip.push_back(triple(mesh->getH2Point(index), neighbor, i));
+            ++i;
+        }
+        std::sort(trip.begin(),trip.end(),compareTriples);
+        for (const auto & trap : trip)
+        {
+            indicesNew.push_back(indicesOld[std::get<2>(trap)]);
+            neighborsPairingsNew.push_back(neighborsPairingsOld[std::get<2>(trap)]);
+        }
+        vertexpoint.neighborsIndices = indicesNew;
+        vertexpoint.neighborsPairings = neighborsPairingsNew;
+        trip.clear();
+        indicesNew.clear();
+        neighborsPairingsNew.clear();
+    }
 }
 
 std::vector<int> H2MeshConstructor::meshPointsIndicesAlongSide(int side) const
@@ -444,14 +522,14 @@ bool H2MeshConstructor::checkForDuplicateNeighbors() const
 {
     if(depth > 1)
     {
-    for (const auto &m : *points)
-    {
-        if (Tools::containsDuplicates(m->neighborsIndices))
+        for (const auto &m : *points)
         {
-            std::cout << "ERROR in H2MeshConstructor::checkForDuplicateNeighbors: test failed" << std::endl;
-            return false;
+            if (Tools::containsDuplicates(m->neighborsIndices))
+            {
+                std::cout << "ERROR in H2MeshConstructor::checkForDuplicateNeighbors: test failed" << std::endl;
+                return false;
+            }
         }
-    }
     }
     std::cout << "H2MeshConstructor::checkForDuplicateNeighbors: passed" << std::endl;
     return true;

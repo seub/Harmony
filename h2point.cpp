@@ -128,3 +128,46 @@ H2Point H2Point::centroid(const std::vector<H2Point> &points, const std::vector<
     return out;
 }
 
+bool H2Point::compareAngles(const H2Point &p1, const H2Point &p2)
+{
+    Complex z1 = p1.z - z;
+    Complex z2 = p2.z - z;
+    double x1,x2,y1,y2;
+    x1 = real(z1); y1 = imag(z1);
+    x2 = real(z2); y2 = imag(z2);
+    if (x1>=0.0)
+    {
+        if (y1>=0.0)
+        {
+            if (x2>=0.0 && y2>=0.0)
+            {
+                return (y1*x2 < x1*y2);
+            }
+            else return true;
+        }
+        else return (x2>0.0 && y2<0.0 && (y1*x2 < x1*y2));
+    }
+    else if (x2<0.0)
+    {
+        return (y1*x2 < x1*y2);
+    }
+    else return (y2<0.0);
+}
+
+void H2Point::counterclockwiseOrder(std::vector<H2Point> &points)
+{
+    //std::sort(points.begin(),points.end(),this->compareAngles);
+}
+
+bool compareTriples(const triple &t1, const triple &t2)
+{
+    //assert that std::get<0>(t1) and std::get<0>(t2) are the same.
+    H2Point p(std::get<0>(t1)), p1(std::get<1>(t1)), p2(std::get<1>(t2));
+    return p.compareAngles(p1, p2);
+}
+
+//bool compareQuadruples(const quadruple &q1, const quadruple &q2)
+//{
+    //assert that std::get<0>(q1) and std::get<0>(q2) are the same.
+//    return std::get<0>(q1).compareAngles(std::get<1>(q1),std::get<1>(q2));
+//}
