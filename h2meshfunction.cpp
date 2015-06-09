@@ -37,3 +37,8 @@ void H2MeshFunction::initializePL(const H2Point &basePoint)
         ++l;
     }
 }
+
+H2MeshFunction::H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation &rhoImage, std::vector<H2Point> values) :
+     mesh(mesh), rhoImage(rhoImage), values(values)
+{
+}

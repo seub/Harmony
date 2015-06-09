@@ -13,6 +13,7 @@ public:
     void initializePL(const H2Point &basePoint);
 
 private:
+    H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation &rhoImage, std::vector<H2Point> values);
     const H2Mesh * const mesh;
     IsomH2Representation rhoImage;
     std::vector<H2Point> values;

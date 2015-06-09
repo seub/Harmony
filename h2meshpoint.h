@@ -21,6 +21,7 @@ protected:
 
     int subdivisionIndex, indexInSubdivision;
     std::vector<int> neighborsIndices;
+    std::vector<double> neighborsWeights;
 };
 
 
@@ -44,6 +45,7 @@ class H2MeshBoundaryPoint : public H2MeshPoint
 {
     friend class H2Mesh;
     friend class H2MeshConstructor;
+    friend class H2MeshFunctionIterator;
 
 private:
     H2MeshBoundaryPoint(int subdivisionIndex, int indexInSubdivision, int side) :
@@ -60,6 +62,7 @@ class H2MeshVertexPoint : public H2MeshPoint
 {
     friend class H2Mesh;
     friend class H2MeshConstructor;
+    friend class H2MeshFunctionIterator;
 
 private:
     H2MeshVertexPoint(int subdivisionIndex, int indexInSubdivision, int vertexIndex,
