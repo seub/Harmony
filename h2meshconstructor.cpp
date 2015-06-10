@@ -23,6 +23,7 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
 
     reorganizeNeighbors();
     setEpsilon();
+    createWeights();
 
     runTests();
 }
@@ -499,6 +500,8 @@ void H2MeshConstructor::createWeights()
     std::vector<double> distances;
     for(const auto & meshPoint : mesh->meshPoints)
     {
+        neighborWeights.clear();
+        distances.clear();
         neighbors = mesh->getKickedH2Neighbors(i);
         basept = mesh->getH2Point(i);
         epsilon = mesh->epsilon;

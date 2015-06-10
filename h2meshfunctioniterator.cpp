@@ -11,8 +11,8 @@ H2MeshFunctionIterator::H2MeshFunctionIterator(const H2MeshFunction * const f) :
 void H2MeshFunctionIterator::iterate(int n)
 {
     int i,j, N=n;
-    std::vector<H2Point> neighborsImages;
-    std::vector<double> weights;
+    std::vector<H2Point> neighborsImages,testImages;
+    std::vector<double> weights,testWeights;
     IsomH2Representation rhoImage = f->rhoImage;
     std::vector<H2Isometry> isometriesImage;
     while (n>0)
@@ -20,6 +20,7 @@ void H2MeshFunctionIterator::iterate(int n)
         i=0;
         for(const auto & meshPoint : mesh->meshPoints)
         {
+            neighborsImages.clear();
             weights = meshPoint->neighborsWeights;
             if (meshPoint->isBoundaryPoint())
             {
@@ -49,12 +50,39 @@ void H2MeshFunctionIterator::iterate(int n)
                 }
             }
             // This is unique to a weighting regime where the basepoint has a non-zero weight
-            neighborsImages.push_back(mesh->getH2Point(meshPoint->index));
+            neighborsImages.push_back(oldValues[i]);
             weights.push_back(meshPoint->weight);
-
+            if(i==14)
+            {
+                testImages = neighborsImages;
+                testWeights = weights;
+            }
             newValues[i] = H2Point::centroid(neighborsImages, weights);
             ++i;
         }
+        std::vector<Complex> test;
+        for (auto pt : testImages)
+        {
+            test.push_back(pt.getDiskCoordinate());
+        }
+        std::cout << "A mesh point has image " << oldValues[14].getDiskCoordinate() << std::endl;
+        std::cout << "A mesh point has neighbor images " << test << std::endl;
+        std::vector<double> norms;
+        for (auto w : test)
+        {
+            norms.push_back(norm(w));
+        }
+        std::cout << "maxnorm = " << *std::max_element(norms.begin(), norms.end()) << std::endl;
+        std::cout << "A mesh point has weights " << testWeights << std::endl;
+        std::cout << "testWeights.size = test.size? " << (testWeights.size()==test.size()) << std::endl;
+        double sum=0;
+        for (auto x : testWeights)
+        {
+            sum += x;
+        }
+        std::cout << "Sum of weights: " << sum << std::endl;
+        std::cout << "A mesh point's averaged value is " << newValues[14].getDiskCoordinate() << std::endl;
+        std::cout << "Centroid " << H2Point::centroid(testImages, testWeights).getDiskCoordinate() << std::endl;
         std::cout << "The error in the " << N-n+1 <<"th iterate is = " << supError() << std::endl;
         oldValues = newValues;
         --n;
