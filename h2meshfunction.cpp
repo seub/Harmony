@@ -31,11 +31,11 @@ void H2MeshFunction::initializePL(const H2Point &basePoint)
         subdivisionImages.push_back(H2TriangleSubdivision(vertexImages[i],vertexImages[j],vertexImages[k],depth));
     }
 
-    int l=0;
+    values.clear();
+    values.reserve(mesh->meshPoints.size());
     for(const auto & meshpoint : mesh->meshPoints)
     {
-        values[l]= subdivisionImages[meshpoint->subdivisionIndex].getPoint(meshpoint->indexInSubdivision);
-        ++l;
+        values.push_back(subdivisionImages[meshpoint->subdivisionIndex].getPoint(meshpoint->indexInSubdivision));
     }
 }
 

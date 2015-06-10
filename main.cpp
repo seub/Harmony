@@ -76,12 +76,12 @@ int main(int argc, char *argv[])
     std::cout << "Time to build function: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     std::cout << std::endl;
 
-/*    start = clock();
+    start = clock();
     f.iterate();
     end = clock();
     std::cout << "Time to iterate discrete heat flow: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     std::cout << std::endl;
-*/
+
     std::cout << std::endl;
     return a.exec();
 }
