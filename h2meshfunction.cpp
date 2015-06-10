@@ -1,6 +1,7 @@
 #include "h2meshfunction.h"
 #include "h2polygontriangulater.h"
 #include "h2trianglesubdivision.h"
+#include "h2meshfunctioniterator.h"
 
 H2MeshFunction::H2MeshFunction(const H2Mesh *const mesh, const IsomH2Representation &rhoImage) : mesh(mesh), rhoImage(rhoImage)
 {
@@ -41,4 +42,11 @@ void H2MeshFunction::initializePL(const H2Point &basePoint)
 H2MeshFunction::H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation &rhoImage, std::vector<H2Point> values) :
      mesh(mesh), rhoImage(rhoImage), values(values)
 {
+}
+
+void H2MeshFunction::iterate(int n)
+{
+    H2MeshFunctionIterator iter(this);
+    iter.iterate(n);
+    values = iter.getOutput().values;
 }

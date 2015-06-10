@@ -15,12 +15,14 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     nbSubdivisionPoints = H2TriangleSubdivision::nbOfPoints(depth);
     nextIndex = 0;
     sidePairings = mesh->rho.getWordSidePairings();
+    currentIndex = 0;
 
     createSubdivisions();
     createPoints();
     createNeighbors();
 
     reorganizeNeighbors();
+    setEpsilon();
 
     runTests();
 }
@@ -99,6 +101,8 @@ void H2MeshConstructor::createRegularPoints()
 
     for (auto &point : *regularPoints)
     {
+        point.index = currentIndex;
+        ++currentIndex;
         points->push_back(&point);
     }
 
@@ -132,6 +136,8 @@ void H2MeshConstructor::createCutPoints()
 
     for (auto &point : *cutPoints)
     {
+        point.index = currentIndex;
+        ++currentIndex;
         points->push_back(&point);
     }
 
@@ -169,6 +175,8 @@ void H2MeshConstructor::createBoundaryPoints()
 
     for (auto &point : *boundaryPoints)
     {
+        point.index = currentIndex;
+        ++currentIndex;
         points->push_back(&point);
     }
 
@@ -212,6 +220,8 @@ void H2MeshConstructor::createVertexPoints()
 
     for (auto &point : *vertexPoints)
     {
+        point.index = currentIndex;
+        ++currentIndex;
         points->push_back(&point);
     }
 
@@ -473,6 +483,70 @@ void H2MeshConstructor::reorganizeNeighbors()
     }
 }
 
+void H2MeshConstructor::setEpsilon()
+{
+    mesh->epsilon = triangulater.minTriangleSide()/Tools::exponentiation(2,depth);
+    std::cout << "Epsilon = " << mesh->epsilon << std::endl;
+}
+
+void H2MeshConstructor::createWeights()
+{
+    int i=0,j;
+    H2Point basept, previous, current, next;
+    std::vector<H2Point> neighbors;
+    std::vector<double> neighborWeights;
+    double r, epsilon, tan1, tan2;
+    std::vector<double> distances;
+    for(const auto & meshPoint : mesh->meshPoints)
+    {
+        neighbors = mesh->getKickedH2Neighbors(i);
+        basept = mesh->getH2Point(i);
+        epsilon = mesh->epsilon;
+        j=0;
+        //distances.push_back(H2Point::distance(basept, neighbors[0]));
+        //tan1=H2Point::tanHalfAngle(neighbors[0], basept, neighbors[1]);
+        //tan2=H2Point::tanHalfAngle(neighbors.back(), basept, neighbors[0]);
+        //neighborWeights.push_back((epsilon/(3*M_PI*r))*(tan1 + tan2));
+        previous = neighbors.back();
+        current = neighbors.front();
+        next = neighbors[1];
+        for(std::vector<H2Point>::size_type j=1; j+1<neighbors.size(); ++j)
+        {
+            r=H2Point::distance(basept, current);
+            distances.push_back(r);
+            tan1=H2Point::tanHalfAngle(current, basept, next);
+            tan2=H2Point::tanHalfAngle(previous, basept, current);
+            neighborWeights.push_back((epsilon/(3*M_PI*r))*(tan1 + tan2));
+            previous = current;
+            current = next;
+            next = neighbors[j+1];
+        }
+        r=H2Point::distance(basept, current);
+        distances.push_back(r);
+        tan1=H2Point::tanHalfAngle(current, basept, next);
+        tan2=H2Point::tanHalfAngle(previous, basept, current);
+        neighborWeights.push_back((epsilon/(3*M_PI*r))*(tan1 + tan2));
+        previous = current;
+        current = next;
+        next = neighbors.front();
+        r=H2Point::distance(basept, current);
+        distances.push_back(r);
+        tan1=H2Point::tanHalfAngle(current, basept, next);
+        tan2=H2Point::tanHalfAngle(previous, basept, current);
+        neighborWeights.push_back((epsilon/(3*M_PI*r))*(tan1 + tan2));
+
+
+        meshPoint->neighborsWeights = neighborWeights;
+        double sum = 0.0;
+        for (auto neighborWeight : neighborWeights)
+        {
+            sum += neighborWeight;
+        }
+        meshPoint->weight = 1.0 - sum;
+        ++i;
+    }
+}
+
 std::vector<int> H2MeshConstructor::meshPointsIndicesAlongSide(int side) const
 {
     int triangleIndex = triangulater.sideTrianglesIndices[side];
@@ -642,7 +716,6 @@ void H2MeshConstructor::createExteriorVertexNeighbors()
 
         neighborsWordIsometriesTemp = wordSidePairings[4*i+1]*neighborsWordIsometriesTemp;
     }
-    return;
 }
 
 bool H2MeshConstructor::runTests() const
@@ -651,7 +724,10 @@ bool H2MeshConstructor::runTests() const
     bool b2 = checkForDuplicateNeighbors();
     bool b4 = checkNumberOfNeighbors();
     bool b5 = checkPartnerPoints();
-    return b1 && b2 && b4 && b5;
+    bool b6 = (currentIndex==(int) (mesh->meshPoints).size());
+    bool result = b1 && b2 && b4 && b5 && b6;
+    std::cout << "Test results: " << result << std::endl;
+    return result;
 }
 
 bool H2MeshConstructor::checkPartnerPoints() const

@@ -1,6 +1,7 @@
 #include "h2polygontriangulater.h"
 
 #include "h2polygon.h"
+#include "h2geodesic.h"
 
 H2PolygonTriangulater::H2PolygonTriangulater(const H2Polygon * const polygon) : polygon(polygon)
 {
@@ -424,6 +425,16 @@ std::vector<TriangulationCut> H2PolygonTriangulater::getCuts() const
     return cuts;
 }
 
+std::vector<H2GeodesicArc> H2PolygonTriangulater::getH2Cuts() const
+{
+    std::vector<H2GeodesicArc> output;
+    for (const auto &cut : cuts)
+    {
+        output.push_back(H2GeodesicArc(polygon->getVertex(cut.vertexIndex1), polygon->getVertex(cut.vertexIndex2)));
+    }
+    return output;
+}
+
 void H2PolygonTriangulater::adjacentSidesIndices(int cutIndex, int &outputIndexLeft1, int &outputIndexLeft2,
                                                     int &outputIndexRight1, int &outputIndexRight2) const
 {
@@ -510,4 +521,19 @@ double H2PolygonTriangulater::minTriangleAngle() const
         }
     }
     return minAngle;
+}
+
+double H2PolygonTriangulater::minTriangleSide() const
+{
+    std::vector<H2GeodesicArc> segments = polygon->getSides();
+    std::vector<H2GeodesicArc> H2cuts = getH2Cuts();
+    segments.insert(segments.end(), H2cuts.begin(), H2cuts.end());
+
+    std::vector<double> segmentLengths;
+    for (const auto & segment : segments)
+    {
+        segmentLengths.push_back(segment.length());
+    }
+
+    return *std::min_element(segmentLengths.begin(), segmentLengths.end());
 }

@@ -365,6 +365,11 @@ void H2GeodesicArc::getEndpointsInDiskModel(Complex &output1, Complex &output2) 
     return;
 }
 
+double H2GeodesicArc::length() const
+{
+    return H2Point::distance(p1, p2);
+}
+
 void H2GeodesicArc::getEndpoints(H2Point &output1, H2Point &output2) const
 {
     output1 = p1;

@@ -1,5 +1,6 @@
 #include "h2meshfunctioniterator.h"
 #include "h2meshfunction.h"
+#include "h2trianglesubdivision.h"
 
 H2MeshFunctionIterator::H2MeshFunctionIterator(const H2MeshFunction * const f) : f(f), mesh(f->mesh)
 {
@@ -46,6 +47,9 @@ void H2MeshFunctionIterator::iterate(int n)
                     neighborsImages.push_back(oldValues[k]);
                 }
             }
+            // This is unique to a weighting regime where the basepoint has a non-zero weight
+            neighborsImages.push_back(mesh->getH2Point(meshPoint->index));
+
             newValues[i] = H2Point::centroid(neighborsImages, weights);
             ++i;
         }

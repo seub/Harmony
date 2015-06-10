@@ -27,7 +27,9 @@ private:
     void createExteriorNeighbors();
     void createExteriorVertexNeighbors();
 
+    void setEpsilon();
     void reorganizeNeighbors();
+    void createWeights();
 
     bool runTests() const;
     bool checkNumberOfMeshPoints() const;
@@ -56,6 +58,7 @@ private:
     std::vector<int> vertexMeshIndex;
     std::vector< std::vector< std::vector<int> > > neighborsInSubdivisions;
     std::vector<Word> sidePairings;
+    int currentIndex;
 };
 
 #endif // H2MESHCONSTRUCTOR_H

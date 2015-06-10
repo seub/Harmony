@@ -22,6 +22,8 @@ protected:
     int subdivisionIndex, indexInSubdivision;
     std::vector<int> neighborsIndices;
     std::vector<double> neighborsWeights;
+    double weight;
+    int index;
 };
 
 

@@ -49,6 +49,7 @@ public:
     H2GeodesicArc(const H2Point & p1, const H2Point & p2);
 
     void setPoints(const H2Point & p1, const H2Point & p2);
+    double length() const;
 
     Circle getCircleInDiskModel() const;
     Complex getCircleCenterInDiskModel() const;

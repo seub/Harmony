@@ -88,6 +88,15 @@ double H2Point::angle(const H2Point &previous, const H2Point &point, const H2Poi
     return Tools::mod2Pi(arg(v*conj(u)));
 }
 
+double H2Point::tanHalfAngle(const H2Point &previous, const H2Point &point, const H2Point &next)
+{
+    Complex u = (previous.z - point.z) / (1.0 - conj(point.z)*previous.z);
+    Complex v = (next.z - point.z) / (1.0 - conj(point.z)*next.z);
+    Complex zed = v*conj(u) / abs(v*conj(u));
+    double x = real(zed), y = imag(zed);
+    return (1-x)/y;
+}
+
 std::ostream & operator<<(std::ostream & out, const H2Point &p)
 {
     out << "H2Point with disk coordinate " << p.z;
@@ -152,11 +161,6 @@ bool H2Point::compareAngles(const H2Point &p1, const H2Point &p2)
         return (y1*x2 < x1*y2);
     }
     else return (y2<0.0);
-}
-
-void H2Point::counterclockwiseOrder(std::vector<H2Point> &points)
-{
-    //std::sort(points.begin(),points.end(),this->compareAngles);
 }
 
 bool compareTriples(const triple &t1, const triple &t2)

@@ -8,6 +8,8 @@
 #include "fenchelnielsenconstructor.h"
 #include "h2canvasdelegate.h"
 #include "canvas.h"
+#include "h2meshfunction.h"
+#include "h2meshfunctioniterator.h"
 
 int main(int argc, char *argv[])
 {
@@ -31,9 +33,9 @@ int main(int argc, char *argv[])
 
     FenchelNielsenConstructor fn(lengths,twists);
     DiscreteGroup group;
-    IsomH2Representation rho(&group);
+    IsomH2Representation rhoImage(&group), rho(&group);
 
-    rho = fn.getRepresentation(&group);
+    rhoImage = fn.getRepresentation(&group);
 
     rho.setNiceRepresentation();
     rho.checkRelations();
@@ -60,13 +62,26 @@ int main(int argc, char *argv[])
     ((H2CanvasDelegate *) canvas.delegate)->buffer.addElement(mesh);
     ((H2CanvasDelegate *) canvas.delegate)->redrawBuffer();
 
-    canvas.show();
-
-    std::cout << "random fucking shit: " << rand() % 100 << std::endl;
+//    canvas.show();
 
 
+    H2MeshFunction f(&mesh, rhoImage);
+    H2Point basept;
+    basept.setDiskCoordinate(Complex(0.0,0.0));
+    start = clock();
+    std::cout << "Alice" << std::endl;
+    f.initializePL(basept);
+    std::cout << "Bob" << std::endl;
+    end = clock();
+    std::cout << "Time to build function: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+    std::cout << std::endl;
 
-
+/*    start = clock();
+    f.iterate();
+    end = clock();
+    std::cout << "Time to iterate discrete heat flow: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+    std::cout << std::endl;
+*/
     std::cout << std::endl;
     return a.exec();
 }
