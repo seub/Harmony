@@ -49,6 +49,7 @@ void H2MeshFunctionIterator::iterate(int n)
             }
             // This is unique to a weighting regime where the basepoint has a non-zero weight
             neighborsImages.push_back(mesh->getH2Point(meshPoint->index));
+            weights.push_back(meshPoint->weight);
 
             newValues[i] = H2Point::centroid(neighborsImages, weights);
             ++i;
