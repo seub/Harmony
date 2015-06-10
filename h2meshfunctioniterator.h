@@ -14,6 +14,7 @@ public:
     void iterate(int n=1);
     H2MeshFunction getOutput();
 
+    double supError() const;
 
 private:
     const H2MeshFunction * const f;

@@ -45,39 +45,39 @@ int main(int argc, char *argv[])
 
 
     H2Mesh mesh;
-    int k = 4;
+    int depth = 2;
     //for (k=0; k<10; ++k)
     //{
-    std::cout << "depth = " << k << std::endl;
+    std::cout << "depth = " << depth << std::endl;
     clock_t start = clock();
-    mesh = H2Mesh(rho, k);
+    mesh = H2Mesh(rho, depth);
     clock_t end = clock();
     std::cout << "Time to construct mesh: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     std::cout << std::endl;
     //}
 
+    std::cout << "The mesh has " << mesh.nbPoints() << " points" << std::endl;
 
-    Canvas canvas(H2DELEGATE);
+
+/*    Canvas canvas(H2DELEGATE);
     ((H2CanvasDelegate *) canvas.delegate)->buffer.addElement(rho, "blue", 2);
     ((H2CanvasDelegate *) canvas.delegate)->buffer.addElement(mesh);
     ((H2CanvasDelegate *) canvas.delegate)->redrawBuffer();
 
-//    canvas.show();
-
+    canvas.show();
+*/
 
     H2MeshFunction f(&mesh, rhoImage);
     H2Point basept;
     basept.setDiskCoordinate(Complex(0.0,0.0));
     start = clock();
-    std::cout << "Alice" << std::endl;
     f.initializePL(basept);
-    std::cout << "Bob" << std::endl;
     end = clock();
     std::cout << "Time to build function: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     std::cout << std::endl;
 
     start = clock();
-    f.iterate();
+    f.iterate(3);
     end = clock();
     std::cout << "Time to iterate discrete heat flow: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     std::cout << std::endl;

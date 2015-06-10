@@ -5,11 +5,12 @@
 H2MeshFunctionIterator::H2MeshFunctionIterator(const H2MeshFunction * const f) : f(f), mesh(f->mesh)
 {
     oldValues = f->values;
+    newValues = oldValues;
 }
 
 void H2MeshFunctionIterator::iterate(int n)
 {
-    int i,j;
+    int i,j, N=n;
     std::vector<H2Point> neighborsImages;
     std::vector<double> weights;
     IsomH2Representation rhoImage = f->rhoImage;
@@ -54,6 +55,7 @@ void H2MeshFunctionIterator::iterate(int n)
             newValues[i] = H2Point::centroid(neighborsImages, weights);
             ++i;
         }
+        std::cout << "The error in the " << N-n+1 <<"th iterate is = " << supError() << std::endl;
         oldValues = newValues;
         --n;
     }
@@ -62,4 +64,17 @@ void H2MeshFunctionIterator::iterate(int n)
 H2MeshFunction H2MeshFunctionIterator::getOutput()
 {
     return H2MeshFunction(mesh, f->rhoImage, oldValues);
+}
+
+double H2MeshFunctionIterator::supError() const
+{
+    double error;
+    std::vector<double> errors;
+    for (std::vector<H2Point>::size_type j=0; j<oldValues.size(); ++j)
+    {
+        error = H2Point::distance(oldValues[j],newValues[j]);
+        std::cout << "error = " << error << std::endl;
+        errors.push_back(error);
+    }
+    return *std::max_element(errors.begin(),errors.end());
 }

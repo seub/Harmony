@@ -97,3 +97,8 @@ IsomH2Representation H2Mesh::getRepresentation() const
 {
     return rho;
 }
+
+int H2Mesh::nbPoints() const
+{
+    return (int) meshPoints.size();
+}

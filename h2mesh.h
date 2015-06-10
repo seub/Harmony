@@ -29,6 +29,7 @@ public:
     std::vector<H2Point> getH2Neighbors(int index) const;
     std::vector<H2Point> getKickedH2Neighbors(int index) const;
     IsomH2Representation getRepresentation() const;
+    int nbPoints() const;
 
 private:
     IsomH2Representation rho;
