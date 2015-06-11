@@ -2,7 +2,6 @@
 #define H2ISOMETRY_H
 
 #include "tools.h"
-#include "tools.h"
 #include "sl2cmatrix.h"
 #include "h2point.h"
 #include "h2geodesic.h"

@@ -19,18 +19,43 @@ public:
     void drawH2Geodesic(const H2Geodesic &L, const QColor &color = "black", int width = 1);
     void drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color = "black", int width = 2);
 
-    void redrawBuffer(const H2Isometry &mobius = H2Isometry::identity());
-    void mousePress(QMouseEvent * mouseEvent);
-    void mouseMove(QMouseEvent * mouseEvent);
-    void keyPress(QKeyEvent * keyEvent);
+    virtual void redrawBuffer(const H2Isometry &mobius = H2Isometry::identity());
+    virtual void mousePress(QMouseEvent * mouseEvent);
+    virtual void mouseMove(QMouseEvent * mouseEvent);
+    virtual void keyPress(QKeyEvent * keyEvent);
 
-//private:
+    virtual void subRedrawBuffer() {}
+    virtual void subMouseMove(QMouseEvent *) {}
+
+    //protected:
     H2Buffer buffer;
     H2Isometry mobius;
     H2Isometry savedMobius;
     bool isTriangleHighlighted;
     bool isPointHighlighted;
     bool arePointsHighlighted;
+};
+
+
+
+class H2CanvasDelegateDomain : public H2CanvasDelegate
+{
+public:
+    explicit H2CanvasDelegateDomain(int sizeX, int sizeY);
+
+    void subRedrawBuffer();
+    void subMouseMove(QMouseEvent * mouseEvent);
+    //private:
+};
+
+class H2CanvasDelegateTarget : public H2CanvasDelegate
+{
+public:
+    explicit H2CanvasDelegateTarget(int sizeX, int sizeY);
+
+    void subRedrawBuffer();
+    void subMouseMove(QMouseEvent *);
+    //private:
 };
 
 

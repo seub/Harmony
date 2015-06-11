@@ -34,6 +34,14 @@ void Canvas::changeDelegate(CanvasDelegateType delegateType)
         delegate = new H2CanvasDelegate(width(), height());
         break;
 
+    case H2DELEGATEDOMAIN:
+        delegate = new H2CanvasDelegateDomain(width(), height());
+        break;
+
+    case H2DELEGATETARGET:
+        delegate = new H2CanvasDelegateTarget(width(), height());
+        break;
+
     case H3DELEGATE:
         break;
 

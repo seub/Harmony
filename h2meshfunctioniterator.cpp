@@ -29,6 +29,8 @@ void H2MeshFunctionIterator::iterate(int n)
         {
             neighborsImages.clear();
             weights = meshPoint->neighborsWeights;
+            neighborsImages.clear();
+
             if (meshPoint->isBoundaryPoint())
             {
                 isometriesImage = rhoImage.evaluateRepresentation( ((H2MeshBoundaryPoint*)meshPoint) ->neighborsPairings);
@@ -70,6 +72,7 @@ void H2MeshFunctionIterator::iterate(int n)
                     }
                 }
             }
+
             // This is unique to a weighting regime where the basepoint has a non-zero weight
             neighborsImages.push_back(oldValues[i]);
             weights.push_back(meshPoint->weight);

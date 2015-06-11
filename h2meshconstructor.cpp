@@ -22,6 +22,7 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     createNeighbors();
 
     reorganizeNeighbors();
+    createWeights();
     setEpsilon();
     createWeights();
 
@@ -492,7 +493,7 @@ void H2MeshConstructor::setEpsilon()
 
 void H2MeshConstructor::createWeights()
 {
-    int i=0,j;
+    int i=0;
     H2Point basept, previous, current, next;
     std::vector<H2Point> neighbors;
     std::vector<double> neighborWeights;
@@ -505,11 +506,6 @@ void H2MeshConstructor::createWeights()
         neighbors = mesh->getKickedH2Neighbors(i);
         basept = mesh->getH2Point(i);
         epsilon = mesh->epsilon;
-        j=0;
-        //distances.push_back(H2Point::distance(basept, neighbors[0]));
-        //tan1=H2Point::tanHalfAngle(neighbors[0], basept, neighbors[1]);
-        //tan2=H2Point::tanHalfAngle(neighbors.back(), basept, neighbors[0]);
-        //neighborWeights.push_back((epsilon/(3*M_PI*r))*(tan1 + tan2));
         previous = neighbors.back();
         current = neighbors.front();
         next = neighbors[1];
