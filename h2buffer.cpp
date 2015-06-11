@@ -138,7 +138,19 @@ void H2Buffer::addElement(const H2Mesh &mesh, const QColor &color, int width)
     }
 }
 
+/*void H2Buffer::addElement(const H2MeshFunction &f, const QColor &color1, const QColor &color2, int width)
+{
+    this->mesh = f.mesh;
+    isMeshEmpty = false;
 
+    const std::vector<H2TriangleSubdivision> & subdivisions = mesh.getSubdivisions();
+    for (const auto &S : subdivisions)
+    {
+        addElement(S, color1, width);
+    }
+
+
+}*/
 
 
 

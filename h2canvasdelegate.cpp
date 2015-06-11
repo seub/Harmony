@@ -278,3 +278,17 @@ void H2CanvasDelegate::keyPress(QKeyEvent *keyEvent)
     return;
 }
 
+
+
+H2CanvasDelegateDomain::H2CanvasDelegateDomain(int sizeX, int sizeY) : H2CanvasDelegate(sizeX, sizeY)
+{
+    delegateType = H2DELEGATEDOMAIN;
+}
+
+H2CanvasDelegateTarget::H2CanvasDelegateTarget(int sizeX, int sizeY) : H2CanvasDelegate(sizeX, sizeY)
+{
+    delegateType = H2DELEGATETARGET;
+}
+
+
+

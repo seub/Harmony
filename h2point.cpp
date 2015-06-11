@@ -111,6 +111,12 @@ bool operator ==(H2Point & p1, H2Point & p2)
 H2Point H2Point::centroid(const std::vector<H2Point> &points, const std::vector<double> &weights)
 {
     //assert sum weights = 1
+
+    if (points.size() != weights.size())
+    {
+        std::cout << "error in centroid" << std::endl;
+    }
+
     std::vector<double> X,Y,Z;
     double a,b,c,xout=0.0,yout=0.0,zout=0.0;
     H2Point out;
@@ -124,6 +130,7 @@ H2Point H2Point::centroid(const std::vector<H2Point> &points, const std::vector<
         Y.push_back(b);
         Z.push_back(c);
     }
+
     for(unsigned int j=0; j<points.size(); ++j)
     {
         xout += weights[j]*X[j];

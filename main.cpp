@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
 
     H2Mesh mesh;
-    int depth = 2;
+    int depth = 1;
     //for (k=0; k<10; ++k)
     //{
     std::cout << "depth = " << depth << std::endl;
@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
     canvas.show();
 */
 
+
     H2MeshFunction f(&mesh, rhoImage);
     H2Point basept;
     basept.setDiskCoordinate(Complex(0.0,0.0));
@@ -77,10 +78,11 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
 
     start = clock();
-    f.iterate(3);
+    f.iterate(1);
     end = clock();
     std::cout << "Time to iterate discrete heat flow: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     std::cout << std::endl;
+
 
     std::cout << std::endl;
     return a.exec();

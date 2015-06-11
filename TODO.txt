@@ -75,3 +75,8 @@ niquer les //private
 
 (Figure out why program doesn't like it when the canvas is closed by user)
 
+
+
+
+************************* Update 10 Juin 2015 ***************************
+regarder les explicit

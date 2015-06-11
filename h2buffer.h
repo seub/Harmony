@@ -11,7 +11,7 @@
 #include "grouprepresentation.h"
 #include "h2mesh.h"
 #include "h2trianglesubdivision.h"
-
+#include "h2meshfunction.h"
 
 
 class H2Buffer
@@ -33,6 +33,7 @@ public:
     void addElement(const std::vector<H2Polygon> &V, const QColor & color = "black", int width = 1);
     void addElement(const H2TriangleSubdivision &T, const QColor & color = "black", int width = 1);
     void addElement(const H2Mesh &mesh, const QColor & color = "black", int width = 1);
+    //void addElement(const H2MeshFunction &f, const QColor & color1 = "black", const QColor & color2 = "red", int width = 1);
 
 private:
     std::vector<H2Point> points;
@@ -49,6 +50,8 @@ private:
 
     H2Mesh mesh;    
     bool isMeshEmpty;
+
+    //H2MeshFunction f;
 
     H2Triangle triangleHighlighted;
     H2Point pointHighlighted;
