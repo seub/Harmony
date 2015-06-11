@@ -46,15 +46,12 @@ int main(int argc, char *argv[])
 
     H2Mesh mesh;
     int depth = 1;
-    //for (k=0; k<10; ++k)
-    //{
     std::cout << "depth = " << depth << std::endl;
     clock_t start = clock();
     mesh = H2Mesh(rho, depth);
     clock_t end = clock();
     std::cout << "Time to construct mesh: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     std::cout << std::endl;
-    //}
 
     std::cout << "The mesh has " << mesh.nbPoints() << " points" << std::endl;
 
@@ -63,10 +60,8 @@ int main(int argc, char *argv[])
     ((H2CanvasDelegate *) canvas.delegate)->buffer.addElement(rho, "blue", 2);
     ((H2CanvasDelegate *) canvas.delegate)->buffer.addElement(mesh);
     ((H2CanvasDelegate *) canvas.delegate)->redrawBuffer();
-
     canvas.show();
 */
-
 
     H2MeshFunction f(&mesh, rhoImage);
     H2Point basept;
@@ -83,7 +78,30 @@ int main(int argc, char *argv[])
     std::cout << "Time to iterate discrete heat flow: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     std::cout << std::endl;
 
-
     std::cout << std::endl;
+
+/*    H2Point p1,p2,p3,cen;
+    Complex z1,z2,z3,cenC;
+    z1=Complex(-0.5,0.0);
+    z2=Complex(0.5,0.0);
+    z3=Complex(0.0,0.7);
+    std::vector<H2Point> points;
+    std::vector<double> weights;
+    p1.setDiskCoordinate(z1);
+    p2.setDiskCoordinate(z2);
+    p3.setDiskCoordinate(z3);
+    weights.push_back(0.3);
+    weights.push_back(0.6);
+    weights.push_back(0.1);
+    points.push_back(p1);
+    points.push_back(p2);
+    points.push_back(p3);
+    cen = H2Point::centroid(points,weights);
+    cenC = cen.getDiskCoordinate();
+    std::cout << "The " << weights << " centroid of " << z1 << ", " << z2 << ", and " << z3 << " = " << cenC << std::endl;
+*/
+
+
+
     return a.exec();
 }

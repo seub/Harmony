@@ -24,6 +24,7 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     reorganizeNeighbors();
     createWeights();
     setEpsilon();
+    createWeights();
 
     runTests();
 }
