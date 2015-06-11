@@ -13,6 +13,7 @@ class H2Polygon
 {
     friend std::ostream & operator<<(std::ostream & out, const H2Polygon &P);
     friend class GroupRepresentation<H2Isometry>;
+    friend class H2MeshFunction;
 
 public:
     H2Polygon();

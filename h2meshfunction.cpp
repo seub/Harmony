@@ -3,7 +3,6 @@
 #include "h2trianglesubdivision.h"
 #include "h2meshfunctioniterator.h"
 
-
 H2MeshFunction::H2MeshFunction() : mesh(0)
 {
 }
@@ -14,19 +13,15 @@ H2MeshFunction::H2MeshFunction(const H2Mesh *const mesh, const IsomH2Representat
 
 void H2MeshFunction::initializePL(const H2Point &basePoint)
 {
-    std::vector<H2Point> vertexImages, vertexPolygon;
+    std::vector<H2Point> vertexImages;
     int nbVertices = mesh->fundamentalDomain.nbVertices();
     vertexImages.reserve(nbVertices);
-    vertexPolygon.reserve(nbVertices);
     IsomH2Representation rhoDomain = mesh->getRepresentation();
     std::vector<Word> vertexPairings = rhoDomain.getVertexPairings();
-
-    std::vector<H2Point> polygonVertices = mesh->fundamentalDomain.getVertices();
 
     for (const auto & pairing : vertexPairings)
     {
         vertexImages.push_back(rhoImage.evaluateRepresentation(pairing)*basePoint);
-        vertexPolygon.push_back(rhoDomain.evaluateRepresentation(pairing)*polygonVertices.front());
     }
 
     std::vector<TriangulationTriangle> triangles = mesh->triangles;
@@ -45,6 +40,12 @@ void H2MeshFunction::initializePL(const H2Point &basePoint)
     {
         values.push_back(subdivisionImages[meshpoint->subdivisionIndex].getPoint(meshpoint->indexInSubdivision));
     }
+}
+
+void H2MeshFunction::initializePLsmart()
+{
+    H2Point basept = rhoImage.generatePolygon(100).vertices[0];
+    initializePL(basept);
 }
 
 H2MeshFunction::H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation &rhoImage, std::vector<H2Point> values) :

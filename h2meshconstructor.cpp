@@ -496,12 +496,14 @@ void H2MeshConstructor::createWeights()
     int i=0;
     H2Point basept, previous, current, next;
     std::vector<H2Point> neighbors;
+    std::vector<double> preNeighborWeights;
     std::vector<double> neighborWeights;
     double r, epsilon, tan1, tan2;
     std::vector<double> distances;
     for(const auto & meshPoint : mesh->meshPoints)
     {
         neighborWeights.clear();
+        preNeighborWeights.clear();
         distances.clear();
         neighbors = mesh->getKickedH2Neighbors(i);
         basept = mesh->getH2Point(i);
@@ -515,7 +517,7 @@ void H2MeshConstructor::createWeights()
             distances.push_back(r);
             tan1=H2Point::tanHalfAngle(current, basept, next);
             tan2=H2Point::tanHalfAngle(previous, basept, current);
-            neighborWeights.push_back((epsilon/(3*M_PI*r))*(tan1 + tan2));
+            preNeighborWeights.push_back((1.0/(3*M_PI*r))*(tan1 + tan2));
             previous = current;
             current = next;
             next = neighbors[j+1];
@@ -524,7 +526,7 @@ void H2MeshConstructor::createWeights()
         distances.push_back(r);
         tan1=H2Point::tanHalfAngle(current, basept, next);
         tan2=H2Point::tanHalfAngle(previous, basept, current);
-        neighborWeights.push_back((epsilon/(3*M_PI*r))*(tan1 + tan2));
+        preNeighborWeights.push_back((1.0/(3*M_PI*r))*(tan1 + tan2));
         previous = current;
         current = next;
         next = neighbors.front();
@@ -532,11 +534,23 @@ void H2MeshConstructor::createWeights()
         distances.push_back(r);
         tan1=H2Point::tanHalfAngle(current, basept, next);
         tan2=H2Point::tanHalfAngle(previous, basept, current);
-        neighborWeights.push_back((epsilon/(3*M_PI*r))*(tan1 + tan2));
+        preNeighborWeights.push_back((1.0/(3*M_PI*r))*(tan1 + tan2));
 
+        double sum = 0.0;
+        for (auto x : preNeighborWeights)
+        {
+            sum += x;
+        }
+        epsilon = 1/sum;
+
+        for (auto preweight : preNeighborWeights)
+        {
+            neighborWeights.push_back(epsilon*preweight);
+        }
 
         meshPoint->neighborsWeights = neighborWeights;
-        double sum = 0.0;
+
+        sum = 0.0;
         for (auto neighborWeight : neighborWeights)
         {
             sum += neighborWeight;

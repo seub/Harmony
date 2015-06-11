@@ -89,7 +89,7 @@ void H2MeshFunctionIterator::iterate(int n)
         {
             test.push_back(pt.getDiskCoordinate());
         }
-        std::cout << "A mesh point has index " << testIndex << std::endl;
+/*        std::cout << "A mesh point has index " << testIndex << std::endl;
         std::cout << "A mesh point is a vertex? " << mesh->meshPoints[testIndex]->isVertexPoint() <<
                      " boundary point? " << mesh->meshPoints[testIndex]->isBoundaryPoint() <<
                      " cut point? " << mesh->meshPoints[testIndex]->isCutPoint() << std::endl;
@@ -113,6 +113,7 @@ void H2MeshFunctionIterator::iterate(int n)
         std::cout << "Sum of weights = " << sum << std::endl;
         std::cout << "A mesh point's averaged value is " << newValues[testIndex].getDiskCoordinate() << std::endl;
         std::cout << "Centroid = " << H2Point::centroid(testImages, testWeights).getDiskCoordinate() << std::endl;
+*/
         std::cout << "The error in the " << N-n+1 <<"th iterate is = " << supError() << std::endl;
         oldValues = newValues;
         --n;

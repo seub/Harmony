@@ -238,8 +238,8 @@ void H2CanvasDelegate::keyPress(QKeyEvent *keyEvent)
         zoom(0.5);
         redrawBuffer();
         break;
-
     }
+    subKeyPress(keyEvent);
 }
 
 
@@ -309,4 +309,17 @@ void H2CanvasDelegateTarget::subRedrawBuffer()
 void H2CanvasDelegateTarget::subMouseMove(QMouseEvent *)
 {
 
+}
+
+void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
+{
+    switch(keyEvent->key())
+    {
+    case Qt::Key_Space :
+        std::cout << "Alice" << std::endl;
+        buffer.f.iterate();
+        std::cout << "Bob" << std::endl;
+        redrawBuffer();
+        break;
+    }
 }

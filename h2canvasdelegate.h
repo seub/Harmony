@@ -26,6 +26,7 @@ public:
 
     virtual void subRedrawBuffer() {}
     virtual void subMouseMove(QMouseEvent *) {}
+    virtual void subKeyPress(QKeyEvent *) {}
 
     //protected:
     H2Buffer buffer;
@@ -55,6 +56,7 @@ public:
 
     void subRedrawBuffer();
     void subMouseMove(QMouseEvent *);
+    void subKeyPress(QKeyEvent *keyEvent);
     //private:
 };
 

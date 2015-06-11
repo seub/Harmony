@@ -17,8 +17,9 @@ public:
 
     void initializePL(const H2Point &basePoint);
     void iterate(int n=1);
+    void initializePLsmart();
 
-private:
+//private:
     explicit H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation &rhoImage, std::vector<H2Point> values);
     const H2Mesh * const mesh;
     IsomH2Representation rhoImage;
