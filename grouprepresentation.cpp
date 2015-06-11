@@ -258,7 +258,7 @@ template <> std::vector<Word> IsomH2Representation::getWordSidePairings() const
         res[4*i] = extra;
         res[4*i + 2] = extra.inverse();
         extra = store*Word({letter(2*i,1),letter(2*i+1,1),
-                letter(2*i,-1), letter(2*i+1,-1), letter(2*i,-1)})*store.inverse();
+                            letter(2*i,-1), letter(2*i+1,-1), letter(2*i,-1)})*store.inverse();
         res[4*i + 1] = extra;
         res[4*i + 3] = extra.inverse();
         store = store*Word({letter(2*i,1), letter(2*i+1,1), letter(2*i,-1), letter(2*i+1,-1)});
@@ -274,9 +274,9 @@ template <> std::vector<Word> IsomH2Representation::getVertexPairings() const
     int genus = Gamma->getGenerators().size()/2;
     res.reserve(4*genus);
     Word store;
+    res.push_back(store);
     for(int j=0; j!=genus; ++j)
     {
-        res.push_back(store);
         store=store*Word({letter(2*j,1)});
         res.push_back(store);
         store=store*Word({letter(2*j+1,1)});
@@ -286,6 +286,7 @@ template <> std::vector<Word> IsomH2Representation::getVertexPairings() const
         store=store*Word({letter(2*j+1,-1)});
         res.push_back(store);
     }
+    res.pop_back();
     return res;
 }
 

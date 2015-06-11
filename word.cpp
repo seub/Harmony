@@ -137,6 +137,12 @@ std::ostream & operator <<(std::ostream &out, const Word &w)
 {
     std::string s;
 
+    if (w.letters.size() == 0)
+    {
+        out << "empty";
+        return out;
+    }
+
     letter l = w.letters.front();
 
     {

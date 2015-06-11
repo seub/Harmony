@@ -9,21 +9,24 @@ H2MeshFunction::H2MeshFunction(const H2Mesh *const mesh, const IsomH2Representat
 
 void H2MeshFunction::initializePL(const H2Point &basePoint)
 {
-    std::vector<H2Point> vertexImages;
+    std::vector<H2Point> vertexImages, vertexPolygon;
     int nbVertices = mesh->fundamentalDomain.nbVertices();
     vertexImages.reserve(nbVertices);
+    vertexPolygon.reserve(nbVertices);
     IsomH2Representation rhoDomain = mesh->getRepresentation();
     std::vector<Word> vertexPairings = rhoDomain.getVertexPairings();
+
+    std::vector<H2Point> polygonVertices = mesh->fundamentalDomain.getVertices();
 
     for (const auto & pairing : vertexPairings)
     {
         vertexImages.push_back(rhoImage.evaluateRepresentation(pairing)*basePoint);
+        vertexPolygon.push_back(rhoDomain.evaluateRepresentation(pairing)*polygonVertices.front());
     }
 
     std::vector<TriangulationTriangle> triangles = mesh->triangles;
     std::vector<H2TriangleSubdivision> subdivisionImages;
     subdivisionImages.reserve(triangles.size());
-
     int i,j,k, depth=mesh->depth;
     for(const auto & triangle : triangles)
     {

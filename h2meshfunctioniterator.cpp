@@ -11,8 +11,15 @@ H2MeshFunctionIterator::H2MeshFunctionIterator(const H2MeshFunction * const f) :
 void H2MeshFunctionIterator::iterate(int n)
 {
     int i,j, N=n;
-    std::vector<H2Point> neighborsImages,testImages;
-    std::vector<double> weights,testWeights;
+    std::vector<H2Point> neighborsImages;
+    std::vector<double> weights;
+
+    std::vector<H2Point> testImages;
+    std::vector<double> testWeights;
+    std::vector<H2Isometry> testIsometriesImage;
+    std::vector<int> testNeighborIndices;
+    int testIndex=14;
+
     IsomH2Representation rhoImage = f->rhoImage;
     std::vector<H2Isometry> isometriesImage;
     while (n>0)
@@ -29,6 +36,11 @@ void H2MeshFunctionIterator::iterate(int n)
                 for(auto k : meshPoint->neighborsIndices)
                 {
                     neighborsImages.push_back(isometriesImage[j]*oldValues[k]);
+                    if(i==testIndex)
+                    {
+                        testIsometriesImage.push_back(isometriesImage[j]);
+                        testNeighborIndices.push_back(k);
+                    }
                     ++j;
                 }
             }
@@ -39,6 +51,11 @@ void H2MeshFunctionIterator::iterate(int n)
                 for(auto k : meshPoint->neighborsIndices)
                 {
                     neighborsImages.push_back(isometriesImage[j]*oldValues[k]);
+                    if(i==testIndex)
+                    {
+                        testIsometriesImage.push_back(isometriesImage[j]);
+                        testNeighborIndices.push_back(k);
+                    }
                     ++j;
                 }
             }
@@ -47,12 +64,16 @@ void H2MeshFunctionIterator::iterate(int n)
                 for(auto k : meshPoint->neighborsIndices)
                 {
                     neighborsImages.push_back(oldValues[k]);
+                    if(i==testIndex)
+                    {
+                        testNeighborIndices.push_back(k);
+                    }
                 }
             }
             // This is unique to a weighting regime where the basepoint has a non-zero weight
             neighborsImages.push_back(oldValues[i]);
             weights.push_back(meshPoint->weight);
-            if(i==14)
+            if(i==testIndex)
             {
                 testImages = neighborsImages;
                 testWeights = weights;
@@ -65,7 +86,13 @@ void H2MeshFunctionIterator::iterate(int n)
         {
             test.push_back(pt.getDiskCoordinate());
         }
-        std::cout << "A mesh point has image " << oldValues[14].getDiskCoordinate() << std::endl;
+        std::cout << "A mesh point has index " << testIndex << std::endl;
+        std::cout << "A mesh point is a vertex? " << mesh->meshPoints[testIndex]->isVertexPoint() <<
+                     " boundary point? " << mesh->meshPoints[testIndex]->isBoundaryPoint() <<
+                     " cut point? " << mesh->meshPoints[testIndex]->isCutPoint() << std::endl;
+        std::cout << "A mesh point has neighbors with indices " << testNeighborIndices << std::endl;
+        std::cout << "A mesh point has image " << oldValues[testIndex].getDiskCoordinate() << std::endl;
+        //std::cout << "This mesh point's neighbor has side pairing " << testIsometriesImage[2] << std::endl;
         std::cout << "A mesh point has neighbor images " << test << std::endl;
         std::vector<double> norms;
         for (auto w : test)
@@ -80,9 +107,9 @@ void H2MeshFunctionIterator::iterate(int n)
         {
             sum += x;
         }
-        std::cout << "Sum of weights: " << sum << std::endl;
-        std::cout << "A mesh point's averaged value is " << newValues[14].getDiskCoordinate() << std::endl;
-        std::cout << "Centroid " << H2Point::centroid(testImages, testWeights).getDiskCoordinate() << std::endl;
+        std::cout << "Sum of weights = " << sum << std::endl;
+        std::cout << "A mesh point's averaged value is " << newValues[testIndex].getDiskCoordinate() << std::endl;
+        std::cout << "Centroid = " << H2Point::centroid(testImages, testWeights).getDiskCoordinate() << std::endl;
         std::cout << "The error in the " << N-n+1 <<"th iterate is = " << supError() << std::endl;
         oldValues = newValues;
         --n;
@@ -101,7 +128,7 @@ double H2MeshFunctionIterator::supError() const
     for (std::vector<H2Point>::size_type j=0; j<oldValues.size(); ++j)
     {
         error = H2Point::distance(oldValues[j],newValues[j]);
-        std::cout << "error = " << error << std::endl;
+        //std::cout << "error = " << error << std::endl;
         errors.push_back(error);
     }
     return *std::max_element(errors.begin(),errors.end());

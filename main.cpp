@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
 
     H2Mesh mesh;
-    int depth = 1;
+    int depth = 2;
     std::cout << "depth = " << depth << std::endl;
     clock_t start = clock();
     mesh = H2Mesh(rho, depth);
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 
     H2MeshFunction f(&mesh, rhoImage);
     H2Point basept;
-    basept.setDiskCoordinate(Complex(0.0,0.0));
+    basept.setDiskCoordinate(Complex(-0.7,-0.7));
     start = clock();
     f.initializePL(basept);
     end = clock();
@@ -100,7 +100,29 @@ int main(int argc, char *argv[])
     cen = H2Point::centroid(points,weights);
     cenC = cen.getDiskCoordinate();
     std::cout << "The " << weights << " centroid of " << z1 << ", " << z2 << ", and " << z3 << " = " << cenC << std::endl;
+
+    std::vector<Complex> test{Complex(0.880804,0.454267),Complex(0.873785,0.485382),
+                Complex(0.874183,0.485592),Complex(0.872984,0.485971),Complex(0.874071,0.485753),
+                Complex(0.874076,0.485756),Complex(0.874061,0.485751),Complex(0.872908,0.486938),
+                Complex(0.87358,0.48638),Complex(0.0,0.0),Complex(0.830459,0.505288),Complex(-0.0941877,0.304982),
+                Complex(-0.17561,0.302569),Complex(0.768432,0.427753),Complex(0.947301,0.241949),
+                Complex(0.857906,0.432588),Complex(0.857906,0.432588),Complex(0.904807,0.416147),
+                Complex(0.866591,0.482394)};
+    std::vector<H2Point> testPts;
+    H2Point pt;
+    for (auto z : test)
+    {
+        pt.setDiskCoordinate(z);
+        testPts.push_back(pt);
+    }
+    std::vector<double> testWeights{0.0694475, 0.0750824, 0.0309618, 0.0290859, 0.0135102,
+                                    0.00469644, 0.0135215, 0.0290229, 0.0306143, 0.0739811,
+                                    0.0684015, 0.0194336, 0.0123215, 0.0329096, 0.0263232,
+                                    0.0329648, 0.0124699, 0.0196033, 0.405649};
+    H2Point bar = H2Point::centroid(testPts,testWeights);
+    std::cout << "The barycenter = " << bar.getDiskCoordinate() << std::endl;
 */
+
 
 
 
