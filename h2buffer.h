@@ -22,8 +22,10 @@ public:
     H2Buffer();
 
     void addElement(const H2Point & point, const QColor & color = "black", int width = 3);
+    void addElement(const std::vector<H2Point> & points, const QColor & color = "black", int width = 2);
     void addElement(const H2Geodesic & geodesic, const QColor & color = "black", int width = 1);
     void addElement(const H2GeodesicArc & geodesicArc, const QColor & color = "black", int width = 1);
+    void addElement(const std::vector<H2GeodesicArc> & geodesicArcs, const QColor & color = "black", int width = 1);
     void addElement(const H2Polygon & polygon, const QColor & color = "black", int width = 1);
     void addElement(const H2Triangle & triangle, const QColor & color = "black", int width = 1);
     void addElement(const std::vector<H2Triangle> & triangles, const QColor & color = "black", int width = 1);
@@ -33,9 +35,9 @@ public:
     void addElement(const std::vector<H2Polygon> &V, const QColor & color = "black", int width = 1);
     void addElement(const H2TriangleSubdivision &T, const QColor & color = "black", int width = 1);
     void addElement(const H2Mesh &mesh, const QColor & color = "black", int width = 1);
-    //void addElement(const H2MeshFunction &f, const QColor & color1 = "black", const QColor & color2 = "red", int width = 1);
+    void addElement(const H2MeshFunction &f, const QColor & color = "black", int width = 1);
 
-private:
+//private:
     std::vector<H2Point> points;
     std::vector<QColor> pointsColors;
     std::vector<int> pointsWidths;
@@ -51,7 +53,8 @@ private:
     H2Mesh mesh;    
     bool isMeshEmpty;
 
-    //H2MeshFunction f;
+    H2MeshFunction f;
+    bool isMeshFunctionEmpty;
 
     H2Triangle triangleHighlighted;
     H2Point pointHighlighted;

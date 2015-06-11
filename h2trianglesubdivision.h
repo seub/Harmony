@@ -9,6 +9,7 @@ class H2TriangleSubdivision
 {
     friend class H2Mesh;
     friend class H2MeshConstructor;
+    friend class H2MeshFunction;
     friend std::ostream & operator<<(std::ostream & out, const H2TriangleSubdivision &T);
     friend void swap(H2TriangleSubdivision &first, H2TriangleSubdivision &second);
 

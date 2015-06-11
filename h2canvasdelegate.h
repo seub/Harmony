@@ -24,6 +24,9 @@ public:
     virtual void mouseMove(QMouseEvent * mouseEvent);
     virtual void keyPress(QKeyEvent * keyEvent);
 
+    virtual void subRedrawBuffer() {}
+    virtual void subMouseMove(QMouseEvent *) {}
+
     //protected:
     H2Buffer buffer;
     H2Isometry mobius;
@@ -39,6 +42,9 @@ class H2CanvasDelegateDomain : public H2CanvasDelegate
 {
 public:
     explicit H2CanvasDelegateDomain(int sizeX, int sizeY);
+
+    void subRedrawBuffer();
+    void subMouseMove(QMouseEvent * mouseEvent);
     //private:
 };
 
@@ -46,6 +52,9 @@ class H2CanvasDelegateTarget : public H2CanvasDelegate
 {
 public:
     explicit H2CanvasDelegateTarget(int sizeX, int sizeY);
+
+    void subRedrawBuffer();
+    void subMouseMove(QMouseEvent *);
     //private:
 };
 

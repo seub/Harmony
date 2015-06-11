@@ -56,12 +56,12 @@ int main(int argc, char *argv[])
     std::cout << "The mesh has " << mesh.nbPoints() << " points" << std::endl;
 
 
-/*    Canvas canvas(H2DELEGATE);
-    ((H2CanvasDelegate *) canvas.delegate)->buffer.addElement(rho, "blue", 2);
-    ((H2CanvasDelegate *) canvas.delegate)->buffer.addElement(mesh);
-    ((H2CanvasDelegate *) canvas.delegate)->redrawBuffer();
-    canvas.show();
-*/
+    Canvas canvas1(H2DELEGATEDOMAIN);
+    ((H2CanvasDelegateDomain *) canvas1.delegate)->buffer.addElement(rho, "blue", 2);
+    ((H2CanvasDelegateDomain *) canvas1.delegate)->buffer.addElement(mesh);
+    ((H2CanvasDelegateDomain *) canvas1.delegate)->redrawBuffer();
+    canvas1.show();
+
 
     H2MeshFunction f(&mesh, rhoImage);
     H2Point basept;
@@ -72,13 +72,19 @@ int main(int argc, char *argv[])
     std::cout << "Time to build function: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     std::cout << std::endl;
 
-    start = clock();
+    Canvas canvas2(H2DELEGATETARGET);
+    ((H2CanvasDelegateTarget *) canvas2.delegate)->buffer.addElement(f, "red", 1);
+    ((H2CanvasDelegateTarget *) canvas2.delegate)->redrawBuffer();
+    canvas2.show();
+
+
+    /*start = clock();
     f.iterate(1);
     end = clock();
     std::cout << "Time to iterate discrete heat flow: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     std::cout << std::endl;
 
-    std::cout << std::endl;
+    std::cout << std::endl;*/
 
 /*    H2Point p1,p2,p3,cen;
     Complex z1,z2,z3,cenC;

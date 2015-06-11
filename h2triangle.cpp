@@ -18,6 +18,16 @@ void H2Triangle::getPoints(H2Point &a, H2Point &b, H2Point &c) const
     return;
 }
 
+std::vector<H2Point> H2Triangle::getPoints() const
+{
+    return {a, b, c};
+}
+
+std::vector<H2GeodesicArc> H2Triangle::getSides() const
+{
+    return {H2GeodesicArc(a, b), H2GeodesicArc(b, c), H2GeodesicArc(c, a)};
+}
+
 void H2Triangle::getSideLengths(double &A, double &B, double &C) const
 {
     A = H2Point::distance(b,c);

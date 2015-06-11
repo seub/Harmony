@@ -3,6 +3,7 @@
 H2Buffer::H2Buffer()
 {
     isMeshEmpty = true;
+    isMeshFunctionEmpty = true;
 }
 
 void H2Buffer::addElement(const H2Point &point, const QColor &color, int width)
@@ -28,32 +29,25 @@ void H2Buffer::addElement(const H2GeodesicArc &geodesicArc, const QColor &color,
     geodesicArcsWidths.push_back(width);
     return;
 }
+
+void H2Buffer::addElement(const std::vector<H2GeodesicArc> &geodesicArcs, const QColor & color, int width)
+{
+    for (auto arc : geodesicArcs)
+    {
+        addElement(arc, color, width);
+    }
+}
+
 void H2Buffer::addElement(const H2Polygon &polygon, const QColor &color, int width)
 {
-    int sizePoly = polygon.nbVertices();
-    for (int i=0; i<sizePoly ; i++)
-    {
-        addElement(polygon.getSide(i),color,width);
-        addElement(polygon.getVertex(i));
-    }
-    return;
+    addElement(polygon.getSides(), color, width);
+    addElement(polygon.getVertices());
 }
 
 void H2Buffer::addElement(const H2Triangle &triangle, const QColor &color, int width)
 {
-    H2Point a,b,c;
-    triangle.getPoints(a,b,c);
-    H2GeodesicArc L;
-    L.setPoints(a,b);
-    addElement(L,color,width);
-    addElement(a);
-    L.setPoints(b,c);
-    addElement(L,color,width);
-    addElement(b);
-    L.setPoints(c,a);
-    addElement(L,color,width);
-    addElement(c);
-    return;
+    addElement(triangle.getPoints());
+    addElement(triangle.getSides(), color, width);
 }
 
 void H2Buffer::addElement(const std::vector<H2Triangle> &triangles, const QColor &color, int width)
@@ -138,20 +132,18 @@ void H2Buffer::addElement(const H2Mesh &mesh, const QColor &color, int width)
     }
 }
 
-/*void H2Buffer::addElement(const H2MeshFunction &f, const QColor &color1, const QColor &color2, int width)
+void H2Buffer::addElement(const H2MeshFunction &f, const QColor &color, int width)
 {
-    this->mesh = f.mesh;
-    isMeshEmpty = false;
+    isMeshFunctionEmpty = false;
+    addElement(f.getTriangles(), color, width);
+}
 
-    const std::vector<H2TriangleSubdivision> & subdivisions = mesh.getSubdivisions();
-    for (const auto &S : subdivisions)
+void H2Buffer::addElement(const std::vector<H2Point> & points, const QColor & color, int width)
+{
+    for (const auto & point : points)
     {
-        addElement(S, color1, width);
+        addElement(point, color, width);
     }
-
-
-}*/
-
-
+}
 
 

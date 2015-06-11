@@ -141,8 +141,7 @@ void H2CanvasDelegate::redrawBuffer(const H2Isometry &mobius)
         }
     }
 
-
-    return;
+    //subRedrawBuffer();
 }
 
 
@@ -189,41 +188,7 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
         }
     }
 
-    if (!buffer.isMeshEmpty)
-    {
-        H2Point point;
-        point.setDiskCoordinate(PixelToComplexCoordinates(mouseEvent->x(), mouseEvent->y()));
-        int meshIndex1, meshIndex2, meshIndex3, meshIndex;
-        point = mobius.inverse()*point;
-        if (buffer.mesh.triangleContaining(point, buffer.triangleHighlighted, meshIndex1, meshIndex2, meshIndex3))
-        {
-            isTriangleHighlighted = true;
-            int vertexIndex;
-            double detectionRadiusSquared = detectionRadius/scaleX;
-            detectionRadiusSquared *= detectionRadiusSquared;
-            if ((mobius*buffer.triangleHighlighted).isVertexCloseInDiskModel(mobius*point, detectionRadiusSquared, vertexIndex))
-            {
-                buffer.pointHighlighted = buffer.triangleHighlighted.getVertex(vertexIndex);
-                isPointHighlighted = true;
-                arePointsHighlighted = true;
-                meshIndex = meshIndex1*(vertexIndex == 0) + meshIndex2*(vertexIndex == 1) + meshIndex3*(vertexIndex == 2);
-                buffer.pointsHighlightedBlue = buffer.mesh.getH2Neighbors(meshIndex);
-                buffer.pointsHighlightedGreen = buffer.mesh.getKickedH2Neighbors(meshIndex);
-            }
-            else
-            {
-                isPointHighlighted = false;
-                arePointsHighlighted = false;
-            }
-        }
-        else
-        {
-            isTriangleHighlighted = false;
-            isPointHighlighted = false;
-            arePointsHighlighted = false;
-        }
-    }
-    return;
+    subMouseMove(mouseEvent);
 }
 
 void H2CanvasDelegate::keyPress(QKeyEvent *keyEvent)
@@ -275,7 +240,6 @@ void H2CanvasDelegate::keyPress(QKeyEvent *keyEvent)
         break;
 
     }
-    return;
 }
 
 
@@ -290,5 +254,59 @@ H2CanvasDelegateTarget::H2CanvasDelegateTarget(int sizeX, int sizeY) : H2CanvasD
     delegateType = H2DELEGATETARGET;
 }
 
+void H2CanvasDelegateDomain::subMouseMove(QMouseEvent *mouseEvent)
+{
+    if (!buffer.isMeshEmpty)
+    {
+        H2Point point;
+        point.setDiskCoordinate(PixelToComplexCoordinates(mouseEvent->x(), mouseEvent->y()));
+        int meshIndex1, meshIndex2, meshIndex3, meshIndex;
+        point = mobius.inverse()*point;
+        if (buffer.mesh.triangleContaining(point, buffer.triangleHighlighted, meshIndex1, meshIndex2, meshIndex3))
+        {
+            isTriangleHighlighted = true;
+            int vertexIndex;
+            double detectionRadiusSquared = detectionRadius/scaleX;
+            detectionRadiusSquared *= detectionRadiusSquared;
+            if ((mobius*buffer.triangleHighlighted).isVertexCloseInDiskModel(mobius*point, detectionRadiusSquared, vertexIndex))
+            {
+                buffer.pointHighlighted = buffer.triangleHighlighted.getVertex(vertexIndex);
+                isPointHighlighted = true;
+                arePointsHighlighted = true;
+                meshIndex = meshIndex1*(vertexIndex == 0) + meshIndex2*(vertexIndex == 1) + meshIndex3*(vertexIndex == 2);
+                buffer.pointsHighlightedBlue = buffer.mesh.getH2Neighbors(meshIndex);
+                buffer.pointsHighlightedGreen = buffer.mesh.getKickedH2Neighbors(meshIndex);
+            }
+            else
+            {
+                isPointHighlighted = false;
+                arePointsHighlighted = false;
+            }
+        }
+        else
+        {
+            isTriangleHighlighted = false;
+            isPointHighlighted = false;
+            arePointsHighlighted = false;
+        }
+    }
+    else
+    {
+        std::cout << "Error in H2CanvasDelegateDomain::subMouseMove, no mesh in buffer?" << std::endl;
+    }
+}
 
+void H2CanvasDelegateDomain::subRedrawBuffer()
+{
 
+}
+
+void H2CanvasDelegateTarget::subRedrawBuffer()
+{
+
+}
+
+void H2CanvasDelegateTarget::subMouseMove(QMouseEvent *)
+{
+
+}
