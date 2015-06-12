@@ -32,6 +32,11 @@ public:
     void wheelEvent(QWheelEvent *wheelEvent);
     void keyPressEvent(QKeyEvent *keyEvent);
     //void enterEvent(QEvent *);
+
+private:
+    Canvas(); // Dummy constructor
+    Canvas(const Canvas &other); // Copy constructor
+    Canvas & operator=(Canvas other); // Copy-assignment operator
 };
 
 #endif // CANVAS_H

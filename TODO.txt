@@ -81,3 +81,4 @@ niquer les //private
 ************************* Update 10 Juin 2015 ***************************
 regarder les explicit
 décommenter les private
+rule of 5 (c++11)

@@ -55,6 +55,9 @@ public:
     virtual void mouseMove(QMouseEvent * mouseEvent) = 0;
     virtual void keyPress(QKeyEvent * keyEvent) = 0;
 
+private:
+    CanvasDelegate(); // Dummy constructor
+    CanvasDelegate(const CanvasDelegate &other); // Copy constructor
 
 protected:
     CanvasDelegateType delegateType;
