@@ -23,6 +23,10 @@ protected:
     IsomH2Representation *rho;
     int index;
     double twistCorrection;
+
+private:
+    PantsTree(); //Dummy constructor
+    PantsTree(const PantsTree & other); //Copy constructor
 };
 
 class PantsTreeNode : public PantsTree
@@ -38,6 +42,10 @@ private:
     PantsTree *rightChild;
     H2Isometry conjugatorLeft;
     H2Isometry conjugatorRight;
+
+    PantsTreeNode(); // Dummy constructor
+    PantsTreeNode(const PantsTreeNode &other); // Copy constructor
+    PantsTreeNode & operator=(PantsTreeNode other); // Copy-assignment operator
 };
 
 class PantsTreeLeaf : public PantsTree
@@ -50,6 +58,9 @@ public:
     IsomH2Representation getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator, const std::string &genericCurveName);
 private:
     H2Isometry hNNconjugator;
+    PantsTreeLeaf(); // Dummy constructor
+    PantsTreeLeaf(const PantsTreeLeaf &other); // Copy constructor
+    PantsTreeLeaf & operator=(PantsTreeLeaf other); // Copy-assignment operator
 };
 
 
@@ -63,6 +74,10 @@ public:
     IsomH2Representation getRepresentation(DiscreteGroup *group);
 
 private:
+    FenchelNielsenConstructor(); //Dummy constructor
+    FenchelNielsenConstructor(const FenchelNielsenConstructor &other); // Copy constructor
+    FenchelNielsenConstructor & operator=(FenchelNielsenConstructor other); //Copy-assignment operator
+
     int genus;
     double firstTwist;
     PantsTree * LeftTree;

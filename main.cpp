@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
 
     H2Mesh mesh;
-    int depth = 3;
+    int depth = 4;
     std::cout << "depth = " << depth << std::endl;
     clock_t start = clock();
     mesh = H2Mesh(rho, depth);
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 
     Canvas canvas1(H2DELEGATEDOMAIN);
     ((H2CanvasDelegateDomain *) canvas1.delegate)->buffer.addElement(rho, "blue", 2);
-    ((H2CanvasDelegateDomain *) canvas1.delegate)->buffer.addElement(mesh);
+    ((H2CanvasDelegateDomain *) canvas1.delegate)->buffer.addElement(&mesh);
     ((H2CanvasDelegateDomain *) canvas1.delegate)->redrawBuffer();
     canvas1.show();
 
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     f.iterate();
     end = clock();
     Canvas canvas2(H2DELEGATETARGET);
-    ((H2CanvasDelegateTarget *) canvas2.delegate)->buffer.addElement(f, "red", 1);
+    ((H2CanvasDelegateTarget *) canvas2.delegate)->buffer.addElement(&f, "red", 1);
     ((H2CanvasDelegateTarget *) canvas2.delegate)->redrawBuffer();
     canvas2.show();
 

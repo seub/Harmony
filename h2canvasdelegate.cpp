@@ -141,7 +141,7 @@ void H2CanvasDelegate::redrawBuffer(const H2Isometry &mobius)
         }
     }
 
-    //subRedrawBuffer();
+    subRedrawBuffer();
 }
 
 
@@ -262,7 +262,7 @@ void H2CanvasDelegateDomain::subMouseMove(QMouseEvent *mouseEvent)
         point.setDiskCoordinate(PixelToComplexCoordinates(mouseEvent->x(), mouseEvent->y()));
         int meshIndex1, meshIndex2, meshIndex3, meshIndex;
         point = mobius.inverse()*point;
-        if (buffer.mesh.triangleContaining(point, buffer.triangleHighlighted, meshIndex1, meshIndex2, meshIndex3))
+        if (buffer.mesh->triangleContaining(point, buffer.triangleHighlighted, meshIndex1, meshIndex2, meshIndex3))
         {
             isTriangleHighlighted = true;
             int vertexIndex;
@@ -274,8 +274,8 @@ void H2CanvasDelegateDomain::subMouseMove(QMouseEvent *mouseEvent)
                 isPointHighlighted = true;
                 arePointsHighlighted = true;
                 meshIndex = meshIndex1*(vertexIndex == 0) + meshIndex2*(vertexIndex == 1) + meshIndex3*(vertexIndex == 2);
-                buffer.pointsHighlightedBlue = buffer.mesh.getH2Neighbors(meshIndex);
-                buffer.pointsHighlightedGreen = buffer.mesh.getKickedH2Neighbors(meshIndex);
+                buffer.pointsHighlightedBlue = buffer.mesh->getH2Neighbors(meshIndex);
+                buffer.pointsHighlightedGreen = buffer.mesh->getKickedH2Neighbors(meshIndex);
             }
             else
             {
@@ -303,7 +303,17 @@ void H2CanvasDelegateDomain::subRedrawBuffer()
 
 void H2CanvasDelegateTarget::subRedrawBuffer()
 {
-
+    if (!buffer.isMeshFunctionEmpty)
+    {
+        for (const auto & arc : buffer.functionArcs)
+        {
+            drawH2GeodesicArc(arc, buffer.functionColor, buffer.functionWidth);
+        }
+        for (const auto & point : buffer.functionPoints)
+        {
+            drawH2Point(point);
+        }
+    }
 }
 
 void H2CanvasDelegateTarget::subMouseMove(QMouseEvent *)
@@ -316,10 +326,10 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
     switch(keyEvent->key())
     {
     case Qt::Key_Space :
-        std::cout << "Alice" << std::endl;
-        (buffer.f).iterate();
-        std::cout << "Bob" << std::endl;
+        buffer.function->iterate();
+        buffer.refreshFunction();
         redrawBuffer();
+
         break;
     }
 }

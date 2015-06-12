@@ -120,22 +120,43 @@ void H2Buffer::addElement(const H2TriangleSubdivision &T, const QColor &color, i
     }
 }
 
-void H2Buffer::addElement(const H2Mesh &mesh, const QColor &color, int width)
+void H2Buffer::addElement(const H2Mesh *mesh, const QColor &color, int width)
 {
     this->mesh = mesh;
     isMeshEmpty = false;
 
-    const std::vector<H2TriangleSubdivision> & subdivisions = mesh.getSubdivisions();
+    const std::vector<H2TriangleSubdivision> & subdivisions = mesh->getSubdivisions();
     for (const auto &S : subdivisions)
     {
         addElement(S, color, width);
     }
 }
 
-void H2Buffer::addElement(const H2MeshFunction &f, const QColor &color, int width)
+void H2Buffer::addElement(H2MeshFunction *f, const QColor &color, int width)
 {
+    this->function = f;
     isMeshFunctionEmpty = false;
-    addElement(f.getTriangles(), color, width);
+    functionColor = color;
+    functionWidth = width;
+    refreshFunction();
+}
+
+void H2Buffer::refreshFunction()
+{
+    functionArcs.clear();
+    functionPoints.clear();
+    std::vector<H2Triangle> triangles = function->getTriangles();
+    functionArcs.reserve(3*triangles.size());
+    functionPoints.reserve(3*triangles.size());
+    std::vector<H2GeodesicArc> sides;
+    std::vector<H2Point> vertices;
+    for (const auto & triangle : triangles)
+    {
+        sides = triangle.getSides();
+        vertices = triangle.getPoints();
+        functionArcs.insert(functionArcs.end(), sides.begin(), sides.end());
+        functionPoints.insert(functionPoints.end(), vertices.begin(), vertices.end());
+    }
 }
 
 void H2Buffer::addElement(const std::vector<H2Point> & points, const QColor & color, int width)
