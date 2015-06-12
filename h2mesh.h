@@ -34,7 +34,6 @@ public:
 private:
     IsomH2Representation rho;
     int depth;
-    double epsilon;
 
     H2Polygon fundamentalDomain;
 

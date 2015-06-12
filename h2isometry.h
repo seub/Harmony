@@ -11,6 +11,7 @@ class H2Isometry
 {
     friend H2Isometry operator *(const H2Isometry & f1, const H2Isometry & f2);
     friend H2Point operator *(const H2Isometry & f, const H2Point & p);
+    friend std::vector<H2Point> operator *(const H2Isometry & f, const std::vector<H2Point> & pts);
     friend H2Polygon operator *(const H2Isometry &f, const H2Polygon &P);
     friend std::vector<H2Isometry> operator *(const H2Isometry & f, const std::vector<H2Isometry> & listOfIsoms);
     friend std::vector<H2Polygon> operator *(const std::vector<H2Isometry> & listOfIsoms, const H2Polygon &P);
@@ -57,6 +58,8 @@ public:
                                      const H2Isometry & f2, const H2Isometry &f2left, double twistNormalized);
 
     static H2Isometry identity();
+
+    void setByMappingPointTo0(const H2Point & p);
 
     // We don't use these (for now?)...
     void setTranslationAxisAndLength(const H2Geodesic & axis, double length);

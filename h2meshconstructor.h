@@ -28,8 +28,9 @@ private:
     void createExteriorVertexNeighbors();
 
     void reorganizeNeighbors();
-    void createWeights();
+    void createAffineWeights();
     void createNaiveWeights();
+    void createQuadraticWeights();
 
     bool runTests() const;
     bool checkNumberOfMeshPoints() const;

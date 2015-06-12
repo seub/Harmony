@@ -93,6 +93,11 @@ void H2Isometry::setByMappingGeodesic(const H2Geodesic &L1, const H2Geodesic &L2
     *this = f2.inverse()*f1;
 }
 
+void H2Isometry::setByMappingPointTo0(const H2Point &p)
+{
+    u = 1.0;
+    a = p.getDiskCoordinate();
+}
 
 SL2CMatrix H2Isometry::getSU11Matrix() const
 {
@@ -221,6 +226,16 @@ H2Point operator *(const H2Isometry & f, const H2Point & p)
     H2Point pOut;
     pOut.setDiskCoordinate(f.u*((z-f.a)/(1.0 - (conj(f.a)*z))));
     return pOut;
+}
+
+std::vector<H2Point> operator *(const H2Isometry & f, const std::vector<H2Point> & pts)
+{
+    std::vector<H2Point> out;
+    for (const auto & p : pts)
+    {
+        out.push_back(f*p);
+    }
+    return out;
 }
 
 H2Polygon operator*(const H2Isometry &f, const H2Polygon &P)

@@ -82,3 +82,20 @@ niquer les //private
 regarder les explicit
 décommenter les private
 rule of 5 (c++11)
+
+************************* Update 12 Juin 2015 ***************************
+
+0. Don't break keys off in locks.
+1. Think about estimating Lebesgue measure on the circle for quadratic functions ("createQuadWeights"?)
+2. Think about equivariance: Explain the picture of the (almost) harmonic map from a rho to its Dehn twist.
+3. Add vertices to sides of the fundamental domain before triangulating (to cut down on triangles with very narrow angles).
+4. Think about how to properly choose a basepoint for the fundamental domain, instead of just trying lots of them.
+5. Think about automating in a totally different way: Fix a weighted graph that triangulates the surface ahead of time (relations on weights?), and use the algorithm to embed it "harmonically" on the surface.
+6. H3 and SL(2,C)-character variety?
+7. Slices of the character variety and pictures?
+8. Hopf differential? Energy?
+
+
+
+
+

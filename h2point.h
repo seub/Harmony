@@ -30,6 +30,10 @@ public:
     static double tanHalfAngle(const H2Point &previous, const H2Point &point, const H2Point &next);
     static H2Point centroid(const std::vector<H2Point> & points, const std::vector<double> & weights);
 
+    void computeAffineWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
+    void computeNaiveWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
+    void computeQuadraticWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
+
     bool compareAngles(const H2Point &p1, const H2Point &p2);
 
 private:
