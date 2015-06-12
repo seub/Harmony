@@ -27,7 +27,6 @@ private:
     void createExteriorNeighbors();
     void createExteriorVertexNeighbors();
 
-    void setEpsilon();
     void reorganizeNeighbors();
     void createWeights();
     void createNaiveWeights();

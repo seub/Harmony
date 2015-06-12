@@ -75,15 +75,11 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
 
 
-    start = clock();
-    f.iterate();
-    end = clock();
     Canvas canvas2(H2DELEGATETARGET);
     ((H2CanvasDelegateTarget *) canvas2.delegate)->buffer.addElement(&f, "red", 1);
     ((H2CanvasDelegateTarget *) canvas2.delegate)->redrawBuffer();
     canvas2.show();
 
-    std::cout << "Time to iterate discrete heat flow: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
 
     std::cout << std::endl;
 

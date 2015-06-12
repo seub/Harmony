@@ -22,8 +22,7 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     createNeighbors();
 
     reorganizeNeighbors();
-    createNaiveWeights();
-    //setEpsilon();
+    createWeights();
 
     runTests();
 }
@@ -482,12 +481,6 @@ void H2MeshConstructor::reorganizeNeighbors()
         indicesNew.clear();
         neighborsPairingsNew.clear();
     }
-}
-
-void H2MeshConstructor::setEpsilon()
-{
-    mesh->epsilon = triangulater.minTriangleSide()/Tools::exponentiation(2,depth);
-    std::cout << "Epsilon = " << mesh->epsilon << std::endl;
 }
 
 void H2MeshConstructor::createWeights()
