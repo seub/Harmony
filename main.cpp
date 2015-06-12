@@ -22,27 +22,33 @@ int main(int argc, char *argv[])
 
     int g = 2;
 
-    std::vector<double> lengths;
-    std::vector<double> twists;
+    std::vector<double> lengths1,lengths2;
+    std::vector<double> twists1,twists2;
     for (int i=0; i<3*g-3; i++)
     {
         //twists.push_back(1.0-.3*i);
-        twists.push_back(0.0);
+        twists1.push_back(0.0);
+        twists2.push_back(0.0);
     }
+    twists2[1] = 2*M_PI;
+
     for (int i=0; i<3*g-3; i++)
     {
-        lengths.push_back(1.5 + .3*i);
+        lengths1.push_back(1.0);
+        lengths2.push_back(1.0);
     }
 
-    FenchelNielsenConstructor fn(lengths,twists);
+    FenchelNielsenConstructor fn1(lengths1,twists1);
+    FenchelNielsenConstructor fn2(lengths2,twists2);
     DiscreteGroup group;
-    IsomH2Representation rhoImage(&group), rho(&group);
+    IsomH2Representation rhoImage(&group), rhoDomain(&group);
 
-    rhoImage = fn.getRepresentation(&group);
+    rhoDomain = fn1.getRepresentation(&group);
+    rhoImage = fn2.getRepresentation(&group);
+
     //rhoImage.setNiceRepresentation();
-
-    rho.setNiceRepresentation();
-    rho.checkRelations();
+    //rho.setNiceRepresentation();
+    rhoDomain.checkRelations();
     std::cout << group << std::endl;
 
     std::cout << group.getRelations().front() << std::endl;
@@ -52,7 +58,7 @@ int main(int argc, char *argv[])
     int depth = 4;
     std::cout << "depth = " << depth << std::endl;
     clock_t start = clock();
-    mesh = H2Mesh(rho, depth);
+    mesh = H2Mesh(rhoDomain, depth);
     clock_t end = clock();
     std::cout << "Time to construct mesh: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     std::cout << std::endl;
@@ -61,7 +67,7 @@ int main(int argc, char *argv[])
 
 
     Canvas canvas1(H2DELEGATEDOMAIN);
-    ((H2CanvasDelegateDomain *) canvas1.delegate)->buffer.addElement(rho, "blue", 2);
+    ((H2CanvasDelegateDomain *) canvas1.delegate)->buffer.addElement(rhoDomain, "blue", 2);
     ((H2CanvasDelegateDomain *) canvas1.delegate)->buffer.addElement(&mesh);
     ((H2CanvasDelegateDomain *) canvas1.delegate)->redrawBuffer();
     canvas1.show();
@@ -74,10 +80,6 @@ int main(int argc, char *argv[])
     std::cout << "Time to build function: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     std::cout << std::endl;
 
-
-    start = clock();
-    f.iterate();
-    end = clock();
     Canvas canvas2(H2DELEGATETARGET);
     ((H2CanvasDelegateTarget *) canvas2.delegate)->buffer.addElement(&f, "red", 1);
     ((H2CanvasDelegateTarget *) canvas2.delegate)->redrawBuffer();

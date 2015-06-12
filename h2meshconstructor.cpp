@@ -22,7 +22,7 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     createNeighbors();
 
     reorganizeNeighbors();
-    createNaiveWeights();
+    createWeights();
     //setEpsilon();
 
     runTests();
@@ -602,15 +602,18 @@ void H2MeshConstructor::createNaiveWeights()
         {
             neighborWeights.push_back(angles[l]/(2*M_PI*distances[l]));
         }
-        meshPoint->neighborsWeights = neighborWeights;
 
         double sum = 0.0;
         for (auto neighborWeight : neighborWeights)
         {
             sum += neighborWeight;
         }
-        meshPoint->weight = 1.0 - sum;
-        std::cout << "meshPoint's weight is " << meshPoint->weight << std::endl;
+        for (auto & neighborWeight : neighborWeights)
+        {
+            neighborWeight = neighborWeight/sum;
+        }
+        meshPoint->neighborsWeights = neighborWeights;
+        meshPoint->weight = 0.0;
         ++i;
     }
 }
