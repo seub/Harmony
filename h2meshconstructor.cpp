@@ -22,9 +22,8 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     createNeighbors();
 
     reorganizeNeighbors();
-    createWeights();
-    setEpsilon();
-    createWeights();
+    createNaiveWeights();
+    //setEpsilon();
 
     runTests();
 }
@@ -556,6 +555,62 @@ void H2MeshConstructor::createWeights()
             sum += neighborWeight;
         }
         meshPoint->weight = 1.0 - sum;
+        ++i;
+    }
+}
+
+void H2MeshConstructor::createNaiveWeights()
+{
+    int i=0;
+    H2Point basept, previous, current, next;
+    std::vector<H2Point> neighbors;
+    std::vector<double> neighborWeights;
+    double r;
+    std::vector<double> distances, angles;
+    for(const auto & meshPoint : mesh->meshPoints)
+    {
+        angles.clear();
+        neighborWeights.clear();
+        distances.clear();
+        neighbors = mesh->getKickedH2Neighbors(i);
+        basept = mesh->getH2Point(i);
+        previous = neighbors.back();
+        current = neighbors.front();
+        next = neighbors[1];
+        for(std::vector<H2Point>::size_type j=1; j+1<neighbors.size(); ++j)
+        {
+            r=H2Point::distance(basept, current);
+            distances.push_back(r);
+            angles.push_back(H2Point::angle(previous, basept, next)/2.0);
+
+            previous = current;
+            current = next;
+            next = neighbors[j+1];
+        }
+        r=H2Point::distance(basept, current);
+        distances.push_back(r);
+        angles.push_back(H2Point::angle(previous, basept, next)/2.0);
+
+        previous = current;
+        current = next;
+        next = neighbors.front();
+        r=H2Point::distance(basept, current);
+        distances.push_back(r);
+        angles.push_back(H2Point::angle(previous, basept, next)/2.0);
+
+        for (std::vector<double>::size_type l=0; l<angles.size(); ++l)
+        {
+            neighborWeights.push_back(angles[l]/(2*M_PI*distances[l]));
+        }
+        meshPoint->neighborsWeights = neighborWeights;
+
+        double sum = 0.0;
+        for (auto neighborWeight : neighborWeights)
+        {
+            sum += neighborWeight;
+        }
+        meshPoint->weight = 1.0 - sum;
+        std::cout << "meshPoint's weight is " << meshPoint->weight << std::endl;
         ++i;
     }
 }

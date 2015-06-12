@@ -30,6 +30,7 @@ private:
     void setEpsilon();
     void reorganizeNeighbors();
     void createWeights();
+    void createNaiveWeights();
 
     bool runTests() const;
     bool checkNumberOfMeshPoints() const;

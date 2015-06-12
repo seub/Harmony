@@ -81,6 +81,18 @@ H2Point H2Point::midpoint(const H2Point &p1, const H2Point &p2)
     return res;
 }
 
+H2Point H2Point::proportionalPoint(const H2Point &p1, const H2Point &p2, const double &s)
+{
+    // assert that 0 < s < 1
+    Complex w1 = (p2.z - p1.z)/(1.0 - conj(p1.z)*p2.z);
+    double d = log ((1+abs(w1))/(1-abs(w1)));
+    Complex w2 = w1*(exp(s*d) - 1.0)/(abs(w1)*(exp(s*d) + 1.0));
+
+    H2Point res;
+    res.setDiskCoordinate((w2 + p1.z)/(1.0 + conj(p1.z)*w2));
+    return res;
+}
+
 double H2Point::angle(const H2Point &previous, const H2Point &point, const H2Point &next)
 {
     Complex u = (previous.z - point.z) / (1.0 - conj(point.z)*previous.z);

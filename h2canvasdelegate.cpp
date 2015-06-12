@@ -317,7 +317,7 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
     {
     case Qt::Key_Space :
         std::cout << "Alice" << std::endl;
-        buffer.f.iterate();
+        (buffer.f).iterate();
         std::cout << "Bob" << std::endl;
         redrawBuffer();
         break;
