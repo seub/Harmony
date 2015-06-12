@@ -80,12 +80,15 @@ int main(int argc, char *argv[])
     std::cout << "Time to build function: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     std::cout << std::endl;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2c43ef5e3074a295dfeecb9ea26f455241fa1b6d
     Canvas canvas2(H2DELEGATETARGET);
     ((H2CanvasDelegateTarget *) canvas2.delegate)->buffer.addElement(&f, "red", 1);
     ((H2CanvasDelegateTarget *) canvas2.delegate)->redrawBuffer();
     canvas2.show();
 
-    std::cout << "Time to iterate discrete heat flow: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
 
     std::cout << std::endl;
 
