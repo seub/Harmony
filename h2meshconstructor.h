@@ -28,7 +28,7 @@ private:
     void createExteriorVertexNeighbors();
 
     void reorganizeNeighbors();
-    void createAffineWeights();
+    void createPiecewiseAffineWeights();
     void createNaiveWeights();
     void createQuadraticWeights();
 

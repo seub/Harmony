@@ -26,7 +26,7 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     createNeighbors();
 
     reorganizeNeighbors();
-    createAffineWeights();
+    createPiecewiseAffineWeights();
 
     //runTests();
 }
@@ -487,7 +487,7 @@ void H2MeshConstructor::reorganizeNeighbors()
     }
 }
 
-void H2MeshConstructor::createAffineWeights()
+void H2MeshConstructor::createPiecewiseAffineWeights()
 {
     int i=0;
     H2Point basept;

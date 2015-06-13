@@ -31,15 +31,17 @@ int main(int argc, char *argv[])
 
     for (int i=0; i<3*g-3; i++)
     {
-        lengths1.push_back(1.0);
+        lengths1.push_back(2);
         lengths2.push_back(1.0);
     }
 
     EquivariantHarmonicMapsFactory F;
     F.setGenus(2);
     F.setRhoDomain(lengths1, twists1);
+    //F.setNiceRhoDomain();
+    //F.setRhoTarget(lengths1, twists1);
     F.setNiceRhoTarget();
-    F.setMeshDepth(4);
+    F.setMeshDepth(5);
     F.initialize();
 
     window.setFactory(&F);
