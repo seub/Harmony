@@ -46,7 +46,11 @@ SOURCES += main.cpp \
     h2meshpoint.cpp \
     word.cpp \
     h2meshfunction.cpp \
-    h2meshfunctioniterator.cpp
+    h2meshfunctioniterator.cpp \
+    window.cpp \
+    topmenu.cpp \
+    inputmenu.cpp \
+    outputmenu.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -79,7 +83,11 @@ HEADERS += \
     h2meshpoint.h \
     word.h \
     h2meshfunction.h \
-    h2meshfunctioniterator.h
+    h2meshfunctioniterator.h \
+    window.h \
+    topmenu.h \
+    inputmenu.h \
+    outputmenu.h
 
 OTHER_FILES += \
     TODO.txt

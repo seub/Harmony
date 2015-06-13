@@ -43,8 +43,6 @@ const QImage *CanvasDelegate::getImage() const
 
 void CanvasDelegate::rescale(int sizeX, int sizeY)
 {
-    //std::cout << "Entering CanvasDelegate::rescale" << std::endl;
-
     delete painter;
     *image = QImage(sizeX, sizeY, QImage::Format_RGB32);
     painter = new QPainter(image);
@@ -61,8 +59,6 @@ void CanvasDelegate::rescale(int sizeX, int sizeY)
 
     scaleX = xFactor * scaleX;
     scaleY = yFactor * scaleY;
-
-    //std::cout << "Leaving CanvasDelegate::rescale" << std::endl;
 }
 
 void CanvasDelegate::resetView(int sizeX, int sizeY)

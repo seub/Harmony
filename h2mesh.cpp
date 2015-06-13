@@ -13,10 +13,10 @@ H2Mesh::H2Mesh()
 
 H2Mesh::H2Mesh(const IsomH2Representation &rho, int depth) : rho(rho), depth(depth)
 {
-    clock_t start = clock();
+    //clock_t start = clock();
     fundamentalDomain = rho.generatePolygon(100);
-    clock_t end = clock();
-    std::cout << "Time to generate fundamental domain: " << (end - start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+    //clock_t end = clock();
+    //std::cout << "Time to generate fundamental domain: " << (end - start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
 
     H2MeshConstructor(this);
 }

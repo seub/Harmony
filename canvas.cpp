@@ -1,19 +1,23 @@
+#include "canvas.h"
+
 #include <QPainter>
 #include <QImage>
 #include <QWheelEvent>
-#include "canvas.h"
+#include <QDebug>
+
 #include "canvasdelegate.h"
 #include "h2canvasdelegate.h"
+#include "window.h"
 
-Canvas::Canvas(CanvasDelegateType delegateType, int width, int height, QWidget *parent) :
-    QWidget(parent)
+Canvas::Canvas(CanvasDelegateType delegateType, Window *window) :
+    window(window)
 {
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
     setFocusPolicy(Qt::WheelFocus);
     setMouseTracking(true);
 
-    resize(width,height);
+    //resize(width,height);
 
     delegate = 0;
     changeDelegate(delegateType);
@@ -72,19 +76,26 @@ void Canvas::resizeEvent(QResizeEvent *resizeEvent)
 {
     QSize newSize = resizeEvent->size();
     delegate->rescale(newSize.width(), newSize.height());
+
+    if (newSize.width()!=newSize.height())
+    {
+        window->resizeCanvases();
+    }
     //update();
 }
 
 void Canvas::mouseMoveEvent(QMouseEvent *mouseEvent)
 {
+    std::cout << "Entering Canvas::mouseMoveEvent" << std::endl;
     delegate->mouseMove(mouseEvent);
     update();
 }
 
-/*void Canvas::enterEvent(QEvent *)
+void Canvas::enterEvent(QEvent *)
 {
+    std::cout << "Entering Canvas::enterEvent" << std::endl;
     setFocus();
-}*/
+}
 
 void Canvas::wheelEvent(QWheelEvent *wheelEvent)
 {
@@ -95,6 +106,13 @@ void Canvas::wheelEvent(QWheelEvent *wheelEvent)
 
 void Canvas::keyPressEvent(QKeyEvent *keyEvent)
 {
+    std::cout << "Entering Canvas::keyEvent" << std::endl;
     delegate->keyPress(keyEvent);
     update();
+}
+
+void Canvas::rescale()
+{
+    //delegate->rescale(width(), height());
+    delegate->rescale(width(), width());
 }

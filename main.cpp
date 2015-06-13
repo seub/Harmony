@@ -2,22 +2,20 @@
 #include <QDebug>
 #include <QWidget>
 
-#include <chrono>
-#include <thread>
-
-#include "tools.h"
-#include "h2mesh.h"
+#include "window.h"
 #include "fenchelnielsenconstructor.h"
+#include "h2mesh.h"
+#include "h2meshfunction.h"
 #include "h2canvasdelegate.h"
 #include "canvas.h"
-#include "h2meshfunction.h"
-#include "h2meshfunctioniterator.h"
 
 int main(int argc, char *argv[])
 {
 
     std::cout << std::endl;
     QApplication a(argc, argv);
+
+    Window window;
 
 
     int g = 2;
@@ -48,47 +46,30 @@ int main(int argc, char *argv[])
 
     //rhoImage.setNiceRepresentation();
     //rho.setNiceRepresentation();
-    rhoDomain.checkRelations();
-    std::cout << group << std::endl;
-
-    std::cout << group.getRelations().front() << std::endl;
 
 
     H2Mesh mesh;
     int depth = 4;
-    std::cout << "depth = " << depth << std::endl;
-    clock_t start = clock();
     mesh = H2Mesh(rhoDomain, depth);
-    clock_t end = clock();
-    std::cout << "Time to construct mesh: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "The mesh has " << mesh.nbPoints() << " points" << std::endl;
 
 
-    Canvas canvas1(H2DELEGATEDOMAIN);
-    ((H2CanvasDelegateDomain *) canvas1.delegate)->buffer.addElement(rhoDomain, "blue", 2);
-    ((H2CanvasDelegateDomain *) canvas1.delegate)->buffer.addElement(&mesh);
-    ((H2CanvasDelegateDomain *) canvas1.delegate)->redrawBuffer();
-    canvas1.show();
+
+
+    Canvas* canvas1 = window.leftCanvas;
+    ((H2CanvasDelegateDomain *) canvas1->delegate)->buffer.addElement(rhoDomain, "blue", 2);
+    ((H2CanvasDelegateDomain *) canvas1->delegate)->buffer.addElement(&mesh);
+    ((H2CanvasDelegateDomain *) canvas1->delegate)->redrawBuffer();
 
 
     H2MeshFunction f(&mesh, rhoImage);
-    start = clock();
     f.initializePLsmart();
-    end = clock();
-    std::cout << "Time to build function: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
-    std::cout << std::endl;
 
-<<<<<<< HEAD
-=======
+    Canvas* canvas2 = window.rightCanvas;
+    ((H2CanvasDelegateTarget *) canvas2->delegate)->buffer.addElement(&f, "red", 1);
+    ((H2CanvasDelegateTarget *) canvas2->delegate)->redrawBuffer();
 
->>>>>>> 2c43ef5e3074a295dfeecb9ea26f455241fa1b6d
-    Canvas canvas2(H2DELEGATETARGET);
-    ((H2CanvasDelegateTarget *) canvas2.delegate)->buffer.addElement(&f, "red", 1);
-    ((H2CanvasDelegateTarget *) canvas2.delegate)->redrawBuffer();
-    canvas2.show();
-
+    window.show();
+    window.resizeCanvases();
 
     std::cout << std::endl;
 

@@ -1,6 +1,7 @@
 #include "h2meshconstructor.h"
 #include "h2trianglesubdivision.h"
 
+
 H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     mesh(mesh), depth(mesh->depth),
     subdivisions(&(mesh->subdivisions)), points(&(mesh->meshPoints)),
@@ -24,7 +25,7 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     reorganizeNeighbors();
     createWeights();
 
-    runTests();
+    //runTests();
 }
 
 void H2MeshConstructor::createPoints()
