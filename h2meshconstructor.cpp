@@ -12,13 +12,15 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     boundaryPoints(&(mesh->boundaryPoints)), vertexPoints(&(mesh->vertexPoints)),
     triangulater(H2PolygonTriangulater(&(mesh->fundamentalDomain)))
 {
-
+    mesh->fundamentalSteinerDomain = triangulater.steinerPolygon;
     nbVertices = mesh->fundamentalDomain.nbVertices();
+    nbSteinerPoints = mesh->fundamentalSteinerDomain.getTotalNbSteinerPoints();
     nbSubdivisions = triangulater.triangles.size();
     nbSubdivisionLines = H2TriangleSubdivision::nbOfLines(depth);
     nbSubdivisionPoints = H2TriangleSubdivision::nbOfPoints(depth);
     nextIndex = 0;
     sidePairings = mesh->rho.getWordSidePairings();
+    // sidePairings needs fixing by this point
     currentIndex = 0;
 
     createSubdivisions();
@@ -36,7 +38,7 @@ void H2MeshConstructor::createPoints()
     createRegularPoints();
     createCutPoints();
     createBoundaryPoints();
-    createVertexPoints();
+    createSteinerAndVertexPoints();
     return;
 }
 
@@ -187,19 +189,21 @@ void H2MeshConstructor::createBoundaryPoints()
     return;
 }
 
-void H2MeshConstructor::createVertexPoints()
+void H2MeshConstructor::createSteinerAndVertexPoints()
 {
     vertexPoints->reserve(nbVertices);
+    steinerPoints->reserve(nbSteinerPoints);
     vertexMeshIndex.resize(nbVertices);
+    steinerPointsMeshIndex.resize(nbSteinerPoints);
 
     std::vector< std::vector<int> > subdivisionIndices, indicesInTriangles, indicesInSubdivisions;
     triangulater.verticesIndices(subdivisionIndices, indicesInTriangles);
     int index2 = nbSubdivisionPoints-1, index1 = index2 - nbSubdivisionLines + 1;
 
-    indicesInSubdivisions.resize(nbVertices);
+    indicesInSubdivisions.resize(nbVertices + nbSteinerPoints);
     int i, indexInTriangle;
     unsigned int j;
-    for (i=0; i!=nbVertices; ++i)
+    for (i=0; i!=nbVertices + nbSteinerPoints; ++i)
     {
         for (j=0; j!=indicesInTriangles[i].size(); ++j)
         {
@@ -208,28 +212,76 @@ void H2MeshConstructor::createVertexPoints()
         }
     }
 
-    for (i=0; i!=nbVertices; ++i)
+    int side=0, indexOnSide = 0;
+    for (i=0; i!=nbVertices+nbSteinerPoints; ++i)
     {
-        vertexPoints->push_back(H2MeshVertexPoint(subdivisionIndices[i][0], indicesInSubdivisions[i][0], i,
-                subdivisionIndices[i], indicesInSubdivisions[i]));
-        vertexMeshIndex[i] = nextIndex;
-
-        for (j=0; j!=subdivisionIndices[i].size(); ++j)
+        if (indexOnSide == mesh->fundamentalSteinerDomain.getNbSteinerPointsOnSide(side) + 1)
         {
-            (*(((*subdivisions)[subdivisionIndices[i][j]]).meshIndices))[indicesInSubdivisions[i][j]] = nextIndex;
+            indexOnSide = 0;
+            ++side;
         }
 
-        ++nextIndex;
+        if (indexOnSide==0)
+        {
+            vertexPoints->push_back(H2MeshVertexPoint(subdivisionIndices[i][0], indicesInSubdivisions[i][0], i,
+                    subdivisionIndices[i], indicesInSubdivisions[i]));
+        }
+        else
+        {
+            steinerPoints->push_back(H2MeshSteinerPoint(subdivisionIndices[i][0], indicesInSubdivisions[i][0], i, side,
+                    subdivisionIndices[i], indicesInSubdivisions[i]));
+        }
+        ++indexOnside;
     }
 
+    int vertexIndex= 0;
+    int indexInFullPolygon;
     for (auto &point : *vertexPoints)
     {
         point.index = currentIndex;
+        vertexMeshIndex[vertexIndex] = currentIndex;
+
+
+        for (j=0; j!=point.subdivisionIndices.size(); ++j)
+        {
+            (*(((*subdivisions)[subdivisionIndices[indexInFullPolygon][j]]).meshIndices))[indicesInSubdivisions[indexInFullPolygon][j]] = currentIndex;
+        }
+
         ++currentIndex;
+        ++nextIndex;
         points->push_back(&point);
+        indexInFullPolygon += mesh->fundamentalSteinerDomain.getNbSteinerPointsOnSide(vertexIndex)+1;
+        vertexIndex++;
     }
 
-    return;
+    int steinerPointIndex = 0;
+    indexInFullPolygon = 0;
+    side = 0;
+    indexOnSide = 1;
+    for (auto &point : *steinerPoints)
+    {
+        if (indexOnSide == mesh->fundamentalSteinerDomain.getNbSteinerPointsOnSide(side) + 1)
+        {
+            indexOnSide = 1;
+            ++side;
+        }
+        indexInFullPolygon = steinerPointIndex + side + 1;
+
+        point.index = currentIndex;
+        steinerPointsMeshIndex[steinerPointIndex] = currentIndex;
+
+        for (j=0; j!=point.subdivisionIndices.size(); ++j)
+        {
+            (*(((*subdivisions)[subdivisionIndices[indexInFullPolygon][j]]).meshIndices))[indicesInSubdivisions[indexInFullPolygon][j]] = currentIndex;
+        }
+
+        ++currentIndex;
+        ++nextIndex;
+        points->push_back(&point);
+
+        steinerPointIndex++;
+        indexOnSide++;
+    }
 }
 
 
@@ -300,7 +352,7 @@ void H2MeshConstructor::createSideNeighbors()
     std::vector<int> indices;
 
     int i, j;
-    for (i=0; i<nbVertices; i++)
+    for (i=0; i<nbVertices+nbSteinerPoints; i++)
     {
         indices = meshPointsIndicesAlongSide(i);
 
@@ -355,59 +407,106 @@ void H2MeshConstructor::createExteriorNeighbors()
     int side=0, k;
     std::vector<int> indices1, indices2, neighbors1, neighbors2;
     H2MeshBoundaryPoint *m1, *m2;
+    H2MeshSteinerPoint *p1, *p2;
+    H2MeshPoint *q1, *q2;
     Word id;
     while(side < nbVertices)
     {
-        indices1 = meshPointsIndicesAlongSide(side);
-        indices2 = meshPointsIndicesAlongSide(side + 2);
+        indices1 = meshPointsIndicesAlongFullSide(side);
+        indices2 = meshPointsIndicesAlongFullSide(side + 2);
 
-        for (k=1; k<nbSubdivisionLines - 1; ++k)
+        for (k=1; k<indices1.size()-1; ++k)
         {
-            m1 = (H2MeshBoundaryPoint *)(*points)[indices1[k]];
-            m2 = (H2MeshBoundaryPoint *)(*points)[indices2[nbSubdivisionLines-1-k]];
-            m1->partnerPointIndex = indices2[nbSubdivisionLines-1-k];
-            m2->partnerPointIndex = indices1[k];
-            /*if(indices1[k]==33)
+            q1 = (*points)[indices1[k]];
+            q2 = (*points)[indices2[indices1.size()-1-k]];
+            if (q1->isBoundaryPoint() && q2->isBoundaryPoint())
             {
-                k = k;
-            }*/
-            neighbors1 = m1->neighborsIndices;
-            neighbors2 = m2->neighborsIndices;
-            
-            m1->neighborsPairings.resize(neighbors1.size());
-            std::fill(m1->neighborsPairings.begin(),m1->neighborsPairings.end(),id);
-            m2->neighborsPairings.resize(neighbors2.size());
-            std::fill(m2->neighborsPairings.begin(),m2->neighborsPairings.end(),id);
-            
-            for (auto neighbor : m1->neighborsIndices)
-            {
-                if (!((*points)[neighbor]->isVertexPoint()) && (!(*points)[neighbor]->isBoundaryPoint() ||
-                                                                ((H2MeshBoundaryPoint *) (*points)[neighbor])->side != side ))
-                {
-                    neighbors2.push_back(neighbor);
-                    m2->neighborsPairings.push_back(sidePairings[side]);
-                }
-            }
+                m1 = (H2MeshBoundaryPoint *) q1;
+                m2 = (H2MeshBoundaryPoint *) q2;
+                m1 = (H2MeshBoundaryPoint *)(*points)[indices1[k]];
+                m2 = (H2MeshBoundaryPoint *)(*points)[indices2[indices1.size()-1-k]];
+                m1->partnerPointIndex = indices2[indices1.size()-1-k];
+                m2->partnerPointIndex = indices1[k];
 
-            for (auto neighbor : m2->neighborsIndices)
-            {
-                if (!((*points)[neighbor]->isVertexPoint()) && (!(*points)[neighbor]->isBoundaryPoint() ||
-                                                                ((H2MeshBoundaryPoint *)(*points)[neighbor])->side != side + 2 ))
+                neighbors1 = m1->neighborsIndices;
+                neighbors2 = m2->neighborsIndices;
+
+                m1->neighborsPairings.resize(neighbors1.size());
+                std::fill(m1->neighborsPairings.begin(),m1->neighborsPairings.end(),id);
+                m2->neighborsPairings.resize(neighbors2.size());
+                std::fill(m2->neighborsPairings.begin(),m2->neighborsPairings.end(),id);
+
+                for (auto neighbor : m1->neighborsIndices)
                 {
-                    neighbors1.push_back(neighbor);
-                    m1->neighborsPairings.push_back(sidePairings[side+2]);
+                    if (!((*points)[neighbor]->isVertexPoint()) && (!(*points)[neighbor]->isBoundaryPoint() ||
+                                                                    ((H2MeshBoundaryPoint *) (*points)[neighbor])->side != side ))
+                    {
+                        neighbors2.push_back(neighbor);
+                        m2->neighborsPairings.push_back(sidePairings[side]);
+                    }
                 }
+
+                for (auto neighbor : m2->neighborsIndices)
+                {
+                    if (!((*points)[neighbor]->isVertexPoint()) && (!(*points)[neighbor]->isBoundaryPoint() ||
+                                                                    ((H2MeshBoundaryPoint *)(*points)[neighbor])->side != side + 2 ))
+                    {
+                        neighbors1.push_back(neighbor);
+                        m1->neighborsPairings.push_back(sidePairings[side+2]);
+                    }
+                }
+
+                m1->neighborsIndices = neighbors1;
+                m2->neighborsIndices = neighbors2;
             }
-            
-            m1->neighborsIndices = neighbors1;
-            m2->neighborsIndices = neighbors2;
+            else if (q1->isSteinerPoint() && q2->isSteinerPoint())
+            {
+                p1 = (H2MeshSteinerPoint *) q1;
+                p2 = (H2MeshSteinerPoint *) q2;
+                p1 = (H2MeshBoundaryPoint *)(*points)[indices1[k]];
+                p2 = (H2MeshBoundaryPoint *)(*points)[indices2[indices1.size()-1-k]];
+                p1->partnerPointIndex = indices2[indices1.size()-1-k];
+                p2->partnerPointIndex = indices1[k];
+
+                neighbors1 = p1->neighborsIndices;
+                neighbors2 = p2->neighborsIndices;
+
+                p1->neighborsPairings.resize(neighbors1.size());
+                std::fill(p1->neighborsPairings.begin(),p1->neighborsPairings.end(),id);
+                p2->neighborsPairings.resize(neighbors2.size());
+                std::fill(p2->neighborsPairings.begin(),p2->neighborsPairings.end(),id);
+
+                for (auto neighbor : p1->neighborsIndices)
+                {
+                    if (!((*points)[neighbor]->isVertexPoint()) && (!(*points)[neighbor]->isBoundaryPoint() ||
+                                                                    ((H2MeshBoundaryPoint *) (*points)[neighbor])->side != side ))
+                    {
+                        neighbors2.push_back(neighbor);
+                        p2->neighborsPairings.push_back(sidePairings[side]);
+                    }
+                }
+
+                for (auto neighbor : p2->neighborsIndices)
+                {
+                    if (!((*points)[neighbor]->isVertexPoint()) && (!(*points)[neighbor]->isBoundaryPoint() ||
+                                                                    ((H2MeshBoundaryPoint *)(*points)[neighbor])->side != side + 2 ))
+                    {
+                        neighbors1.push_back(neighbor);
+                        p1->neighborsPairings.push_back(sidePairings[side+2]);
+                    }
+                }
+
+                p1->neighborsIndices = neighbors1;
+                p2->neighborsIndices = neighbors2;
+            }
+            else
+            {
+                std::cout << "A BoundaryPoint is paired with a SteinerPoint or something" << std::endl;
+            }
         }
-
-
         side += 1 + jumpNext*2;
         jumpNext = !jumpNext;
     }
-
     return;
 }
 
@@ -481,6 +580,30 @@ void H2MeshConstructor::reorganizeNeighbors()
         }
         vertexpoint.neighborsIndices = indicesNew;
         vertexpoint.neighborsPairings = neighborsPairingsNew;
+        trip.clear();
+        indicesNew.clear();
+        neighborsPairingsNew.clear();
+    }
+
+    for (auto & steinerpoint : *steinerPoints)
+    {
+        i=0;
+        index = (subdivisions->at(steinerpoint.subdivisionIndex)).meshIndices->at(steinerpoint.indexInSubdivision);
+        indicesOld = steinerpoint.neighborsIndices;
+        neighborsPairingsOld = steinerpoint.neighborsPairings;
+        for (const auto & neighbor : mesh->getKickedH2Neighbors(index))
+        {
+            trip.push_back(triple(mesh->getH2Point(index), neighbor, i));
+            ++i;
+        }
+        std::sort(trip.begin(),trip.end(),compareTriples);
+        for (const auto & trap : trip)
+        {
+            indicesNew.push_back(indicesOld[std::get<2>(trap)]);
+            neighborsPairingsNew.push_back(neighborsPairingsOld[std::get<2>(trap)]);
+        }
+        steinerpoint.neighborsIndices = indicesNew;
+        steinerpoint.neighborsPairings = neighborsPairingsNew;
         trip.clear();
         indicesNew.clear();
         neighborsPairingsNew.clear();
@@ -565,6 +688,29 @@ std::vector<int> H2MeshConstructor::meshPointsIndicesAlongSide(int side) const
     return res;
 }
 
+std::vector<int> H2MeshConstructor::meshPointsIndicesAlongFullSide(int side) const
+{
+    std::vector<int> output;
+    std::vector<int> temp;
+    int index = mesh->fundamentalSteinerDomain.getIndexOfFullVertex(side);
+    for (int j=index; j<index + mesh->fundamentalSteinerDomain.getNbSteinerPointsOnSide(side) + 1; ++j)
+    {
+        temp = meshPointsIndicesAlongSide(j);
+        temp.pop_back();
+        output.insert(output.end(),temp.begin(),temp.end());
+    }
+    if (side+1 < nbVertices)
+    {
+        output.push_back(vertexMeshIndex[side+1]);
+    }
+    else
+    {
+        output.push_back(vertexMeshIndex[0]);
+    }
+
+    return output;
+}
+
 bool H2MeshConstructor::checkNumberOfMeshPoints() const
 {
     int expected = 0, nbPoints = points->size();
@@ -640,7 +786,9 @@ void H2MeshConstructor::createExteriorVertexNeighbors()
         // choppe les voisins de 4i
         for(auto k: (*points)[vertexMeshIndex[4*i]]->neighborsIndices)
         {
-            if(!(*points)[k]->isBoundaryPoint() || ((H2MeshBoundaryPoint *) ((*points)[k]))->side == 4*i)
+            if(((*points)[k]->isBoundaryPoint() && ((H2MeshBoundaryPoint *) ((*points)[k]))->side == 4*i)
+                || ((*points)[k]->isSteinerPoint() && ((H2MeshSteinerPoint *) ((*points)[k]))->side == 4*i)
+                    || ((!(*points)[k]->isSteinerPoint()) && (!(*points)[k]->isBoundaryPoint())))
             {
                 neighborsTemp.push_back(k);
                 neighborsWordIsometriesTemp.push_back(f);
@@ -652,7 +800,9 @@ void H2MeshConstructor::createExteriorVertexNeighbors()
         
         for(auto k: (*points)[vertexMeshIndex[4*i+3]]->neighborsIndices)
         {
-            if(!(*points)[k]->isBoundaryPoint() || ((H2MeshBoundaryPoint *) ((*points)[k]))->side == 4*i+3)
+            if(((*points)[k]->isBoundaryPoint() && ((H2MeshBoundaryPoint *) ((*points)[k]))->side == 4*i+3)
+                    || ((*points)[k]->isSteinerPoint() && ((H2MeshSteinerPoint *) ((*points)[k]))->side == 4*i+3)
+                        || ((!(*points)[k]->isSteinerPoint()) && (!(*points)[k]->isBoundaryPoint())))
             {
                 neighborsTemp.push_back(k);
                 neighborsWordIsometriesTemp.push_back(f);
@@ -663,7 +813,9 @@ void H2MeshConstructor::createExteriorVertexNeighbors()
         
         for(auto k: (*points)[vertexMeshIndex[4*i+2]]->neighborsIndices)
         {
-            if(!(*points)[k]->isBoundaryPoint() || ((H2MeshBoundaryPoint *) ((*points)[k]))->side == 4*i+2)
+            if(((*points)[k]->isBoundaryPoint() && ((H2MeshBoundaryPoint *) ((*points)[k]))->side == 4*i+2)
+                    || ((*points)[k]->isSteinerPoint() && ((H2MeshSteinerPoint *) ((*points)[k]))->side == 4*i+2)
+                        || ((!(*points)[k]->isSteinerPoint()) && (!(*points)[k]->isBoundaryPoint())))
             {
                 neighborsTemp.push_back(k);
                 neighborsWordIsometriesTemp.push_back(f);
@@ -674,7 +826,9 @@ void H2MeshConstructor::createExteriorVertexNeighbors()
         // choppe les voisins de 4i+1
         for(auto k: (*points)[vertexMeshIndex[4*i+1]]->neighborsIndices)
         {
-            if(!(*points)[k]->isBoundaryPoint() || ((H2MeshBoundaryPoint *) ((*points)[k]))->side == 4*i+1)
+            if(((*points)[k]->isBoundaryPoint() && ((H2MeshBoundaryPoint *) ((*points)[k]))->side == 4*i+1)
+                    || ((*points)[k]->isSteinerPoint() && ((H2MeshSteinerPoint *) ((*points)[k]))->side == 4*i+1)
+                        || ((!(*points)[k]->isSteinerPoint()) && (!(*points)[k]->isBoundaryPoint())))
             {
                 neighborsTemp.push_back(k);
                 neighborsWordIsometriesTemp.push_back(f);

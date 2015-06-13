@@ -18,7 +18,7 @@ private:
     void createRegularPoints();
     void createCutPoints();
     void createBoundaryPoints();
-    void createVertexPoints();
+    void createSteinerAndVertexPoints();
 
     void createInteriorNeighbors();
     void createCutNeighbors();
@@ -39,6 +39,7 @@ private:
     bool checkPartnerPoints() const;
 
     std::vector<int> meshPointsIndicesAlongSide(int side) const;
+    std::vector<int> meshPointsIndicesAlongFullSide(int side) const;
 
 
     H2Mesh *mesh;
@@ -50,13 +51,14 @@ private:
     std::vector<H2MeshCutPoint> *cutPoints;
     std::vector<H2MeshBoundaryPoint> *boundaryPoints;
     std::vector<H2MeshVertexPoint> *vertexPoints;
+    std::vector<H2MeshSteinerPoint> *steinerPoints;
 
 
     H2PolygonTriangulater triangulater;
-    int nbVertices, nbSubdivisions, nbSubdivisionLines, nbSubdivisionPoints;
+    int nbVertices, nbSteinerPoints, nbSubdivisions, nbSubdivisionLines, nbSubdivisionPoints;
     int nextIndex;
     std::vector< std::vector<bool> > boundaryPointInSubdivisions;
-    std::vector<int> vertexMeshIndex;
+    std::vector<int> vertexMeshIndex, steinerPointsMeshIndex;
     std::vector< std::vector< std::vector<int> > > neighborsInSubdivisions;
     std::vector<Word> sidePairings;
     int currentIndex;

@@ -281,7 +281,7 @@ void H2Polygon::optimalMobius(H2Isometry &output) const
     double A = 0.0;
     Complex T = 0.0;
     Circle Ck;
-    PlanarLine Lk;    
+    PlanarLine Lk;
     
     std::vector<H2Geodesic> geodesics = getCompletedSides();
     
@@ -401,9 +401,9 @@ std::vector<double> H2Polygon::getAngles() const
 
     res.push_back(H2Point::angle(vertices.back(), vertices.front(), vertices[1]));
     for (unsigned int i=1; i+1<vertices.size(); i++)
-    {        
+    {
         res.push_back(H2Point::angle(vertices[i-1], vertices[i], vertices[i+1]));
-    }    
+    }
     res.push_back(H2Point::angle(vertices[vertices.size() - 2], vertices.back(), vertices.front()));
     
     return res;
@@ -452,5 +452,75 @@ std::ostream & operator<<(std::ostream & out, const H2Polygon &P)
     }
     return out;
 }
+
+void H2Polygon::insertMidpoints()
+{
+    H2Point current, next;
+    std::vector<H2Point> newVertices;
+    current = vertices.front();
+    for(std::vector<H2Point>::size_type i=0; i+1<vertices.size(); ++i)
+    {
+        next = vertices[i+1];
+        newVertices.push_back(current);
+        newVertices.push_back(H2Point::midpoint(current,next));
+        current = next;
+    }
+    next = vertices[0];
+    newVertices.push_back(current);
+    newVertices.push_back(H2Point::midpoint(current,next));
+    vertices = newVertices;
+}
+
+H2SteinerPolygon::H2SteinerPolygon(std::vector<int> nbSteinerPoints) : H2Polygon(), nbSteinerPoints(nbSteinerPoints)
+{
+}
+
+std::vector<H2Point> H2SteinerPolygon::getPointsOnSide(int side) const
+{
+    H2GeodesicArc a = getSide(side);
+    return a.getEvenSubdivision(nbSteinerPoints[side]);
+}
+
+
+H2Polygon H2SteinerPolygon::getFullPolygon() const
+{
+    std::vector<H2Point> verticesOut, sidePoints;
+    for(int j=0; j<nbVertices(); ++j)
+    {
+        sidePoints = getPointsOnSide(j);
+        verticesOut.insert(verticesOut.end(),sidePoints.begin(),sidePoints.end());
+        verticesOut.pop_back();
+    }
+    H2Polygon output;
+    output.setVertices(verticesOut);
+    return output;
+}
+
+int H2SteinerPolygon::getTotalNbSteinerPoints() const
+{
+    int sum=0;
+    for(const auto & num : nbSteinerPoints)
+    {
+        sum += num;
+    }
+    return sum;
+}
+
+int H2SteinerPolygon::getNbSteinerPointsOnSide(int side) const
+{
+    return nbSteinerPoints[side];
+}
+
+int H2SteinerPolygon::getIndexOfFullVertex(int vertexIndex) const
+{
+    int sum = 0;
+    for(int j=0; j<vertexIndex; ++j)
+    {
+        sum += nbSteinerPoints[j] + 1;
+    }
+    return sum;
+}
+
+
 
 

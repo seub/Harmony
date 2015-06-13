@@ -23,6 +23,7 @@ void H2MeshFunction::initializePL(const H2Point &basePoint)
     {
         vertexImages.push_back(rhoImage->evaluateRepresentation(pairing)*basePoint);
     }
+    // vertexImages needs fixing by this point: insert midpoints
 
     std::vector<TriangulationTriangle> triangles = mesh->triangles;
     std::vector<H2TriangleSubdivision> subdivisionImages;

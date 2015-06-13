@@ -50,10 +50,29 @@ public:
 
     void optimalMobius(H2Isometry &output) const;
     std::vector<double> getAngles() const;
-    std::vector<double> getPositiveInteriorAngles() const;    
+    std::vector<double> getPositiveInteriorAngles() const;
+
+    void insertMidpoints();
+
+protected:
+    std::vector<H2Point> vertices;
+};
+
+class H2SteinerPolygon : H2Polygon
+{
+
+public:
+    H2SteinerPolygon(std::vector<int> nbSteinerPoints);
+
+    std::vector<H2Point> getPointsOnSide(int side) const;
+    H2Polygon getFullPolygon() const;
+    int getTotalNbSteinerPoints() const;
+    int getNbSteinerPointsOnSide(int side) const;
+    int getIndexOfFullVertex(int vertexIndex) const;
 
 private:
-    std::vector<H2Point> vertices;
+    std::vector<int> nbSteinerPoints;
+
 };
 
 #endif // H2POLYGON_H

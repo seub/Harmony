@@ -487,7 +487,17 @@ std::ostream & operator<<(std::ostream & out, const H2Geodesic & L)
     return out;
 }
 
+std::vector<H2Point> H2GeodesicArc::getEvenSubdivision(int nbCuts) const
+{
+    std::vector<H2Point> output;
+    output.reserve(nbCuts+2);
 
+    for(int j=0; j<nbCuts+2; ++j)
+    {
+        output.push_back(H2Point::proportionalPoint(p1,p2,j/(nbCuts+1)));
+    }
+    return output;
+}
 
 
 
