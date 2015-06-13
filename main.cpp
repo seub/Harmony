@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
         twists1.push_back(0.0);
         twists2.push_back(0.0);
     }
-    twists2[1] = 2*M_PI;
+    twists2[1] = -2*M_PI;
 
     for (int i=0; i<3*g-3; i++)
     {
