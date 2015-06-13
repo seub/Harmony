@@ -10,7 +10,7 @@ class H2MeshFunction
 
 public:
     H2MeshFunction();
-    explicit H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation &rhoImage);
+    explicit H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation * const rhoImage);
 
     const std::vector<H2Point> & getValues() const;
     std::vector<H2Triangle> getTriangles() const;
@@ -20,9 +20,9 @@ public:
     void initializePLsmart();
 
 //private:
-    explicit H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation &rhoImage, std::vector<H2Point> values);
+    explicit H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation * const rhoImage, std::vector<H2Point> values);
     const H2Mesh * const mesh;
-    IsomH2Representation rhoImage;
+    const IsomH2Representation * const rhoImage;
     std::vector<H2Point> values;
 };
 

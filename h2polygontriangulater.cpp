@@ -7,10 +7,10 @@ H2PolygonTriangulater::H2PolygonTriangulater(const H2Polygon * const polygon) : 
 {
     orientation = polygon->isPositivelyOriented();
     triangulate();
-    std::cout << "min angle = " << minTriangleAngle() << std::endl;
+    //std::cout << "min angle = " << minTriangleAngle() << std::endl;
     std::vector<double> polygonAngles = polygon->getPositiveInteriorAngles();
-    double minPolygonAngle = *std::min_element(polygonAngles.begin(), polygonAngles.end());
-    std::cout << "min angle in polygon = " << minPolygonAngle << std::endl;
+    //double minPolygonAngle = *std::min_element(polygonAngles.begin(), polygonAngles.end());
+    //std::cout << "min angle in polygon = " << minPolygonAngle << std::endl;
 }
 
 double H2PolygonTriangulater::minAngleOfCutInSubpolygon(const std::vector<int> & indices, unsigned int cut1, unsigned int cut2) const

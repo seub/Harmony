@@ -6,12 +6,16 @@
 #include "tools.h"
 
 class CanvasDelegate;
+class Window;
 
 class Canvas : public QWidget
 {
     Q_OBJECT
+
+    friend class Window;
+
 public:
-    explicit Canvas(CanvasDelegateType delegateType, int width = 700, int height = 700, QWidget *parent = 0);
+    explicit Canvas(CanvasDelegateType delegateType, Window *const window = 0);
     ~Canvas();
 
     void changeDelegate(CanvasDelegateType delegateType);
@@ -31,12 +35,16 @@ public:
     void mouseMoveEvent(QMouseEvent *mouseEvent);
     void wheelEvent(QWheelEvent *wheelEvent);
     void keyPressEvent(QKeyEvent *keyEvent);
-    //void enterEvent(QEvent *);
+    void enterEvent(QEvent *);
 
 private:
     Canvas(); // Dummy constructor
     Canvas(const Canvas &other); // Copy constructor
     Canvas & operator=(Canvas other); // Copy-assignment operator
+
+    void rescale();
+
+    Window* window;
 };
 
 #endif // CANVAS_H

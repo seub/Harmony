@@ -4,6 +4,7 @@
 #include <Eigen/LU>
 
 
+
 H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     mesh(mesh), depth(mesh->depth),
     subdivisions(&(mesh->subdivisions)), points(&(mesh->meshPoints)),
@@ -25,9 +26,9 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     createNeighbors();
 
     reorganizeNeighbors();
-    createAffineWeights();
+    createPiecewiseAffineWeights();
 
-    runTests();
+    //runTests();
 }
 
 void H2MeshConstructor::createPoints()
@@ -486,7 +487,7 @@ void H2MeshConstructor::reorganizeNeighbors()
     }
 }
 
-void H2MeshConstructor::createAffineWeights()
+void H2MeshConstructor::createPiecewiseAffineWeights()
 {
     int i=0;
     H2Point basept;

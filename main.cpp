@@ -2,16 +2,13 @@
 #include <QDebug>
 #include <QWidget>
 
-#include <chrono>
-#include <thread>
-
-#include "tools.h"
-#include "h2mesh.h"
+#include "window.h"
 #include "fenchelnielsenconstructor.h"
+#include "h2mesh.h"
+#include "h2meshfunction.h"
 #include "h2canvasdelegate.h"
 #include "canvas.h"
-#include "h2meshfunction.h"
-#include "h2meshfunctioniterator.h"
+#include "equivariantharmonicmapsfactory.h"
 
 int main(int argc, char *argv[])
 {
@@ -19,9 +16,9 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
     QApplication a(argc, argv);
 
+    Window window;
 
     int g = 2;
-
     std::vector<double> lengths1,lengths2;
     std::vector<double> twists1,twists2;
     for (int i=0; i<3*g-3; i++)
@@ -34,60 +31,23 @@ int main(int argc, char *argv[])
 
     for (int i=0; i<3*g-3; i++)
     {
-        lengths1.push_back(1.0);
+        lengths1.push_back(2);
         lengths2.push_back(1.0);
     }
 
-    FenchelNielsenConstructor fn1(lengths1,twists1);
-    FenchelNielsenConstructor fn2(lengths2,twists2);
-    DiscreteGroup group;
-    IsomH2Representation rhoImage(&group), rhoDomain(&group);
+    EquivariantHarmonicMapsFactory F;
+    F.setGenus(2);
+    F.setRhoDomain(lengths1, twists1);
+    //F.setNiceRhoDomain();
+    //F.setRhoTarget(lengths1, twists1);
+    F.setNiceRhoTarget();
+    F.setMeshDepth(5);
+    F.initialize();
 
-    rhoDomain = fn1.getRepresentation(&group);
-    rhoImage = fn2.getRepresentation(&group);
+    window.setFactory(&F);
 
-    //rhoImage.setNiceRepresentation();
-    //rho.setNiceRepresentation();
-    rhoDomain.checkRelations();
-    std::cout << group << std::endl;
-
-    std::cout << group.getRelations().front() << std::endl;
-
-
-    H2Mesh mesh;
-    int depth = 4;
-    std::cout << "depth = " << depth << std::endl;
-    clock_t start = clock();
-    mesh = H2Mesh(rhoDomain, depth);
-    clock_t end = clock();
-    std::cout << "Time to construct mesh: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "The mesh has " << mesh.nbPoints() << " points" << std::endl;
-
-
-    Canvas canvas1(H2DELEGATEDOMAIN);
-    ((H2CanvasDelegateDomain *) canvas1.delegate)->buffer.addElement(rhoDomain, "blue", 2);
-    ((H2CanvasDelegateDomain *) canvas1.delegate)->buffer.addElement(&mesh);
-    ((H2CanvasDelegateDomain *) canvas1.delegate)->redrawBuffer();
-    canvas1.show();
-
-
-    H2MeshFunction f(&mesh, rhoImage);
-    H2Point basept;
-    basept.setDiskCoordinate(Complex(0.0,0.0));
-    start = clock();
-    f.initializePLsmart();
-    end = clock();
-    std::cout << "Time to build function: " << (end-start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
-    std::cout << std::endl;
-
-
-    Canvas canvas2(H2DELEGATETARGET);
-    ((H2CanvasDelegateTarget *) canvas2.delegate)->buffer.addElement(&f, "red", 1);
-    ((H2CanvasDelegateTarget *) canvas2.delegate)->redrawBuffer();
-    canvas2.show();
-
+    window.show();
+    window.resizeCanvases();
 
     std::cout << std::endl;
 

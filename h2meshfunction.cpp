@@ -3,11 +3,11 @@
 #include "h2trianglesubdivision.h"
 #include "h2meshfunctioniterator.h"
 
-H2MeshFunction::H2MeshFunction() : mesh(0)
+H2MeshFunction::H2MeshFunction() : mesh(0), rhoImage(0)
 {
 }
 
-H2MeshFunction::H2MeshFunction(const H2Mesh *const mesh, const IsomH2Representation &rhoImage) : mesh(mesh), rhoImage(rhoImage)
+H2MeshFunction::H2MeshFunction(const H2Mesh *const mesh, const IsomH2Representation * const rhoImage) : mesh(mesh), rhoImage(rhoImage)
 {
 }
 
@@ -21,7 +21,7 @@ void H2MeshFunction::initializePL(const H2Point &basePoint)
 
     for (const auto & pairing : vertexPairings)
     {
-        vertexImages.push_back(rhoImage.evaluateRepresentation(pairing)*basePoint);
+        vertexImages.push_back(rhoImage->evaluateRepresentation(pairing)*basePoint);
     }
 
     std::vector<TriangulationTriangle> triangles = mesh->triangles;
@@ -44,11 +44,11 @@ void H2MeshFunction::initializePL(const H2Point &basePoint)
 
 void H2MeshFunction::initializePLsmart()
 {
-    H2Point basept = rhoImage.generatePolygon(100).vertices[0];
+    H2Point basept = rhoImage->generatePolygon(100).vertices[0];
     initializePL(basept);
 }
 
-H2MeshFunction::H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation &rhoImage, std::vector<H2Point> values) :
+H2MeshFunction::H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation * const rhoImage, std::vector<H2Point> values) :
      mesh(mesh), rhoImage(rhoImage), values(values)
 {
 }
