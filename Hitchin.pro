@@ -50,7 +50,8 @@ SOURCES += main.cpp \
     window.cpp \
     topmenu.cpp \
     inputmenu.cpp \
-    outputmenu.cpp
+    outputmenu.cpp \
+    equivariantharmonicmapsfactory.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -87,7 +88,8 @@ HEADERS += \
     window.h \
     topmenu.h \
     inputmenu.h \
-    outputmenu.h
+    outputmenu.h \
+    equivariantharmonicmapsfactory.h
 
 OTHER_FILES += \
     TODO.txt

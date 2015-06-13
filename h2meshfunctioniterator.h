@@ -9,6 +9,8 @@ class H2Point;
 
 class H2MeshFunctionIterator
 {
+    friend class EquivariantHarmonicMapsFactory;
+
 public:
     H2MeshFunctionIterator(const H2MeshFunction * const f);
     void iterate(int n=1);

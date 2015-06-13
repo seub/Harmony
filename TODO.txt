@@ -83,6 +83,8 @@ regarder les explicit
 décommenter les private
 rule of 5 (c++11)
 
+traiter proprement l'inclusion de factory dans window et dans les canvas
+
 ************************* Update 12 Juin 2015 ***************************
 
 0. Don't break keys off in locks.

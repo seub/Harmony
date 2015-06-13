@@ -8,13 +8,14 @@ H2MeshFunctionIterator::H2MeshFunctionIterator(const H2MeshFunction * const f) :
     newValues = oldValues;
 }
 
+
 void H2MeshFunctionIterator::iterate(int n)
 {
     int i,j, N=n;
     std::vector<H2Point> neighborsImages;
     std::vector<double> weights;
 
-    IsomH2Representation rhoImage = f->rhoImage;
+    IsomH2Representation rhoImage = *(f->rhoImage);
     std::vector<H2Isometry> isometriesImage;
     while (n>0)
     {

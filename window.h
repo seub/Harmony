@@ -4,6 +4,7 @@
 #include <QWidget>
 
 #include "tools.h"
+#include "equivariantharmonicmapsfactory.h"
 
 class QGridLayout; class QStatusBar; class QLabel;
 
@@ -16,6 +17,7 @@ public:
     Window();
 
     void resizeEvent(QResizeEvent *event);
+    void setFactory(EquivariantHarmonicMapsFactory *Factory);
 
 signals:
 
@@ -37,6 +39,8 @@ public:
     QStatusBar* statusBar;
     QLabel* statusBarLabel;
     TopMenu* topMenu;
+
+    EquivariantHarmonicMapsFactory *Factory;
 };
 
 #endif // WINDOW_H

@@ -216,7 +216,7 @@ void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std
     }
 
     std::vector<double> neighborsInTangentSpaceX, neighborsInTangentSpaceY;
-    double d, r, xj, yj, sum;
+    double d, r, xj, yj;
     Complex z;
     using namespace Eigen;
     MatrixXd m(6,6);

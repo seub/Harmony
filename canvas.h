@@ -15,7 +15,7 @@ class Canvas : public QWidget
     friend class Window;
 
 public:
-    explicit Canvas(CanvasDelegateType delegateType, Window *window = 0);
+    explicit Canvas(CanvasDelegateType delegateType, Window *const window = 0);
     ~Canvas();
 
     void changeDelegate(CanvasDelegateType delegateType);
