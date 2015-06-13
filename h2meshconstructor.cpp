@@ -1,5 +1,8 @@
 #include "h2meshconstructor.h"
 #include "h2trianglesubdivision.h"
+#include <Eigen/Dense>
+#include <Eigen/LU>
+
 
 
 H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
@@ -23,7 +26,7 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     createNeighbors();
 
     reorganizeNeighbors();
-    createWeights();
+    createAffineWeights();
 
     //runTests();
 }
@@ -484,71 +487,17 @@ void H2MeshConstructor::reorganizeNeighbors()
     }
 }
 
-void H2MeshConstructor::createWeights()
+void H2MeshConstructor::createAffineWeights()
 {
     int i=0;
-    H2Point basept, previous, current, next;
+    H2Point basept;
     std::vector<H2Point> neighbors;
-    std::vector<double> preNeighborWeights;
-    std::vector<double> neighborWeights;
-    double r, epsilon, tan1, tan2;
-    std::vector<double> distances;
     for(const auto & meshPoint : mesh->meshPoints)
     {
-        neighborWeights.clear();
-        preNeighborWeights.clear();
-        distances.clear();
         neighbors = mesh->getKickedH2Neighbors(i);
         basept = mesh->getH2Point(i);
-        epsilon = mesh->epsilon;
-        previous = neighbors.back();
-        current = neighbors.front();
-        next = neighbors[1];
-        for(std::vector<H2Point>::size_type j=1; j+1<neighbors.size(); ++j)
-        {
-            r=H2Point::distance(basept, current);
-            distances.push_back(r);
-            tan1=H2Point::tanHalfAngle(current, basept, next);
-            tan2=H2Point::tanHalfAngle(previous, basept, current);
-            preNeighborWeights.push_back((1.0/(3*M_PI*r))*(tan1 + tan2));
-            previous = current;
-            current = next;
-            next = neighbors[j+1];
-        }
-        r=H2Point::distance(basept, current);
-        distances.push_back(r);
-        tan1=H2Point::tanHalfAngle(current, basept, next);
-        tan2=H2Point::tanHalfAngle(previous, basept, current);
-        preNeighborWeights.push_back((1.0/(3*M_PI*r))*(tan1 + tan2));
-        previous = current;
-        current = next;
-        next = neighbors.front();
-        r=H2Point::distance(basept, current);
-        distances.push_back(r);
-        tan1=H2Point::tanHalfAngle(current, basept, next);
-        tan2=H2Point::tanHalfAngle(previous, basept, current);
-        preNeighborWeights.push_back((1.0/(3*M_PI*r))*(tan1 + tan2));
-
-        double sum = 0.0;
-        for (auto x : preNeighborWeights)
-        {
-            sum += x;
-        }
-        epsilon = 1/sum;
-
-        for (auto preweight : preNeighborWeights)
-        {
-            neighborWeights.push_back(epsilon*preweight);
-        }
-
-        meshPoint->neighborsWeights = neighborWeights;
-
-        sum = 0.0;
-        for (auto neighborWeight : neighborWeights)
-        {
-            sum += neighborWeight;
-        }
-        meshPoint->weight = 1.0 - sum;
+        basept.computeAffineWeights(neighbors,meshPoint->neighborsWeights);
+        meshPoint->weight = 0.0;
         ++i;
     }
 }
@@ -556,57 +505,35 @@ void H2MeshConstructor::createWeights()
 void H2MeshConstructor::createNaiveWeights()
 {
     int i=0;
-    H2Point basept, previous, current, next;
+    H2Point basept;
     std::vector<H2Point> neighbors;
-    std::vector<double> neighborWeights;
-    double r;
-    std::vector<double> distances, angles;
     for(const auto & meshPoint : mesh->meshPoints)
     {
-        angles.clear();
-        neighborWeights.clear();
-        distances.clear();
         neighbors = mesh->getKickedH2Neighbors(i);
         basept = mesh->getH2Point(i);
-        previous = neighbors.back();
-        current = neighbors.front();
-        next = neighbors[1];
-        for(std::vector<H2Point>::size_type j=1; j+1<neighbors.size(); ++j)
-        {
-            r=H2Point::distance(basept, current);
-            distances.push_back(r);
-            angles.push_back(H2Point::angle(previous, basept, next)/2.0);
+        basept.computeNaiveWeights(neighbors,meshPoint->neighborsWeights);
+        meshPoint->weight = 0.0;
+        ++i;
+    }
+}
 
-            previous = current;
-            current = next;
-            next = neighbors[j+1];
-        }
-        r=H2Point::distance(basept, current);
-        distances.push_back(r);
-        angles.push_back(H2Point::angle(previous, basept, next)/2.0);
-
-        previous = current;
-        current = next;
-        next = neighbors.front();
-        r=H2Point::distance(basept, current);
-        distances.push_back(r);
-        angles.push_back(H2Point::angle(previous, basept, next)/2.0);
-
-        for (std::vector<double>::size_type l=0; l<angles.size(); ++l)
+void H2MeshConstructor::createQuadraticWeights()
+{
+    int i=0;
+    H2Point basept;
+    std::vector<H2Point> neighbors;
+    for(const auto & meshPoint : mesh->meshPoints)
+    {
+        neighbors = mesh->getKickedH2Neighbors(i);
+        basept = mesh->getH2Point(i);
+        if (meshPoint->isVertexPoint())
         {
-            neighborWeights.push_back(angles[l]/(2*M_PI*distances[l]));
+            basept.computeAffineWeights(neighbors,meshPoint->neighborsWeights);
         }
-
-        double sum = 0.0;
-        for (auto neighborWeight : neighborWeights)
+        else
         {
-            sum += neighborWeight;
+            basept.computeQuadraticWeights(neighbors,meshPoint->neighborsWeights);
         }
-        for (auto & neighborWeight : neighborWeights)
-        {
-            neighborWeight = neighborWeight/sum;
-        }
-        meshPoint->neighborsWeights = neighborWeights;
         meshPoint->weight = 0.0;
         ++i;
     }

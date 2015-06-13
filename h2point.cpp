@@ -1,4 +1,6 @@
 #include "h2point.h"
+#include "h2isometry.h"
+#include <Eigen/Dense>
 
 H2Point::H2Point()
 {
@@ -17,7 +19,7 @@ Complex H2Point::getDiskCoordinate() const
 
 Complex H2Point::getKleinCoordinate() const
 {
-//    complex z = getDiskCoordinate();
+    //    complex z = getDiskCoordinate();
     return 2.0*z / (1.0 + norm(z));
 }
 
@@ -109,6 +111,227 @@ double H2Point::tanHalfAngle(const H2Point &previous, const H2Point &point, cons
     return (1-x)/y;
 }
 
+void H2Point::computeAffineWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
+{
+    H2Point previous, current, next;
+    std::vector<double> preNeighborWeights;
+    double r, tan1, tan2, sum;
+    std::vector<double> distances;
+
+    outputWeights.clear();
+    previous = neighbors.back();
+    current = neighbors.front();
+    next = neighbors[1];
+    for(std::vector<H2Point>::size_type j=1; j+1<neighbors.size(); ++j)
+    {
+        r=H2Point::distance(*this, current);
+        distances.push_back(r);
+        tan1=H2Point::tanHalfAngle(current, *this, next);
+        tan2=H2Point::tanHalfAngle(previous, *this, current);
+        preNeighborWeights.push_back((1.0/(3*M_PI*r))*(tan1 + tan2));
+        previous = current;
+        current = next;
+        next = neighbors[j+1];
+    }
+    r=H2Point::distance(*this, current);
+    distances.push_back(r);
+    tan1=H2Point::tanHalfAngle(current, *this, next);
+    tan2=H2Point::tanHalfAngle(previous, *this, current);
+    preNeighborWeights.push_back((1.0/(3*M_PI*r))*(tan1 + tan2));
+    previous = current;
+    current = next;
+    next = neighbors.front();
+    r=H2Point::distance(*this, current);
+    distances.push_back(r);
+    tan1=H2Point::tanHalfAngle(current, *this, next);
+    tan2=H2Point::tanHalfAngle(previous, *this, current);
+    preNeighborWeights.push_back((1.0/(3*M_PI*r))*(tan1 + tan2));
+
+    sum = 0.0;
+    for (auto x : preNeighborWeights)
+    {
+        sum += x;
+    }
+    double epsilon = 1/sum;
+
+    for (auto preweight : preNeighborWeights)
+    {
+        outputWeights.push_back(epsilon*preweight);
+    }
+}
+
+void H2Point::computeNaiveWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
+{
+    H2Point previous, current, next;
+    double r, sum;
+    std::vector<double> distances, angles;
+
+    outputWeights.clear();
+    previous = neighbors.back();
+    current = neighbors.front();
+    next = neighbors[1];
+    for(std::vector<H2Point>::size_type j=1; j+1<neighbors.size(); ++j)
+    {
+        r=H2Point::distance(*this, current);
+        distances.push_back(r);
+        angles.push_back(H2Point::angle(previous, *this, next)/2.0);
+
+        previous = current;
+        current = next;
+        next = neighbors[j+1];
+    }
+    r=H2Point::distance(*this, current);
+    distances.push_back(r);
+    angles.push_back(H2Point::angle(previous, *this, next)/2.0);
+
+    previous = current;
+    current = next;
+    next = neighbors.front();
+    r=H2Point::distance(*this, current);
+    distances.push_back(r);
+    angles.push_back(H2Point::angle(previous, *this, next)/2.0);
+
+    for (std::vector<double>::size_type l=0; l<angles.size(); ++l)
+    {
+        outputWeights.push_back(angles[l]/(2*M_PI*distances[l]));
+    }
+
+    sum = 0.0;
+    for (auto neighborWeight : outputWeights)
+    {
+        sum += neighborWeight;
+    }
+    for (auto & neighborWeight : outputWeights)
+    {
+        neighborWeight = neighborWeight/sum;
+    }
+}
+
+void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
+{
+    if (neighbors.size() != 6)
+    {
+        std::cout << "Error in H2Point::computeQuadraticWeights: there needs to be 6 neighbors (you gave me "
+                     << neighbors.size() << ")" << std::endl;
+    }
+
+    std::vector<double> neighborsInTangentSpaceX, neighborsInTangentSpaceY;
+    double d, r, xj, yj, sum;
+    Complex z;
+    using namespace Eigen;
+    MatrixXd m(6,6);
+    VectorXd vec(6), out(6);
+
+
+    H2Isometry A;
+    outputWeights.clear();
+    A.setByMappingPointTo0(*this);
+    std::vector<H2Point> translatedNeighbors = A*neighbors;
+
+    double epsilon = -1.0;
+    for(const auto & point : translatedNeighbors)
+    {
+        z = point.getDiskCoordinate();
+        d = abs(z);
+        r = log((1.0+d)/(1.0-d));
+        epsilon = ((epsilon < r) && epsilon > 0) ? epsilon : r;
+        neighborsInTangentSpaceX.push_back(r*real(z)/d);
+        neighborsInTangentSpaceY.push_back(r*imag(z)/d);
+    }
+
+
+    epsilon *= 0.1;
+
+    vec(0) = 1; vec(1) = 0; vec(2) = 0; vec(3) = 0;
+    vec(4) = epsilon*epsilon/4.0; vec(5) = epsilon*epsilon/4.0;
+
+    std::cout << "List of angles:";
+    for(int j=0; j<6; ++j)
+    {
+        xj = neighborsInTangentSpaceX[j];
+        yj = neighborsInTangentSpaceY[j];
+        m(0,j) = 1;
+        m(1,j) = xj;
+        m(2,j) = yj;
+        m(3,j) = xj*yj;
+        m(4,j) = xj*xj;
+        m(5,j) = yj*yj;
+        std::cout << atan2(yj, xj) << ", ";
+    }
+    std::cout << std::endl;
+
+    out = m.colPivHouseholderQr().solve(vec);
+
+    for(int j=0; j<6; ++j)
+    {
+        outputWeights.push_back(out(j));
+    }
+
+
+    //Tests
+    int counter=0;
+    std::cout << "List of weights: ";
+    for(int j=0; j<6; ++j)
+    {
+        if (out(j)<0.0)
+        {
+            ++counter;
+        }
+        std::cout << out(j) << ", ";
+    }
+    std::cout << std::endl;
+    std::cout << "Number of negative weights:" << counter << std::endl;
+
+
+    /*sum=0.0;
+    for(int j=0; j<6; ++j)
+    {
+        sum += out(j)*neighborsInTangentSpaceX[j];
+    }
+    std::cout << "A mesh point has weighted sum of X coordinates " << sum << std::endl;
+
+    sum=0.0;
+    for(int j=0; j<6; ++j)
+    {
+        sum += out(j)*neighborsInTangentSpaceY[j];
+    }
+    std::cout << "A mesh point has weighted sum of Y coordinates " << sum << std::endl;
+
+    sum=0.0;
+    for(int j=0; j<6; ++j)
+    {
+        sum += out(j)*neighborsInTangentSpaceX[j]*neighborsInTangentSpaceY[j];
+    }
+    std::cout << "A mesh point has weighted sum of X*Y coordinates " << sum << std::endl;
+
+    sum=0.0;
+    for(int j=0; j<6; ++j)
+    {
+        sum += out(j)*neighborsInTangentSpaceX[j]*neighborsInTangentSpaceX[j];
+    }
+    std::cout << "A mesh point has weighted sum of X^2 coordinates " << sum-(epsilon*epsilon/4.0) << std::endl;
+
+    sum=0.0;
+    for(int j=0; j<6; ++j)
+    {
+        sum += out(j)*neighborsInTangentSpaceY[j]*neighborsInTangentSpaceY[j];
+    }
+    std::cout << "A mesh point has weighted sum of Y^2 coordinates " << sum-(epsilon*epsilon/4.0) << std::endl;
+
+    sum = 0.0;
+    for (auto neighborWeight : outputWeights)
+    {
+        sum += neighborWeight;
+    }
+    std::cout << "sum of weights = " << sum << std::endl;*/
+}
+
+
+
+
+
+
+
 std::ostream & operator<<(std::ostream & out, const H2Point &p)
 {
     out << "H2Point with disk coordinate " << p.z;
@@ -191,6 +414,6 @@ bool compareTriples(const triple &t1, const triple &t2)
 
 //bool compareQuadruples(const quadruple &q1, const quadruple &q2)
 //{
-    //assert that std::get<0>(q1) and std::get<0>(q2) are the same.
+//assert that std::get<0>(q1) and std::get<0>(q2) are the same.
 //    return std::get<0>(q1).compareAngles(std::get<1>(q1),std::get<1>(q2));
 //}

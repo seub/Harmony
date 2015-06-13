@@ -65,6 +65,7 @@ int main(int argc, char *argv[])
     f.initializePLsmart();
 
     Canvas* canvas2 = window.rightCanvas;
+    ((H2CanvasDelegateDomain *) canvas1->delegate)->buffer.addElement(rhoImage, "blue", 2);
     ((H2CanvasDelegateTarget *) canvas2->delegate)->buffer.addElement(&f, "red", 1);
     ((H2CanvasDelegateTarget *) canvas2->delegate)->redrawBuffer();
 
