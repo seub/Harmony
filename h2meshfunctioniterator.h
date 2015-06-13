@@ -19,7 +19,7 @@ public:
     double supError() const;
 
 private:
-    const H2MeshFunction * const f;
+    const H2MeshFunction * const fInit;
     std::vector<H2Point> oldValues, newValues;
     const H2Mesh * const mesh;
 

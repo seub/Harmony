@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     //F.setNiceRhoDomain();
     //F.setRhoTarget(lengths1, twists1);
     F.setNiceRhoTarget();
-    F.setMeshDepth(5);
+    F.setMeshDepth(4);
     F.initialize();
 
     window.setFactory(&F);

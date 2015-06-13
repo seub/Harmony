@@ -3,20 +3,29 @@
 #include "fenchelnielsenconstructor.h"
 #include "h2trianglesubdivision.h"
 
-EquivariantHarmonicMapsFactory::EquivariantHarmonicMapsFactory() : function(&mesh, &rhoTarget), iterator(&function)
+EquivariantHarmonicMapsFactory::EquivariantHarmonicMapsFactory() : functionInit(&mesh, &rhoTarget), iterator(&functionInit)
 {
     reset();
 }
 
 void EquivariantHarmonicMapsFactory::reset()
 {
+    resetBooleans();
+
+    rhoDomain = IsomH2Representation(&Gamma);
+    rhoTarget = IsomH2Representation(&Gamma);
+
+    //function = functionInit;
+    stop = false;
+}
+
+void EquivariantHarmonicMapsFactory::resetBooleans()
+{
     isGenusSet = false;
     isRhoDomainSet = false;
     isRhoTargetSet = false;
     isMeshDepthSet = false;
-
-    rhoDomain = IsomH2Representation(&Gamma);
-    rhoTarget = IsomH2Representation(&Gamma);
+    isInitialized = false;
 }
 
 void EquivariantHarmonicMapsFactory::setGenus(int genus)
@@ -34,6 +43,7 @@ void EquivariantHarmonicMapsFactory::setNiceRhoDomain()
     }
     rhoDomain.setNiceRepresentation();
     isRhoDomainSet = true;
+    isInitialized = false;
 }
 
 void EquivariantHarmonicMapsFactory::setNiceRhoTarget()
@@ -44,12 +54,14 @@ void EquivariantHarmonicMapsFactory::setNiceRhoTarget()
     }
     rhoTarget.setNiceRepresentation();
     isRhoTargetSet = true;
+    isInitialized = false;
 }
 
 void EquivariantHarmonicMapsFactory::setMeshDepth(int meshDepth)
 {
     this->meshDepth = meshDepth;
     isMeshDepthSet = true;
+    isInitialized = false;
 }
 
 void EquivariantHarmonicMapsFactory::setRhoDomain(const std::vector<double> &FNLengths, const std::vector<double> FNTwists)
@@ -67,6 +79,7 @@ void EquivariantHarmonicMapsFactory::setRhoDomain(const std::vector<double> &FNL
     FenchelNielsenConstructor FN(FNLengths, FNTwists);
     rhoDomain = FN.getRepresentation(&Gamma);
     isRhoDomainSet = true;
+    isInitialized = false;
 }
 
 void EquivariantHarmonicMapsFactory::setRhoTarget(const std::vector<double> &FNLengths, const std::vector<double> FNTwists)
@@ -84,14 +97,50 @@ void EquivariantHarmonicMapsFactory::setRhoTarget(const std::vector<double> &FNL
     FenchelNielsenConstructor FN(FNLengths, FNTwists);
     rhoTarget = FN.getRepresentation(&Gamma);
     isRhoTargetSet = true;
+    isInitialized = false;
 }
 
 void EquivariantHarmonicMapsFactory::initialize()
 {
     if (!(isGenusSet && isMeshDepthSet && isRhoDomainSet && isRhoTargetSet))
     {
-        std::cout << "Error in EquivariantHarmonicMapsFactory::initialize: Factory not ready to run" << std::endl;
+        std::cout << "Error in EquivariantHarmonicMapsFactory::initialize: Factory not ready to initialize" << std::endl;
     }
     mesh = H2Mesh(rhoDomain, meshDepth);
-    function.initializePLsmart();
+    functionInit.initializePLsmart();
+    //function.initializePLsmart();
+    isInitialized = true;
 }
+
+bool EquivariantHarmonicMapsFactory::isReady() const
+{
+    return isGenusSet && isRhoDomainSet && isRhoTargetSet && isMeshDepthSet && isInitialized;
+}
+
+void EquivariantHarmonicMapsFactory::refreshFunction()
+{
+    //function = iterator.getOutput();
+}
+
+void EquivariantHarmonicMapsFactory::iterate(int n)
+{
+    if (!isReady())
+    {
+        std::cout << "Error in void EquivariantHarmonicMapsFactory::iterate(): not ready" << std::endl;
+    }
+    iterator.iterate(n);
+    refreshFunction();
+}
+
+/*void EquivariantHarmonicMapsFactory::run()
+{
+    while(!stop)
+    {
+        iterator.iterate();
+    }
+}
+
+void EquivariantHarmonicMapsFactory::stopRunning()
+{
+    stop = true;
+}*/

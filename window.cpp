@@ -199,6 +199,6 @@ void Window::setFactory(EquivariantHarmonicMapsFactory *Factory)
     ((H2CanvasDelegateDomain *) leftCanvas->delegate)->redrawBuffer();
 
     ((H2CanvasDelegateTarget *) rightCanvas->delegate)->buffer.addElement(Factory->rhoTarget, "blue", 2);
-    ((H2CanvasDelegateTarget *) rightCanvas->delegate)->buffer.addElement(&Factory->function, "red", 1);
+    ((H2CanvasDelegateTarget *) rightCanvas->delegate)->buffer.addElement(&Factory->functionInit, "red", 1);
     ((H2CanvasDelegateTarget *) rightCanvas->delegate)->redrawBuffer();
 }

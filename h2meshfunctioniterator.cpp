@@ -2,7 +2,7 @@
 #include "h2meshfunction.h"
 #include "h2trianglesubdivision.h"
 
-H2MeshFunctionIterator::H2MeshFunctionIterator(const H2MeshFunction * const f) : f(f), mesh(f->mesh)
+H2MeshFunctionIterator::H2MeshFunctionIterator(const H2MeshFunction * const f) : fInit(f), mesh(f->mesh)
 {
     oldValues = f->values;
     newValues = oldValues;
@@ -15,7 +15,7 @@ void H2MeshFunctionIterator::iterate(int n)
     std::vector<H2Point> neighborsImages;
     std::vector<double> weights;
 
-    IsomH2Representation rhoImage = *(f->rhoImage);
+    IsomH2Representation rhoImage = *(fInit->rhoImage);
     std::vector<H2Isometry> isometriesImage;
     while (n>0)
     {
@@ -54,9 +54,9 @@ void H2MeshFunctionIterator::iterate(int n)
                 }
             }
 
-            // This is unique to a weighting regime where the basepoint has a non-zero weight
+            /*// This is unique to a weighting regime where the basepoint has a non-zero weight
             neighborsImages.push_back(oldValues[i]);
-            weights.push_back(meshPoint->weight);
+            weights.push_back(meshPoint->weight);*/
             newValues[i] = H2Point::centroid(neighborsImages, weights);
             ++i;
         }
@@ -68,7 +68,7 @@ void H2MeshFunctionIterator::iterate(int n)
 
 H2MeshFunction H2MeshFunctionIterator::getOutput()
 {
-    return H2MeshFunction(mesh, f->rhoImage, oldValues);
+    return H2MeshFunction(mesh, fInit->rhoImage, oldValues);
 }
 
 double H2MeshFunctionIterator::supError() const
