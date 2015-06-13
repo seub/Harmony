@@ -40,14 +40,14 @@ void H2Buffer::addElement(const std::vector<H2GeodesicArc> &geodesicArcs, const 
 
 void H2Buffer::addElement(const H2Polygon &polygon, const QColor &color, int width)
 {
-    addElement(polygon.getSides(), color, width);
-    addElement(polygon.getVertices());
+    addElement(polygon.getSides(), color, 1);
+    addElement(polygon.getVertices(), "black", width);
 }
 
 void H2Buffer::addElement(const H2Triangle &triangle, const QColor &color, int width)
 {
-    addElement(triangle.getPoints());
-    addElement(triangle.getSides(), color, width);
+    addElement(triangle.getPoints(), "black", width);
+    addElement(triangle.getSides(), color, 1);
 }
 
 void H2Buffer::addElement(const std::vector<H2Triangle> &triangles, const QColor &color, int width)

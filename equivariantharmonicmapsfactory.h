@@ -20,6 +20,10 @@ public:
     void setRhoTarget(const std::vector<double> & FNlengths, const std::vector<double> FNtwists);
     void setNiceRhoDomain();
     void setNiceRhoTarget();
+
+    IsomH2Representation getRhoDomain() const;
+    IsomH2Representation getRhoTarget() const;
+
     void reset();
 
     void initialize();

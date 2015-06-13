@@ -23,11 +23,11 @@ int main(int argc, char *argv[])
     std::vector<double> twists1,twists2;
     for (int i=0; i<3*g-3; i++)
     {
-        //twists.push_back(1.0-.3*i);
-        twists1.push_back(0.0);
+        twists1.push_back(1.0-.3*i);
+        //twists1.push_back(0.0);
         twists2.push_back(0.0);
     }
-    twists2[1] = -2*M_PI;
+    twists2[2] = 8.0*M_PI;
 
     for (int i=0; i<3*g-3; i++)
     {
@@ -38,16 +38,33 @@ int main(int argc, char *argv[])
     EquivariantHarmonicMapsFactory F;
     F.setGenus(2);
     F.setRhoDomain(lengths1, twists1);
-    //F.setNiceRhoDomain();
-    //F.setRhoTarget(lengths1, twists1);
-    F.setNiceRhoTarget();
+
+    IsomH2Representation testRho = F.getRhoDomain();
+    H2Polygon poly = testRho.generatePolygon(100);
+    H2PolygonTriangulater T1(&poly);
+    ((H2CanvasDelegateDomain*) (window.leftCanvas->delegate))->buffer.addElement(T1.getTriangles(), "blue", 5);
+    poly.insertMidpoints();
+    H2PolygonTriangulater T2(&poly);
+    ((H2CanvasDelegateTarget*) (window.rightCanvas->delegate))->buffer.addElement(T2.getTriangles(), "blue", 5);
+
+    /*    //F.setNiceRhoDomain();
+    F.setRhoTarget(lengths2, twists2);
+    //F.setNiceRhoTarget();
     F.setMeshDepth(5);
     F.initialize();
 
+    //std::cout << "RhoDomain is " << F.getRhoDomain() << std::endl;
+    //std::cout << "RhoTarget is " << F.getRhoTarget() << std::endl;
+
     window.setFactory(&F);
+*/
 
     window.show();
     window.resizeCanvases();
+
+
+
+
 
     std::cout << std::endl;
 

@@ -98,6 +98,6 @@ traiter proprement l'inclusion de factory dans window et dans les canvas
 8. Hopf differential? Energy?
 
 
-
+9. Add functionality to the window (lots): all choices (FN parameters of domain/target, depth), iteration / start over
 
 

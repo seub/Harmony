@@ -55,6 +55,8 @@ public:
     Complex getCircleCenterInDiskModel() const;
     double getCircleRadiusInDiskModel() const;
 
+    std::vector<H2Point> getEvenSubdivision(int nbCuts) const;
+
     void getExtremalCoordinatesInHyperboloidProjection(double & xMin, double & xMax, double & yMin, double & yMax);
 
     H2Geodesic getGeodesic() const;

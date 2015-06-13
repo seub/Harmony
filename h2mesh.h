@@ -36,6 +36,7 @@ private:
     int depth;
 
     H2Polygon fundamentalDomain;
+    H2SteinerPolygon fundamentalSteinerDomain;
 
     std::vector<H2TriangleSubdivision> subdivisions;
     std::vector<TriangulationTriangle> triangles;
@@ -45,6 +46,7 @@ private:
     std::vector<H2MeshCutPoint> cutPoints;
     std::vector<H2MeshBoundaryPoint> boundaryPoints;
     std::vector<H2MeshVertexPoint> vertexPoints;
+    std::vector<H2MeshSteinerPoint> steinerPoints;
 
 };
 

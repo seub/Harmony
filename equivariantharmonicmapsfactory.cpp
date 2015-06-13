@@ -86,6 +86,16 @@ void EquivariantHarmonicMapsFactory::setRhoTarget(const std::vector<double> &FNL
     isRhoTargetSet = true;
 }
 
+IsomH2Representation EquivariantHarmonicMapsFactory::getRhoDomain() const
+{
+    return rhoDomain;
+}
+
+IsomH2Representation EquivariantHarmonicMapsFactory::getRhoTarget() const
+{
+    return rhoTarget;
+}
+
 void EquivariantHarmonicMapsFactory::initialize()
 {
     if (!(isGenusSet && isMeshDepthSet && isRhoDomainSet && isRhoTargetSet))

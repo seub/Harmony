@@ -2,6 +2,7 @@
 #define H2POLYGONTRIANGULATER_H
 
 #include "tools.h"
+#include "h2polygon.h"
 
 class H2GeodesicArc;
 
@@ -39,8 +40,6 @@ private:
 };
 
 
-
-class H2Polygon;
 class H2Triangle;
 
 class H2PolygonTriangulater
@@ -80,13 +79,16 @@ private:
     double minTriangleAngle() const;
     double minTriangleSide() const;
 
+    void createSteinerPoints();
+
     const H2Polygon * const polygon;
     bool orientation;
     std::vector<TriangulationCut> cuts;
     std::vector<TriangulationTriangle> triangles;
     std::vector<int> sideTrianglesIndices;
     std::vector<int> sideTrianglesBoundarySideIndices;
-
+    H2SteinerPolygon steinerPolygon;
+    H2Polygon fullPolygon;
 
 };
 
