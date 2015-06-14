@@ -11,7 +11,7 @@ class H2Triangle
 {
     friend std::ostream & operator<<(std::ostream &out, const H2Triangle &T);
     friend H2Triangle operator*(const H2Isometry &f, const H2Triangle &T);
-    //friend class H2TriangleSubdivision;
+    friend class H2TriangleSubdivision;
 
 public:
     H2Triangle();
@@ -31,7 +31,7 @@ public:
     bool isVertexCloseInDiskModel(const H2Point &point, double detectionRadiusSquared, int &vertexIndex) const;
 
 
-//private:
+private:
     H2Point a, b, c;
 };
 

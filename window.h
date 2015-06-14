@@ -23,7 +23,7 @@ signals:
 
 public slots:
 
-//private:
+private:
 public:
     void createWindow();
     void enableCanvasesUpdates(bool b);

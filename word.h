@@ -7,8 +7,6 @@
 class Word
 {
     friend Word operator*(Word w1, const Word &w2);
-    friend std::vector<Word> operator*(const Word &w, std::vector<Word> V);
-    friend std::vector<Word> operator*(std::vector<Word> V, const Word &w);
     friend std::ostream & operator <<(std::ostream &out, const Word &w);
 
 public:

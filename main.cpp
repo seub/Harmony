@@ -9,6 +9,7 @@
 #include "h2canvasdelegate.h"
 #include "canvas.h"
 #include "equivariantharmonicmapsfactory.h"
+#include "h2isometry.h"
 
 int main(int argc, char *argv[])
 {
@@ -44,7 +45,8 @@ int main(int argc, char *argv[])
     F.setMeshDepth(4);
     F.initialize();
 
-    //IsomH2Representation rho = F.getRhoDomain();
+    IsomH2Representation rhoDomain = F.getRhoDomain();
+    IsomH2Representation rhoTarget = F.getRhoTarget();
 
     //H2Mesh mesh(rho, 1);
 
@@ -54,7 +56,12 @@ int main(int argc, char *argv[])
 
     ((H2CanvasDelegateDomain*) (window.leftCanvas->delegate))->buffer.addElement(&F.mesh,"blue", 1);
     ((H2CanvasDelegateDomain*) (window.leftCanvas->delegate))->redrawBuffer();
+    ((H2CanvasDelegateDomain*) (window.leftCanvas->delegate))->addKickedDrawing(rhoDomain.getSidePairingsNormalizedAroundVertex());
+    ((H2CanvasDelegateDomain*) (window.leftCanvas->delegate))->redrawBuffer();
     ((H2CanvasDelegateTarget*) (window.rightCanvas->delegate))->buffer.addElement(&f,"red", 1);
+    ((H2CanvasDelegateTarget*) (window.rightCanvas->delegate))->redrawBuffer();
+    ((H2CanvasDelegateTarget*) (window.rightCanvas->delegate))->buffer.setIsometries(rhoTarget.getSidePairingsNormalizedAroundVertex());
+    ((H2CanvasDelegateTarget*) (window.rightCanvas->delegate))->addKickedDrawing(rhoTarget.getSidePairingsNormalizedAroundVertex());
     ((H2CanvasDelegateTarget*) (window.rightCanvas->delegate))->redrawBuffer();
 
     window.show();

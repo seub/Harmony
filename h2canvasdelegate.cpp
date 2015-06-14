@@ -326,10 +326,27 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
     switch(keyEvent->key())
     {
     case Qt::Key_Space :
-        buffer.function->iterate(200);
+        buffer.function->iterate(20);
         buffer.refreshFunction();
+        addKickedDrawing();
         redrawBuffer();
 
         break;
     }
+}
+
+
+void H2CanvasDelegate::addKickedDrawing(const H2Isometry &A)
+{
+    buffer.addKickedDrawing(A);
+}
+
+void H2CanvasDelegate::addKickedDrawing(const std::vector<H2Isometry> &vectorA)
+{
+    buffer.addKickedDrawing(vectorA);
+}
+
+void H2CanvasDelegate::addKickedDrawing()
+{
+    buffer.addKickedDrawing();
 }
