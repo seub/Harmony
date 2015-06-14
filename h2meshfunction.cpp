@@ -25,6 +25,11 @@ void H2MeshFunction::initializePL(const H2Point &basePoint)
     }
     // vertexImages needs fixing by this point: insert midpoints
 
+    H2SteinerPolygon SteinerPolygonImage(vertexImages, mesh->fundamentalSteinerDomain.getVectorNbSteinerPoints());
+
+    std::vector<H2Point> SteinerPolygonImageVertices = SteinerPolygonImage.getFullPolygon().getVertices();
+
+
     std::vector<TriangulationTriangle> triangles = mesh->triangles;
     std::vector<H2TriangleSubdivision> subdivisionImages;
     subdivisionImages.reserve(triangles.size());
@@ -32,7 +37,7 @@ void H2MeshFunction::initializePL(const H2Point &basePoint)
     for(const auto & triangle : triangles)
     {
         triangle.getVertices(i,j,k);
-        subdivisionImages.push_back(H2TriangleSubdivision(vertexImages[i],vertexImages[j],vertexImages[k],depth));
+        subdivisionImages.push_back(H2TriangleSubdivision(SteinerPolygonImageVertices[i],SteinerPolygonImageVertices[j],SteinerPolygonImageVertices[k],depth));
     }
 
     values.clear();

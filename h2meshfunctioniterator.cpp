@@ -22,7 +22,6 @@ void H2MeshFunctionIterator::iterate(int n)
         i=0;
         for(const auto & meshPoint : mesh->meshPoints)
         {
-            neighborsImages.clear();
             weights = meshPoint->neighborsWeights;
             neighborsImages.clear();
 
@@ -39,6 +38,16 @@ void H2MeshFunctionIterator::iterate(int n)
             else if (meshPoint->isVertexPoint())
             {
                 isometriesImage = rhoImage.evaluateRepresentation( ((H2MeshVertexPoint*)meshPoint) ->neighborsPairings);
+                j=0;
+                for(auto k : meshPoint->neighborsIndices)
+                {
+                    neighborsImages.push_back(isometriesImage[j]*oldValues[k]);
+                    ++j;
+                }
+            }
+            else if (meshPoint->isSteinerPoint())
+            {
+                isometriesImage = rhoImage.evaluateRepresentation( ((H2MeshSteinerPoint*)meshPoint) ->neighborsPairings);
                 j=0;
                 for(auto k : meshPoint->neighborsIndices)
                 {

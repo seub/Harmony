@@ -10,6 +10,11 @@ H2Polygon::H2Polygon()
     vertices.reserve(18);
 }
 
+H2Polygon::H2Polygon(std::vector<H2Point> vertices) : vertices(vertices)
+{
+
+}
+
 void H2Polygon::addVertex(const H2Point &p)
 {
     vertices.push_back(p);
@@ -471,7 +476,7 @@ void H2Polygon::insertMidpoints()
     vertices = newVertices;
 }
 
-H2SteinerPolygon::H2SteinerPolygon(std::vector<int> nbSteinerPoints) : H2Polygon(), nbSteinerPoints(nbSteinerPoints)
+H2SteinerPolygon::H2SteinerPolygon(std::vector<H2Point> vertices, std::vector<int> nbSteinerPoints) : H2Polygon(vertices), nbSteinerPoints(nbSteinerPoints)
 {
 }
 
@@ -521,6 +526,58 @@ int H2SteinerPolygon::getIndexOfFullVertex(int vertexIndex) const
     return sum;
 }
 
+std::vector<int> H2SteinerPolygon::getVectorNbSteinerPoints() const
+{
+    return nbSteinerPoints;
+}
 
+int H2SteinerPolygon::getActualSide(int vertexInFullPolygon) const
+{
+    int side = 0;
+    int actualVertexIndexInFullPolygon = 0;
+    while (actualVertexIndexInFullPolygon <= vertexInFullPolygon)
+    {
+        actualVertexIndexInFullPolygon += nbSteinerPoints[side] + 1;
+        ++side;
+    }
+    return side-1;
+}
+
+bool H2SteinerPolygon::lieOnSameActualSide(int vertexInFullPolygon1, int vertexInFullPolygon2) const
+{
+    int side1 = 0;
+    int actualVertexIndexInFullPolygon = 0;
+    while (actualVertexIndexInFullPolygon <= vertexInFullPolygon1)
+    {
+        actualVertexIndexInFullPolygon += nbSteinerPoints[side1] + 1;
+        ++side1;
+    }
+    --side1;
+
+    int vertex1 = actualVertexIndexInFullPolygon - (nbSteinerPoints[side1] + 1);
+
+    int side2 = 0;
+    actualVertexIndexInFullPolygon = 0;
+    while (actualVertexIndexInFullPolygon <= vertexInFullPolygon2)
+    {
+        actualVertexIndexInFullPolygon += nbSteinerPoints[side2] + 1;
+        ++side2;
+    }
+    --side2;
+    int vertex2 = actualVertexIndexInFullPolygon - (nbSteinerPoints[side2] + 1);
+
+    if (vertexInFullPolygon1 == vertex1)
+    {
+        return ((side2 == side1) || ((side1 == 0) && (side2 == nbVertices()-1)) || ((side1 != 0) && (side2 == side1-1)) || ((vertexInFullPolygon2 == vertex2) && (side2 == side1+1)));
+    }
+    else if (vertexInFullPolygon2 == vertex2)
+    {
+        return ((side1 == side2) || ((side2 == 0) && (side1 == nbVertices()-1)) || ((side2 != 0) && (side1 == side2-1)));
+    }
+    else
+    {
+        return side1 == side2;
+    }
+}
 
 

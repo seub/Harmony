@@ -307,11 +307,11 @@ void H2CanvasDelegateTarget::subRedrawBuffer()
     {
         for (const auto & arc : buffer.functionArcs)
         {
-            drawH2GeodesicArc(arc, buffer.functionColor, buffer.functionWidth);
+            drawH2GeodesicArc(arc, buffer.functionColor, 1);
         }
         for (const auto & point : buffer.functionPoints)
         {
-            drawH2Point(point);
+            drawH2Point(point, "black", buffer.functionWidth);
         }
     }
 }
@@ -326,7 +326,7 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
     switch(keyEvent->key())
     {
     case Qt::Key_Space :
-        buffer.function->iterate(100);
+        buffer.function->iterate(200);
         buffer.refreshFunction();
         redrawBuffer();
 

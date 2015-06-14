@@ -89,6 +89,14 @@ std::vector<H2Point> H2Mesh::getKickedH2Neighbors(int index) const
             res[i] = isometries[i]*res[i];
         }
     }
+    else if (point->isSteinerPoint())
+    {
+        std::vector<H2Isometry> isometries = rho.evaluateRepresentation(((H2MeshSteinerPoint*) point)->neighborsPairings);
+        for (unsigned int i=0; i<neighborIndices.size(); ++i)
+        {
+            res[i] = isometries[i]*res[i];
+        }
+    }
 
     return res;
 }

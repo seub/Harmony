@@ -16,14 +16,14 @@ H2PolygonTriangulater::H2PolygonTriangulater(const H2Polygon * const polygon) : 
 double H2PolygonTriangulater::minAngleOfCutInSubpolygon(const std::vector<int> & indices, unsigned int cut1, unsigned int cut2) const
 {
     std::vector<double> angles(4);
-    angles[1] = H2Point::angle(fullPolygon->getVertex(indices[cut1==0?indices.size()-1:cut1-1]),
-            fullPolygon->getVertex(indices[cut1]), fullPolygon->getVertex(indices[cut2]));
-    angles[2] = H2Point::angle(fullPolygon->getVertex(indices[cut2==0?indices.size()-1:cut2-1]),
-                    fullPolygon->getVertex(indices[cut2]), fullPolygon->getVertex(indices[cut1]));
-    angles[3] = H2Point::angle(fullPolygon->getVertex(indices[cut2]),
-                    fullPolygon->getVertex(indices[cut1]), fullPolygon->getVertex(indices[cut1+1 >= indices.size()?0:cut1+1]));
-    angles[0] = H2Point::angle(fullPolygon->getVertex(indices[cut1]),
-                    fullPolygon->getVertex(indices[cut2]), fullPolygon->getVertex(indices[cut2+1 >= indices.size()?0:cut2+1]));
+    angles[1] = H2Point::angle(fullPolygon.getVertex(indices[cut1==0?indices.size()-1:cut1-1]),
+            fullPolygon.getVertex(indices[cut1]), fullPolygon.getVertex(indices[cut2]));
+    angles[2] = H2Point::angle(fullPolygon.getVertex(indices[cut2==0?indices.size()-1:cut2-1]),
+            fullPolygon.getVertex(indices[cut2]), fullPolygon.getVertex(indices[cut1]));
+    angles[3] = H2Point::angle(fullPolygon.getVertex(indices[cut2]),
+                               fullPolygon.getVertex(indices[cut1]), fullPolygon.getVertex(indices[cut1+1 >= indices.size()?0:cut1+1]));
+    angles[0] = H2Point::angle(fullPolygon.getVertex(indices[cut1]),
+                               fullPolygon.getVertex(indices[cut2]), fullPolygon.getVertex(indices[cut2+1 >= indices.size()?0:cut2+1]));
     if(orientation)
     {
         for(auto &a : angles)
@@ -42,21 +42,21 @@ std::vector<double> H2PolygonTriangulater::subpolygonAngles(const std::vector<in
     int N = indices.size();
     res.resize(N);
 
-    double angle = H2Point::angle(fullPolygon->getVertex(indices.back()),
-                                  fullPolygon->getVertex(indices.front()), fullPolygon->getVertex(indices[1]));
+    double angle = H2Point::angle(fullPolygon.getVertex(indices.back()),
+                                  fullPolygon.getVertex(indices.front()), fullPolygon.getVertex(indices[1]));
     angle = orientation ? 2.0*M_PI - angle : angle;
     res[0] = angle;
 
     for (int i =1; i < N - 1; i++)
     {
-        angle = H2Point::angle(fullPolygon->getVertex(indices[i - 1]),
-                fullPolygon->getVertex(indices[i]), fullPolygon->getVertex(indices[i+1]));
+        angle = H2Point::angle(fullPolygon.getVertex(indices[i - 1]),
+                fullPolygon.getVertex(indices[i]), fullPolygon.getVertex(indices[i+1]));
         angle = orientation ? 2.0*M_PI - angle : angle;
         res[i] = angle;
     }
 
-    angle = H2Point::angle(fullPolygon->getVertex(indices[N - 2]),
-            fullPolygon->getVertex(indices.back()), fullPolygon->getVertex(indices.front()));
+    angle = H2Point::angle(fullPolygon.getVertex(indices[N - 2]),
+            fullPolygon.getVertex(indices.back()), fullPolygon.getVertex(indices.front()));
     angle = orientation ? 2.0*M_PI - angle : angle;
     res[N-1] = angle;
 
@@ -118,24 +118,30 @@ void H2PolygonTriangulater::findCutInSubpolygon2(const std::vector<int> &indices
     double max = 0, angle;
     for(j=2;j<indices.size()-1;++j)
     {
-        angle = minAngleOfCutInSubpolygon(indices,0,j);
-        if(angle>max)
+        if (!sameSide(indices[0], indices[j]))
         {
-            max = angle;
-            outputIndex1 = 0;
-            outputIndex2 = j;
+            angle = minAngleOfCutInSubpolygon(indices,0,j);
+            if(angle>max)
+            {
+                max = angle;
+                outputIndex1 = 0;
+                outputIndex2 = j;
+            }
         }
     }
     for(i = 1;i+2<indices.size();++i)
     {
         for(j=i+2;j<indices.size();++j)
         {
-            angle = minAngleOfCutInSubpolygon(indices,i,j);
-            if(angle>max)
+            if (!sameSide(indices[i], indices[j]))
             {
-                max = angle;
-                outputIndex1 = i;
-                outputIndex2 = j;
+                angle = minAngleOfCutInSubpolygon(indices,i,j);
+                if(angle>max)
+                {
+                    max = angle;
+                    outputIndex1 = i;
+                    outputIndex2 = j;
+                }
             }
         }
     }
@@ -254,7 +260,7 @@ void TriangulationTriangle::getVertices(int &i1, int &i2, int &i3) const
 
 std::vector<int> H2PolygonTriangulater::nbCutsFromVertex() const
 {
-    std::vector<int> res(fullPolygon->nbVertices());
+    std::vector<int> res(fullPolygon.nbVertices());
     for (const auto &cut : cuts)
     {
         ++res[cut.vertexIndex1];
@@ -265,7 +271,7 @@ std::vector<int> H2PolygonTriangulater::nbCutsFromVertex() const
 
 void H2PolygonTriangulater::completeCutsAndSides()
 {
-    int N = fullPolygon->nbVertices();
+    int N = fullPolygon.nbVertices();
     sideTrianglesIndices.resize(N);
     sideTrianglesBoundarySideIndices.resize(N);
 
@@ -388,9 +394,10 @@ void H2PolygonTriangulater::completeCutsAndSides()
 
 void H2PolygonTriangulater::triangulate()
 {
+    createSteinerPoints();
 
     std::vector<int> indices;
-    int i, N = fullPolygon->nbVertices();
+    int i, N = fullPolygon.nbVertices();
     indices.resize(N);
     for (i=0; i<N; i++)
     {
@@ -411,7 +418,7 @@ std::vector<H2Triangle> H2PolygonTriangulater::getTriangles() const
     for (unsigned int i=0; i<triangles.size(); i++)
     {
         triangles[i].getVertices(i1, i2, i3);
-        res.push_back(H2Triangle(fullPolygon->getVertex(i1), fullPolygon->getVertex(i2), fullPolygon->getVertex(i3)));
+        res.push_back(H2Triangle(fullPolygon.getVertex(i1), fullPolygon.getVertex(i2), fullPolygon.getVertex(i3)));
     }
     return res;
 }
@@ -431,13 +438,13 @@ std::vector<H2GeodesicArc> H2PolygonTriangulater::getH2Cuts() const
     std::vector<H2GeodesicArc> output;
     for (const auto &cut : cuts)
     {
-        output.push_back(H2GeodesicArc(fullPolygon->getVertex(cut.vertexIndex1), fullPolygon->getVertex(cut.vertexIndex2)));
+        output.push_back(H2GeodesicArc(fullPolygon.getVertex(cut.vertexIndex1), fullPolygon.getVertex(cut.vertexIndex2)));
     }
     return output;
 }
 
 void H2PolygonTriangulater::adjacentSidesIndices(int cutIndex, int &outputIndexLeft1, int &outputIndexLeft2,
-                                                    int &outputIndexRight1, int &outputIndexRight2) const
+                                                 int &outputIndexRight1, int &outputIndexRight2) const
 {
     bool failLeft = true;
 
@@ -487,7 +494,7 @@ void H2PolygonTriangulater::verticesIndices(std::vector< std::vector<int> > &tri
                                             std::vector< std::vector<int> > &indicesInTriangles) const
 {
     int i, nbTriangles = triangles.size();
-    int N = fullPolygon->nbVertices();
+    int N = fullPolygon.nbVertices();
     triangleIndices.resize(N);
     indicesInTriangles.resize(N);
 
@@ -526,7 +533,7 @@ double H2PolygonTriangulater::minTriangleAngle() const
 
 double H2PolygonTriangulater::minTriangleSide() const
 {
-    std::vector<H2GeodesicArc> segments = fullPolygon->getSides();
+    std::vector<H2GeodesicArc> segments = fullPolygon.getSides();
     std::vector<H2GeodesicArc> H2cuts = getH2Cuts();
     segments.insert(segments.end(), H2cuts.begin(), H2cuts.end());
 
@@ -542,10 +549,28 @@ double H2PolygonTriangulater::minTriangleSide() const
 void H2PolygonTriangulater::createSteinerPoints()
 {
     std::vector<int> nbSteinerPoints;
-    for(int j=0; j<polygon->nbVertices(); ++j)
+    std::vector<H2GeodesicArc> sides = polygon->getSides();
+    std::vector<double> sideLengths;
+    for (const auto & side : sides)
+    {
+        sideLengths.push_back(side.length());
+    }
+    double minlength = *std::min_element(sideLengths.begin(), sideLengths.end());
+    for (const auto & sideLength : sideLengths)
+    {
+        nbSteinerPoints.push_back(Tools::intRound(2*sideLength/minlength)-1);
+    }
+
+
+    /*     for(int j=0; j<polygon->nbVertices(); ++j)
     {
         nbSteinerPoints.push_back(1);
-    }
-    steinerPolygon = H2SteinerPolygon(nbSteinerPoints);
+    }*/
+    steinerPolygon = H2SteinerPolygon(polygon->getVertices(), nbSteinerPoints);
     fullPolygon = steinerPolygon.getFullPolygon();
+}
+
+bool H2PolygonTriangulater::sameSide(int fullIndex1, int fullIndex2) const
+{
+    return steinerPolygon.lieOnSameActualSide(fullIndex1, fullIndex2);
 }

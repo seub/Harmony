@@ -17,6 +17,7 @@ class H2Polygon
 
 public:
     H2Polygon();
+    H2Polygon(std::vector<H2Point> vertices);
 
     void addVertex(const H2Point & p);
     void removeLastVertex();
@@ -62,13 +63,17 @@ class H2SteinerPolygon : H2Polygon
 {
 
 public:
-    H2SteinerPolygon(std::vector<int> nbSteinerPoints);
+    H2SteinerPolygon() {}
+    H2SteinerPolygon(std::vector<H2Point> vertices, std::vector<int> nbSteinerPoints);
 
     std::vector<H2Point> getPointsOnSide(int side) const;
     H2Polygon getFullPolygon() const;
+    std::vector<int> getVectorNbSteinerPoints() const;
     int getTotalNbSteinerPoints() const;
     int getNbSteinerPointsOnSide(int side) const;
     int getIndexOfFullVertex(int vertexIndex) const;
+    int getActualSide(int vertexInFullPolygon) const;
+    bool lieOnSameActualSide(int vertexInFullPolygon1, int vertexInFullPolygon2) const;
 
 private:
     std::vector<int> nbSteinerPoints;

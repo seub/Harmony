@@ -26,7 +26,7 @@ public:
     void addElement(const H2Geodesic & geodesic, const QColor & color = "black", int width = 1);
     void addElement(const H2GeodesicArc & geodesicArc, const QColor & color = "black", int width = 1);
     void addElement(const std::vector<H2GeodesicArc> & geodesicArcs, const QColor & color = "black", int width = 1);
-    void addElement(const H2Polygon & polygon, const QColor & color = "black", int width = 1);
+    void addElement(const H2Polygon & polygon, const QColor & color = "black", int width = 3);
     void addElement(const H2Triangle & triangle, const QColor & color = "black", int width = 1);
     void addElement(const std::vector<H2Triangle> & triangles, const QColor & color = "black", int width = 1);
     void addElement(const H2Isometry & isometry, const QColor & color = "black", int width = 1);

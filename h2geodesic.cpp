@@ -494,7 +494,7 @@ std::vector<H2Point> H2GeodesicArc::getEvenSubdivision(int nbCuts) const
 
     for(int j=0; j<nbCuts+2; ++j)
     {
-        output.push_back(H2Point::proportionalPoint(p1,p2,j/(nbCuts+1)));
+        output.push_back(H2Point::proportionalPoint(p1,p2,j*1.0/(nbCuts+1)));
     }
     return output;
 }

@@ -38,7 +38,7 @@ public:
     void run();
     void stopRunning();*/
 
-private:
+//private:
     void resetBooleans();
     bool isReady() const;
     void refreshFunction();

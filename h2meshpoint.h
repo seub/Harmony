@@ -86,13 +86,12 @@ class H2MeshSteinerPoint : public H2MeshPoint
     friend class H2MeshFunctionIterator;
 
 private:
-    H2MeshSteinerPoint(int subdivisionIndex, int indexInSubdivision, int vertexIndex, int side,
+    H2MeshSteinerPoint(int subdivisionIndex, int indexInSubdivision, int side,
                       std::vector<int> subdivisionIndices, std::vector<int> indicesInSubdivisions) :
-        H2MeshPoint(subdivisionIndex, indexInSubdivision), vertexIndex(vertexIndex), side(side),
+        H2MeshPoint(subdivisionIndex, indexInSubdivision), side(side),
         subdivisionIndices(subdivisionIndices), indicesInSubdivisions(indicesInSubdivisions) {}
     bool isSteinerPoint() const {return true;}
 
-    int vertexIndex;
     int side;
     int partnerPointIndex;
     std::vector<Word> neighborsPairings;

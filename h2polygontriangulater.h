@@ -81,6 +81,8 @@ private:
 
     void createSteinerPoints();
 
+    bool sameSide(int fullIndex1, int fullIndex2) const;
+
     const H2Polygon * const polygon;
     bool orientation;
     std::vector<TriangulationCut> cuts;

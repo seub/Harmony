@@ -27,33 +27,35 @@ int main(int argc, char *argv[])
         //twists1.push_back(0.0);
         twists2.push_back(0.0);
     }
-    twists2[2] = 8.0*M_PI;
+    twists2[2] = 2.0*M_PI;
 
     for (int i=0; i<3*g-3; i++)
     {
         lengths1.push_back(2);
-        lengths2.push_back(1.0);
+        lengths2.push_back(1.0+3.0*i);
     }
 
     EquivariantHarmonicMapsFactory F;
     F.setGenus(2);
-    F.setRhoDomain(lengths1, twists1);
-    //F.setNiceRhoDomain();
-    //F.setRhoTarget(lengths1, twists1);
-    F.setNiceRhoTarget();
-    F.setMeshDepth(4);
-
-    /*    //F.setNiceRhoDomain();
+    //F.setRhoDomain(lengths1, twists1);
+    F.setNiceRhoDomain();
     F.setRhoTarget(lengths2, twists2);
     //F.setNiceRhoTarget();
-    F.setMeshDepth(5);
+    F.setMeshDepth(4);
     F.initialize();
 
-    //std::cout << "RhoDomain is " << F.getRhoDomain() << std::endl;
-    //std::cout << "RhoTarget is " << F.getRhoTarget() << std::endl;
+    //IsomH2Representation rho = F.getRhoDomain();
 
-    window.setFactory(&F);
-*/
+    //H2Mesh mesh(rho, 1);
+
+    H2MeshFunction f(F.functionInit);
+    //f.iterate();
+
+
+    ((H2CanvasDelegateDomain*) (window.leftCanvas->delegate))->buffer.addElement(&F.mesh,"blue", 1);
+    ((H2CanvasDelegateDomain*) (window.leftCanvas->delegate))->redrawBuffer();
+    ((H2CanvasDelegateTarget*) (window.rightCanvas->delegate))->buffer.addElement(&f,"red", 1);
+    ((H2CanvasDelegateTarget*) (window.rightCanvas->delegate))->redrawBuffer();
 
     window.show();
     window.resizeCanvases();
