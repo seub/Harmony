@@ -156,13 +156,12 @@ void H2Buffer::refreshFunction()
 {
     functionArcs.clear();
     functionPoints.clear();
-<<<<<<< HEAD
+
     functionColors.clear();
     functionWidths.clear();
-    std::vector<H2Triangle> triangles = function->getTriangles();
-=======
+
     std::vector<H2Triangle> triangles = function->getTrianglesUp();
->>>>>>> 3e1a391b1f6ee80fd0e97c1e0b10c20f0b372eeb
+
     functionArcs.reserve(3*triangles.size());
     functionPoints.reserve(3*triangles.size());
     std::vector<H2GeodesicArc> sides;

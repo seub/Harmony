@@ -11,7 +11,7 @@ H2MeshFunctionIterator::H2MeshFunctionIterator(const H2MeshFunction * const f) :
 
 void H2MeshFunctionIterator::iterate(int n)
 {
-    int i,j, N=n;
+    int i,j; //int N =0;
     std::vector<H2Point> neighborsImages;
     std::vector<double> weights;
 
