@@ -125,7 +125,7 @@ template<typename T> std::ostream & operator<<(std::ostream &out, const std::vec
     return out;
 }
 
-template<typename T> std::vector<T> operator+(std::vector<T> V, T &x)
+template<typename T> std::vector<T> operator+(std::vector<T> V, const T &x)
 {
     for (auto &v : V)
     {
@@ -134,6 +134,22 @@ template<typename T> std::vector<T> operator+(std::vector<T> V, T &x)
     return V;
 }
 
+template<typename T, typename F> std::vector<T> operator*(const F & f, std::vector<T> V)
+{
+    for (auto &v : V)
+    {
+        v = f*v;
+    }
+    return V;
+}
 
+template<typename T, typename F> std::vector<T> operator*(std::vector<T> V, const F & f)
+{
+    for (auto &v : V)
+    {
+        v = v*f;
+    }
+    return V;
+}
 
 #endif // TOOLS_H

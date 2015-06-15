@@ -21,12 +21,18 @@ public:
     void initializePLsmart();
 
 private:
+<<<<<<< HEAD
     H2MeshFunction(); // Dummy constructor
     H2MeshFunction(const H2MeshFunction &other); // Copy constructor
     H2MeshFunction & operator=(H2MeshFunction other); // Copy-assignment operator
     explicit H2MeshFunction(const H2Mesh *mesh, const IsomH2Representation *rhoImage, const std::vector<H2Point> &values);
     const H2Mesh *mesh;
     const IsomH2Representation *rhoImage;
+=======
+    explicit H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation * const rhoImage, std::vector<H2Point> values);
+    const H2Mesh * const mesh;
+    const IsomH2Representation * const rhoImage;
+>>>>>>> 91fedd6e4c65254211900beb9463362abc24b3a3
     std::vector<H2Point> values;
 };
 

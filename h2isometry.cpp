@@ -228,16 +228,6 @@ H2Point operator *(const H2Isometry & f, const H2Point & p)
     return pOut;
 }
 
-std::vector<H2Point> operator *(const H2Isometry & f, const std::vector<H2Point> & pts)
-{
-    std::vector<H2Point> out;
-    for (const auto & p : pts)
-    {
-        out.push_back(f*p);
-    }
-    return out;
-}
-
 H2Polygon operator*(const H2Isometry &f, const H2Polygon &P)
 {
     H2Polygon res;
@@ -249,27 +239,6 @@ H2Polygon operator*(const H2Isometry &f, const H2Polygon &P)
     return res;
 }
 
-std::vector<H2Polygon> operator *(const std::vector<H2Isometry> & listOfIsoms, const H2Polygon & P)
-{
-    std::vector<H2Polygon> listOfPolys;
-    listOfPolys.reserve(listOfIsoms.size());
-    for (unsigned int i=0; i<listOfIsoms.size(); i++)
-    {
-        listOfPolys.push_back(listOfIsoms[i]*P);
-    }
-    return listOfPolys;
-}
-
-std::vector<H2Isometry> operator *(const H2Isometry & f, const std::vector<H2Isometry> & listOfIsoms)
-{
-    std::vector<H2Isometry> output;
-    output.reserve(listOfIsoms.size());
-    for (unsigned int i =0; i<listOfIsoms.size(); i++)
-    {
-        output.push_back(f*listOfIsoms[i]);
-    }
-    return output;
-}
 
 H2Geodesic operator*(const H2Isometry &f, const H2Geodesic &L)
 {

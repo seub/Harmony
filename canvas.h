@@ -24,7 +24,7 @@ public:
 signals:
 
 
-//private:
+private:
 public:
     CanvasDelegate *delegate;
 

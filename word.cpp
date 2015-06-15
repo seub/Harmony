@@ -67,24 +67,6 @@ Word operator*(Word w1, const Word &w2)
     return w1;
 }
 
-std::vector<Word> operator*(const Word &w, std::vector<Word> V)
-{
-    for(auto &x : V)
-    {
-        x = w*x;
-    }
-    return V;
-}
-
-
-std::vector<Word> operator*(std::vector<Word> V, const Word &w)
-{
-    for(auto &x : V)
-    {
-        x = x*w;
-    }
-    return V;
-}
 
 std::vector<Word> Word::contract(std::vector<Word> V)
 {

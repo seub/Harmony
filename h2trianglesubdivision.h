@@ -11,7 +11,11 @@ class H2TriangleSubdivision
     friend class H2MeshConstructor;
     friend class H2MeshFunction;
     friend std::ostream & operator<<(std::ostream & out, const H2TriangleSubdivision &T);
+<<<<<<< HEAD
     friend void swap(H2TriangleSubdivision &first, H2TriangleSubdivision &second); // swap function
+=======
+    friend void swap(H2TriangleSubdivision &first, H2TriangleSubdivision &second); //swap function
+>>>>>>> 91fedd6e4c65254211900beb9463362abc24b3a3
 
 public:
     H2TriangleSubdivision(); // Dummy constructor

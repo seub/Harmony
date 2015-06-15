@@ -17,6 +17,8 @@
 class H2Buffer
 {
     friend class H2CanvasDelegate;
+    friend class H2CanvasDelegateDomain;
+    friend class H2CanvasDelegateTarget;
 
 public:
     H2Buffer();
@@ -38,7 +40,14 @@ public:
     void addElement(H2MeshFunction *function, const QColor & color = "black", int width = 1);
     void refreshFunction();
 
-//private:
+    void addKickedDrawing(const H2Isometry &A);
+    void addKickedDrawing(const std::vector<H2Isometry> & vectorA);
+    void addKickedDrawing();
+
+    void setIsometries(const std::vector<H2Isometry> & isometries);
+
+
+private:
     std::vector<H2Point> points;
     std::vector<QColor> pointsColors;
     std::vector<int> pointsWidths;
@@ -50,6 +59,8 @@ public:
     std::vector<H2GeodesicArc> geodesicArcs;
     std::vector<QColor> geodesicArcsColors;
     std::vector<int> geodesicArcsWidths;
+
+    std::vector<H2Isometry> isometries;
 
     const H2Mesh *mesh;
     bool isMeshEmpty;

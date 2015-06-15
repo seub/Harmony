@@ -18,6 +18,9 @@ public:
     void drawH2Point(const H2Point &p, const QColor &color = "black", int width = 4);
     void drawH2Geodesic(const H2Geodesic &L, const QColor &color = "black", int width = 1);
     void drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color = "black", int width = 2);
+    void addKickedDrawing(const H2Isometry & A);
+    void addKickedDrawing(const std::vector<H2Isometry> & vectorA);
+    void addKickedDrawing();
 
     virtual void redrawBuffer(const H2Isometry &mobius = H2Isometry::identity());
     virtual void mousePress(QMouseEvent * mouseEvent);
@@ -46,7 +49,7 @@ public:
 
     void subRedrawBuffer();
     void subMouseMove(QMouseEvent * mouseEvent);
-    //private:
+    private:
 };
 
 class H2CanvasDelegateTarget : public H2CanvasDelegate
@@ -57,7 +60,7 @@ public:
     void subRedrawBuffer();
     void subMouseMove(QMouseEvent *);
     void subKeyPress(QKeyEvent *keyEvent);
-    //private:
+    private:
 };
 
 

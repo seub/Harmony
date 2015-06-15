@@ -31,7 +31,7 @@ public:
     IsomH2Representation getRepresentation() const;
     int nbPoints() const;
 
-//private:
+private:
     IsomH2Representation rho;
     int depth;
 
