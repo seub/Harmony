@@ -1,20 +1,8 @@
-#include <QApplication>
-#include <QDebug>
-#include <QWidget>
-
-#include "window.h"
-#include "fenchelnielsenconstructor.h"
-#include "h2mesh.h"
-#include "h2meshfunction.h"
-#include "h2canvasdelegate.h"
-#include "canvas.h"
-#include "equivariantharmonicmapsfactory.h"
-#include "h2isometry.h"
+#include "mainapplication.h"
 
 int main(int argc, char *argv[])
 {
 
-    std::cout << std::endl;
     QApplication a(argc, argv);
 
     Window window;
@@ -75,5 +63,6 @@ int main(int argc, char *argv[])
 
 
 
-    return a.exec();
+    MainApplication mainApplication(argc, argv);
+    return mainApplication.exec();
 }

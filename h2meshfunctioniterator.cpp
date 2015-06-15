@@ -75,9 +75,9 @@ void H2MeshFunctionIterator::iterate(int n)
     }
 }
 
-H2MeshFunction H2MeshFunctionIterator::getOutput()
+void H2MeshFunctionIterator::getOutput(H2MeshFunction &output)
 {
-    return H2MeshFunction(mesh, fInit->rhoImage, oldValues);
+    output = H2MeshFunction(mesh, fInit->rhoImage, oldValues);
 }
 
 double H2MeshFunctionIterator::supError() const

@@ -14,7 +14,7 @@ class H2MeshFunctionIterator
 public:
     H2MeshFunctionIterator(const H2MeshFunction * const f);
     void iterate(int n=1);
-    H2MeshFunction getOutput();
+    void getOutput(H2MeshFunction &output);
 
     double supError() const;
 

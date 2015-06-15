@@ -2,6 +2,8 @@
 
 #include "fenchelnielsenconstructor.h"
 #include "h2trianglesubdivision.h"
+#include "h2meshconstructor.h"
+#include "h2trianglesubdivision.h"
 
 EquivariantHarmonicMapsFactory::EquivariantHarmonicMapsFactory() : functionInit(&mesh, &rhoTarget), iterator(&functionInit)
 {
@@ -15,7 +17,7 @@ void EquivariantHarmonicMapsFactory::reset()
     rhoDomain = IsomH2Representation(&Gamma);
     rhoTarget = IsomH2Representation(&Gamma);
 
-    //function = functionInit;
+    function = functionInit;
     stop = false;
 }
 
@@ -116,9 +118,14 @@ void EquivariantHarmonicMapsFactory::initialize()
     {
         std::cout << "Error in EquivariantHarmonicMapsFactory::initialize: Factory not ready to initialize" << std::endl;
     }
-    mesh = H2Mesh(rhoDomain, meshDepth);
+    //mesh = H2Mesh(rhoDomain, meshDepth);
+    mesh.fundamentalDomain = rhoDomain.generatePolygon(100);
+    mesh.rho = rhoDomain;
+    mesh.depth = meshDepth;
+    H2MeshConstructor(&(this->mesh));
+
     functionInit.initializePLsmart();
-    //function.initializePLsmart();
+    function = functionInit;
     isInitialized = true;
 }
 
@@ -129,7 +136,7 @@ bool EquivariantHarmonicMapsFactory::isReady() const
 
 void EquivariantHarmonicMapsFactory::refreshFunction()
 {
-    //function = iterator.getOutput();
+    iterator.getOutput(function);
 }
 
 void EquivariantHarmonicMapsFactory::iterate(int n)
@@ -142,7 +149,7 @@ void EquivariantHarmonicMapsFactory::iterate(int n)
     refreshFunction();
 }
 
-/*void EquivariantHarmonicMapsFactory::run()
+void EquivariantHarmonicMapsFactory::run()
 {
     while(!stop)
     {
@@ -153,4 +160,4 @@ void EquivariantHarmonicMapsFactory::iterate(int n)
 void EquivariantHarmonicMapsFactory::stopRunning()
 {
     stop = true;
-}*/
+}

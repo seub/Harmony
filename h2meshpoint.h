@@ -18,7 +18,7 @@ protected:
     virtual bool isVertexPoint() const {return false;}
     virtual bool isSteinerPoint() const {return false;}
 
-    H2MeshPoint(int subdivisionIndex, int indexInSubdivision) : subdivisionIndex(subdivisionIndex), indexInSubdivision(indexInSubdivision) {}
+    H2MeshPoint(int subdivisionIndex, int indexInSubdivision, int index) : subdivisionIndex(subdivisionIndex), indexInSubdivision(indexInSubdivision), index(index) {}
 
     int subdivisionIndex, indexInSubdivision;
     std::vector<int> neighborsIndices;
@@ -34,8 +34,8 @@ class H2MeshCutPoint : public H2MeshPoint
     friend class H2MeshConstructor;
 
 private:
-    H2MeshCutPoint(int subdivisionIndexLeft, int indexInSubdivisionLeft, int subdivisionIndexRight, int indexInSubdivisionRight) :
-        H2MeshPoint(subdivisionIndexLeft, indexInSubdivisionLeft),
+    H2MeshCutPoint(int subdivisionIndexLeft, int indexInSubdivisionLeft, int subdivisionIndexRight, int indexInSubdivisionRight, int index) :
+        H2MeshPoint(subdivisionIndexLeft, indexInSubdivisionLeft, index),
         subdivisionIndexRight(subdivisionIndexRight), indexInSubdivisionRight(indexInSubdivisionRight) {}
     bool isCutPoint() const {return true;}
 
@@ -51,8 +51,8 @@ class H2MeshBoundaryPoint : public H2MeshPoint
     friend class H2MeshFunctionIterator;
 
 private:
-    H2MeshBoundaryPoint(int subdivisionIndex, int indexInSubdivision, int side) :
-        H2MeshPoint(subdivisionIndex, indexInSubdivision), side(side) {}
+    H2MeshBoundaryPoint(int subdivisionIndex, int indexInSubdivision, int side, int index) :
+        H2MeshPoint(subdivisionIndex, indexInSubdivision, index), side(side) {}
     bool isBoundaryPoint() const {return true;}
 
     int side;
@@ -69,8 +69,8 @@ class H2MeshVertexPoint : public H2MeshPoint
 
 private:
     H2MeshVertexPoint(int subdivisionIndex, int indexInSubdivision, int vertexIndex,
-                      std::vector<int> subdivisionIndices, std::vector<int> indicesInSubdivisions) :
-        H2MeshPoint(subdivisionIndex, indexInSubdivision), vertexIndex(vertexIndex),
+                      std::vector<int> subdivisionIndices, std::vector<int> indicesInSubdivisions, int index) :
+        H2MeshPoint(subdivisionIndex, indexInSubdivision, index), vertexIndex(vertexIndex),
         subdivisionIndices(subdivisionIndices), indicesInSubdivisions(indicesInSubdivisions) {}
     bool isVertexPoint() const {return true;}
 
@@ -87,8 +87,8 @@ class H2MeshSteinerPoint : public H2MeshPoint
 
 private:
     H2MeshSteinerPoint(int subdivisionIndex, int indexInSubdivision, int side,
-                      std::vector<int> subdivisionIndices, std::vector<int> indicesInSubdivisions) :
-        H2MeshPoint(subdivisionIndex, indexInSubdivision), side(side),
+                      std::vector<int> subdivisionIndices, std::vector<int> indicesInSubdivisions, int index) :
+        H2MeshPoint(subdivisionIndex, indexInSubdivision, index), side(side),
         subdivisionIndices(subdivisionIndices), indicesInSubdivisions(indicesInSubdivisions) {}
     bool isSteinerPoint() const {return true;}
 

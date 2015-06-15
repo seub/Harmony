@@ -18,7 +18,7 @@ private:
     void createRegularPoints();
     void createCutPoints();
     void createBoundaryPoints();
-    void createSteinerAndVertexPoints();
+    void createVertexAndSteinerPoints();
 
     void createInteriorNeighbors();
     void createCutNeighbors();
@@ -37,6 +37,7 @@ private:
     bool checkForDuplicateNeighbors() const;
     bool checkNumberOfNeighbors() const;
     bool checkPartnerPoints() const;
+    bool checkCurrentIndex() const;
 
     std::vector<int> meshPointsIndicesAlongSide(int side) const;
     std::vector<int> meshPointsIndicesAlongFullSide(int side) const;
@@ -61,7 +62,6 @@ private:
     std::vector<int> vertexMeshIndex, steinerPointsMeshIndex;
     std::vector< std::vector< std::vector<int> > > neighborsInSubdivisions;
     std::vector<Word> sidePairings;
-    int currentIndex;
 };
 
 #endif // H2MESHCONSTRUCTOR_H

@@ -11,7 +11,6 @@ void H2Geodesic::setEndpointsInDiskModel(const Complex &z1, const Complex &z2)
     if (z1 == z2)
     {
         std::cout << "ERROR in H2Geodesic::setEndpointsInDiskModel: there is no H2Geodesic between a point and itself." << std::endl;
-        //throw(0);
     }
     this->z1 = z1;
     this->z2 = z2;

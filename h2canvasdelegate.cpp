@@ -262,6 +262,7 @@ void H2CanvasDelegateDomain::subMouseMove(QMouseEvent *mouseEvent)
         point.setDiskCoordinate(PixelToComplexCoordinates(mouseEvent->x(), mouseEvent->y()));
         int meshIndex1, meshIndex2, meshIndex3, meshIndex;
         point = mobius.inverse()*point;
+
         if (buffer.mesh->triangleContaining(point, buffer.triangleHighlighted, meshIndex1, meshIndex2, meshIndex3))
         {
             isTriangleHighlighted = true;
@@ -318,7 +319,6 @@ void H2CanvasDelegateTarget::subRedrawBuffer()
 
 void H2CanvasDelegateTarget::subMouseMove(QMouseEvent *)
 {
-
 }
 
 void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
@@ -328,7 +328,7 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
     case Qt::Key_Space :
         buffer.function->iterate(20);
         buffer.refreshFunction();
-        addKickedDrawing();
+        //addKickedDrawing();
         redrawBuffer();
 
         break;

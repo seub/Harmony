@@ -28,7 +28,6 @@ Complex CP1Point::getComplexCoordinate() const
     else
     {
         std::cout << "Infinity is not in C" << std::endl;
-        //throw(0);
         return Complex(1.0/0.0);
     }
 }
