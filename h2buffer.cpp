@@ -102,6 +102,8 @@ void H2Buffer::addElement(const std::vector<H2Polygon> &V, const QColor &color, 
 
 void H2Buffer::addElement(const H2TriangleSubdivision &T, const QColor &color, int width)
 {
+    if (T.isRoot())
+    {
     int L = T.nbOfLines(T.getTotalDepth());
     std::vector<H2Point> Tpoints = T.getPoints();
 
@@ -117,6 +119,11 @@ void H2Buffer::addElement(const H2TriangleSubdivision &T, const QColor &color, i
             c = Tpoints[m + j + i + 2];
             addElement(H2Triangle(a, b, c), color, width);
         }
+    }
+    }
+    else
+    {
+        throw(QString("Error in  H2Buffer::addElement(const H2TriangleSubdivision &T, const QColor &color, int width): not a root subdivision"));
     }
 }
 

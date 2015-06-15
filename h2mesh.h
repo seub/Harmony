@@ -45,6 +45,7 @@ public:
     H2SteinerPolygon fundamentalSteinerDomain;
 
     std::vector<H2TriangleSubdivision> subdivisions;
+    std::vector<std::vector<int>> meshIndicesInSubdivisions;
     std::vector<TriangulationTriangle> triangles;
 
     std::vector<H2MeshPoint*> meshPoints;

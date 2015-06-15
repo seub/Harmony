@@ -47,6 +47,7 @@ private:
 
     int depth;
     std::vector<H2TriangleSubdivision> *subdivisions;
+    std::vector<std::vector<int>> *meshIndicesInSubdivisions;
     std::vector<H2MeshPoint*> *points;
     std::vector<H2MeshPoint> *regularPoints;
     std::vector<H2MeshCutPoint> *cutPoints;

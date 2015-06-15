@@ -90,14 +90,13 @@ const std::vector<H2Point> & H2MeshFunction::getValues() const
 std::vector<H2Triangle> H2MeshFunction::getTriangles() const
 {
     std::vector<H2Triangle> output;
-    H2Point a, b, c;
     int aIndex, bIndex, cIndex;
     int L = mesh->subdivisions.front().nbOfLines(mesh->depth);
     int i, j, m = 0;
     output.reserve((mesh->subdivisions.size()*(L-1)*L)/2);
 
 
-    for (const auto & S : mesh->subdivisions)
+    for (const auto & meshIndices : mesh->meshIndicesInSubdivisions)
     {
         m = 0;
         for (i=0; i<L - 1; i++)
@@ -105,9 +104,9 @@ std::vector<H2Triangle> H2MeshFunction::getTriangles() const
             m += i;
             for (j=0; j<=i; j++)
             {
-                aIndex = S.meshIndices->at(m + j);
-                bIndex = S.meshIndices->at(m + j + i + 1);
-                cIndex = S.meshIndices->at(m + j + i + 2);
+                aIndex = meshIndices.at(m + j);
+                bIndex = meshIndices.at(m + j + i + 1);
+                cIndex = meshIndices.at(m + j + i + 2);
                 output.push_back(H2Triangle(values[aIndex], values[bIndex], values[cIndex]));
             }
         }
