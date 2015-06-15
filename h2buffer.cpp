@@ -136,15 +136,21 @@ void H2Buffer::addElement(H2MeshFunction *f, const QColor &color, int width)
 {
     this->function = f;
     isMeshFunctionEmpty = false;
-    functionColor = color;
-    functionWidth = width;
+    //functionColor = color;
+    //functionWidth = width;
     refreshFunction();
+    functionColors.resize(functionPoints.size());
+    functionWidths.resize(functionPoints.size());
+    std::fill(functionColors.begin(), functionColors.end(), color);
+    std::fill(functionWidths.begin(), functionWidths.end(), width);
 }
 
 void H2Buffer::refreshFunction()
 {
     functionArcs.clear();
     functionPoints.clear();
+    functionColors.clear();
+    functionWidths.clear();
     std::vector<H2Triangle> triangles = function->getTriangles();
     functionArcs.reserve(3*triangles.size());
     functionPoints.reserve(3*triangles.size());
@@ -188,10 +194,20 @@ void H2Buffer::addKickedDrawing(const H2Isometry &A)
     geodesicArcsColors.insert(geodesicArcsColors.end(), tempColors.begin(), tempColors.end());
 
     std::vector<H2Point> tempFunctionPoints = A*functionPoints;
+    tempColors.resize(functionPoints.size());
+    tempWidths = functionWidths;
+    std::fill(tempColors.begin(), tempColors.end(), "grey");
     functionPoints.insert(functionPoints.end(),tempFunctionPoints.begin(),tempFunctionPoints.end());
+    functionWidths.insert(functionWidths.end(),tempWidths.begin(),tempWidths.end());
+    functionColors.insert(functionColors.end(), tempColors.begin(), tempColors.end());
 
     std::vector<H2GeodesicArc> tempFunctionArcs = A*functionArcs;
+    tempColors.resize(functionArcs.size());
+    tempWidths = functionWidths;
+    std::fill(tempColors.begin(), tempColors.end(), "grey");
     functionArcs.insert(functionArcs.end(),tempFunctionArcs.begin(),tempFunctionArcs.end());
+    functionWidths.insert(functionWidths.end(),tempWidths.begin(),tempWidths.end());
+    functionColors.insert(functionColors.end(), tempColors.begin(), tempColors.end());
 }
 
 void H2Buffer::addKickedDrawing(const std::vector<H2Isometry> &vectorA)
@@ -225,10 +241,20 @@ void H2Buffer::addKickedDrawing(const std::vector<H2Isometry> &vectorA)
         geodesicArcsColors.insert(geodesicArcsColors.end(), tempColors.begin(), tempColors.end());
 
         tempFunctionPoints = A*functionPointsHolder;
+        tempColors.resize(functionPoints.size());
+        tempWidths = functionWidths;
+        std::fill(tempColors.begin(), tempColors.end(), "grey");
         functionPoints.insert(functionPoints.end(),tempFunctionPoints.begin(),tempFunctionPoints.end());
+        functionWidths.insert(functionWidths.end(),tempWidths.begin(),tempWidths.end());
+        functionColors.insert(functionColors.end(), tempColors.begin(), tempColors.end());
 
         tempFunctionArcs = A*functionArcsHolder;
+        tempColors.resize(functionArcs.size());
+        tempWidths = functionWidths;
+        std::fill(tempColors.begin(), tempColors.end(), "grey");
         functionArcs.insert(functionArcs.end(),tempFunctionArcs.begin(),tempFunctionArcs.end());
+        functionWidths.insert(functionWidths.end(),tempWidths.begin(),tempWidths.end());
+        functionColors.insert(functionColors.end(), tempColors.begin(), tempColors.end());
     }
 }
 

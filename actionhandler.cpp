@@ -60,8 +60,13 @@ void ActionHandler::setFactory()
 
     rightDelegate->buffer.addElement(factory->rhoTarget, "blue", 2);
     rightDelegate->buffer.addElement(&factory->functionInit, "red", 1);
+
+    std::cout << "The size of functionPoints is " << rightDelegate->buffer.functionPoints.size() << std::endl;
+    std::cout << "The size of functionWidths is " << rightDelegate->buffer.functionWidths.size() << std::endl;
+    std::cout << "The size of points is " << rightDelegate->buffer.points.size() << std::endl;
+
     rightDelegate->buffer.setIsometries(factory->rhoTarget.getSidePairingsNormalizedAroundVertex());
-    rightDelegate->buffer.addKickedDrawing(factory->rhoTarget.getSidePairingsNormalizedAroundVertex());
+    rightDelegate->buffer.addKickedDrawing();
 
     rightDelegate->redrawBuffer();
 }

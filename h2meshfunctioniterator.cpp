@@ -69,7 +69,7 @@ void H2MeshFunctionIterator::iterate(int n)
             newValues[i] = H2Point::centroid(neighborsImages, weights);
             ++i;
         }
-        std::cout << "The error in the " << N-n+1 <<"th iterate is = " << supError() << std::endl;
+        //std::cout << "The error in the " << N-n+1 <<"th iterate is = " << supError() << std::endl;
         oldValues = newValues;
         --n;
     }

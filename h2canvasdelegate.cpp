@@ -304,15 +304,20 @@ void H2CanvasDelegateDomain::subRedrawBuffer()
 
 void H2CanvasDelegateTarget::subRedrawBuffer()
 {
+    int j=0;
     if (!buffer.isMeshFunctionEmpty)
     {
         for (const auto & arc : buffer.functionArcs)
         {
-            drawH2GeodesicArc(arc, buffer.functionColor, 1);
-        }
+            //drawH2GeodesicArc(arc, buffer.functionColor, 1);
+            drawH2GeodesicArc(arc, buffer.functionColors[j],1);
+            ++j;
+        }j=0;
         for (const auto & point : buffer.functionPoints)
         {
-            drawH2Point(point, "black", buffer.functionWidth);
+            //drawH2Point(point, "black", buffer.functionWidth);
+            drawH2Point(point, "black", buffer.functionWidths[j]);
+            ++j;
         }
     }
 }
@@ -326,9 +331,12 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
     switch(keyEvent->key())
     {
     case Qt::Key_Space :
-        buffer.function->iterate(20);
+        buffer.function->iterate();
         buffer.refreshFunction();
-        //addKickedDrawing();
+        addKickedDrawing();
+        std::cout << "The size of functionPoints is " << buffer.functionPoints.size() << std::endl;
+        std::cout << "The size of functionWidths is " << buffer.functionWidths.size() << std::endl;
+        std::cout << "The size of points is " << buffer.points.size() << std::endl;
         redrawBuffer();
 
         break;

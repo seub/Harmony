@@ -47,7 +47,7 @@ public:
     void setIsometries(const std::vector<H2Isometry> & isometries);
 
 
-private:
+//private:
     std::vector<H2Point> points;
     std::vector<QColor> pointsColors;
     std::vector<int> pointsWidths;
@@ -69,8 +69,11 @@ private:
     bool isMeshFunctionEmpty;
     std::vector<H2Point> functionPoints;
     std::vector<H2GeodesicArc> functionArcs;
-    QColor functionColor;
-    int functionWidth;
+    //QColor functionColor;
+    //int functionWidth;
+    std::vector<QColor> functionColors;
+    std::vector<int> functionWidths;
+
 
     H2Triangle triangleHighlighted;
     H2Point pointHighlighted;
