@@ -73,7 +73,7 @@ private:
     int functionWidth;
 
     H2Triangle triangleHighlighted;
-    H2Point pointHighlighted;
+    std::vector<H2Point> pointsHighlightedRed;
     std::vector<H2Point> pointsHighlightedBlue;
     std::vector<H2Point> pointsHighlightedGreen;
 };

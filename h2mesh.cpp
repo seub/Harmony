@@ -146,6 +146,27 @@ std::vector<H2Point> H2Mesh::getH2Neighbors(int index) const
     return res;
 }
 
+std::vector<H2Point> H2Mesh::getPartnerPoints(int index) const
+{
+    H2MeshPoint *point = meshPoints.at(index);
+    if (point->isBoundaryPoint())
+    {
+        return {getH2Point(index), getH2Point(((H2MeshBoundaryPoint *) point)->partnerPointIndex)};
+    }
+    else if (point->isSteinerPoint())
+    {
+        return {getH2Point(index), getH2Point(((H2MeshSteinerPoint *) point)->partnerPointIndex)};
+    }
+    else if (point->isVertexPoint())
+    {
+        return fundamentalDomain.getVertices();
+    }
+    else
+    {
+        return {getH2Point(index)};
+    }
+}
+
 std::vector<H2Point> H2Mesh::getKickedH2Neighbors(int index) const
 {
     H2MeshPoint* point = meshPoints.at(index);
@@ -188,4 +209,9 @@ IsomH2Representation H2Mesh::getRepresentation() const
 int H2Mesh::nbPoints() const
 {
     return (int) meshPoints.size();
+}
+
+bool H2Mesh::isInteriorPoint(int index) const
+{
+    return meshPoints.at(index)->isInteriorPoint();
 }

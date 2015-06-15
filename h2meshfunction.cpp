@@ -87,11 +87,11 @@ const std::vector<H2Point> & H2MeshFunction::getValues() const
     return values;
 }
 
-std::vector<H2Triangle> H2MeshFunction::getTriangles() const
+std::vector<H2Triangle> H2MeshFunction::getTrianglesUp() const
 {
     std::vector<H2Triangle> output;
     int aIndex, bIndex, cIndex;
-    int L = mesh->subdivisions.front().nbOfLines(mesh->depth);
+    int L = H2TriangleSubdivision::nbOfLines(mesh->depth);
     int i, j, m = 0;
     output.reserve((mesh->subdivisions.size()*(L-1)*L)/2);
 

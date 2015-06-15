@@ -37,8 +37,9 @@ protected:
     H2Isometry mobius;
     H2Isometry savedMobius;
     bool isTriangleHighlighted;
-    bool isPointHighlighted;
-    bool arePointsHighlighted;
+    bool arePointsHighlightedRed;
+    bool arePointsHighlightedGreen;
+    bool arePointsHighlightedBlue;
 };
 
 

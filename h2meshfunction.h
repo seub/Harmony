@@ -14,7 +14,7 @@ public:
     explicit H2MeshFunction(const H2Mesh *mesh, const IsomH2Representation *rhoImage);
 
     const std::vector<H2Point> & getValues() const;
-    std::vector<H2Triangle> getTriangles() const;
+    std::vector<H2Triangle> getTrianglesUp() const;
 
     void initializePL(const H2Point &basePoint);
     void iterate(int n=1);

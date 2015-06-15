@@ -100,8 +100,6 @@ traiter proprement l'inclusion de factory dans window et dans les canvas
 
 9. Add functionality to the window (lots): all choices (FN parameters of domain/target, depth), iteration / start over
 
-
-Add function of H2trianglesubdivision that outputs couples of indices of all geodesic arcs
 rendre affichage plus efficace
 afficher l'erreur dans la statusbar
 

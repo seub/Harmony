@@ -17,6 +17,7 @@ protected:
     virtual bool isBoundaryPoint() const {return false;}
     virtual bool isVertexPoint() const {return false;}
     virtual bool isSteinerPoint() const {return false;}
+    bool isInteriorPoint() const {return !(isBoundaryPoint() || isVertexPoint() || isSteinerPoint());}
 
     H2MeshPoint(int subdivisionIndex, int indexInSubdivision, int index) : subdivisionIndex(subdivisionIndex), indexInSubdivision(indexInSubdivision), index(index) {}
 

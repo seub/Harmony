@@ -29,10 +29,12 @@ public:
     const std::vector<H2TriangleSubdivision> &getSubdivisions() const;
     std::vector<H2Point> getH2Neighbors(int index) const;
     std::vector<H2Point> getKickedH2Neighbors(int index) const;
+    std::vector<H2Point> getPartnerPoints(int index) const;
     IsomH2Representation getRepresentation() const;
     int nbPoints() const;
+    bool isInteriorPoint(int index) const;
 
-//private:
+private:
     H2Mesh() {} // Dummy constructor
     H2Mesh(const H2Mesh &other); // Copy constructor
     H2Mesh & operator=(H2Mesh other); //Copy-assignment operator
