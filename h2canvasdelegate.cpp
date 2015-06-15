@@ -20,8 +20,9 @@ H2CanvasDelegate::H2CanvasDelegate(int sizeX, int sizeY) : CanvasDelegate(sizeX,
     mobius.setIdentity();
     drawCircle(0, 1);
     isTriangleHighlighted = false;
-    isPointHighlighted = false;
-    arePointsHighlighted = false;
+    arePointsHighlightedRed = false;
+    arePointsHighlightedGreen = false;
+    arePointsHighlightedBlue = false;
 
     //std::cout << "Leaving H2CanvasDelegate::CanvasDelegate" << std::endl;
 }
@@ -125,18 +126,26 @@ void H2CanvasDelegate::redrawBuffer(const H2Isometry &mobius)
         drawH2GeodesicArc(L, "red", 2);
     }
 
-    if (isPointHighlighted)
+    if (arePointsHighlightedRed)
     {
-        drawH2Point(buffer.pointHighlighted, "red", 8);
+        for (const auto &p : buffer.pointsHighlightedRed)
+        {
+            drawH2Point(p, "red", 8);
+        }
     }
-    if (arePointsHighlighted)
+    if (arePointsHighlightedGreen)
     {
         for (const auto &p : buffer.pointsHighlightedGreen)
         {
+            std::cout << "green" << std::endl;
             drawH2Point(p, "green", 6);
         }
+    }
+    if (arePointsHighlightedBlue)
+    {
         for (const auto &p : buffer.pointsHighlightedBlue)
         {
+            std::cout << "blue" << std::endl;
             drawH2Point(p, "blue", 6);
         }
     }
@@ -271,24 +280,31 @@ void H2CanvasDelegateDomain::subMouseMove(QMouseEvent *mouseEvent)
             detectionRadiusSquared *= detectionRadiusSquared;
             if ((mobius*buffer.triangleHighlighted).isVertexCloseInDiskModel(mobius*point, detectionRadiusSquared, vertexIndex))
             {
-                buffer.pointHighlighted = buffer.triangleHighlighted.getVertex(vertexIndex);
-                isPointHighlighted = true;
-                arePointsHighlighted = true;
+                buffer.pointsHighlightedRed = {buffer.triangleHighlighted.getVertex(vertexIndex)};
+                arePointsHighlightedRed = true;
+                arePointsHighlightedBlue = true;
                 meshIndex = meshIndex1*(vertexIndex == 0) + meshIndex2*(vertexIndex == 1) + meshIndex3*(vertexIndex == 2);
                 buffer.pointsHighlightedBlue = buffer.mesh->getH2Neighbors(meshIndex);
-                buffer.pointsHighlightedGreen = buffer.mesh->getKickedH2Neighbors(meshIndex);
+                if (!buffer.mesh->isInteriorPoint(meshIndex))
+                {
+                    arePointsHighlightedGreen = true;
+                    buffer.pointsHighlightedGreen = buffer.mesh->getKickedH2Neighbors(meshIndex);
+                    buffer.pointsHighlightedRed = buffer.mesh->getPartnerPoints(meshIndex);
+                }
             }
             else
             {
-                isPointHighlighted = false;
-                arePointsHighlighted = false;
+                arePointsHighlightedRed = false;
+                arePointsHighlightedGreen = false;
+                arePointsHighlightedBlue = false;
             }
         }
         else
         {
             isTriangleHighlighted = false;
-            isPointHighlighted = false;
-            arePointsHighlighted = false;
+            arePointsHighlightedRed = false;
+            arePointsHighlightedGreen = false;
+            arePointsHighlightedBlue = false;
         }
     }
     else

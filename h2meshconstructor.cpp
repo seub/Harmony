@@ -7,7 +7,7 @@
 
 H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     mesh(mesh), depth(mesh->depth),
-    subdivisions(&(mesh->subdivisions)), points(&(mesh->meshPoints)),
+    subdivisions(&(mesh->subdivisions)), meshIndicesInSubdivisions(&(mesh->meshIndicesInSubdivisions)), points(&(mesh->meshPoints)),
     regularPoints(&(mesh->regularPoints)), cutPoints(&(mesh->cutPoints)),
     boundaryPoints(&(mesh->boundaryPoints)), vertexPoints(&(mesh->vertexPoints)), steinerPoints(&(mesh->steinerPoints)),
     triangulater(H2PolygonTriangulater(&(mesh->fundamentalDomain)))
@@ -55,9 +55,11 @@ void H2MeshConstructor::createSubdivisions()
     std::vector<H2Triangle> triangles = triangulater.getTriangles();
     mesh->triangles = triangulater.getTriangulationTriangles();
 
+    int nbPointsPerSubdivision = H2TriangleSubdivision::nbOfPoints(depth);
     for (const auto &T : triangles)
     {
         subdivisions->push_back(H2TriangleSubdivision(T, depth));
+        meshIndicesInSubdivisions->push_back(std::vector<int>(nbPointsPerSubdivision));
     }
 
     neighborsInSubdivisions.reserve(nbSubdivisions);
@@ -89,8 +91,7 @@ void H2MeshConstructor::createRegularPoints()
             if (!boundaryPointInSubdivisions[i][j])
             {
                 regularPoints->push_back(H2MeshPoint(i, j, nextIndex));
-
-                (*((*subdivisions)[i].meshIndices))[j] = nextIndex;
+                meshIndicesInSubdivisions->at(i)[j] = nextIndex;
                 ++nextIndex;
             }
         }
@@ -116,8 +117,8 @@ void H2MeshConstructor::createCutPoints()
         for (j=1; j+1!=nbSubdivisionLines; ++j)
         {
             cutPoints->push_back(H2MeshCutPoint(cut.leftTriangleIndex, indicesLeft[j], cut.rightTriangleIndex, indicesRight[j], nextIndex));
-            (*(((*subdivisions)[cut.leftTriangleIndex]).meshIndices))[indicesLeft[j]] = nextIndex;
-            (*(((*subdivisions)[cut.rightTriangleIndex]).meshIndices))[indicesRight[j]] = nextIndex;
+            meshIndicesInSubdivisions->at(cut.leftTriangleIndex)[indicesLeft[j]] = nextIndex;
+            meshIndicesInSubdivisions->at(cut.rightTriangleIndex)[indicesRight[j]] = nextIndex;
             ++nextIndex;
         }
     }
@@ -155,7 +156,7 @@ void H2MeshConstructor::createBoundaryPoints()
         for (j=1; j+1!=nbSubdivisionLines; ++j)
         {
             boundaryPoints->push_back(H2MeshBoundaryPoint(triangleIndex, indices[j], side, nextIndex));
-            (*(((*subdivisions)[triangleIndex]).meshIndices))[indices[j]] = nextIndex;
+            meshIndicesInSubdivisions->at(triangleIndex)[indices[j]] = nextIndex;
             ++nextIndex;
         }
 
@@ -205,7 +206,7 @@ void H2MeshConstructor::createVertexAndSteinerPoints()
                     subdivisionIndices[i], indicesInSubdivisions[i], nextIndex + vertexIndex));
             for (j=0; j!=subdivisionIndices[i].size(); ++j)
             {
-                (*(((*subdivisions)[subdivisionIndices[i][j]]).meshIndices))[indicesInSubdivisions[i][j]] = nextIndex + vertexIndex;
+                meshIndicesInSubdivisions->at(subdivisionIndices[i][j])[indicesInSubdivisions[i][j]] = nextIndex + vertexIndex;
             }
             vertexMeshIndex[vertexIndex] = nextIndex + vertexIndex;
             ++vertexIndex;
@@ -216,7 +217,7 @@ void H2MeshConstructor::createVertexAndSteinerPoints()
                     subdivisionIndices[i], indicesInSubdivisions[i], nextIndex + nbVertices + steinerPointIndex));
             for (j=0; j!=subdivisionIndices[i].size(); ++j)
             {
-                (*(((*subdivisions)[subdivisionIndices[i][j]]).meshIndices))[indicesInSubdivisions[i][j]] = nextIndex + nbVertices + steinerPointIndex;;
+                meshIndicesInSubdivisions->at(subdivisionIndices[i][j])[indicesInSubdivisions[i][j]] = nextIndex + nbVertices + steinerPointIndex;
             }
             steinerPointsMeshIndex[steinerPointIndex] = nextIndex + nbVertices + steinerPointIndex;
             ++steinerPointIndex;
@@ -237,11 +238,11 @@ void H2MeshConstructor::createInteriorNeighbors()
         {
             if (!boundaryPointInSubdivisions[i][j])
             {
-                index = (*((*subdivisions)[i].meshIndices))[j];
+                index = meshIndicesInSubdivisions->at(i)[j];
                 (*points)[index]->neighborsIndices.reserve(6);
                 for (auto k : neighborsInSubdivisions[i][j])
                 {
-                    neighborIndex = (*((*subdivisions)[i].meshIndices))[k];
+                    neighborIndex = meshIndicesInSubdivisions->at(i)[k];
                     (*points)[index]->neighborsIndices.push_back(neighborIndex);
                     if (boundaryPointInSubdivisions[i][k])
                     {
@@ -268,8 +269,8 @@ void H2MeshConstructor::createCutNeighbors()
         triangulater.adjacentSidesIndices(i, vertexIndexLeft1, vertexIndexLeft2, vertexIndexRight1, vertexIndexRight2);
         indicesLeft = (*subdivisions)[cut.leftTriangleIndex].sidePointsIndices(vertexIndexLeft1, vertexIndexLeft2);
 
-        index = (*((*subdivisions)[cut.leftTriangleIndex].meshIndices))[indicesLeft[0]];
-        nextIndex = (*((*subdivisions)[cut.leftTriangleIndex].meshIndices))[indicesLeft[1]];
+        index = meshIndicesInSubdivisions->at(cut.leftTriangleIndex)[indicesLeft[0]];
+        nextIndex = meshIndicesInSubdivisions->at(cut.leftTriangleIndex)[indicesLeft[1]];
 
         (*points)[index]->neighborsIndices.push_back(nextIndex);
 
@@ -277,7 +278,7 @@ void H2MeshConstructor::createCutNeighbors()
         {
             previousIndex = index;
             index = nextIndex;
-            nextIndex = (*((*subdivisions)[cut.leftTriangleIndex].meshIndices))[indicesLeft[j+1]];
+            nextIndex = meshIndicesInSubdivisions->at(cut.leftTriangleIndex)[indicesLeft[j+1]];
             (*points)[index]->neighborsIndices.push_back(previousIndex);
             (*points)[index]->neighborsIndices.push_back(nextIndex);
         }
@@ -324,18 +325,18 @@ void H2MeshConstructor::createRemainingNeighbors()
         int index1, index2;
         for (int i=0; i != nbSubdivisions; ++i)
         {
-            index1 = (*(*subdivisions)[i].meshIndices)[1];
-            index2 = (*(*subdivisions)[i].meshIndices)[2];
+            index1 = meshIndicesInSubdivisions->at(i)[1];
+            index2 = meshIndicesInSubdivisions->at(i)[2];
             (*points)[index1]->neighborsIndices.push_back(index2);
             (*points)[index2]->neighborsIndices.push_back(index1);
 
-            index1 = (*(*subdivisions)[i].meshIndices)[((nbSubdivisionLines-1)*(nbSubdivisionLines-2))/2];
-            index2 = (*(*subdivisions)[i].meshIndices)[(nbSubdivisionLines*(nbSubdivisionLines-1))/2 + 1];
+            index1 = meshIndicesInSubdivisions->at(i)[((nbSubdivisionLines-1)*(nbSubdivisionLines-2))/2];
+            index2 = meshIndicesInSubdivisions->at(i)[(nbSubdivisionLines*(nbSubdivisionLines-1))/2 + 1];
             (*points)[index1]->neighborsIndices.push_back(index2);
             (*points)[index2]->neighborsIndices.push_back(index1);
 
-            index1 = (*(*subdivisions)[i].meshIndices)[nbSubdivisionPoints - nbSubdivisionLines - 1];
-            index2 = (*(*subdivisions)[i].meshIndices)[nbSubdivisionPoints - 2];
+            index1 = meshIndicesInSubdivisions->at(i)[nbSubdivisionPoints - nbSubdivisionLines - 1];
+            index2 = meshIndicesInSubdivisions->at(i)[nbSubdivisionPoints - 2];
             (*points)[index1]->neighborsIndices.push_back(index2);
             (*points)[index2]->neighborsIndices.push_back(index1);
         }
@@ -460,7 +461,7 @@ void H2MeshConstructor::reorganizeNeighbors()
     for (auto & cutpoint : *cutPoints)
     {
         i=0;
-        index = (subdivisions->at(cutpoint.subdivisionIndex)).meshIndices->at(cutpoint.indexInSubdivision);
+        index = meshIndicesInSubdivisions->at(cutpoint.subdivisionIndex)[cutpoint.indexInSubdivision];
         indicesOld = cutpoint.neighborsIndices;
         for (const auto & neighbor : mesh->getH2Neighbors(index))
         {
@@ -481,7 +482,7 @@ void H2MeshConstructor::reorganizeNeighbors()
     for (auto & boundarypoint : *boundaryPoints)
     {
         i=0;
-        index = (subdivisions->at(boundarypoint.subdivisionIndex)).meshIndices->at(boundarypoint.indexInSubdivision);
+        index = (meshIndicesInSubdivisions->at(boundarypoint.subdivisionIndex))[boundarypoint.indexInSubdivision];
         indicesOld = boundarypoint.neighborsIndices;
         neighborsPairingsOld = boundarypoint.neighborsPairings;
         for (const auto & neighbor : mesh->getKickedH2Neighbors(index))
@@ -506,7 +507,7 @@ void H2MeshConstructor::reorganizeNeighbors()
     for (auto & vertexpoint : *vertexPoints)
     {
         i=0;
-        index = (subdivisions->at(vertexpoint.subdivisionIndex)).meshIndices->at(vertexpoint.indexInSubdivision);
+        index = (meshIndicesInSubdivisions->at(vertexpoint.subdivisionIndex))[vertexpoint.indexInSubdivision];
         indicesOld = vertexpoint.neighborsIndices;
         neighborsPairingsOld = vertexpoint.neighborsPairings;
         for (const auto & neighbor : mesh->getKickedH2Neighbors(index))
@@ -530,7 +531,7 @@ void H2MeshConstructor::reorganizeNeighbors()
     for (auto & steinerpoint : *steinerPoints)
     {
         i=0;
-        index = (subdivisions->at(steinerpoint.subdivisionIndex)).meshIndices->at(steinerpoint.indexInSubdivision);
+        index = (meshIndicesInSubdivisions->at(steinerpoint.subdivisionIndex))[steinerpoint.indexInSubdivision];
         indicesOld = steinerpoint.neighborsIndices;
         neighborsPairingsOld = steinerpoint.neighborsPairings;
         for (const auto & neighbor : mesh->getKickedH2Neighbors(index))
@@ -624,7 +625,7 @@ std::vector<int> H2MeshConstructor::meshPointsIndicesAlongSide(int side) const
     std::vector<int>::size_type i=0;
     for (i=0; i!=indicesInTriangulation.size(); ++i)
     {
-        res[i] = (*((*subdivisions)[triangleIndex].meshIndices))[indicesInTriangulation[i]];
+        res[i] = (meshIndicesInSubdivisions->at(triangleIndex))[indicesInTriangulation[i]];
     }
 
     return res;

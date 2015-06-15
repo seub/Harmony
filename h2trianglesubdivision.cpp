@@ -17,12 +17,11 @@ H2TriangleSubdivision::H2TriangleSubdivision(const H2TriangleSubdivision &other)
     if (!empty)
     {
         points = new std::vector<H2Point>(*other.points);
-        meshIndices = new std::vector<int>(*other.meshIndices);
-        copy(other, points, meshIndices);
+        copy(other, points);
     }
 }
 
-void H2TriangleSubdivision::copy(const H2TriangleSubdivision &other, std::vector<H2Point> *points, std::vector<int> *meshIndices)
+void H2TriangleSubdivision::copy(const H2TriangleSubdivision &other, std::vector<H2Point> *points)
 {
     aIndex = other.aIndex;
     bIndex = other.bIndex;
@@ -30,7 +29,6 @@ void H2TriangleSubdivision::copy(const H2TriangleSubdivision &other, std::vector
     depth = other.depth;
     totalDepth = other.totalDepth;
     this->points = points;
-    this->meshIndices = meshIndices;
     empty = false;
 
     if (depth == 0)
@@ -47,10 +45,10 @@ void H2TriangleSubdivision::copy(const H2TriangleSubdivision &other, std::vector
         C = new H2TriangleSubdivision;
         O = new H2TriangleSubdivision;
 
-        A->copy(*other.A, points, meshIndices);
-        B->copy(*other.B, points, meshIndices);
-        C->copy(*other.C, points, meshIndices);
-        O->copy(*other.O, points, meshIndices);
+        A->copy(*other.A, points);
+        B->copy(*other.B, points);
+        C->copy(*other.C, points);
+        O->copy(*other.O, points);
     }
 
     return;
@@ -70,7 +68,6 @@ void swap(H2TriangleSubdivision &first, H2TriangleSubdivision &second)
     std::swap(first.depth, second.depth);
     std::swap(first.totalDepth, second.totalDepth);
     std::swap(first.points, second.points);
-    std::swap(first.meshIndices, second.meshIndices);
     std::swap(first.empty, second.empty);
 }
 
@@ -86,8 +83,6 @@ H2TriangleSubdivision::H2TriangleSubdivision(const H2Point &a, const H2Point &b,
     int L = nbOfLines(depth), N = nbOfPoints(depth);
     points = new std::vector<H2Point>;
     points->resize(N);
-    meshIndices = new std::vector<int>;
-    meshIndices->resize(N);
     std::vector<bool> filled;
     filled.resize(N);
     std::fill(filled.begin(), filled.end(), false);
@@ -104,7 +99,7 @@ H2TriangleSubdivision::H2TriangleSubdivision(const H2Point &a, const H2Point &b,
     filled[bIndex] = true;
     filled[cIndex] = true;
 
-    construct(aIndex, bIndex, cIndex, depth, depth, points, meshIndices, filled, an, bn, cn, ap, bp, cp);
+    construct(aIndex, bIndex, cIndex, depth, depth, points, filled, an, bn, cn, ap, bp, cp);
 
     /*// Filled count check
     int counter = 0;
@@ -120,7 +115,7 @@ H2TriangleSubdivision::H2TriangleSubdivision(const H2Point &a, const H2Point &b,
 }
 
 void H2TriangleSubdivision::construct(int aIndex, int bIndex, int cIndex, int depth, int totalDepth, std::vector<H2Point> *points,
-                                      std::vector<int> *meshIndices, std::vector<bool> &filled, int an, int bn, int cn, int ap, int bp, int cp)
+                                      std::vector<bool> &filled, int an, int bn, int cn, int ap, int bp, int cp)
 {
     this->aIndex = aIndex;
     this->bIndex = bIndex;
@@ -128,7 +123,6 @@ void H2TriangleSubdivision::construct(int aIndex, int bIndex, int cIndex, int de
     this->depth = depth;
     this->totalDepth = totalDepth;
     this->points = points;
-    this->meshIndices = meshIndices;
 
     if (depth == 0)
     {
@@ -166,10 +160,10 @@ void H2TriangleSubdivision::construct(int aIndex, int bIndex, int cIndex, int de
         C = new H2TriangleSubdivision;
         O = new H2TriangleSubdivision;
 
-        A->construct(aIndex, midabIndex, midacIndex, depth - 1, totalDepth, points, meshIndices, filled, an, midabn, midacn, ap, midabp, midacp);
-        B->construct(midabIndex, bIndex, midbcIndex, depth - 1, totalDepth, points, meshIndices, filled, midabn, bn, midbcn, midabp, bp, midbcp);
-        C->construct(midacIndex, midbcIndex, cIndex, depth - 1, totalDepth, points, meshIndices, filled, midacn, midbcn, cn, midacp, midbcp, cp);
-        O->construct(midbcIndex, midacIndex, midabIndex, depth - 1, totalDepth, points, meshIndices, filled, midbcn, midacn, midabn, midbcp, midacp, midabp);
+        A->construct(aIndex, midabIndex, midacIndex, depth - 1, totalDepth, points, filled, an, midabn, midacn, ap, midabp, midacp);
+        B->construct(midabIndex, bIndex, midbcIndex, depth - 1, totalDepth, points, filled, midabn, bn, midbcn, midabp, bp, midbcp);
+        C->construct(midacIndex, midbcIndex, cIndex, depth - 1, totalDepth, points, filled, midacn, midbcn, cn, midacp, midbcp, cp);
+        O->construct(midbcIndex, midacIndex, midabIndex, depth - 1, totalDepth, points, filled, midbcn, midacn, midabn, midbcp, midacp, midabp);
     }
 
     empty = false;
@@ -227,6 +221,11 @@ int H2TriangleSubdivision::getTotalDepth() const
     return totalDepth;
 }
 
+bool H2TriangleSubdivision::isRoot() const
+{
+    return depth == totalDepth;
+}
+
 H2Triangle H2TriangleSubdivision::getTriangle() const
 {
     return H2Triangle((*points)[aIndex], (*points)[bIndex], (*points)[cIndex]);
@@ -272,24 +271,24 @@ bool H2TriangleSubdivision::triangleContaining(const H2Point &point, H2Triangle 
 }
 
 bool H2TriangleSubdivision::triangleContaining(const H2Point &point, H2Triangle &outputTriangle,
-                                               int &meshIndex1, int &meshIndex2, int &meshIndex3) const
+                                               int &index1, int &index2, int &index3) const
 {
     if (getTriangle().contains(point))
     {
         if (depth == 0)
         {
             outputTriangle = getTriangle();
-            meshIndex1 = meshIndices->at(aIndex);
-            meshIndex2 = meshIndices->at(bIndex);
-            meshIndex3 = meshIndices->at(cIndex);
+            index1 = aIndex;
+            index2 = bIndex;
+            index3 = cIndex;
             return true;
         }
         else
         {
-            if (A->triangleContaining(point, outputTriangle, meshIndex1, meshIndex2, meshIndex3) ||
-                    B->triangleContaining(point, outputTriangle, meshIndex1, meshIndex2, meshIndex3) ||
-                    C->triangleContaining(point, outputTriangle, meshIndex1, meshIndex2, meshIndex3) ||
-                    O->triangleContaining(point, outputTriangle, meshIndex1, meshIndex2, meshIndex3))
+            if (A->triangleContaining(point, outputTriangle, index1, index2, index3) ||
+                    B->triangleContaining(point, outputTriangle, index1, index2, index3) ||
+                    C->triangleContaining(point, outputTriangle, index1, index2, index3) ||
+                    O->triangleContaining(point, outputTriangle, index1, index2, index3))
             {
                 return true;
             }

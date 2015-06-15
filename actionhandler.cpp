@@ -49,7 +49,7 @@ void ActionHandler::setFactory()
     factory->setRhoTarget(lengths2, twists2);
     //F.setNiceRhoTarget();
 
-    factory->setMeshDepth(4);
+    factory->setMeshDepth(2);
     factory->initialize();
 
 

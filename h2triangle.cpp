@@ -77,23 +77,56 @@ void H2Triangle::getAngles(double &angleA, double &angleB, double &angleC) const
 
 bool H2Triangle::isVertexCloseInDiskModel(const H2Point &point, double detectionRadiusSquared, int &vertexIndex) const
 {
+    bool res = false;
+
     Complex z = point.getDiskCoordinate();
-    if (norm(z - a.getDiskCoordinate()) < detectionRadiusSquared)
+    double min = 0;
+    double A = norm(z - a.getDiskCoordinate());
+    double B = norm(z - b.getDiskCoordinate());
+    double C = norm(z - c.getDiskCoordinate());
+
+    if (A < detectionRadiusSquared)
     {
+        min = A;
         vertexIndex = 0;
-        return true;
+        res = true;
     }
-    else if (norm(z - b.getDiskCoordinate()) < detectionRadiusSquared)
+    if (B < detectionRadiusSquared)
     {
-        vertexIndex = 1;
-        return true;
+        if (res)
+        {
+            if (B<min)
+            {
+                min = B;
+                vertexIndex = 1;
+            }
+        }
+        else
+        {
+            min = B;
+            vertexIndex = 1;
+            res = true;
+        }
+
     }
-    else if (norm(z - c.getDiskCoordinate()) < detectionRadiusSquared)
+    if (C < detectionRadiusSquared)
     {
-        vertexIndex = 2;
-        return true;
+        if (res)
+        {
+            if (C<min)
+            {
+                min = C;
+                vertexIndex = 2;
+            }
+        }
+        else
+        {
+            min = C;
+            vertexIndex = 2;
+            res = true;
+        }
     }
-    return false;
+    return res;
 }
 
 H2Point H2Triangle::getVertex(int index) const

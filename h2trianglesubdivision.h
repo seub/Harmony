@@ -22,6 +22,7 @@ public:
     ~H2TriangleSubdivision();
 
     int getTotalDepth() const;
+    bool isRoot() const;
     bool isEmpty() const;
 
     static int nbOfLines(int depth);
@@ -35,7 +36,7 @@ public:
     H2Point getPoint(int index) const;
 
     bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle) const;
-    bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle, int &meshIndex1, int&meshIndex2, int &meshIndex3) const;
+    bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle, int &index1, int&index2, int &index3) const;
 
 
 
@@ -43,9 +44,9 @@ public:
     std::vector<bool> areBoundaryPoints() const;
 
 private:
-    void construct(int aIndex, int bIndex, int cIndex, int depth, int totalDepth, std::vector<H2Point> *points, std::vector<int> *meshIndices,
+    void construct(int aIndex, int bIndex, int cIndex, int depth, int totalDepth, std::vector<H2Point> *points,
                    std::vector<bool> &filled, int an, int bn, int cn, int ap, int bp, int cp); // Base (pseudo)constructor;
-    void copy(const H2TriangleSubdivision &other, std::vector<H2Point> *points, std::vector<int> *meshIndices);
+    void copy(const H2TriangleSubdivision &other, std::vector<H2Point> *points);
 
 
 
@@ -53,7 +54,6 @@ private:
     int aIndex, bIndex, cIndex;
     int depth, totalDepth;
     std::vector<H2Point> *points;
-    std::vector<int> *meshIndices;
     bool empty;
 };
 

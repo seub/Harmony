@@ -26,6 +26,7 @@ H2Mesh::H2Mesh(const H2Mesh &other)
     fundamentalSteinerDomain = other.fundamentalSteinerDomain;
 
     subdivisions = other.subdivisions;
+    meshIndicesInSubdivisions = other.meshIndicesInSubdivisions;
     triangles = other.triangles;
 
     regularPoints = other.regularPoints;
@@ -76,6 +77,7 @@ void swap(H2Mesh &first, H2Mesh &second)
     std::swap(first.fundamentalSteinerDomain, second.fundamentalSteinerDomain);
 
     std::swap(first.subdivisions, second.subdivisions);
+    std::swap(first.meshIndicesInSubdivisions, second.meshIndicesInSubdivisions);
     std::swap(first.triangles, second.triangles);
 
     std::swap(first.meshPoints, second.meshPoints);
@@ -111,14 +113,19 @@ bool H2Mesh::triangleContaining(const H2Point &point, H2Triangle &outputTriangle
 }
 
 bool H2Mesh::triangleContaining(const H2Point &point, H2Triangle &outputTriangle,
-                                             int &meshIndex1, int &meshIndex2, int &meshIndex3) const
+                                int &meshIndex1, int &meshIndex2, int &meshIndex3) const
 {
+    int indexInSubdivision1, indexInSubdivision2, indexInSubdivision3, i=0;
     for(const auto &S : subdivisions)
     {
-        if (S.triangleContaining(point, outputTriangle, meshIndex1, meshIndex2, meshIndex3))
+        if (S.triangleContaining(point, outputTriangle, indexInSubdivision1, indexInSubdivision2, indexInSubdivision3))
         {
+            meshIndex1 = meshIndicesInSubdivisions[i][indexInSubdivision1];
+            meshIndex2 = meshIndicesInSubdivisions[i][indexInSubdivision2];
+            meshIndex3 = meshIndicesInSubdivisions[i][indexInSubdivision3];
             return true;
         }
+        ++i;
     }
     return false;
 }
@@ -137,6 +144,27 @@ std::vector<H2Point> H2Mesh::getH2Neighbors(int index) const
         res.push_back(getH2Point(k));
     }
     return res;
+}
+
+std::vector<H2Point> H2Mesh::getPartnerPoints(int index) const
+{
+    H2MeshPoint *point = meshPoints.at(index);
+    if (point->isBoundaryPoint())
+    {
+        return {getH2Point(index), getH2Point(((H2MeshBoundaryPoint *) point)->partnerPointIndex)};
+    }
+    else if (point->isSteinerPoint())
+    {
+        return {getH2Point(index), getH2Point(((H2MeshSteinerPoint *) point)->partnerPointIndex)};
+    }
+    else if (point->isVertexPoint())
+    {
+        return fundamentalDomain.getVertices();
+    }
+    else
+    {
+        return {getH2Point(index)};
+    }
 }
 
 std::vector<H2Point> H2Mesh::getKickedH2Neighbors(int index) const
@@ -181,4 +209,9 @@ IsomH2Representation H2Mesh::getRepresentation() const
 int H2Mesh::nbPoints() const
 {
     return (int) meshPoints.size();
+}
+
+bool H2Mesh::isInteriorPoint(int index) const
+{
+    return meshPoints.at(index)->isInteriorPoint();
 }

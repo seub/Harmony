@@ -102,6 +102,8 @@ void H2Buffer::addElement(const std::vector<H2Polygon> &V, const QColor &color, 
 
 void H2Buffer::addElement(const H2TriangleSubdivision &T, const QColor &color, int width)
 {
+    if (T.isRoot())
+    {
     int L = T.nbOfLines(T.getTotalDepth());
     std::vector<H2Point> Tpoints = T.getPoints();
 
@@ -117,6 +119,11 @@ void H2Buffer::addElement(const H2TriangleSubdivision &T, const QColor &color, i
             c = Tpoints[m + j + i + 2];
             addElement(H2Triangle(a, b, c), color, width);
         }
+    }
+    }
+    else
+    {
+        throw(QString("Error in  H2Buffer::addElement(const H2TriangleSubdivision &T, const QColor &color, int width): not a root subdivision"));
     }
 }
 
@@ -149,9 +156,13 @@ void H2Buffer::refreshFunction()
 {
     functionArcs.clear();
     functionPoints.clear();
+<<<<<<< HEAD
     functionColors.clear();
     functionWidths.clear();
     std::vector<H2Triangle> triangles = function->getTriangles();
+=======
+    std::vector<H2Triangle> triangles = function->getTrianglesUp();
+>>>>>>> 3e1a391b1f6ee80fd0e97c1e0b10c20f0b372eeb
     functionArcs.reserve(3*triangles.size());
     functionPoints.reserve(3*triangles.size());
     std::vector<H2GeodesicArc> sides;
