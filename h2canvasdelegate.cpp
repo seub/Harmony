@@ -137,7 +137,6 @@ void H2CanvasDelegate::redrawBuffer(const H2Isometry &mobius)
     {
         for (const auto &p : buffer.pointsHighlightedGreen)
         {
-            std::cout << "green" << std::endl;
             drawH2Point(p, "green", 6);
         }
     }
@@ -145,7 +144,6 @@ void H2CanvasDelegate::redrawBuffer(const H2Isometry &mobius)
     {
         for (const auto &p : buffer.pointsHighlightedBlue)
         {
-            std::cout << "blue" << std::endl;
             drawH2Point(p, "blue", 6);
         }
     }
