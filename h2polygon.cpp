@@ -173,8 +173,7 @@ H2GeodesicArc H2Polygon::getSide(int index) const
     }
     else
     {
-        std::cout << "ERROR in H2Polygon::isPositivelyOriented: wrong index" << std::endl;
-        throw(0);
+        throw(QString("ERROR in H2Polygon::isPositivelyOriented: wrong index"));
     }
 }
 

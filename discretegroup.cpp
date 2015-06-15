@@ -102,7 +102,6 @@ std::vector<Word> DiscreteGroup::getWordsOfLengthEqualTo(int n) const
     if (n <= 0)
     {
         std::cout << "There are no words of negative length" << std::endl;
-        throw(0);
     }
     if (n==1)
     {
@@ -160,7 +159,6 @@ std::vector<Word> DiscreteGroup::getWordsOfNonRepeatingLettersLengthEqualTo(int 
     if (n <= 0)
     {
         std::cout << "There are no Words of negative length" << std::endl;
-        throw(0);
     }
     if (n==1)
     {

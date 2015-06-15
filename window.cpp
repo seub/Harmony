@@ -6,7 +6,6 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QResizeEvent>
-#include <QDebug>
 
 #include "canvas.h"
 #include "topmenu.h"
@@ -191,14 +190,4 @@ void Window::optimalSize(unsigned int &outputWidth, unsigned int &outputHeight) 
     outputWidth = std::min(menuWidth() + 2*layout->margin() + 2*canvasOptimalSize + 2*layout->horizontalSpacing(), Tools::intRound(0.9*screenWidth));
 }
 
-void Window::setFactory(EquivariantHarmonicMapsFactory *Factory)
-{
-    this->Factory = Factory;
-    ((H2CanvasDelegateDomain *) leftCanvas->delegate)->buffer.addElement(Factory->rhoDomain, "blue", 2);
-    ((H2CanvasDelegateDomain *) leftCanvas->delegate)->buffer.addElement(&Factory->mesh);
-    ((H2CanvasDelegateDomain *) leftCanvas->delegate)->redrawBuffer();
 
-    ((H2CanvasDelegateTarget *) rightCanvas->delegate)->buffer.addElement(Factory->rhoTarget, "blue", 2);
-    ((H2CanvasDelegateTarget *) rightCanvas->delegate)->buffer.addElement(&Factory->functionInit, "red", 1);
-    ((H2CanvasDelegateTarget *) rightCanvas->delegate)->redrawBuffer();
-}

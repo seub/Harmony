@@ -17,7 +17,6 @@ SL2CMatrix::SL2CMatrix(const Complex &a, const Complex &b, const Complex &c, con
     if (norm(det() - Complex(1.0,0.0)) > ERROR)
     {
         std::cout << "WARNING in SL2Cmatrix::SL2Cmatrix: the determinant is not 1 (it is equal to " << det() <<" )" << std::endl;
-        //throw(0);
     }
 }
 
@@ -96,7 +95,6 @@ void SL2CMatrix::getRealPart(SL2RMatrix & output) const
         return;
     }
     else std::cout << "That's not a real matrix." << std::endl;
-    throw(0);
 }
 
 

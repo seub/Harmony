@@ -16,10 +16,11 @@ class H2Mesh
     friend class H2MeshConstructor;
     friend class H2MeshFunction;
     friend class H2MeshFunctionIterator;
+    friend class EquivariantHarmonicMapsFactory;
+    friend void swap(H2Mesh &first, H2Mesh & second); // swap function
 
 public:
-    H2Mesh();
-    H2Mesh(const IsomH2Representation &rho, int depth);
+    H2Mesh(const IsomH2Representation &rho, int depth); // Main constructor
 
     bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle) const;
     bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle, int &meshIndex1, int &meshIndex2, int &meshIndex3) const;
@@ -31,7 +32,12 @@ public:
     IsomH2Representation getRepresentation() const;
     int nbPoints() const;
 
-private:
+//private:
+    H2Mesh() {} // Dummy constructor
+    H2Mesh(const H2Mesh &other); // Copy constructor
+    H2Mesh & operator=(H2Mesh other); //Copy-assignment operator
+    void createMeshPointsVector();
+
     IsomH2Representation rho;
     int depth;
 

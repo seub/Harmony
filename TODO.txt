@@ -102,5 +102,10 @@ traiter proprement l'inclusion de factory dans window et dans les canvas
 
 
 Add function of H2trianglesubdivision that outputs couples of indices of all geodesic arcs
+rendre affichage plus efficace
+afficher l'erreur dans la statusbar
+
+mettre des throw Qstring partout où y a des erreurs possibles (track down les cout)
+remplacer les friend class par des friend functions
 
 

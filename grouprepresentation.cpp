@@ -303,7 +303,6 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormali
     if (n<=0)
     {
         std::cout << "Error in IsomH2Representation::getSidePairingsNormalizedToDepth: Side pairings of 'negative'' depth" << std::endl;
-        throw(0);
     }
     if (n==1)
     {

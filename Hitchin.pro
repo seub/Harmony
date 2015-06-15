@@ -4,13 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core \
+QT += core \
     widgets \
     opengl
 TARGET = Hitchin
-CONFIG   += console
-CONFIG   -= app_bundle
+CONFIG += console
+CONFIG -= app_bundle
 CONFIG += c++11
+CONFIG += thread
 
 # LIBS += -L/usr/local/lib -lGLU
 
@@ -51,7 +52,10 @@ SOURCES += main.cpp \
     topmenu.cpp \
     inputmenu.cpp \
     outputmenu.cpp \
-    equivariantharmonicmapsfactory.cpp
+    equivariantharmonicmapsfactory.cpp \
+    mainapplication.cpp \
+    mathscontainer.cpp \
+    actionhandler.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -89,7 +93,10 @@ HEADERS += \
     topmenu.h \
     inputmenu.h \
     outputmenu.h \
-    equivariantharmonicmapsfactory.h
+    equivariantharmonicmapsfactory.h \
+    mainapplication.h \
+    mathscontainer.h \
+    actionhandler.h
 
 OTHER_FILES += \
     TODO.txt

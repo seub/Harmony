@@ -17,8 +17,6 @@ public:
     Window();
 
     void resizeEvent(QResizeEvent *event);
-    void setFactory(EquivariantHarmonicMapsFactory *Factory);
-
 signals:
 
 public slots:
@@ -39,8 +37,6 @@ public:
     QStatusBar* statusBar;
     QLabel* statusBarLabel;
     TopMenu* topMenu;
-
-    EquivariantHarmonicMapsFactory *Factory;
 };
 
 #endif // WINDOW_H

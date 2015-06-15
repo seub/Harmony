@@ -10,15 +10,14 @@
 #include "h2meshfunction.h"
 
 
-class EquivariantHarmonicMapsFactory// : public QThread
+class EquivariantHarmonicMapsFactory : public QThread
 {
-    //Q_OBJECT
+    Q_OBJECT
 
-    friend class Window;
+    friend class ActionHandler;
 
 public:
     EquivariantHarmonicMapsFactory();
-    virtual ~EquivariantHarmonicMapsFactory() {}
     void setGenus(int genus);
     void setMeshDepth(int meshDepth);
     void setRhoDomain(const std::vector<double> & FNlengths, const std::vector<double> FNtwists);
@@ -34,11 +33,11 @@ public:
     void initialize();
     void iterate(int n=1);
 
-/*public slots:
+public slots:
     void run();
-    void stopRunning();*/
+    void stopRunning();
 
-//private:
+private:
     void resetBooleans();
     bool isReady() const;
     void refreshFunction();
