@@ -106,4 +106,5 @@ afficher l'erreur dans la statusbar
 mettre des throw Qstring partout où y a des erreurs possibles (track down les cout)
 remplacer les friend class par des friend functions
 
+parfois isTriangleHighlighted est true à tort ?
 
