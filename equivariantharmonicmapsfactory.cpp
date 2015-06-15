@@ -15,7 +15,7 @@ void EquivariantHarmonicMapsFactory::reset()
     rhoDomain = IsomH2Representation(&Gamma);
     rhoTarget = IsomH2Representation(&Gamma);
 
-    //function = functionInit;
+    function = functionInit;
     stop = false;
 }
 
@@ -118,7 +118,7 @@ void EquivariantHarmonicMapsFactory::initialize()
     }
     mesh = H2Mesh(rhoDomain, meshDepth);
     functionInit.initializePLsmart();
-    //function.initializePLsmart();
+    function.initializePLsmart();
     isInitialized = true;
 }
 
@@ -129,7 +129,7 @@ bool EquivariantHarmonicMapsFactory::isReady() const
 
 void EquivariantHarmonicMapsFactory::refreshFunction()
 {
-    //function = iterator.getOutput();
+    iterator.getOutput(function);
 }
 
 void EquivariantHarmonicMapsFactory::iterate(int n)

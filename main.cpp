@@ -44,18 +44,7 @@ int main(int argc, char *argv[])
     F.setMeshDepth(4);
     F.initialize();
 
-    //IsomH2Representation rho = F.getRhoDomain();
 
-    //H2Mesh mesh(rho, 1);
-
-    H2MeshFunction f(F.functionInit);
-    //f.iterate();
-
-
-    ((H2CanvasDelegateDomain*) (window.leftCanvas->delegate))->buffer.addElement(&F.mesh,"blue", 1);
-    ((H2CanvasDelegateDomain*) (window.leftCanvas->delegate))->redrawBuffer();
-    ((H2CanvasDelegateTarget*) (window.rightCanvas->delegate))->buffer.addElement(&f,"red", 1);
-    ((H2CanvasDelegateTarget*) (window.rightCanvas->delegate))->redrawBuffer();
 
     window.show();
     window.resizeCanvases();

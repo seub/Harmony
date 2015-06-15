@@ -7,8 +7,25 @@ H2MeshFunction::H2MeshFunction() : mesh(0), rhoImage(0)
 {
 }
 
-H2MeshFunction::H2MeshFunction(const H2Mesh *const mesh, const IsomH2Representation * const rhoImage) : mesh(mesh), rhoImage(rhoImage)
+H2MeshFunction::H2MeshFunction(const H2MeshFunction &other) : H2MeshFunction(other.mesh, other.rhoImage, other.values)
 {
+}
+
+H2MeshFunction::H2MeshFunction(const H2Mesh *mesh, const IsomH2Representation *rhoImage) : mesh(mesh), rhoImage(rhoImage)
+{
+}
+
+void swap(H2MeshFunction &first, H2MeshFunction &second)
+{
+    std::swap(first.mesh, second.mesh);
+    std::swap(first.rhoImage, second.rhoImage);
+    std::swap(first.values, second.values);
+}
+
+H2MeshFunction & H2MeshFunction::operator=(H2MeshFunction other)
+{
+    swap(*this, other);
+    return *this;
 }
 
 void H2MeshFunction::initializePL(const H2Point &basePoint)
@@ -23,7 +40,6 @@ void H2MeshFunction::initializePL(const H2Point &basePoint)
     {
         vertexImages.push_back(rhoImage->evaluateRepresentation(pairing)*basePoint);
     }
-    // vertexImages needs fixing by this point: insert midpoints
 
     H2SteinerPolygon SteinerPolygonImage(vertexImages, mesh->fundamentalSteinerDomain.getVectorNbSteinerPoints());
 
@@ -54,7 +70,7 @@ void H2MeshFunction::initializePLsmart()
     initializePL(basept);
 }
 
-H2MeshFunction::H2MeshFunction(const H2Mesh * const mesh, const IsomH2Representation * const rhoImage, std::vector<H2Point> values) :
+H2MeshFunction::H2MeshFunction(const H2Mesh *mesh, const IsomH2Representation *rhoImage, const std::vector<H2Point> &values) :
      mesh(mesh), rhoImage(rhoImage), values(values)
 {
 }
@@ -63,7 +79,7 @@ void H2MeshFunction::iterate(int n)
 {
     H2MeshFunctionIterator iter(this);
     iter.iterate(n);
-    values = iter.getOutput().values;
+    iter.getOutput(*this);
 }
 
 const std::vector<H2Point> & H2MeshFunction::getValues() const
