@@ -52,11 +52,16 @@ void ActionHandler::setFactory()
     factory->setMeshDepth(4);
     factory->initialize();
 
+
     leftDelegate->buffer.addElement(factory->rhoDomain, "blue", 2);
     leftDelegate->buffer.addElement(&factory->mesh, "red", 1);
+    leftDelegate->buffer.addKickedDrawing(factory->rhoDomain.getSidePairingsNormalizedAroundVertex());
     leftDelegate->redrawBuffer();
 
     rightDelegate->buffer.addElement(factory->rhoTarget, "blue", 2);
     rightDelegate->buffer.addElement(&factory->functionInit, "red", 1);
+    rightDelegate->buffer.setIsometries(factory->rhoTarget.getSidePairingsNormalizedAroundVertex());
+    rightDelegate->buffer.addKickedDrawing(factory->rhoTarget.getSidePairingsNormalizedAroundVertex());
+
     rightDelegate->redrawBuffer();
 }
