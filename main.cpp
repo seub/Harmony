@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     F.setNiceRhoDomain();
     F.setRhoTarget(lengths2, twists2);
     //F.setNiceRhoTarget();
-    F.setMeshDepth(4);
+    F.setMeshDepth(3);
     F.initialize();
 
     IsomH2Representation rhoDomain = F.getRhoDomain();
@@ -52,7 +52,6 @@ int main(int argc, char *argv[])
 
     H2MeshFunction f(F.functionInit);
     //f.iterate();
-
 
     ((H2CanvasDelegateDomain*) (window.leftCanvas->delegate))->buffer.addElement(&F.mesh,"blue", 1);
     ((H2CanvasDelegateDomain*) (window.leftCanvas->delegate))->redrawBuffer();

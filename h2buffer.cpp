@@ -196,9 +196,39 @@ void H2Buffer::addKickedDrawing(const H2Isometry &A)
 
 void H2Buffer::addKickedDrawing(const std::vector<H2Isometry> &vectorA)
 {
+    std::vector<H2Point> tempPts, tempFunctionPoints, pointsHolder, functionPointsHolder;
+    std::vector<int> tempWidths;
+    std::vector<QColor> tempColors;
+    std::vector<H2GeodesicArc> tempGeodesicArcs, tempFunctionArcs, arcsHolder, functionArcsHolder;
+
+    pointsHolder = points;
+    arcsHolder = geodesicArcs;
+    functionPointsHolder = functionPoints;
+    functionArcsHolder = functionArcs;
+
     for (const auto & A : vectorA)
     {
-        addKickedDrawing(A);
+        tempPts = A*pointsHolder;
+        tempColors.resize(pointsHolder.size());
+        tempWidths = pointsWidths;
+        std::fill(tempColors.begin(), tempColors.end(), "grey");
+        points.insert(points.end(),tempPts.begin(),tempPts.end());
+        pointsWidths.insert(pointsWidths.end(),tempWidths.begin(),tempWidths.end());
+        pointsColors.insert(pointsColors.end(), tempColors.begin(), tempColors.end());
+
+        tempGeodesicArcs = A*arcsHolder;
+        tempColors.resize(geodesicArcs.size());
+        tempWidths = geodesicArcsWidths;
+        std::fill(tempColors.begin(), tempColors.end(), "grey");
+        geodesicArcs.insert(geodesicArcs.end(),tempGeodesicArcs.begin(),tempGeodesicArcs.end());
+        geodesicArcsWidths.insert(geodesicArcsWidths.end(),tempWidths.begin(),tempWidths.end());
+        geodesicArcsColors.insert(geodesicArcsColors.end(), tempColors.begin(), tempColors.end());
+
+        tempFunctionPoints = A*functionPointsHolder;
+        functionPoints.insert(functionPoints.end(),tempFunctionPoints.begin(),tempFunctionPoints.end());
+
+        tempFunctionArcs = A*functionArcsHolder;
+        functionArcs.insert(functionArcs.end(),tempFunctionArcs.begin(),tempFunctionArcs.end());
     }
 }
 
