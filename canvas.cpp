@@ -75,7 +75,7 @@ void Canvas::paintEvent(QPaintEvent *event)
 {
     //std::cout << "Entering Canvas::paintEvent for canvas" << this << std::endl;
 
-    delegate->redrawBuffer(delegate->redrawBufferLeft, delegate->redrawBufferRight);
+    delegate->redrawBuffer(delegate->enableRedrawBufferBack, delegate->enableRedrawBufferTop);
     delegate->enableRedrawBuffer(false, false);
 
     QPainter canvasPainter(this);
@@ -112,6 +112,11 @@ void Canvas::mouseMoveEvent(QMouseEvent *mouseEvent)
 void Canvas::enterEvent(QEvent *)
 {
     setFocus();
+}
+
+void Canvas::leaveEvent(QEvent *)
+{
+    delegate->leave();
 }
 
 void Canvas::wheelEvent(QWheelEvent *wheelEvent)

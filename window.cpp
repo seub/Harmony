@@ -25,7 +25,7 @@ void Window::createWindow(ActionHandler *handler)
     leftCanvas = new Canvas(H2DELEGATEDOMAIN, this, true, false, handler);
     rightCanvas = new Canvas(H2DELEGATETARGET, this, false, true, handler);
     inputMenu = new InputMenu(this);
-    outputMenu = new OutputMenu(this);
+    outputMenu = new OutputMenu(this, handler);
     statusBar= new QStatusBar(this);
     statusBar->setSizeGripEnabled(false);
     statusBar->setFixedHeight(25);

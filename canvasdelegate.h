@@ -53,11 +53,12 @@ public:
     void mouseShift(int x, int y);
     void shift(int x, int y);
 
-    void enableRedrawBuffer(bool left = true, bool right = true);
+    void enableRedrawBuffer(bool back = true, bool top = true);
 
     virtual void mousePress(QMouseEvent * mouseEvent) = 0;
     virtual void mouseMove(QMouseEvent * mouseEvent) = 0;
     virtual void keyPress(QKeyEvent * keyEvent) = 0;
+    virtual void leave() = 0;
 
 private:
     CanvasDelegate(); // Dummy constructor
@@ -77,7 +78,7 @@ protected:
     QImage *imageBack, *imageTop;
     QPainter *painterBack, *painterTop;
 
-    bool redrawBufferLeft, redrawBufferRight;
+    bool enableRedrawBufferBack, enableRedrawBufferTop;
 
     void rescale(int sizeX, int sizeY);
     void resetView(int sizeX, int sizeY);

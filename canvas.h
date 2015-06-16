@@ -37,6 +37,7 @@ public:
     void wheelEvent(QWheelEvent *wheelEvent);
     void keyPressEvent(QKeyEvent *keyEvent);
     void enterEvent(QEvent *);
+    void leaveEvent(QEvent *);
 
 private:
     Canvas(); // Dummy constructor

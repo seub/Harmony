@@ -12,7 +12,9 @@
 class H2CanvasDelegate : public CanvasDelegate
 {
     friend class ActionHandler;
-public:
+    friend class Canvas;
+
+protected:
     explicit H2CanvasDelegate(int sizeX, int sizeY, ActionHandler* handler = 0);
 
     H2Point pixelToH2coordinate(int x, int y) const;
@@ -45,8 +47,8 @@ public:
     virtual void keyPress(QKeyEvent * keyEvent);
     virtual void subMouseMove(QMouseEvent *) {}
     virtual void subKeyPress(QKeyEvent *) {}
+    virtual void leave();
 
-protected:
     H2Buffer buffer;
     H2Isometry mobius;
     H2Isometry savedMobius;
@@ -62,22 +64,29 @@ protected:
 
 class H2CanvasDelegateDomain : public H2CanvasDelegate
 {
+    friend class Canvas;
 public:
-    explicit H2CanvasDelegateDomain(int sizeX, int sizeY, ActionHandler *handler = 0);
 
+private:
+    explicit H2CanvasDelegateDomain(int sizeX, int sizeY, ActionHandler *handler = 0);
     void decideHighlighting(const H2Point &pointUnderMouse);
     void decideHighlightingMeshPoints(bool highlighted, bool &update, int meshIndexHighlighted = -1);
     void decideHighlightingTriangle(bool highlighted, bool& update, int triangleMeshIndex1 = -1, int triangleMeshIndex2 = -1, int triangleMeshIndex3 = -1);
     void subRedrawBufferBack();
     void subRedrawBufferTop();
     void subMouseMove(QMouseEvent * mouseEvent);
-private:
 };
 
 class H2CanvasDelegateTarget : public H2CanvasDelegate
 {
+    friend class Canvas;
+    friend class ActionHandler;
 public:
+
+private:
     explicit H2CanvasDelegateTarget(int sizeX, int sizeY, ActionHandler *handler = 0);
+
+    void refreshFunction();
 
     void decideHighlighting(const H2Point &pointUnderMouse);
     void decideHighlightingMeshPoints(bool highlighted, bool &update, int meshIndexHighlighted = -1);
@@ -86,8 +95,6 @@ public:
     void subRedrawBufferTop();
     void subMouseMove(QMouseEvent *mouseEvent);
     void subKeyPress(QKeyEvent *keyEvent);
-
-private:
 };
 
 

@@ -5,7 +5,7 @@
 #include "h2meshconstructor.h"
 #include "h2trianglesubdivision.h"
 
-EquivariantHarmonicMapsFactory::EquivariantHarmonicMapsFactory() : functionInit(&mesh, rhoTarget), iterator(&functionInit)
+EquivariantHarmonicMapsFactory::EquivariantHarmonicMapsFactory() : functionInit(&mesh, rhoTarget), iterator(&function)
 {
     reset();
 }
@@ -128,12 +128,26 @@ void EquivariantHarmonicMapsFactory::initialize()
 
     functionInit.initializePLsmart();
     function = functionInit;
+
+    iterator.initialize();
     isInitialized = true;
 }
 
 bool EquivariantHarmonicMapsFactory::isReady() const
 {
     return isGenusSet && isRhoDomainSet && isRhoTargetSet && isMeshDepthSet && isInitialized;
+}
+
+void EquivariantHarmonicMapsFactory::resetInit()
+{
+    if (!(isGenusSet && isMeshDepthSet && isRhoDomainSet && isRhoTargetSet))
+    {
+        std::cout << "Error in EquivariantHarmonicMapsFactory::resetInit: Factory not ready to reset Init" << std::endl;
+    }
+    function = functionInit;
+
+    iterator.initialize();
+    isInitialized = true;
 }
 
 void EquivariantHarmonicMapsFactory::refreshFunction()
@@ -167,8 +181,8 @@ void EquivariantHarmonicMapsFactory::stopRunning()
 std::vector<H2GeodesicArc> EquivariantHarmonicMapsFactory::getPolygonTranslatesDomain() const
 {
     std::vector<H2GeodesicArc> sides, sidesImages, temp;
-    sides = rhoDomain.generatePolygon(100).getSides();
-    sidesImages.resize(64*genus*genus*genus - 32*genus*genus);
+    sides = mesh.fundamentalDomain.getSides();
+    sidesImages.reserve(64*genus*genus*genus - 32*genus*genus);
     for (const auto & A : rhoDomain.getSidePairingsNormalizedAroundVertices())
     {
         temp = A*sides;
