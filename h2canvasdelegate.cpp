@@ -628,6 +628,7 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
 
         buffer.refreshFunction();
         addMeshTranslates();
+        //addPolygonTranslates();
         break;
     }
 }
@@ -640,4 +641,9 @@ void H2CanvasDelegate::addMeshTranslates(const std::vector<H2Isometry> &translat
 void H2CanvasDelegate::addMeshTranslates()
 {
     buffer.addMeshTranslates();
+}
+
+void H2CanvasDelegate::addPolygonTranslates()
+{
+    buffer.addPolygonTranslates();
 }

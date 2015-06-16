@@ -34,12 +34,12 @@ void ActionHandler::setFactory()
         //twists1.push_back(0.0);
         twists2.push_back(0.0);
     }
-    twists2[2] = 2.0*M_PI;
+    twists2[1] = -2.0*M_PI;
 
     for (int i=0; i<3*g-3; i++)
     {
         lengths1.push_back(2.0);
-        lengths2.push_back(1.0+3.0*i);
+        lengths2.push_back(2.0);
     }
 
     factory->setGenus(2);
@@ -55,12 +55,14 @@ void ActionHandler::setFactory()
 
     leftDelegate->buffer.addElement(factory->rhoDomain, "blue", 2);
     leftDelegate->buffer.addElement(&factory->mesh, "red", 1);
-    leftDelegate->buffer.addMeshTranslates(factory->rhoDomain.getSidePairingsNormalizedAroundVertices());
+    //leftDelegate->buffer.addMeshTranslates(factory->rhoDomain.getSidePairingsNormalizedAroundVertices());
+    leftDelegate->buffer.addElement(factory->getPolygonTranslatesDomain(),"grey",1);
 
     rightDelegate->buffer.addElement(factory->rhoTarget, "blue", 2);
     rightDelegate->buffer.addElement(&factory->functionInit, "red", 1);
     rightDelegate->buffer.setTranslations(factory->rhoTarget.getSidePairingsNormalizedAroundVertices());
     rightDelegate->buffer.addMeshTranslates();
+    //rightDelegate->buffer.addPolygonTranslates();
 }
 
 void ActionHandler::processMessage(actionHandlerMessage message, int timeOut)
