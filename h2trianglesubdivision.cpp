@@ -99,7 +99,7 @@ H2TriangleSubdivision::H2TriangleSubdivision(const H2Point &a, const H2Point &b,
     filled[bIndex] = true;
     filled[cIndex] = true;
 
-    construct(aIndex, bIndex, cIndex, depth, depth, points, filled, an, bn, cn, ap, bp, cp);
+    constructWithMidpoints(aIndex, bIndex, cIndex, depth, depth, points, filled, an, bn, cn, ap, bp, cp);
 
     /*// Filled count check
     int counter = 0;
@@ -114,8 +114,38 @@ H2TriangleSubdivision::H2TriangleSubdivision(const H2Point &a, const H2Point &b,
     std::cout << "nb of points in triangulation: " << N << std::endl;*/
 }
 
-void H2TriangleSubdivision::construct(int aIndex, int bIndex, int cIndex, int depth, int totalDepth, std::vector<H2Point> *points,
-                                      std::vector<bool> &filled, int an, int bn, int cn, int ap, int bp, int cp)
+H2TriangleSubdivision::H2TriangleSubdivision(const std::vector<H2Point> &points, int depth)
+{
+    if (H2TriangleSubdivision::nbOfPoints(depth) == (int) points.size())
+    {
+        totalDepth = depth;
+        int L = nbOfLines(depth), N = nbOfPoints(depth);
+        this->points = new std::vector<H2Point>;
+        *(this->points) = points;
+        std::vector<bool> filled;
+        filled.resize(N);
+        std::fill(filled.begin(), filled.end(), false);
+
+        int an = 0, ap = 0, bn = L - 1, bp = 0, cn = L - 1, cp = L - 1;
+        aIndex = 0;
+        cIndex = N - 1;
+        bIndex = cIndex - cp;
+
+        filled[aIndex] = true;
+        filled[bIndex] = true;
+        filled[cIndex] = true;
+
+        constructWithGivenPoints(aIndex, bIndex, cIndex, depth, depth, this->points, filled, an, bn, cn, ap, bp, cp);
+    }
+    else
+    {
+        throw(QString("Error in H2TriangleSubdivision::H2TriangleSubdivision(const std::vector<H2Point> &points, int depth): points.size() does not match expected size"));
+    }
+}
+
+
+void H2TriangleSubdivision::constructWithMidpoints(int aIndex, int bIndex, int cIndex, int depth, int totalDepth, std::vector<H2Point> *points,
+                                                   std::vector<bool> &filled, int an, int bn, int cn, int ap, int bp, int cp)
 {
     this->aIndex = aIndex;
     this->bIndex = bIndex;
@@ -160,10 +190,63 @@ void H2TriangleSubdivision::construct(int aIndex, int bIndex, int cIndex, int de
         C = new H2TriangleSubdivision;
         O = new H2TriangleSubdivision;
 
-        A->construct(aIndex, midabIndex, midacIndex, depth - 1, totalDepth, points, filled, an, midabn, midacn, ap, midabp, midacp);
-        B->construct(midabIndex, bIndex, midbcIndex, depth - 1, totalDepth, points, filled, midabn, bn, midbcn, midabp, bp, midbcp);
-        C->construct(midacIndex, midbcIndex, cIndex, depth - 1, totalDepth, points, filled, midacn, midbcn, cn, midacp, midbcp, cp);
-        O->construct(midbcIndex, midacIndex, midabIndex, depth - 1, totalDepth, points, filled, midbcn, midacn, midabn, midbcp, midacp, midabp);
+        A->constructWithMidpoints(aIndex, midabIndex, midacIndex, depth - 1, totalDepth, points, filled, an, midabn, midacn, ap, midabp, midacp);
+        B->constructWithMidpoints(midabIndex, bIndex, midbcIndex, depth - 1, totalDepth, points, filled, midabn, bn, midbcn, midabp, bp, midbcp);
+        C->constructWithMidpoints(midacIndex, midbcIndex, cIndex, depth - 1, totalDepth, points, filled, midacn, midbcn, cn, midacp, midbcp, cp);
+        O->constructWithMidpoints(midbcIndex, midacIndex, midabIndex, depth - 1, totalDepth, points, filled, midbcn, midacn, midabn, midbcp, midacp, midabp);
+    }
+
+    empty = false;
+    return;
+}
+
+void H2TriangleSubdivision::constructWithGivenPoints(int aIndex, int bIndex, int cIndex, int depth, int totalDepth, std::vector<H2Point> *points,
+                                                     std::vector<bool> &filled, int an, int bn, int cn, int ap, int bp, int cp)
+{
+    this->aIndex = aIndex;
+    this->bIndex = bIndex;
+    this->cIndex = cIndex;
+    this->depth = depth;
+    this->totalDepth = totalDepth;
+    this->points = points;
+
+    if (depth == 0)
+    {
+        A = 0;
+        B = 0;
+        C = 0;
+        O = 0;
+    }
+    else
+    {
+        int midabn = (an + bn)/2, midacn = (an + cn)/2, midbcn = (bn + cn)/2;
+        int midabp = (ap + bp)/2, midacp = (ap + cp)/2, midbcp = (bp + cp)/2;
+        int midabIndex = (midabn*(midabn+1))/2 + midabp;
+        int midacIndex = (midacn*(midacn+1))/2 + midacp;
+        int midbcIndex = (midbcn*(midbcn+1))/2 + midbcp;
+
+        if (!filled[midabIndex])
+        {
+            filled[midabIndex] = true;
+        }
+        if (!filled[midacIndex])
+        {
+            filled[midacIndex] = true;
+        }
+        if (!filled[midbcIndex])
+        {
+            filled[midbcIndex] = true;
+        }
+
+        A = new H2TriangleSubdivision;
+        B = new H2TriangleSubdivision;
+        C = new H2TriangleSubdivision;
+        O = new H2TriangleSubdivision;
+
+        A->constructWithMidpoints(aIndex, midabIndex, midacIndex, depth - 1, totalDepth, points, filled, an, midabn, midacn, ap, midabp, midacp);
+        B->constructWithMidpoints(midabIndex, bIndex, midbcIndex, depth - 1, totalDepth, points, filled, midabn, bn, midbcn, midabp, bp, midbcp);
+        C->constructWithMidpoints(midacIndex, midbcIndex, cIndex, depth - 1, totalDepth, points, filled, midacn, midbcn, cn, midacp, midbcp, cp);
+        O->constructWithMidpoints(midbcIndex, midacIndex, midabIndex, depth - 1, totalDepth, points, filled, midbcn, midacn, midabn, midbcp, midacp, midabp);
     }
 
     empty = false;
@@ -294,7 +377,11 @@ bool H2TriangleSubdivision::triangleContaining(const H2Point &point, H2Triangle 
             }
             else
             {
-                std::cout << "ERROR in H2TriangleSubdivision::getTriangleContaining: not supposed to happen" << std::endl;
+                outputTriangle = getTriangle() ;
+                index1 = aIndex;
+                index2 = bIndex;
+                index3 = cIndex;
+                std::cout << "WARNING in H2TriangleSubdivision::getTriangleContaining: I could not find a smallest triangle" << std::endl;
                 return false;
             }
         }

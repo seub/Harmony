@@ -28,6 +28,8 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     reorganizeNeighbors();
     createPiecewiseAffineWeights();
 
+    createMeshExteriorIndices();
+
     runTests();
 }
 
@@ -166,7 +168,6 @@ void H2MeshConstructor::createBoundaryPoints()
 
 void H2MeshConstructor::createVertexAndSteinerPoints()
 {
-
     vertexPoints->reserve(nbVertices);
     steinerPoints->reserve(nbSteinerPoints);
     vertexMeshIndex.resize(nbVertices);
@@ -807,6 +808,18 @@ void H2MeshConstructor::createExteriorVertexNeighbors()
         ((H2MeshVertexPoint *) ((*points)[vertexMeshIndex[4*i+1]]))->neighborsPairings = neighborsWordIsometriesTemp;
 
         neighborsWordIsometriesTemp = wordSidePairings[4*i+1]*neighborsWordIsometriesTemp;
+    }
+}
+
+void H2MeshConstructor::createMeshExteriorIndices()
+{
+    mesh->exteriorSidesIndices.clear();
+    std::vector<int> indicesAlongSide;
+    for (int i=0; i != nbVertices; ++i)
+    {
+        indicesAlongSide = meshPointsIndicesAlongFullSide(i);
+        mesh->exteriorSidesIndices.insert(mesh->exteriorSidesIndices.end(), indicesAlongSide.begin(), indicesAlongSide.end());
+        mesh->exteriorSidesIndices.pop_back();
     }
 }
 

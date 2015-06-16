@@ -5,7 +5,7 @@
 #include "h2meshconstructor.h"
 #include "h2trianglesubdivision.h"
 
-EquivariantHarmonicMapsFactory::EquivariantHarmonicMapsFactory() : functionInit(&mesh, &rhoTarget), iterator(&functionInit)
+EquivariantHarmonicMapsFactory::EquivariantHarmonicMapsFactory() : functionInit(&mesh, rhoTarget), iterator(&functionInit)
 {
     reset();
 }
@@ -55,6 +55,7 @@ void EquivariantHarmonicMapsFactory::setNiceRhoTarget()
         std::cout << "Error in EquivariantHarmonicMapsFactory::setNiceRhoTarget(): genus needs to be 2" << std::endl;
     }
     rhoTarget.setNiceRepresentation();
+    functionInit.rhoImage = rhoTarget;
     isRhoTargetSet = true;
     isInitialized = false;
 }
@@ -98,6 +99,7 @@ void EquivariantHarmonicMapsFactory::setRhoTarget(const std::vector<double> &FNL
     FNTwistsTarget = FNTwists;
     FenchelNielsenConstructor FN(FNLengths, FNTwists);
     rhoTarget = FN.getRepresentation(&Gamma);
+    functionInit.rhoImage = rhoTarget;
     isRhoTargetSet = true;
     isInitialized = false;
 }

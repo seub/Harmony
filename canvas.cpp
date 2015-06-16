@@ -9,8 +9,9 @@
 #include "canvasdelegate.h"
 #include "h2canvasdelegate.h"
 #include "window.h"
+#include "actionhandler.h"
 
-Canvas::Canvas(CanvasDelegateType delegateType, Window *const window) :
+Canvas::Canvas(CanvasDelegateType delegateType, Window *const window, bool left, bool right, ActionHandler *handler) :
     window(window)
 {
     setParent(window);
@@ -21,10 +22,8 @@ Canvas::Canvas(CanvasDelegateType delegateType, Window *const window) :
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setEnabled(true);
 
-    //resize(width,height);
-
     delegate = 0;
-    changeDelegate(delegateType);
+    changeDelegate(delegateType, left, right, handler);
 }
 
 Canvas::~Canvas()
@@ -32,41 +31,57 @@ Canvas::~Canvas()
     delete delegate;
 }
 
-void Canvas::changeDelegate(CanvasDelegateType delegateType)
+void Canvas::changeDelegate(CanvasDelegateType delegateType, bool left, bool right, ActionHandler* handler)
 {
+
     delete delegate;
 
     switch(delegateType)
     {
     case H2DELEGATE:
-        delegate = new H2CanvasDelegate(width(), height());
+        delegate = new H2CanvasDelegate(width(), height(), handler);
         break;
 
     case H2DELEGATEDOMAIN:
-        delegate = new H2CanvasDelegateDomain(width(), height());
+        delegate = new H2CanvasDelegateDomain(width(), height(), handler);
         break;
 
     case H2DELEGATETARGET:
-        delegate = new H2CanvasDelegateTarget(width(), height());
+        delegate = new H2CanvasDelegateTarget(width(), height(), handler);
         break;
 
     case H3DELEGATE:
         break;
 
     default:
-        std::cout << "ERROR in Canvas::changeDelegate: delegate type undefined" << std::endl;
+        throw(QString("ERROR in Canvas::changeDelegate: delegate type undefined"));
+    }
+
+    if (handler != 0)
+    {
+        if (left)
+        {
+            handler->leftDelegate = (H2CanvasDelegate*) delegate;
+        }
+        if (right)
+        {
+            handler->rightDelegate = (H2CanvasDelegate*) delegate;
+        }
     }
 }
 
 
-void Canvas::paintEvent(QPaintEvent *)
+void Canvas::paintEvent(QPaintEvent *event)
 {
-    //std::cout << "Entering Canvas::paintEvent" << std::endl;
+    //std::cout << "Entering Canvas::paintEvent for canvas" << this << std::endl;
 
-    delegate->redrawBuffer();
+    delegate->redrawBuffer(delegate->redrawBufferLeft, delegate->redrawBufferRight);
+    delegate->enableRedrawBuffer(false, false);
 
-    QPainter canvas_painter(this);
-    canvas_painter.drawImage(0, 0, *(delegate->getImage()));
+    QPainter canvasPainter(this);
+    canvasPainter.setClipRegion(event->region());
+    canvasPainter.drawImage(0, 0, *(delegate->getImageBack()));
+    canvasPainter.drawImage(0, 0, *(delegate->getImageTop()));
 
     //std::cout << "Leaving Canvas::paintEvent" << std::endl;
 }
@@ -116,4 +131,5 @@ void Canvas::rescale()
 {
     //delegate->rescale(width(), height());
     delegate->rescale(width(), width());
+    //update();
 }

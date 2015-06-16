@@ -13,22 +13,34 @@ class H2CanvasDelegate : public CanvasDelegate
 {
     friend class ActionHandler;
 public:
-    explicit H2CanvasDelegate(int sizeX, int sizeY);
+    explicit H2CanvasDelegate(int sizeX, int sizeY, ActionHandler* handler = 0);
 
-    void drawComplexPointInDiskModel(const Complex &z, const QColor &color = "black", int width = 1);
-    void drawH2Point(const H2Point &p, const QColor &color = "black", int width = 4);
-    void drawH2Geodesic(const H2Geodesic &L, const QColor &color = "black", int width = 1);
-    void drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color = "black", int width = 2);
-    void addKickedDrawing(const H2Isometry & A);
-    void addKickedDrawing(const std::vector<H2Isometry> & vectorA);
-    void addKickedDrawing();
+    H2Point pixelToH2coordinate(int x, int y) const;
+    void drawComplexPointInDiskModel(const Complex &z, const QColor &color = "black", int width = 1, bool back = true);
+    void drawH2Point(const H2Point &p, const QColor &color = "black", int width = 4, bool back = true);
+    void drawH2Geodesic(const H2Geodesic &L, const QColor &color = "black", int width = 1, bool back = true);
+    void drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color = "black", int width = 2, bool back = true);
 
-    virtual void redrawBuffer(const H2Isometry &mobius = H2Isometry::identity());
+    void addMeshTranslates(const H2Isometry & A);
+    void addMeshTranslates(const std::vector<H2Isometry> & translations);
+    void addMeshTranslates();
+
+    virtual void decideHighlighting(const H2Point &) {}
+    void getMeshIndexHighlighted(bool &highlighted, int &meshIndexHighted) const;
+    void getMeshTriangleIndicesHighlighted(bool &highlighted, int &index1, int &index2, int &index3) const;
+    virtual void decideHighlightingMeshPoints(bool, bool&, int) {}
+    virtual void decideHighlightingTriangle(bool, bool&, int, int, int) {}
+    void resetHighlighted();
+
+    void redrawBuffer(bool back = true, bool top = true, const H2Isometry &mobius = H2Isometry::identity());
+    virtual void redrawBufferBack();
+    virtual void redrawBufferTop();
+    virtual void subRedrawBufferBack() {}
+    virtual void subRedrawBufferTop() {}
+
     virtual void mousePress(QMouseEvent * mouseEvent);
     virtual void mouseMove(QMouseEvent * mouseEvent);
     virtual void keyPress(QKeyEvent * keyEvent);
-
-    virtual void subRedrawBuffer() {}
     virtual void subMouseMove(QMouseEvent *) {}
     virtual void subKeyPress(QKeyEvent *) {}
 
@@ -37,6 +49,8 @@ protected:
     H2Isometry mobius;
     H2Isometry savedMobius;
     bool isTriangleHighlighted;
+    int triangleMeshIndex1, triangleMeshIndex2, triangleMeshIndex3, meshIndexHighlighted;
+
     bool arePointsHighlightedRed;
     bool arePointsHighlightedGreen;
     bool arePointsHighlightedBlue;
@@ -47,9 +61,13 @@ protected:
 class H2CanvasDelegateDomain : public H2CanvasDelegate
 {
 public:
-    explicit H2CanvasDelegateDomain(int sizeX, int sizeY);
+    explicit H2CanvasDelegateDomain(int sizeX, int sizeY, ActionHandler *handler = 0);
 
-    void subRedrawBuffer();
+    void decideHighlighting(const H2Point &pointUnderMouse);
+    void decideHighlightingMeshPoints(bool highlighted, bool &update, int meshIndexHighlighted = -1);
+    void decideHighlightingTriangle(bool highlighted, bool& update, int triangleMeshIndex1 = -1, int triangleMeshIndex2 = -1, int triangleMeshIndex3 = -1);
+    void subRedrawBufferBack();
+    void subRedrawBufferTop();
     void subMouseMove(QMouseEvent * mouseEvent);
 private:
 };
@@ -57,11 +75,16 @@ private:
 class H2CanvasDelegateTarget : public H2CanvasDelegate
 {
 public:
-    explicit H2CanvasDelegateTarget(int sizeX, int sizeY);
+    explicit H2CanvasDelegateTarget(int sizeX, int sizeY, ActionHandler *handler = 0);
 
-    void subRedrawBuffer();
-    void subMouseMove(QMouseEvent *);
+    void decideHighlighting(const H2Point &pointUnderMouse);
+    void decideHighlightingMeshPoints(bool highlighted, bool &update, int meshIndexHighlighted = -1);
+    void decideHighlightingTriangle(bool highlighted, bool &update, int triangleMeshIndex1 = -1, int triangleMeshIndex2 = -1, int triangleMeshIndex3 = -1);
+    void subRedrawBufferBack();
+    void subRedrawBufferTop();
+    void subMouseMove(QMouseEvent *mouseEvent);
     void subKeyPress(QKeyEvent *keyEvent);
+
 private:
 };
 

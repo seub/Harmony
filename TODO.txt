@@ -100,11 +100,16 @@ traiter proprement l'inclusion de factory dans window et dans les canvas
 
 9. Add functionality to the window (lots): all choices (FN parameters of domain/target, depth), iteration / start over
 
-rendre affichage plus efficace
+rendre affichage plus efficace:
+1. trouver un moyen de rendre le redraw plus rapide?
+2. faire un calque pour éviter de redraw la triangulation?
 afficher l'erreur dans la statusbar
 
 mettre des throw Qstring partout où y a des erreurs possibles (track down les cout)
 remplacer les friend class par des friend functions
 
 parfois isTriangleHighlighted est true à tort ?
+
+modifier H2trianglesubdivision de manière à autoriser une subdivision non uniforme (avec un vecteur arbitraire de H2point). normalement pas grand chose à changer.
+puis chanfer h2meshfunction.
 

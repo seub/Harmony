@@ -24,6 +24,7 @@ H2Mesh::H2Mesh(const H2Mesh &other)
 
     fundamentalDomain = other.fundamentalDomain;
     fundamentalSteinerDomain = other.fundamentalSteinerDomain;
+    exteriorSidesIndices = other.exteriorSidesIndices;
 
     subdivisions = other.subdivisions;
     meshIndicesInSubdivisions = other.meshIndicesInSubdivisions;
@@ -75,6 +76,7 @@ void swap(H2Mesh &first, H2Mesh &second)
 
     std::swap(first.fundamentalDomain, second.fundamentalDomain);
     std::swap(first.fundamentalSteinerDomain, second.fundamentalSteinerDomain);
+    std::swap(first.exteriorSidesIndices, second.exteriorSidesIndices);
 
     std::swap(first.subdivisions, second.subdivisions);
     std::swap(first.meshIndicesInSubdivisions, second.meshIndicesInSubdivisions);
@@ -130,10 +132,17 @@ bool H2Mesh::triangleContaining(const H2Point &point, H2Triangle &outputTriangle
     return false;
 }
 
-const H2Point & H2Mesh::getH2Point(int index) const
+H2Point H2Mesh::getH2Point(int index) const
 {
     return subdivisions[meshPoints[index]->subdivisionIndex].points->at(meshPoints[index]->indexInSubdivision);
 }
+
+H2Triangle H2Mesh::getH2Triangle(int index1, int index2, int index3) const
+{
+    return H2Triangle(getH2Point(index1), getH2Point(index2), getH2Point(index3));
+}
+
+
 
 std::vector<H2Point> H2Mesh::getH2Neighbors(int index) const
 {
@@ -165,6 +174,50 @@ std::vector<H2Point> H2Mesh::getPartnerPoints(int index) const
     {
         return {getH2Point(index)};
     }
+}
+
+std::vector<H2Point> H2Mesh::getPoints() const
+{
+    std::vector<H2Point> out;
+    out.reserve(meshPoints.size());
+    for (std::vector<H2MeshPoint*>::size_type i=0; i != meshPoints.size(); ++i)
+    {
+        out.push_back(getH2Point(i));
+    }
+    return out;
+}
+
+std::vector<H2GeodesicArc> H2Mesh::getSides() const
+{
+    return fundamentalDomain.getSides();
+}
+
+std::vector<H2Triangle> H2Mesh::getTrianglesUp() const
+{
+    std::vector<H2Triangle> output;
+    int aIndex, bIndex, cIndex;
+    int L = H2TriangleSubdivision::nbOfLines(depth);
+    int i, j, m = 0;
+    output.reserve((subdivisions.size()*(L-1)*L)/2);
+
+
+    for (const auto & meshIndices : meshIndicesInSubdivisions)
+    {
+        m = 0;
+        for (i=0; i<L - 1; i++)
+        {
+            m += i;
+            for (j=0; j<=i; j++)
+            {
+                aIndex = meshIndices.at(m + j);
+                bIndex = meshIndices.at(m + j + i + 1);
+                cIndex = meshIndices.at(m + j + i + 2);
+                output.push_back(H2Triangle(getH2Point(aIndex), getH2Point(bIndex), getH2Point(cIndex)));
+            }
+        }
+    }
+
+    return output;
 }
 
 std::vector<H2Point> H2Mesh::getKickedH2Neighbors(int index) const

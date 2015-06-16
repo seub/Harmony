@@ -39,12 +39,12 @@ public:
     void addElement(const H2Mesh *mesh, const QColor & color = "black", int width = 1);
     void addElement(H2MeshFunction *function, const QColor & color = "black", int width = 1);
     void refreshFunction();
+    void refreshMesh();
 
-    void addKickedDrawing(const H2Isometry &A);
-    void addKickedDrawing(const std::vector<H2Isometry> & vectorA);
-    void addKickedDrawing();
+    void addMeshTranslates(const std::vector<H2Isometry> & translations, const QColor &color = "grey", int width = 1);
+    void addMeshTranslates(const QColor &color = "grey", int width = 1);
 
-    void setIsometries(const std::vector<H2Isometry> & isometries);
+    void setTranslations(const std::vector<H2Isometry> & translations);
 
 
 //private:
@@ -60,19 +60,20 @@ public:
     std::vector<QColor> geodesicArcsColors;
     std::vector<int> geodesicArcsWidths;
 
-    std::vector<H2Isometry> isometries;
+    std::vector<H2Isometry> translations;
 
     const H2Mesh *mesh;
     bool isMeshEmpty;
-
+    std::vector<H2Point> meshPoints;
+    std::vector<H2GeodesicArc> meshArcs;
+    std::vector<H2GeodesicArc> meshSides;
+    std::vector<H2Point> meshPointsTranslates;
+    std::vector<H2GeodesicArc> meshArcsTranslates;
+    std::vector<H2GeodesicArc> meshSidesTranslates;
+    QColor meshColor, meshTranslatesColor;
+    int meshWidth, meshTranslatesWidth;
     H2MeshFunction *function;
     bool isMeshFunctionEmpty;
-    std::vector<H2Point> functionPoints;
-    std::vector<H2GeodesicArc> functionArcs;
-    //QColor functionColor;
-    //int functionWidth;
-    std::vector<QColor> functionColors;
-    std::vector<int> functionWidths;
 
 
     H2Triangle triangleHighlighted;

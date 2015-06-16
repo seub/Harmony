@@ -9,12 +9,13 @@
 class QGridLayout; class QStatusBar; class QLabel;
 
 class Canvas; class InputMenu; class OutputMenu; class TopMenu;
+class ActionHandler;
 
 class Window : public QWidget
 {
     Q_OBJECT
 public:
-    Window();
+    Window(ActionHandler* handler = 0);
 
     void resizeEvent(QResizeEvent *event);
 signals:
@@ -23,7 +24,7 @@ public slots:
 
 private:
 public:
-    void createWindow();
+    void createWindow(ActionHandler *handler = 0);
     void enableCanvasesUpdates(bool b);
     void resizeCanvases();
     int menuWidth() const;
