@@ -646,3 +646,8 @@ void H2CanvasDelegateTarget::refreshFunction()
 {
     buffer.refreshFunction();
 }
+
+void H2CanvasDelegate::addPolygonTranslates()
+{
+    buffer.addPolygonTranslates();
+}

@@ -25,6 +25,11 @@ public:
     std::vector<Word> getWordsOfNonRepeatingLettersLengthLessThan(int n) const;
     std::vector<Word> getWordsOfNonRepeatingLettersLengthEqualTo(int n) const;
 
+    std::vector<Word> getPairingsClosedSurfaceFromVertex() const;
+    std::vector<Word> getPairingsClosedSurfaceToVertex() const;
+    std::vector<Word> getSidePairingsClosedSurface() const;
+    std::vector<Word> getPairingsClosedSurfaceAroundVertices() const;
+
     std::string getWordAsString(const Word & w) const;
     std::string getLetterAsString(const letter & l) const;
     bool isClosedSurfaceGroup() const;

@@ -179,6 +179,30 @@ void H2Buffer::refreshFunction()
     }
 }
 
+void H2Buffer::addPolygonTranslates(const std::vector<H2Isometry> &translations, const QColor &color, int width)
+{
+    int genus = 2;//(((mesh->getRepresentation()).getDiscreteGroup()).getGenerators()).size()/2;
+
+    meshTranslatesColor = color;
+    meshTranslatesWidth = width;
+
+    std::vector<H2GeodesicArc> arcsTranslates, sides;
+    sides = function->getExteriorSides();
+    meshArcsTranslates.clear();
+    meshArcsTranslates.reserve(sides.size()*(16*genus*genus - 8*genus));
+
+    for (const auto & A : translations)
+    {
+        arcsTranslates = A*sides;
+        meshArcsTranslates.insert(meshArcsTranslates.end(), arcsTranslates.begin(), arcsTranslates.end());
+    }
+}
+
+void H2Buffer::addPolygonTranslates(const QColor &color, int width)
+{
+    addPolygonTranslates(translations, color, width);
+}
+
 void H2Buffer::addElement(const std::vector<H2Point> & points, const QColor & color, int width)
 {
     for (const auto & point : points)

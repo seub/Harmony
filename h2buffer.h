@@ -40,6 +40,8 @@ public:
     void addElement(H2MeshFunction *function, const QColor & color = "black", int width = 1);
     void refreshFunction();
     void refreshMesh();
+    void addPolygonTranslates(const std::vector<H2Isometry> &translations, const QColor &color = "grey", int width = 1);
+    void addPolygonTranslates(const QColor &color = "grey", int width = 1);
 
     void addMeshTranslates(const std::vector<H2Isometry> & translations, const QColor &color = "grey", int width = 1);
     void addMeshTranslates(const QColor &color = "grey", int width = 1);

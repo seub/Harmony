@@ -177,3 +177,29 @@ void EquivariantHarmonicMapsFactory::stopRunning()
 {
     stop = true;
 }
+
+/*std::vector<H2GeodesicArc> EquivariantHarmonicMapsFactory::getPolygonTranslatesTarget() const
+{
+    std::vector<H2GeodesicArc> sides, sidesImages, temp;
+    sides = function.getExteriorSides();
+    sidesImages.resize(sides.size()*(16*genus*genus - 8*genus));
+    for (const auto & A : rhoTarget.getSidePairingsNormalizedAroundVertices())
+    {
+        temp = A*sides;
+        sidesImages.insert(sidesImages.end(),temp.begin(),temp.end());
+    }
+    return sidesImages;
+}*/
+
+std::vector<H2GeodesicArc> EquivariantHarmonicMapsFactory::getPolygonTranslatesDomain() const
+{
+    std::vector<H2GeodesicArc> sides, sidesImages, temp;
+    sides = mesh.fundamentalDomain.getSides();
+    sidesImages.reserve(64*genus*genus*genus - 32*genus*genus);
+    for (const auto & A : rhoDomain.getSidePairingsNormalizedAroundVertices())
+    {
+        temp = A*sides;
+        sidesImages.insert(sidesImages.end(),temp.begin(),temp.end());
+    }
+    return sidesImages;
+}

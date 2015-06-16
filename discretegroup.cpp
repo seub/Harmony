@@ -234,6 +234,98 @@ std::vector<Word> DiscreteGroup::getCusps() const
     return cusps;
 }
 
+std::vector<Word> DiscreteGroup::getPairingsClosedSurfaceFromVertex() const
+{
+    assert(isClosedSurfaceGroup());
+
+    std::vector<Word> res;
+    int genus = generators.size()/2;
+    res.reserve(4*genus);
+    Word store;
+    res.push_back(store);
+    for(int j=0; j!=genus; ++j)
+    {
+        store=store*Word({letter(2*j,1)});
+        res.push_back(store);
+        store=store*Word({letter(2*j+1,1)});
+        res.push_back(store);
+        store=store*Word({letter(2*j,-1)});
+        res.push_back(store);
+        store=store*Word({letter(2*j+1,-1)});
+        res.push_back(store);
+    }
+    res.pop_back();
+    return res;
+}
+
+std::vector<Word> DiscreteGroup::getPairingsClosedSurfaceToVertex() const
+{
+    assert(isClosedSurfaceGroup());
+    std::vector<Word> output;
+    int genus = generators.size()/2;
+    output.reserve(4*genus);
+
+    for (const auto & w : getPairingsClosedSurfaceFromVertex())
+    {
+        output.push_back(w.inverse());
+    }
+    return output;
+}
+
+std::vector<Word> DiscreteGroup::getSidePairingsClosedSurface() const
+{
+    assert(isClosedSurfaceGroup());
+
+    std::vector<Word> res;
+    int genus = generators.size()/2;
+    res.resize(4*genus);
+    Word store, extra;
+    for (int i=0; i!=genus; ++i)
+    {
+        extra = store*Word({letter(2*i,1),letter(2*i+1,1),letter(2*i,-1)})*store.inverse();
+        res[4*i] = extra;
+        res[4*i + 2] = extra.inverse();
+        extra = store*Word({letter(2*i,1),letter(2*i+1,1),
+                            letter(2*i,-1), letter(2*i+1,-1), letter(2*i,-1)})*store.inverse();
+        res[4*i + 1] = extra;
+        res[4*i + 3] = extra.inverse();
+        store = store*Word({letter(2*i,1), letter(2*i+1,1), letter(2*i,-1), letter(2*i+1,-1)});
+    }
+    return res;
+}
+
+std::vector<Word> DiscreteGroup::getPairingsClosedSurfaceAroundVertices() const
+{
+    assert(isClosedSurfaceGroup());
+
+    int genus = generators.size()/2;
+    std::vector<Word> output, toVertex, fromVertex, temp1, temp2;
+    output.reserve(16*genus*genus-4*genus);
+    fromVertex.reserve(4*genus);
+    temp1.reserve(4*genus-1);
+    temp2.reserve(4*genus);
+    toVertex = getPairingsClosedSurfaceToVertex();
+    fromVertex = getPairingsClosedSurfaceFromVertex();
+    int j=0;
+    for (const auto & w : fromVertex)
+    {
+        temp2 = toVertex;
+        temp2.erase(temp2.begin()+j);
+        if (((j%4) == 0) || ((j%4) == 1))
+        {
+            temp2.erase(temp2.begin() + (j==4*genus-3 ? 0 : j+2));
+        }
+        else
+        {
+            temp2.erase(temp2.begin()+j-1);
+        }
+        temp1 = w*temp2;
+        output.insert(output.end(),temp1.begin(),temp1.end());
+        ++j;
+    }
+    return output;
+}
+
 int DiscreteGroup::numberOfCusps() const
 {
     return cusps.size();
