@@ -345,7 +345,7 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
     switch(keyEvent->key())
     {
     case Qt::Key_Space :
-        buffer.function->iterate();
+        buffer.function->iterate(20);
         buffer.refreshFunction();
         addKickedDrawing();
         std::cout << "The size of functionPoints is " << buffer.functionPoints.size() << std::endl;

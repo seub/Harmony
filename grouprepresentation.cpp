@@ -350,7 +350,7 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormali
 {
     int genus = generatorImages.size()/2;
     std::vector<H2Isometry> output,previous,storePrevious;
-    output.reserve(16*genus*genus);
+    output.reserve(16*genus*genus-8*genus);
     H2Isometry store,ai,bi;
     store.setIdentity();
     previous = getSidePairingsNormalizedAroundVertex();
