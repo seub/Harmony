@@ -623,11 +623,9 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
     switch(keyEvent->key())
     {
     case Qt::Key_Space :
-<<<<<<< HEAD
+
         buffer.function->iterate(20);
-=======
-        buffer.function->iterate(100);
->>>>>>> 859c251a231dbc70cd2cdf51195b59d99f419677
+
         buffer.refreshFunction();
         addMeshTranslates();
         break;

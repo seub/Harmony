@@ -35,7 +35,7 @@ void H2MeshFunction::initializePL(const H2Point &basePoint)
     int nbVertices = mesh->fundamentalDomain.nbVertices();
     vertexImages.reserve(nbVertices);
     IsomH2Representation rhoDomain = mesh->getRepresentation();
-    std::vector<Word> vertexPairings = rhoDomain.getVertexPairings();
+    std::vector<Word> vertexPairings = rhoDomain.getGroup()->getPairingsClosedSurfaceFromVertex();
 
     for (const auto & pairing : vertexPairings)
     {

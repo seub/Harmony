@@ -243,7 +243,7 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int tilingSize) cons
     return bestPolygon;
 }
 
-
+/*
 template <> std::vector<Word> IsomH2Representation::getWordSidePairings() const
 {
     assert(Gamma->isClosedSurfaceGroup());
@@ -264,8 +264,14 @@ template <> std::vector<Word> IsomH2Representation::getWordSidePairings() const
         store = store*Word({letter(2*i,1), letter(2*i+1,1), letter(2*i,-1), letter(2*i+1,-1)});
     }
     return res;
+}*/
+
+template <> DiscreteGroup* IsomH2Representation::getGroup() const
+{
+    return Gamma;
 }
 
+/*
 template <> std::vector<Word> IsomH2Representation::getVertexPairings() const
 {
     assert(Gamma->isClosedSurfaceGroup());
@@ -288,11 +294,11 @@ template <> std::vector<Word> IsomH2Representation::getVertexPairings() const
     }
     res.pop_back();
     return res;
-}
+}*/
 
 template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsForNormalizedFundamentalDomain() const
 {
-    return evaluateRepresentation(getWordSidePairings());
+    return evaluateRepresentation(getGroup()->getSidePairingsClosedSurface());
 }
 
 template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormalizedToDepth(int n) const
@@ -326,77 +332,27 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormali
 {
     int genus = generatorImages.size()/2;
     std::vector<H2Isometry> output;
-    output.reserve(4*genus);
-    H2Isometry store,ai,bi;
-    store.setIdentity();
-    for (int i=0; i<genus; ++i)
+    output.reserve(4*genus-1);
+    std::vector<Word> temp = getGroup()->getPairingsClosedSurfaceToVertex();
+    temp.erase(temp.begin());
+    for (const auto & w : temp)
     {
-        ai = generatorImages[2*i];
-        bi = generatorImages[2*i+1];
-        store = store*ai;
-        output.push_back(store.inverse());
-        store = store*bi;
-        output.push_back(store.inverse());
-        store = store*ai.inverse();
-        output.push_back(store.inverse());
-        store = store*bi.inverse();
-        output.push_back(store.inverse());
+        output.push_back(evaluateRepresentation(w));
     }
-    output.pop_back();
     return output;
 }
 
 template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormalizedAroundVertices() const
 {
     int genus = generatorImages.size()/2;
-    std::vector<H2Isometry> output,previous,storePrevious;
-    output.reserve(16*genus*genus-8*genus);
-    H2Isometry store,ai,bi;
-    store.setIdentity();
-    previous = getSidePairingsNormalizedAroundVertex();
-    previous.push_back(store);
-    output = previous;
+    std::vector<H2Isometry> output;
+    output.reserve(16*genus*genus-4*genus);
+    std::vector<Word> temp = getGroup()->getPairingsClosedSurfaceAroundVertices();
 
-    for (int i=0; i<genus-1; ++i)
+    for (const auto & w : temp)
     {
-        ai = generatorImages[2*i];
-        bi = generatorImages[2*i+1];
-
-        store = store*ai;
-        storePrevious = store*previous;
-        output.insert(output.end(), storePrevious.begin(), storePrevious.end());
-
-        store = store*bi;
-        storePrevious = store*previous;
-        output.insert(output.end(), storePrevious.begin(), storePrevious.end());
-
-        store = store*ai.inverse();
-        storePrevious = store*previous;
-        output.insert(output.end(), storePrevious.begin(), storePrevious.end());
-
-        store = store*bi.inverse();
-        storePrevious = store*previous;
-        output.insert(output.end(), storePrevious.begin(), storePrevious.end());
-
+        output.push_back(evaluateRepresentation(w));
     }
-    ai = generatorImages[2*genus-2];
-    bi = generatorImages[2*genus-1];
-
-    store = store*ai;
-    storePrevious = store*previous;
-    output.insert(output.end(), storePrevious.begin(), storePrevious.end());
-
-    store = store*bi;
-    storePrevious = store*previous;
-    output.insert(output.end(), storePrevious.begin(), storePrevious.end());
-
-    store = store*ai.inverse();
-    storePrevious = store*previous;
-    output.insert(output.end(), storePrevious.begin(), storePrevious.end());
-    /*std::vector<H2Isometry> output2;
-    output2.reserve(output.size()/2);
-    for(unsigned int i = 0;i< output.size();i+=2)
-        output2.push_back(output[i]);*/
     return output;
 }
 

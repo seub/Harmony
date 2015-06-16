@@ -19,7 +19,7 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     nbSubdivisionLines = H2TriangleSubdivision::nbOfLines(depth);
     nbSubdivisionPoints = H2TriangleSubdivision::nbOfPoints(depth);
     nextIndex = 0;
-    sidePairings = mesh->rho.getWordSidePairings();
+    sidePairings = mesh->rho.getGroup()->getSidePairingsClosedSurface();
 
     createSubdivisions();
     createPoints();
@@ -722,7 +722,7 @@ bool H2MeshConstructor::checkNumberOfNeighbors() const
 
 void H2MeshConstructor::createExteriorVertexNeighbors()
 {
-    std::vector<Word> wordSidePairings = mesh->rho.getWordSidePairings();
+    std::vector<Word> wordSidePairings = mesh->rho.getGroup()->getSidePairingsClosedSurface();
 
     int i, genus = nbVertices/4;
     std::vector<Word> neighborsWordIsometriesTemp;

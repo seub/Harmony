@@ -48,21 +48,18 @@ void ActionHandler::setFactory()
     //factory->setRhoTarget(lengths2, twists2);
     factory->setNiceRhoTarget();
 
-<<<<<<< HEAD
-    factory->setMeshDepth(3);
-=======
-    factory->setMeshDepth(4);
->>>>>>> 859c251a231dbc70cd2cdf51195b59d99f419677
-    factory->initialize();
 
+    factory->setMeshDepth(3);
+
+    factory->initialize();
 
     leftDelegate->buffer.addElement(factory->rhoDomain, "blue", 2);
     leftDelegate->buffer.addElement(&factory->mesh, "red", 1);
-    leftDelegate->buffer.addMeshTranslates(factory->rhoDomain.getSidePairingsNormalizedAroundVertex());
+    leftDelegate->buffer.addMeshTranslates(factory->rhoDomain.getSidePairingsNormalizedAroundVertices());
 
     rightDelegate->buffer.addElement(factory->rhoTarget, "blue", 2);
     rightDelegate->buffer.addElement(&factory->functionInit, "red", 1);
-    rightDelegate->buffer.setTranslations(factory->rhoTarget.getSidePairingsNormalizedAroundVertex());
+    rightDelegate->buffer.setTranslations(factory->rhoTarget.getSidePairingsNormalizedAroundVertices());
     rightDelegate->buffer.addMeshTranslates();
 }
 
