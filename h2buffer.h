@@ -47,7 +47,7 @@ public:
     void setTranslations(const std::vector<H2Isometry> & translations);
 
 
-//private:
+private:
     std::vector<H2Point> points;
     std::vector<QColor> pointsColors;
     std::vector<int> pointsWidths;

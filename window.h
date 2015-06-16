@@ -14,6 +14,11 @@ class ActionHandler;
 class Window : public QWidget
 {
     Q_OBJECT
+
+    friend class ActionHandler;
+    friend class MainApplication;
+    friend class Canvas;
+
 public:
     Window(ActionHandler* handler = 0);
 
@@ -23,7 +28,6 @@ signals:
 public slots:
 
 private:
-public:
     void createWindow(ActionHandler *handler = 0);
     void enableCanvasesUpdates(bool b);
     void resizeCanvases();

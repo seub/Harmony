@@ -4,6 +4,7 @@
 #include "mathscontainer.h"
 #include "window.h"
 #include "canvas.h"
+#include "outputmenu.h"
 
 ActionHandler::ActionHandler()
 {
@@ -48,7 +49,7 @@ void ActionHandler::setFactory()
     //factory->setRhoTarget(lengths2, twists2);
     factory->setNiceRhoTarget();
 
-    factory->setMeshDepth(4);
+    factory->setMeshDepth(3);
     factory->initialize();
 
 
@@ -57,7 +58,7 @@ void ActionHandler::setFactory()
     leftDelegate->buffer.addMeshTranslates(factory->rhoDomain.getSidePairingsNormalizedAroundVertex());
 
     rightDelegate->buffer.addElement(factory->rhoTarget, "blue", 2);
-    rightDelegate->buffer.addElement(&factory->functionInit, "red", 1);
+    rightDelegate->buffer.addElement(&factory->function, "red", 1);
     rightDelegate->buffer.setTranslations(factory->rhoTarget.getSidePairingsNormalizedAroundVertex());
     rightDelegate->buffer.addMeshTranslates();
 }
@@ -100,4 +101,34 @@ void ActionHandler::processMessage(actionHandlerMessage message, int timeOut)
     default:
         throw(QString("Error in ActionHandler::processMessage: message unknown"));
     }
+}
+
+void ActionHandler::computeButtonClicked()
+{
+
+}
+
+void ActionHandler::outputResetButtonClicked()
+{
+    factory->resetInit();
+    window->outputMenu->resetMenu();
+    ((H2CanvasDelegateTarget *) rightDelegate)->refreshFunction();
+    rightDelegate->addMeshTranslates();
+    rightDelegate->enableRedrawBuffer();
+    window->rightCanvas->update();
+}
+
+void ActionHandler::iterateButtonClicked()
+{
+    iterateDiscreteFlow(50);
+    ((H2CanvasDelegateTarget *) rightDelegate)->refreshFunction();
+    rightDelegate->addMeshTranslates();
+    rightDelegate->enableRedrawBuffer();
+    window->rightCanvas->update();
+    window->outputMenu->enableReset();
+}
+
+void ActionHandler::iterateDiscreteFlow(int N)
+{
+    factory->iterate(N);
 }

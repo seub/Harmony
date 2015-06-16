@@ -107,8 +107,8 @@ void H2CanvasDelegate::redrawBuffer(bool back, bool top, const H2Isometry &mobiu
         subRedrawBufferTop();
     }
 
-    redrawBufferLeft = false;
-    redrawBufferRight = false;
+    enableRedrawBufferBack = false;
+    enableRedrawBufferTop = false;
 
     //std::cout << "redraw buffer for delegate type " << delegateType << " :" << (clock() - start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
 }
@@ -226,6 +226,11 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
     }
 
     subMouseMove(mouseEvent);
+}
+
+void H2CanvasDelegate::leave()
+{
+    resetHighlighted();
 }
 
 void H2CanvasDelegate::resetHighlighted()
@@ -623,9 +628,6 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
     switch(keyEvent->key())
     {
     case Qt::Key_Space :
-        buffer.function->iterate(100);
-        buffer.refreshFunction();
-        addMeshTranslates();
         break;
     }
 }
@@ -638,4 +640,9 @@ void H2CanvasDelegate::addMeshTranslates(const std::vector<H2Isometry> &translat
 void H2CanvasDelegate::addMeshTranslates()
 {
     buffer.addMeshTranslates();
+}
+
+void H2CanvasDelegateTarget::refreshFunction()
+{
+    buffer.refreshFunction();
 }

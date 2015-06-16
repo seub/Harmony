@@ -31,8 +31,8 @@ CanvasDelegate::CanvasDelegate(int sizeX, int sizeY, ActionHandler *handler) : h
     imageTop->fill(qRgba(0, 0, 0, 0));
     painterTop->setPen(*penTop);
 
-    redrawBufferLeft = false;
-    redrawBufferRight = false;
+    enableRedrawBufferBack = false;
+    enableRedrawBufferTop = false;
 
     detectionRadius = 20;
     resetView(sizeX, sizeY);
@@ -152,10 +152,10 @@ void CanvasDelegate::shift(int x, int y)
     yMax += y/scaleY;
 }
 
-void CanvasDelegate::enableRedrawBuffer(bool left, bool right)
+void CanvasDelegate::enableRedrawBuffer(bool back, bool top)
 {
-    redrawBufferLeft = left;
-    redrawBufferRight = right;
+    enableRedrawBufferBack = back;
+    enableRedrawBufferTop = top;
 }
 
 void CanvasDelegate::drawPoint(const Complex &z, const QColor &color, int width, bool back)

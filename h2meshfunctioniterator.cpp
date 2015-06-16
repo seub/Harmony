@@ -2,9 +2,15 @@
 #include "h2meshfunction.h"
 #include "h2trianglesubdivision.h"
 
-H2MeshFunctionIterator::H2MeshFunctionIterator(const H2MeshFunction * const f) : fInit(f), mesh(f->mesh)
+H2MeshFunctionIterator::H2MeshFunctionIterator(const H2MeshFunction * const f) : fInit(f)
 {
-    oldValues = f->values;
+    initialize();
+}
+
+void H2MeshFunctionIterator::initialize()
+{
+    mesh = fInit->mesh;
+    oldValues = fInit->values;
     newValues = oldValues;
 }
 
