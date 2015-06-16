@@ -50,6 +50,7 @@ class H2MeshBoundaryPoint : public H2MeshPoint
     friend class H2Mesh;
     friend class H2MeshConstructor;
     friend class H2MeshFunctionIterator;
+    friend class H2MeshFunction;
 
 private:
     H2MeshBoundaryPoint(int subdivisionIndex, int indexInSubdivision, int side, int index) :
@@ -67,6 +68,7 @@ class H2MeshVertexPoint : public H2MeshPoint
     friend class H2Mesh;
     friend class H2MeshConstructor;
     friend class H2MeshFunctionIterator;
+    friend class H2MeshFunction;
 
 private:
     H2MeshVertexPoint(int subdivisionIndex, int indexInSubdivision, int vertexIndex,
@@ -85,6 +87,7 @@ class H2MeshSteinerPoint : public H2MeshPoint
     friend class H2Mesh;
     friend class H2MeshConstructor;
     friend class H2MeshFunctionIterator;
+    friend class H2MeshFunction;
 
 private:
     H2MeshSteinerPoint(int subdivisionIndex, int indexInSubdivision, int side,

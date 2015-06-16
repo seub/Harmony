@@ -25,11 +25,15 @@ public:
     bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle) const;
     bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle, int &meshIndex1, int &meshIndex2, int &meshIndex3) const;
 
-    const H2Point & getH2Point(int index) const;
+    H2Point getH2Point(int index) const;
+    H2Triangle getH2Triangle(int index1, int index2, int index3) const;
     const std::vector<H2TriangleSubdivision> &getSubdivisions() const;
     std::vector<H2Point> getH2Neighbors(int index) const;
     std::vector<H2Point> getKickedH2Neighbors(int index) const;
     std::vector<H2Point> getPartnerPoints(int index) const;
+    std::vector<H2Point> getPoints() const;
+    std::vector<H2GeodesicArc> getSides() const;
+    std::vector<H2Triangle> getTrianglesUp() const;
     IsomH2Representation getRepresentation() const;
     int nbPoints() const;
     bool isInteriorPoint(int index) const;
@@ -45,6 +49,7 @@ private:
 
     H2Polygon fundamentalDomain;
     H2SteinerPolygon fundamentalSteinerDomain;
+    std::vector<int> exteriorSidesIndices;
 
     std::vector<H2TriangleSubdivision> subdivisions;
     std::vector<std::vector<int>> meshIndicesInSubdivisions;

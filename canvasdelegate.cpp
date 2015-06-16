@@ -10,18 +10,29 @@
 #include "circle.h"
 #include "tools.h"
 
-CanvasDelegate::CanvasDelegate(int sizeX, int sizeY)
+CanvasDelegate::CanvasDelegate(int sizeX, int sizeY, ActionHandler *handler) : handler(handler)
 {
     //std::cout << "Entering CanvasDelegate::CanvasDelegate" << std::endl;
 
-    pen = new QPen;
+    penBack = new QPen;
+    penTop = new QPen;
 
-    image = new QImage(sizeX, sizeY, QImage::Format_RGB32);
+    imageBack = new QImage(sizeX, sizeY, QImage::Format_RGB32);
+    imageTop = new QImage(sizeX, sizeY, QImage::Format_ARGB32);
 
-    painter = new QPainter(image);
-    painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->eraseRect(0, 0, sizeX, sizeY);
-    painter->setPen(*pen);
+    painterBack = new QPainter(imageBack);
+    painterBack->setRenderHint(QPainter::Antialiasing, true);
+    painterBack->eraseRect(0, 0, sizeX, sizeY);
+    painterBack->setPen(*penBack);
+
+    painterTop = new QPainter(imageTop);
+    painterTop->setRenderHint(QPainter::Antialiasing, true);
+    painterTop->eraseRect(0, 0, sizeX, sizeY);
+    imageTop->fill(qRgba(0, 0, 0, 0));
+    painterTop->setPen(*penTop);
+
+    redrawBufferLeft = false;
+    redrawBufferRight = false;
 
     detectionRadius = 20;
     resetView(sizeX, sizeY);
@@ -31,24 +42,41 @@ CanvasDelegate::CanvasDelegate(int sizeX, int sizeY)
 
 CanvasDelegate::~CanvasDelegate()
 {
-    delete pen;
-    delete painter;
-    delete image;
+    delete penBack;
+    delete painterBack;
+    delete imageBack;
+
+    delete penTop;
+    delete painterTop;
+    delete imageTop;
 }
 
-const QImage *CanvasDelegate::getImage() const
+const QImage *CanvasDelegate::getImageBack() const
 {
-    return image;
+    return imageBack;
+}
+
+const QImage *CanvasDelegate::getImageTop() const
+{
+    return imageTop;
 }
 
 void CanvasDelegate::rescale(int sizeX, int sizeY)
 {
-    delete painter;
-    *image = QImage(sizeX, sizeY, QImage::Format_RGB32);
-    painter = new QPainter(image);
-    painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->eraseRect(0, 0, sizeX, sizeY);
-    painter->setPen(*pen);
+    delete painterBack;
+    *imageBack = QImage(sizeX, sizeY, QImage::Format_RGB32);
+    painterBack = new QPainter(imageBack);
+    painterBack->setRenderHint(QPainter::Antialiasing, true);
+    painterBack->eraseRect(0, 0, sizeX, sizeY);
+    painterBack->setPen(*penBack);
+
+    delete painterTop;
+    *imageTop = QImage(sizeX, sizeY, QImage::Format_ARGB32);
+    painterTop = new QPainter(imageTop);
+    painterTop->setRenderHint(QPainter::Antialiasing, true);
+    painterTop->eraseRect(0, 0, sizeX, sizeY);
+    imageTop->fill(qRgba(0, 0, 0, 0));
+    painterTop->setPen(*penTop);
 
 
     double xFactor = (sizeX *1.0/ this->sizeX);
@@ -59,6 +87,8 @@ void CanvasDelegate::rescale(int sizeX, int sizeY)
 
     scaleX = xFactor * scaleX;
     scaleY = yFactor * scaleY;
+
+    enableRedrawBuffer();
 }
 
 void CanvasDelegate::resetView(int sizeX, int sizeY)
@@ -106,7 +136,7 @@ void CanvasDelegate::zoom(double coeff, int centerX, int centerY)
     scaleX *= coeff;
     scaleY *= coeff;
 
-    //redrawBuffer();
+    enableRedrawBuffer();
 }
 
 void CanvasDelegate::mouseShift(int x, int y)
@@ -122,50 +152,89 @@ void CanvasDelegate::shift(int x, int y)
     yMax += y/scaleY;
 }
 
-void CanvasDelegate::drawPoint(const Complex &z, const QColor &color, int width)
+void CanvasDelegate::enableRedrawBuffer(bool left, bool right)
+{
+    redrawBufferLeft = left;
+    redrawBufferRight = right;
+}
+
+void CanvasDelegate::drawPoint(const Complex &z, const QColor &color, int width, bool back)
 {
     int x, y;
     ComplexToPixelCoordinates(x, y, z);
-    pen->setWidth(width);
-    pen->setColor(color);
-    painter->setPen(*pen);
-    painter->drawPoint(x,y);
+
+    if (back)
+    {
+        penBack->setWidth(width);
+        penBack->setColor(color);
+        painterBack->setPen(*penBack);
+        painterBack->drawPoint(x,y);
+    }
+    else
+    {
+        penTop->setWidth(width);
+        penTop->setColor(color);
+        painterTop->setPen(*penTop);
+        painterTop->drawPoint(x,y);
+    }
 }
 
-void CanvasDelegate::drawSegment(const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width)
+void CanvasDelegate::drawSegment(const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width, bool back)
 {
     int x1, y1, x2, y2;
     ComplexToPixelCoordinates(x1, y1, endpoint1);
     ComplexToPixelCoordinates(x2, y2, endpoint2);
-    pen->setWidth(width);
-    pen->setColor(color);
-    painter->setPen(*pen);
-    painter->drawLine(x1, y1, x2, y2);
+
+    if (back)
+    {
+        penBack->setWidth(width);
+        penBack->setColor(color);
+        painterBack->setPen(*penBack);
+        painterBack->drawLine(x1, y1, x2, y2);
+    }
+    else
+    {
+        penTop->setWidth(width);
+        penTop->setColor(color);
+        painterTop->setPen(*penTop);
+        painterTop->drawLine(x1, y1, x2, y2);
+    }
 }
 
-void CanvasDelegate::drawCircle(const Complex &center, double radius, const QColor &color, int width)
+void CanvasDelegate::drawCircle(const Complex &center, double radius, const QColor &color, int width, bool back)
 {
     int x1, y1, x2, y2;
     Complex firstCorner = center + radius*Complex(-1.0,1.0);
     Complex secondCorner = center + radius*Complex(1.0, - 1.0);
     ComplexToPixelCoordinates(x1, y1, firstCorner);
     ComplexToPixelCoordinates(x2, y2, secondCorner);
-    pen->setColor(color);
-    pen->setWidth(width);
-    painter->setPen(*pen);
-    painter->drawEllipse(x1, y1, x2 - x1, y2 - y1);
+
+    if (back)
+    {
+        penBack->setColor(color);
+        penBack->setWidth(width);
+        painterBack->setPen(*penBack);
+        painterBack->drawEllipse(x1, y1, x2 - x1, y2 - y1);
+    }
+    else
+    {
+        penTop->setColor(color);
+        penTop->setWidth(width);
+        painterTop->setPen(*penTop);
+        painterTop->drawEllipse(x1, y1, x2 - x1, y2 - y1);
+    }
 }
 
-void CanvasDelegate::drawCircle(const Circle &C, const QColor &color, int width)
+void CanvasDelegate::drawCircle(const Circle &C, const QColor &color, int width, bool back)
 {
     Complex center;
     double radius;
     C.getCenterAndRadius(center, radius);
-    drawCircle(center, radius, color, width);
+    drawCircle(center, radius, color, width, back);
 }
 
 bool CanvasDelegate::dealWithAlmostStraightArc(const Complex &center, double radius,
-                                               const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width)
+                                               const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width, bool back)
 {
     double angleMin = M_PI/(180*16);
     double scale = scaleX > scaleY ? scaleX : scaleY;
@@ -174,7 +243,7 @@ bool CanvasDelegate::dealWithAlmostStraightArc(const Complex &center, double rad
     if(radius*scale*angleMin > pixelError)
     {
         intersectsCanvasBoundary(center, radius, endpoint1, endpoint2, z1, z2);
-        drawSegment(z1,z2,color,width);
+        drawSegment(z1, z2, color, width, back);
         return true;
     }
     else
@@ -337,9 +406,9 @@ void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radi
 }
 
 void CanvasDelegate::drawArcCounterClockwise(const Complex &center, double radius, double angle1, double angle2,
-                                             const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width)
+                                             const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width, bool back)
 {
-    if (dealWithAlmostStraightArc(center, radius, endpoint1, endpoint2, color, width))
+    if (dealWithAlmostStraightArc(center, radius, endpoint1, endpoint2, color, width, back))
     {
 
     }
@@ -350,45 +419,56 @@ void CanvasDelegate::drawArcCounterClockwise(const Complex &center, double radiu
         Complex secondCorner = center + radius*Complex(1.0, -1.0);
         ComplexToPixelCoordinates(x1, y1, firstCorner);
         ComplexToPixelCoordinates(x2, y2, secondCorner);
-        pen->setColor(color);
-        pen->setWidth(width);
-        painter->setPen(*pen);
         int QtAngle1 = Tools::intRound(Tools::mod2Pi(angle1)*16*360/(2*M_PI));
         int QtSpan = Tools::intRound(Tools::mod2Pi(angle2 - angle1)*16*360/(2*M_PI));
-        painter->drawArc(x1, y1, x2 - x1, y2 - y1, QtAngle1, QtSpan);
+
+        if (back)
+        {
+            penBack->setColor(color);
+            penBack->setWidth(width);
+            painterBack->setPen(*penBack);
+            painterBack->drawArc(x1, y1, x2 - x1, y2 - y1, QtAngle1, QtSpan);
+        }
+        else
+        {
+            penTop->setColor(color);
+            penTop->setWidth(width);
+            painterTop->setPen(*penTop);
+            painterTop->drawArc(x1, y1, x2 - x1, y2 - y1, QtAngle1, QtSpan);
+        }
     }
 }
 
 void CanvasDelegate::drawSmallerArc(const Complex &center, double radius, double angle1, double angle2,
-                                    const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width)
+                                    const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width, bool back)
 {
     double d = angle2 - angle1;
     d = Tools::mod2Pi(d);
     if (d>M_PI)
     {
-        drawArcCounterClockwise(center, radius, angle2, angle1, endpoint1, endpoint2, color, width);
+        drawArcCounterClockwise(center, radius, angle2, angle1, endpoint1, endpoint2, color, width, back);
     }
     else
     {
-        drawArcCounterClockwise(center, radius, angle1, angle2, endpoint1, endpoint2, color, width);
+        drawArcCounterClockwise(center, radius, angle1, angle2, endpoint1, endpoint2, color, width, back);
     }
 }
 
 void CanvasDelegate::drawSmallerArc(const Circle &C, double angle1, double angle2,
-                                    const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width)
+                                    const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width, bool back)
 {
     Complex center;
     double radius;
     C.getCenterAndRadius(center, radius);
-    drawSmallerArc(center, radius, angle1, angle2, endpoint1, endpoint2, color, width);
+    drawSmallerArc(center, radius, angle1, angle2, endpoint1, endpoint2, color, width, back);
 }
 
 void CanvasDelegate::drawArcCounterClockwise(const Circle &C, double angle1, double angle2,
-                                             const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width)
+                                             const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width, bool back)
 {
     //std::cout << "Entering CanvasDelegate::drawArc" << std::endl;
     Complex center;
     double radius;
     C.getCenterAndRadius(center, radius);
-    drawArcCounterClockwise(center, radius, angle1, angle2, endpoint1, endpoint2, color, width);
+    drawArcCounterClockwise(center, radius, angle1, angle2, endpoint1, endpoint2, color, width, back);
 }

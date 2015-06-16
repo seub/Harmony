@@ -15,15 +15,15 @@
 
 
 
-Window::Window()
+Window::Window(ActionHandler *handler)
 {
-    createWindow();
+    createWindow(handler);
 }
 
-void Window::createWindow()
+void Window::createWindow(ActionHandler *handler)
 {
-    leftCanvas = new Canvas(H2DELEGATEDOMAIN, this);
-    rightCanvas = new Canvas(H2DELEGATETARGET, this);
+    leftCanvas = new Canvas(H2DELEGATEDOMAIN, this, true, false, handler);
+    rightCanvas = new Canvas(H2DELEGATETARGET, this, false, true, handler);
     inputMenu = new InputMenu(this);
     outputMenu = new OutputMenu(this);
     statusBar= new QStatusBar(this);

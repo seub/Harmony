@@ -26,6 +26,7 @@ private:
     void createRemainingNeighbors();
     void createExteriorNeighbors();
     void createExteriorVertexNeighbors();
+    void createMeshExteriorIndices();
 
     void reorganizeNeighbors();
     void createPiecewiseAffineWeights();

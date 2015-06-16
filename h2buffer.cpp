@@ -104,22 +104,22 @@ void H2Buffer::addElement(const H2TriangleSubdivision &T, const QColor &color, i
 {
     if (T.isRoot())
     {
-    int L = T.nbOfLines(T.getTotalDepth());
-    std::vector<H2Point> Tpoints = T.getPoints();
+        int L = T.nbOfLines(T.getTotalDepth());
+        std::vector<H2Point> Tpoints = T.getPoints();
 
-    H2Point a, b, c;
-    int i, j, m = 0;
-    for (i=0; i<L - 1; i++)
-    {
-        m += i;
-        for (j=0; j<=i; j++)
+        H2Point a, b, c;
+        int i, j, m = 0;
+        for (i=0; i<L - 1; i++)
         {
-            a = Tpoints[m + j];
-            b = Tpoints[m + j + i + 1];
-            c = Tpoints[m + j + i + 2];
-            addElement(H2Triangle(a, b, c), color, width);
+            m += i;
+            for (j=0; j<=i; j++)
+            {
+                a = Tpoints[m + j];
+                b = Tpoints[m + j + i + 1];
+                c = Tpoints[m + j + i + 2];
+                addElement(H2Triangle(a, b, c), color, width);
+            }
         }
-    }
     }
     else
     {
@@ -132,46 +132,50 @@ void H2Buffer::addElement(const H2Mesh *mesh, const QColor &color, int width)
     this->mesh = mesh;
     isMeshEmpty = false;
 
-    const std::vector<H2TriangleSubdivision> & subdivisions = mesh->getSubdivisions();
-    for (const auto &S : subdivisions)
-    {
-        addElement(S, color, width);
-    }
+    meshColor = color;
+    meshWidth = width;
+    refreshMesh();
 }
 
 void H2Buffer::addElement(H2MeshFunction *f, const QColor &color, int width)
 {
     this->function = f;
     isMeshFunctionEmpty = false;
-    //functionColor = color;
-    //functionWidth = width;
+
+    meshColor = color;
+    meshWidth = width;
     refreshFunction();
-    functionColors.resize(functionPoints.size());
-    functionWidths.resize(functionPoints.size());
-    std::fill(functionColors.begin(), functionColors.end(), color);
-    std::fill(functionWidths.begin(), functionWidths.end(), width);
+}
+
+void H2Buffer::refreshMesh()
+{
+    meshSides = mesh->getSides();
+    meshPoints = mesh->getPoints();
+
+    std::vector<H2Triangle> triangles = mesh->getTrianglesUp();
+    meshArcs.clear();
+    meshArcs.reserve(3*triangles.size());
+    std::vector<H2GeodesicArc> sides;
+    for (const auto & triangle : triangles)
+    {
+        sides = triangle.getSides();
+        meshArcs.insert(meshArcs.end(), sides.begin(), sides.end());
+    }
 }
 
 void H2Buffer::refreshFunction()
 {
-    functionArcs.clear();
-    functionPoints.clear();
-
-    functionColors.clear();
-    functionWidths.clear();
+    meshSides = function->getExteriorSides();
+    meshPoints = function->getPoints();
 
     std::vector<H2Triangle> triangles = function->getTrianglesUp();
-
-    functionArcs.reserve(3*triangles.size());
-    functionPoints.reserve(3*triangles.size());
+    meshArcs.clear();
+    meshArcs.reserve(3*triangles.size());
     std::vector<H2GeodesicArc> sides;
-    std::vector<H2Point> vertices;
     for (const auto & triangle : triangles)
     {
         sides = triangle.getSides();
-        vertices = triangle.getPoints();
-        functionArcs.insert(functionArcs.end(), sides.begin(), sides.end());
-        functionPoints.insert(functionPoints.end(), vertices.begin(), vertices.end());
+        meshArcs.insert(meshArcs.end(), sides.begin(), sides.end());
     }
 }
 
@@ -183,97 +187,41 @@ void H2Buffer::addElement(const std::vector<H2Point> & points, const QColor & co
     }
 }
 
-void H2Buffer::addKickedDrawing(const H2Isometry &A)
+
+void H2Buffer::addMeshTranslates(const QColor &color, int width)
 {
-    std::vector<H2Point> tempPts = A*points;
-    std::vector<int> tempWidths;
-    std::vector<QColor> tempColors;
-    tempColors.resize(points.size());
-    tempWidths = pointsWidths;
-    std::fill(tempColors.begin(), tempColors.end(), "grey");
-    points.insert(points.end(),tempPts.begin(),tempPts.end());
-    pointsWidths.insert(pointsWidths.end(),tempWidths.begin(),tempWidths.end());
-    pointsColors.insert(pointsColors.end(), tempColors.begin(), tempColors.end());
-
-    std::vector<H2GeodesicArc> tempGeodesicArcs = A*geodesicArcs;
-    tempColors.resize(geodesicArcs.size());
-    tempWidths = geodesicArcsWidths;
-    std::fill(tempColors.begin(), tempColors.end(), "grey");
-    geodesicArcs.insert(geodesicArcs.end(),tempGeodesicArcs.begin(),tempGeodesicArcs.end());
-    geodesicArcsWidths.insert(geodesicArcsWidths.end(),tempWidths.begin(),tempWidths.end());
-    geodesicArcsColors.insert(geodesicArcsColors.end(), tempColors.begin(), tempColors.end());
-
-    std::vector<H2Point> tempFunctionPoints = A*functionPoints;
-    tempColors.resize(functionPoints.size());
-    tempWidths = functionWidths;
-    std::fill(tempColors.begin(), tempColors.end(), "grey");
-    functionPoints.insert(functionPoints.end(),tempFunctionPoints.begin(),tempFunctionPoints.end());
-    functionWidths.insert(functionWidths.end(),tempWidths.begin(),tempWidths.end());
-    functionColors.insert(functionColors.end(), tempColors.begin(), tempColors.end());
-
-    std::vector<H2GeodesicArc> tempFunctionArcs = A*functionArcs;
-    tempColors.resize(functionArcs.size());
-    tempWidths = functionWidths;
-    std::fill(tempColors.begin(), tempColors.end(), "grey");
-    functionArcs.insert(functionArcs.end(),tempFunctionArcs.begin(),tempFunctionArcs.end());
-    functionWidths.insert(functionWidths.end(),tempWidths.begin(),tempWidths.end());
-    functionColors.insert(functionColors.end(), tempColors.begin(), tempColors.end());
+    addMeshTranslates(translations, color, width);
 }
 
-void H2Buffer::addKickedDrawing(const std::vector<H2Isometry> &vectorA)
+void H2Buffer::addMeshTranslates(const std::vector<H2Isometry> &translations, const QColor &color, int width)
 {
-    std::vector<H2Point> tempPts, tempFunctionPoints, pointsHolder, functionPointsHolder;
-    std::vector<int> tempWidths;
-    std::vector<QColor> tempColors;
-    std::vector<H2GeodesicArc> tempGeodesicArcs, tempFunctionArcs, arcsHolder, functionArcsHolder;
+    meshTranslatesColor = color;
+    meshTranslatesWidth = width;
 
-    pointsHolder = points;
-    arcsHolder = geodesicArcs;
-    functionPointsHolder = functionPoints;
-    functionArcsHolder = functionArcs;
+    std::vector<H2Point> pointsTranslates;
+    std::vector<H2GeodesicArc> arcsTranslates, sideTranslates;
 
-    for (const auto & A : vectorA)
+    meshPointsTranslates.clear();
+    meshPointsTranslates.reserve(translations.size()*meshPoints.size());
+    meshArcsTranslates.clear();
+    meshArcsTranslates.reserve(translations.size()*meshArcs.size());
+    meshSidesTranslates.clear();
+    meshSidesTranslates.reserve(translations.size()*meshSides.size());
+
+    for (const auto & A : translations)
     {
-        tempPts = A*pointsHolder;
-        tempColors.resize(pointsHolder.size());
-        tempWidths = pointsWidths;
-        std::fill(tempColors.begin(), tempColors.end(), "grey");
-        points.insert(points.end(),tempPts.begin(),tempPts.end());
-        pointsWidths.insert(pointsWidths.end(),tempWidths.begin(),tempWidths.end());
-        pointsColors.insert(pointsColors.end(), tempColors.begin(), tempColors.end());
+        pointsTranslates = A*meshPoints;
+        meshPointsTranslates.insert(meshPointsTranslates.end(), pointsTranslates.begin(), pointsTranslates.end());
 
-        tempGeodesicArcs = A*arcsHolder;
-        tempColors.resize(geodesicArcs.size());
-        tempWidths = geodesicArcsWidths;
-        std::fill(tempColors.begin(), tempColors.end(), "grey");
-        geodesicArcs.insert(geodesicArcs.end(),tempGeodesicArcs.begin(),tempGeodesicArcs.end());
-        geodesicArcsWidths.insert(geodesicArcsWidths.end(),tempWidths.begin(),tempWidths.end());
-        geodesicArcsColors.insert(geodesicArcsColors.end(), tempColors.begin(), tempColors.end());
+        arcsTranslates = A*meshArcs;
+        meshArcsTranslates.insert(meshArcsTranslates.end(), arcsTranslates.begin(), arcsTranslates.end());
 
-        tempFunctionPoints = A*functionPointsHolder;
-        tempColors.resize(functionPoints.size());
-        tempWidths = functionWidths;
-        std::fill(tempColors.begin(), tempColors.end(), "grey");
-        functionPoints.insert(functionPoints.end(),tempFunctionPoints.begin(),tempFunctionPoints.end());
-        functionWidths.insert(functionWidths.end(),tempWidths.begin(),tempWidths.end());
-        functionColors.insert(functionColors.end(), tempColors.begin(), tempColors.end());
-
-        tempFunctionArcs = A*functionArcsHolder;
-        tempColors.resize(functionArcs.size());
-        tempWidths = functionWidths;
-        std::fill(tempColors.begin(), tempColors.end(), "grey");
-        functionArcs.insert(functionArcs.end(),tempFunctionArcs.begin(),tempFunctionArcs.end());
-        functionWidths.insert(functionWidths.end(),tempWidths.begin(),tempWidths.end());
-        functionColors.insert(functionColors.end(), tempColors.begin(), tempColors.end());
+        sideTranslates = A*meshSides;
+        meshSidesTranslates.insert(meshSidesTranslates.end(), sideTranslates.begin(), sideTranslates.end());
     }
 }
 
-void H2Buffer::addKickedDrawing()
+void H2Buffer::setTranslations(const std::vector<H2Isometry> &isometries)
 {
-    addKickedDrawing(isometries);
-}
-
-void H2Buffer::setIsometries(const std::vector<H2Isometry> &isometries)
-{
-    this->isometries = isometries;
+    this->translations = isometries;
 }

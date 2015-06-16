@@ -30,7 +30,7 @@ void ActionHandler::setFactory()
     std::vector<double> twists1,twists2;
     for (int i=0; i<3*g-3; i++)
     {
-        twists1.push_back(1.0-.3*i);
+        twists1.push_back(0.0);
         //twists1.push_back(0.0);
         twists2.push_back(0.0);
     }
@@ -38,35 +38,66 @@ void ActionHandler::setFactory()
 
     for (int i=0; i<3*g-3; i++)
     {
-        lengths1.push_back(2);
+        lengths1.push_back(2.0);
         lengths2.push_back(1.0+3.0*i);
     }
 
-    //EquivariantHarmonicMapsFactory F;
     factory->setGenus(2);
-    //F.setRhoDomain(lengths1, twists1);
-    factory->setNiceRhoDomain();
-    factory->setRhoTarget(lengths2, twists2);
-    //F.setNiceRhoTarget();
+    //factory->setNiceRhoDomain();
+    factory->setRhoDomain(lengths1, twists1);
+    //factory->setRhoTarget(lengths2, twists2);
+    factory->setNiceRhoTarget();
 
-    factory->setMeshDepth(2);
+    factory->setMeshDepth(4);
     factory->initialize();
 
 
     leftDelegate->buffer.addElement(factory->rhoDomain, "blue", 2);
     leftDelegate->buffer.addElement(&factory->mesh, "red", 1);
-    leftDelegate->buffer.addKickedDrawing(factory->rhoDomain.getSidePairingsNormalizedAroundVertex());
-    leftDelegate->redrawBuffer();
+    leftDelegate->buffer.addMeshTranslates(factory->rhoDomain.getSidePairingsNormalizedAroundVertex());
 
     rightDelegate->buffer.addElement(factory->rhoTarget, "blue", 2);
     rightDelegate->buffer.addElement(&factory->functionInit, "red", 1);
+    rightDelegate->buffer.setTranslations(factory->rhoTarget.getSidePairingsNormalizedAroundVertex());
+    rightDelegate->buffer.addMeshTranslates();
+}
 
-    std::cout << "The size of functionPoints is " << rightDelegate->buffer.functionPoints.size() << std::endl;
-    std::cout << "The size of functionWidths is " << rightDelegate->buffer.functionWidths.size() << std::endl;
-    std::cout << "The size of points is " << rightDelegate->buffer.points.size() << std::endl;
+void ActionHandler::processMessage(actionHandlerMessage message, int timeOut)
+{
+    bool isVertexHighlighted, isTriangleHighlighted;
+    int meshIndexHighlighted, index1, index2, index3;
+    bool update;
 
-    rightDelegate->buffer.setIsometries(factory->rhoTarget.getSidePairingsNormalizedAroundVertex());
-    rightDelegate->buffer.addKickedDrawing();
+    switch(message)
+    {
+    case HIGHLIGHTED_LEFT:
+        leftDelegate->getMeshTriangleIndicesHighlighted(isTriangleHighlighted, index1, index2, index3);
+        leftDelegate->getMeshIndexHighlighted(isVertexHighlighted, meshIndexHighlighted);
+        rightDelegate->decideHighlightingTriangle(isTriangleHighlighted, update, index1, index2, index3);
+        rightDelegate->decideHighlightingMeshPoints(isVertexHighlighted, update, meshIndexHighlighted);
+        leftDelegate->redrawBuffer(false, true);
+        rightDelegate->redrawBuffer(false, true);
+        window->leftCanvas->update();
+        window->rightCanvas->update();
+        break;
 
-    rightDelegate->redrawBuffer();
+    case HIGHLIGHTED_RIGHT:
+        rightDelegate->getMeshTriangleIndicesHighlighted(isTriangleHighlighted, index1, index2, index3);
+        rightDelegate->getMeshIndexHighlighted(isVertexHighlighted, meshIndexHighlighted);
+        leftDelegate->decideHighlightingTriangle(isTriangleHighlighted, update, index1, index2, index3);
+        leftDelegate->decideHighlightingMeshPoints(isVertexHighlighted, update, meshIndexHighlighted);
+        leftDelegate->redrawBuffer(false, true);
+        rightDelegate->redrawBuffer(false, true);
+        window->leftCanvas->update();
+        window->rightCanvas->update();
+        break;
+
+    case HIGHLIGHTED_RESET:
+        leftDelegate->resetHighlighted();
+        rightDelegate->resetHighlighted();
+        break;
+
+    default:
+        throw(QString("Error in ActionHandler::processMessage: message unknown"));
+    }
 }

@@ -20,7 +20,7 @@ MainApplication::MainApplication(int &argc, char **argv) : QApplication(argc, ar
 
 void MainApplication::createWindow()
 {
-    window = new Window;
+    window = new Window(&(this->handler));
 
     connect(window, SIGNAL(destroyed()), this, SLOT(quit()));
     window->setAttribute(Qt::WA_DeleteOnClose, true);
