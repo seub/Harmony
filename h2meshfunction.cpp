@@ -265,3 +265,8 @@ void H2MeshFunction::refreshSubdivisions()
         functionSubdivisions.push_back(H2TriangleSubdivision(points, depth));
     }
 }
+
+IsomH2Representation H2MeshFunction::getRepresentation() const
+{
+    return rhoImage;
+}

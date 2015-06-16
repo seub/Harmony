@@ -181,7 +181,7 @@ void H2Buffer::refreshFunction()
 
 void H2Buffer::addPolygonTranslates(const std::vector<H2Isometry> &translations, const QColor &color, int width)
 {
-    int genus = 2;//(((mesh->getRepresentation()).getDiscreteGroup()).getGenerators()).size()/2;
+    int genus = function->getRepresentation().getDiscreteGroup().getGenerators().size()/2;
 
     meshTranslatesColor = color;
     meshTranslatesWidth = width;
@@ -201,6 +201,41 @@ void H2Buffer::addPolygonTranslates(const std::vector<H2Isometry> &translations,
 void H2Buffer::addPolygonTranslates(const QColor &color, int width)
 {
     addPolygonTranslates(translations, color, width);
+}
+
+void H2Buffer::addPolygonAndMeshTranslates(const std::vector<H2Isometry> &someTranslations, const QColor &color, int width)
+{
+    int genus = function->getRepresentation().getDiscreteGroup().getGenerators().size()/2;
+    meshTranslatesColor = color;
+    meshTranslatesWidth = width;
+
+    std::vector<H2Point> pointsTranslates;
+    std::vector<H2GeodesicArc> arcsTranslates, sideTranslates, sides;
+    sides = function->getExteriorSides();
+
+    meshPointsTranslates.clear();
+    meshPointsTranslates.reserve(translations.size()*meshPoints.size());
+    meshArcsTranslates.clear();
+    meshArcsTranslates.reserve(sides.size()*(16*genus*genus - 8*genus) + translations.size()*meshArcs.size());
+    meshSidesTranslates.clear();
+    meshSidesTranslates.reserve(translations.size()*meshSides.size());
+
+    for (const auto & A : someTranslations)
+    {
+        pointsTranslates = A*meshPoints;
+        meshPointsTranslates.insert(meshPointsTranslates.end(), pointsTranslates.begin(), pointsTranslates.end());
+
+        arcsTranslates = A*meshArcs;
+        meshArcsTranslates.insert(meshArcsTranslates.end(), arcsTranslates.begin(), arcsTranslates.end());
+
+        sideTranslates = A*meshSides;
+        meshSidesTranslates.insert(meshSidesTranslates.end(), sideTranslates.begin(), sideTranslates.end());
+    }
+    for (const auto & A : translations)
+    {
+        arcsTranslates = A*sides;
+        meshArcsTranslates.insert(meshArcsTranslates.end(), arcsTranslates.begin(), arcsTranslates.end());
+    }
 }
 
 void H2Buffer::addElement(const std::vector<H2Point> & points, const QColor & color, int width)

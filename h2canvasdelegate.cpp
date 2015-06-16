@@ -627,8 +627,11 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
         buffer.function->iterate(20);
 
         buffer.refreshFunction();
-        addMeshTranslates();
+
+        //addMeshTranslates();
         //addPolygonTranslates();
+        addPolygonAndMeshTranslates();
+
         break;
     }
 }
@@ -646,4 +649,9 @@ void H2CanvasDelegate::addMeshTranslates()
 void H2CanvasDelegate::addPolygonTranslates()
 {
     buffer.addPolygonTranslates();
+}
+
+void H2CanvasDelegate::addPolygonAndMeshTranslates()
+{
+    buffer.addPolygonAndMeshTranslates(buffer.function->getRepresentation().getSidePairingsForNormalizedFundamentalDomain());
 }

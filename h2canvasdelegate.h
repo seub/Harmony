@@ -25,6 +25,7 @@ public:
     void addMeshTranslates(const std::vector<H2Isometry> & translations);
     void addMeshTranslates();
     void addPolygonTranslates();
+    void addPolygonAndMeshTranslates();
 
     virtual void decideHighlighting(const H2Point &) {}
     void getMeshIndexHighlighted(bool &highlighted, int &meshIndexHighted) const;
