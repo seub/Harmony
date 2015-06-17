@@ -49,33 +49,24 @@ void ActionHandler::setFactory()
     //factory->setRhoTarget(lengths2, twists2);
     factory->setNiceRhoTarget();
 
-<<<<<<< HEAD
-
-    factory->setMeshDepth(4);
-=======
     factory->setMeshDepth(3);
->>>>>>> 0a84e24c70019319d05602e665676562ceb6c390
+
 
     factory->initialize();
 
     leftDelegate->buffer.addElement(factory->rhoDomain, "blue", 2);
     leftDelegate->buffer.addElement(&factory->mesh, "red", 1);
-<<<<<<< HEAD
-    leftDelegate->buffer.addMeshTranslates(factory->rhoDomain.getSidePairingsNormalizedAroundVertices());
-    //leftDelegate->buffer.addElement(factory->getPolygonTranslatesDomain(),"grey",1);
-=======
+
     leftDelegate->buffer.addElement(factory->getPolygonTranslatesDomain(),"grey",1);
->>>>>>> 0a84e24c70019319d05602e665676562ceb6c390
+
 
     rightDelegate->buffer.addElement(factory->rhoTarget, "blue", 2);
     rightDelegate->buffer.addElement(&factory->function, "red", 1);
     rightDelegate->buffer.setTranslations(factory->rhoTarget.getSidePairingsNormalizedAroundVertices());
-<<<<<<< HEAD
-    //rightDelegate->buffer.addMeshTranslates();
-    rightDelegate->addPolygonAndMeshTranslates();
-=======
+
+    //rightDelegate->addPolygonAndMeshTranslates();
+
     rightDelegate->buffer.addMeshTranslates();
->>>>>>> 0a84e24c70019319d05602e665676562ceb6c390
 }
 
 void ActionHandler::processMessage(actionHandlerMessage message, int timeOut)

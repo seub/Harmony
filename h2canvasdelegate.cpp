@@ -628,7 +628,6 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
     switch(keyEvent->key())
     {
     case Qt::Key_Space :
-<<<<<<< HEAD
 
         buffer.function->iterate(20);
 
@@ -636,10 +635,8 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
 
         //addMeshTranslates();
         //addPolygonTranslates();
-        addPolygonAndMeshTranslates();
+        //addPolygonAndMeshTranslates();
 
-=======
->>>>>>> 0a84e24c70019319d05602e665676562ceb6c390
         break;
     }
 }
