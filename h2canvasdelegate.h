@@ -66,10 +66,15 @@ protected:
 class H2CanvasDelegateDomain : public H2CanvasDelegate
 {
     friend class Canvas;
+    friend class ActionHandler;
+
 public:
 
 private:
     explicit H2CanvasDelegateDomain(int sizeX, int sizeY, ActionHandler *handler = 0);
+
+    void refreshMesh();
+
     void decideHighlighting(const H2Point &pointUnderMouse);
     void decideHighlightingMeshPoints(bool highlighted, bool &update, int meshIndexHighlighted = -1);
     void decideHighlightingTriangle(bool highlighted, bool& update, int triangleMeshIndex1 = -1, int triangleMeshIndex2 = -1, int triangleMeshIndex3 = -1);
@@ -82,6 +87,7 @@ class H2CanvasDelegateTarget : public H2CanvasDelegate
 {
     friend class Canvas;
     friend class ActionHandler;
+
 public:
 
 private:

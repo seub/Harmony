@@ -28,8 +28,10 @@ private slots:
     void finishedComputing();
     void iterateButtonClicked();
     void outputResetButtonClicked();
-    void updateFunction(bool updateTranslates = true);
+    void updateFunction(bool updateTranslates);
+    void updateMesh(bool updateTranslates);
     void outputShowTranslatesChoice(int choice);
+    void inputShowTranslatesChoice(int choice);
 
 private:
     void runDiscreteFlow();

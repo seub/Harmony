@@ -151,13 +151,13 @@ void ActionHandler::outputResetButtonClicked()
 {
     topFactory->resetInitSubfactory();
     outputMenu->resetMenu();
-    updateFunction();
+    updateFunction(true);
 }
 
 void ActionHandler::iterateButtonClicked()
 {
     iterateDiscreteFlow(outputMenu->getNbIterations());
-    updateFunction();
+    updateFunction(true);
     outputMenu->enableReset();
 }
 
@@ -199,6 +199,45 @@ void ActionHandler::outputShowTranslatesChoice(int choice)
     }
 }
 
+void ActionHandler::inputShowTranslatesChoice(int choice)
+{
+    bool aroundVertexOld, aroundVerticesOld, aroundVertexNew, aroundVerticesNew;
+    leftDelegate->getShowTranslates(aroundVertexOld, aroundVerticesOld);
+
+    switch(choice)
+    {
+    case SHOW_TRANSLATES_CHOOSE:
+        aroundVertexNew = aroundVertexOld;
+        aroundVerticesNew = aroundVerticesOld;
+        break;
+
+    case SHOW_TRANSLATES_DOMAIN:
+        aroundVertexNew = false;
+        aroundVerticesNew = false;
+        break;
+
+    case SHOW_TRANSLATES_VERTEX:
+        aroundVertexNew = true;
+        aroundVerticesNew = false;
+        break;
+
+    case SHOW_TRANSLATES_VERTICES:
+        aroundVertexNew = false;
+        aroundVerticesNew = true;
+        break;
+
+    default:
+        throw(QString("Error in ActionHandler::outputShowTranslatesChoice: not supposed to land here"));
+    }
+
+    if ((aroundVertexNew != aroundVertexOld) || (aroundVerticesNew != aroundVerticesOld))
+    {
+        leftDelegate->setShowTranslates(aroundVertexNew, aroundVerticesNew);
+        updateMesh(true);
+    }
+}
+
+
 void ActionHandler::iterateDiscreteFlow(int N)
 {
     topFactory->iterateSubfactory(N);
@@ -208,6 +247,22 @@ void ActionHandler::stopButtonClicked()
 {
     topFactory->stopHeatFlow();
 }
+
+void ActionHandler::updateMesh(bool updateTranslates)
+{
+    ((H2CanvasDelegateDomain *) leftDelegate)->refreshMesh();
+    if (updateTranslates)
+    {
+        leftDelegate->addMeshTranslates();
+    }
+    else
+    {
+        leftDelegate->addMeshTranslates(false, false);
+    }
+    leftDelegate->enableRedrawBuffer(true, false);
+    leftCanvas->update();
+}
+
 
 void ActionHandler::updateFunction(bool updateTranslates)
 {

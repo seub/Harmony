@@ -11,7 +11,7 @@
 #include "window.h"
 #include "actionhandler.h"
 
-OutputMenu::OutputMenu(Window * const window, ActionHandler* handler) : handler(handler)
+OutputMenu::OutputMenu(Window *window, ActionHandler* handler) : handler(handler)
 {
     setParent(window);
     setTitle("Output");

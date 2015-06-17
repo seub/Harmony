@@ -641,6 +641,11 @@ void H2CanvasDelegate::addMeshTranslates(bool aroundVertex, bool aroundVertices)
     buffer.addMeshTranslates(aroundVertex, aroundVertices);
 }
 
+void H2CanvasDelegateDomain::refreshMesh()
+{
+    buffer.refreshMesh();
+}
+
 void H2CanvasDelegateTarget::refreshFunction()
 {
     buffer.refreshFunction();

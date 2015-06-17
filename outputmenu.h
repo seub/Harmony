@@ -23,7 +23,7 @@ public:
     int getNbIterations() const;
 
 private:
-    OutputMenu(Window * const window, ActionHandler *handler);
+    OutputMenu(Window *window, ActionHandler *handler);
     void resizeEvent(QResizeEvent *event);
     void resetMenu();
 
@@ -38,8 +38,8 @@ private:
     void switchStopToComputeButton();
 
     ActionHandler *handler;
-    QGridLayout *layout;
 
+    QGridLayout *layout;
     QPushButton *resetButton, *computeButton, *iterateButton;
     QLabel *showLiveLabel, *nbIterationsLabel;
     QCheckBox *showLiveCheckbox;
