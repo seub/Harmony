@@ -179,28 +179,26 @@ void H2Buffer::refreshFunction()
     }
 }
 
-void H2Buffer::addPolygonTranslates(const std::vector<H2Isometry> &translations, const QColor &color, int width)
+void H2Buffer::addSideTranslates(const std::vector<H2Isometry> &translations, const QColor &color, int width)
 {
-    int genus = 2;//(((mesh->getRepresentation()).getDiscreteGroup()).getGenerators()).size()/2;
-
     meshTranslatesColor = color;
     meshTranslatesWidth = width;
 
-    std::vector<H2GeodesicArc> arcsTranslates, sides;
-    sides = function->getExteriorSides();
-    meshArcsTranslates.clear();
-    meshArcsTranslates.reserve(sides.size()*(16*genus*genus - 8*genus));
+    std::vector<H2GeodesicArc> sideTranslates;
+
+    meshSidesTranslatesAroundVertices.clear();
+    meshSidesTranslatesAroundVertices.reserve(translations.size()*meshSides.size());
 
     for (const auto & A : translations)
     {
-        arcsTranslates = A*sides;
-        meshArcsTranslates.insert(meshArcsTranslates.end(), arcsTranslates.begin(), arcsTranslates.end());
+        sideTranslates = A*meshSides;
+        meshSidesTranslatesAroundVertices.insert(meshSidesTranslatesAroundVertices.end(), sideTranslates.begin(), sideTranslates.end());
     }
 }
 
-void H2Buffer::addPolygonTranslates(const QColor &color, int width)
+void H2Buffer::addSideTranslates(const QColor &color, int width)
 {
-    addPolygonTranslates(translations, color, width);
+    addSideTranslates(translationsAroundVertices, color, width);
 }
 
 void H2Buffer::addElement(const std::vector<H2Point> & points, const QColor & color, int width)
@@ -212,40 +210,90 @@ void H2Buffer::addElement(const std::vector<H2Point> & points, const QColor & co
 }
 
 
-void H2Buffer::addMeshTranslates(const QColor &color, int width)
+void H2Buffer::addMeshTranslates(bool aroundVertex, bool aroundVertices, const QColor &color, int width)
 {
-    addMeshTranslates(translations, color, width);
+    if (aroundVertex && aroundVertices)
+    {
+        throw(QString("Error in H2Buffer::addMeshTranslates: both booleans are true"));
+    }
+
+    addSideTranslates(translationsAroundVertices, color, width);
+
+    if (aroundVertex)
+    {
+        addMeshTranslatesAroundVertex(color, width);
+    }
+    if (aroundVertices)
+    {
+        addMeshTranslatesAroundVertices(color, width);
+    }
 }
 
-void H2Buffer::addMeshTranslates(const std::vector<H2Isometry> &translations, const QColor &color, int width)
+void H2Buffer::addMeshTranslatesAroundVertices(const QColor &color, int width)
 {
     meshTranslatesColor = color;
     meshTranslatesWidth = width;
 
     std::vector<H2Point> pointsTranslates;
-    std::vector<H2GeodesicArc> arcsTranslates, sideTranslates;
+    std::vector<H2GeodesicArc> arcsTranslates;
 
-    meshPointsTranslates.clear();
-    meshPointsTranslates.reserve(translations.size()*meshPoints.size());
-    meshArcsTranslates.clear();
-    meshArcsTranslates.reserve(translations.size()*meshArcs.size());
-    meshSidesTranslates.clear();
-    meshSidesTranslates.reserve(translations.size()*meshSides.size());
+    meshPointsTranslatesAroundVertices.clear();
+    meshPointsTranslatesAroundVertices.reserve(translationsAroundVertices.size()*meshPoints.size());
+    meshArcsTranslatesAroundVertices.clear();
+    meshArcsTranslatesAroundVertices.reserve(translationsAroundVertices.size()*meshArcs.size());
 
-    for (const auto & A : translations)
+    for (const auto & A : translationsAroundVertices)
     {
         pointsTranslates = A*meshPoints;
-        meshPointsTranslates.insert(meshPointsTranslates.end(), pointsTranslates.begin(), pointsTranslates.end());
+        meshPointsTranslatesAroundVertices.insert(meshPointsTranslatesAroundVertices.end(), pointsTranslates.begin(), pointsTranslates.end());
 
         arcsTranslates = A*meshArcs;
-        meshArcsTranslates.insert(meshArcsTranslates.end(), arcsTranslates.begin(), arcsTranslates.end());
-
-        sideTranslates = A*meshSides;
-        meshSidesTranslates.insert(meshSidesTranslates.end(), sideTranslates.begin(), sideTranslates.end());
+        meshArcsTranslatesAroundVertices.insert(meshArcsTranslatesAroundVertices.end(), arcsTranslates.begin(), arcsTranslates.end());
     }
 }
 
-void H2Buffer::setTranslations(const std::vector<H2Isometry> &isometries)
+void H2Buffer::addMeshTranslatesAroundVertex(const QColor &color, int width)
 {
-    this->translations = isometries;
+    meshTranslatesColor = color;
+    meshTranslatesWidth = width;
+
+    std::vector<H2Point> pointsTranslates;
+    std::vector<H2GeodesicArc> arcsTranslates;
+
+    meshPointsTranslatesAroundVertex.clear();
+    meshPointsTranslatesAroundVertex.reserve(translationsAroundVertex.size()*meshPoints.size());
+    meshArcsTranslatesAroundVertex.clear();
+    meshArcsTranslatesAroundVertex.reserve(translationsAroundVertex.size()*meshArcs.size());
+
+    for (const auto & A : translationsAroundVertex)
+    {
+        pointsTranslates = A*meshPoints;
+        meshPointsTranslatesAroundVertex.insert(meshPointsTranslatesAroundVertex.end(), pointsTranslates.begin(), pointsTranslates.end());
+
+        arcsTranslates = A*meshArcs;
+        meshArcsTranslatesAroundVertex.insert(meshArcsTranslatesAroundVertex.end(), arcsTranslates.begin(), arcsTranslates.end());
+    }
+}
+
+
+void H2Buffer::setTranslations(const IsomH2Representation &rho)
+{
+    translationsAroundVertex = rho.getSidePairingsNormalizedAroundVertex();
+    translationsAroundVertices = rho.getSidePairingsNormalizedAroundVertices();
+}
+
+void H2Buffer::setTranslations()
+{
+    if (!isMeshEmpty && isMeshFunctionEmpty)
+    {
+        setTranslations(mesh->getRepresentation());
+    }
+    else if (isMeshEmpty && !isMeshFunctionEmpty)
+    {
+        setTranslations(function->getTargetRepresentation());
+    }
+    else
+    {
+        throw(QString("Error in H2Buffer::setTranslations: both mesh and functions are empty or nonempty?"));
+    }
 }

@@ -29,6 +29,7 @@ private slots:
     void iterateButtonClicked();
     void outputResetButtonClicked();
     void updateFunction(bool updateTranslates = true);
+    void outputShowTranslatesChoice(int choice);
 
 private:
     void runDiscreteFlow();
@@ -44,6 +45,7 @@ private:
 
     H2CanvasDelegate *leftDelegate, *rightDelegate;
     bool isShowingLive;
+    bool showTranslatesAroundVertexOld, showTranslatesAroundVerticesOld;
 };
 
 #endif // ACTIONHANDLER_H

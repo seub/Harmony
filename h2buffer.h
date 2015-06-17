@@ -40,13 +40,15 @@ public:
     void addElement(H2MeshFunction *function, const QColor & color = "black", int width = 1);
     void refreshFunction();
     void refreshMesh();
-    void addPolygonTranslates(const std::vector<H2Isometry> &translations, const QColor &color = "grey", int width = 1);
-    void addPolygonTranslates(const QColor &color = "grey", int width = 1);
+    void addSideTranslates(const std::vector<H2Isometry> &translationsAroundVertices, const QColor &color = "grey", int width = 1);
+    void addSideTranslates(const QColor &color = "grey", int width = 1);
 
-    void addMeshTranslates(const std::vector<H2Isometry> & translations, const QColor &color = "grey", int width = 1);
-    void addMeshTranslates(const QColor &color = "grey", int width = 1);
+    void addMeshTranslatesAroundVertex(const QColor &color = "grey", int width = 1);
+    void addMeshTranslatesAroundVertices(const QColor &color = "grey", int width = 1);
+    void addMeshTranslates(bool aroundVertex, bool aroundVertices, const QColor &color = "grey", int width = 1);
 
-    void setTranslations(const std::vector<H2Isometry> & translations);
+    void setTranslations();
+    void setTranslations(const IsomH2Representation &rho);
 
 
 private:
@@ -62,16 +64,16 @@ private:
     std::vector<QColor> geodesicArcsColors;
     std::vector<int> geodesicArcsWidths;
 
-    std::vector<H2Isometry> translations;
+    std::vector<H2Isometry> translationsAroundVertex, translationsAroundVertices;
 
     const H2Mesh *mesh;
     bool isMeshEmpty;
     std::vector<H2Point> meshPoints;
     std::vector<H2GeodesicArc> meshArcs;
     std::vector<H2GeodesicArc> meshSides;
-    std::vector<H2Point> meshPointsTranslates;
-    std::vector<H2GeodesicArc> meshArcsTranslates;
-    std::vector<H2GeodesicArc> meshSidesTranslates;
+    std::vector<H2Point> meshPointsTranslatesAroundVertex, meshPointsTranslatesAroundVertices;
+    std::vector<H2GeodesicArc> meshArcsTranslatesAroundVertex, meshArcsTranslatesAroundVertices;
+    std::vector<H2GeodesicArc> meshSidesTranslatesAroundVertex, meshSidesTranslatesAroundVertices;
     QColor meshColor, meshTranslatesColor;
     int meshWidth, meshTranslatesWidth;
     H2MeshFunction *function;

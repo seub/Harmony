@@ -20,7 +20,7 @@ H2CanvasDelegate::H2CanvasDelegate(int sizeX, int sizeY, ActionHandler *handler)
     //std::cout << "Entering H2CanvasDelegate::CanvasDelegate" << std::endl;
     delegateType = H2DELEGATE;
     mobius.setIdentity();
-    showTranslates = true;
+    showTranslatesAroundAllVertices = true;
     drawCircle(0, 1);
     resetHighlighted();
 
@@ -51,50 +51,54 @@ void H2CanvasDelegate::drawComplexPointInDiskModel(const Complex &z, const QColo
 
 void H2CanvasDelegate::drawH2Geodesic(const H2Geodesic &L, const QColor &color, int width, bool back)
 {
-    H2Geodesic tempGeodesic =  mobius*L;
-    if (tempGeodesic.isCircleInDiskModel())
+    H2Geodesic geodesic =  mobius*L;
+    if (geodesic.isCircleInDiskModel())
     {
         Circle C;
         double angle1, angle2;
-        tempGeodesic.getCircleAndAnglesInDiskModel(C, angle1, angle2);
+        geodesic.getCircleAndAnglesInDiskModel(C, angle1, angle2);
         Complex endpoint1, endpoint2;
-        tempGeodesic.getEndpointsInDiskModel(endpoint1, endpoint2);
+        geodesic.getEndpointsInDiskModel(endpoint1, endpoint2);
         drawSmallerArc(C, angle1, angle2, endpoint1, endpoint2, color, width, back);
     }
     else
     {
         Complex z1, z2;
-        tempGeodesic.getEndpointsInDiskModel(z1, z2);
+        geodesic.getEndpointsInDiskModel(z1, z2);
         drawSegment(z1, z2, color, width, back);
     }
-    return;
 }
 
 void H2CanvasDelegate::drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color, int width, bool back)
 {
-    H2GeodesicArc tempGeodesic =  mobius*L;
-    if(!tempGeodesic.isLineSegmentInDiskModel())
+    ++nbArcs;
+    H2GeodesicArc arc =  mobius*L;
+    if(!arc.isLineSegmentInDiskModel())
     {
         Circle C;
         double angle1, angle2;
-        tempGeodesic.getCircleAndAnglesInDiskModel(C, angle1, angle2);
+        arc.getCircleAndAnglesInDiskModel(C, angle1, angle2);
         Complex endpoint1, endpoint2;
-        tempGeodesic.getEndpointsInDiskModel(endpoint1, endpoint2);
+        arc.getEndpointsInDiskModel(endpoint1, endpoint2);
         drawSmallerArc(C, angle1, angle2, endpoint1, endpoint2, color, width, back);
     }
     else
     {
+        ++nbStraightArcs;
         Complex z1, z2;
-        tempGeodesic.getEndpointsInDiskModel(z1, z2);
+        arc.getEndpointsInDiskModel(z1, z2);
         drawSegment(z1, z2, color, width, back);
     }
-    return;
 }
 
 
 void H2CanvasDelegate::redrawBuffer(bool back, bool top, const H2Isometry &mobius)
 {
-    //clock_t start = clock();
+    clock_t start = clock();
+    nbArcs = 0;
+    nbStraightArcs = 0;
+    nbAlmostStraightArcs = 0;
+
     this->mobius = mobius*this->mobius;
 
     if (back)
@@ -112,34 +116,100 @@ void H2CanvasDelegate::redrawBuffer(bool back, bool top, const H2Isometry &mobiu
     enableRedrawBufferTop = false;
 
     //std::cout << "redraw buffer for delegate type " << delegateType << " :" << (clock() - start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+    //std::cout << "nbArcs = " << nbArcs << ", nbStraightArcs = " << nbStraightArcs << ", nbAlmostStraightArcs = " << nbAlmostStraightArcs << std::endl;
 }
 
 void H2CanvasDelegate::redrawBufferBack()
 {
     imageBack->fill("white");
-    drawCircle(0, 1);
 
-    int i;
+    subRedrawBufferBack();
 
-    int nbGeodesicArcs = buffer.geodesicArcs.size();
+    if (buffer.isMeshEmpty != buffer.isMeshFunctionEmpty)
+    {
+        redrawMeshOrFunction();
+    }
+    else
+    {
+        throw(QString("Error in H2CanvasDelegate::redrawBufferBack(): mesh and function are both empty or nonempty?"));
+    }
+
+    unsigned int i;
+    unsigned int nbGeodesicArcs = buffer.geodesicArcs.size();
     for (i = 0; i < nbGeodesicArcs; i++)
     {
         drawH2GeodesicArc(buffer.geodesicArcs[i], buffer.geodesicArcsColors[i], buffer.geodesicArcsWidths[i]);
     }
 
-    int nbGeodesics = buffer.geodesics.size();
+    unsigned int nbGeodesics = buffer.geodesics.size();
     for (i = 0; i < nbGeodesics; i++)
     {
         drawH2Geodesic(buffer.geodesics[i], buffer.geodesicsColors[i], buffer.geodesicsWidths[i]);
     }
 
-    int nbPoints = buffer.points.size();
+    unsigned int nbPoints = buffer.points.size();
     for (i = 0; i < nbPoints; i++)
     {
         drawH2Point(buffer.points[i], buffer.pointsColors[i], buffer.pointsWidths[i]);
     }
 
-    subRedrawBufferBack();
+    drawCircle(0, 1);
+}
+
+void H2CanvasDelegate::redrawMeshOrFunction()
+{
+    if (buffer.isMeshFunctionEmpty != buffer.isMeshEmpty)
+    {
+        if (showTranslatesAroundAllVertices)
+        {
+
+            for (const auto & meshArc : buffer.meshArcsTranslatesAroundVertices)
+            {
+                drawH2GeodesicArc(meshArc, buffer.meshTranslatesColor, buffer.meshTranslatesWidth);
+            }
+
+            /*for (const auto & meshPoint : buffer.meshPointsTranslatesAroundVertices)
+            {
+                drawH2Point(meshPoint, "grey", 2);
+            }*/
+        }
+        if (showTranslatesAroundVertex)
+        {
+            for (const auto & meshArc : buffer.meshArcsTranslatesAroundVertex)
+            {
+                drawH2GeodesicArc(meshArc, buffer.meshTranslatesColor, buffer.meshTranslatesWidth);
+            }
+
+            /*for (const auto & meshPoint : buffer.meshPointsTranslatesAroundVertex)
+            {
+                drawH2Point(meshPoint, "grey", 2);
+            }*/
+        }
+
+        for (const auto & side : buffer.meshSidesTranslatesAroundVertices)
+        {
+            drawH2GeodesicArc(side, "black", 1);
+        }
+
+        for (const auto & meshArc : buffer.meshArcs)
+        {
+            drawH2GeodesicArc(meshArc, buffer.meshColor, buffer.meshWidth);
+        }
+
+        for (const auto & side : buffer.meshSides)
+        {
+            drawH2GeodesicArc(side, buffer.meshColor, 2);
+        }
+
+        /*for (const auto & meshPoint : buffer.meshPoints)
+        {
+            drawH2Point(meshPoint, "black", 2);
+        }*/
+    }
+    else
+    {
+        throw(QString("Error in H2CanvasDelegate::redrawMeshOrFunction: mesh and function are both empty or nonempty?"));
+    }
 }
 
 void H2CanvasDelegate::redrawBufferTop()
@@ -307,11 +377,13 @@ void H2CanvasDelegate::keyPress(QKeyEvent *keyEvent)
 H2CanvasDelegateDomain::H2CanvasDelegateDomain(int sizeX, int sizeY, ActionHandler * handler) : H2CanvasDelegate(sizeX, sizeY, handler)
 {
     delegateType = H2DELEGATEDOMAIN;
+    setShowTranslates(false, false);
 }
 
 H2CanvasDelegateTarget::H2CanvasDelegateTarget(int sizeX, int sizeY, ActionHandler *handler) : H2CanvasDelegate(sizeX, sizeY, handler)
 {
     delegateType = H2DELEGATETARGET;
+    setShowTranslates(false, false);
 }
 
 void H2CanvasDelegateDomain::decideHighlightingMeshPoints(bool highlighted, bool &update, int meshIndexHighlighted)
@@ -426,43 +498,6 @@ void H2CanvasDelegateDomain::subMouseMove(QMouseEvent *mouseEvent)
 
 void H2CanvasDelegateDomain::subRedrawBufferBack()
 {
-    if (!buffer.isMeshEmpty)
-    {
-        for (const auto & meshArc : buffer.meshArcsTranslates)
-        {
-            drawH2GeodesicArc(meshArc, buffer.meshTranslatesColor, buffer.meshTranslatesWidth);
-        }
-
-        for (const auto & side : buffer.meshSidesTranslates)
-        {
-            drawH2GeodesicArc(side, buffer.meshTranslatesColor, 2);
-        }
-
-        /*for (const auto & meshPoint : buffer.meshPointsTranslates)
-        {
-            drawH2Point(meshPoint, "grey", 2);
-        }*/
-
-        for (const auto & meshArc : buffer.meshArcs)
-        {
-            drawH2GeodesicArc(meshArc, buffer.meshColor, buffer.meshWidth);
-        }
-
-        for (const auto & side : buffer.meshSides)
-        {
-            drawH2GeodesicArc(side, buffer.meshColor, 2);
-        }
-
-        /*for (const auto & meshPoint : buffer.meshPoints)
-        {
-            drawH2Point(meshPoint, "black", 2);
-        }*/
-    }
-    else
-    {
-        throw(QString("Error in H2CanvasDelegateDomain::subRedrawBufferBack: no mesh in buffer?"));
-    }
-
 }
 
 void H2CanvasDelegateDomain::subRedrawBufferTop()
@@ -576,51 +611,10 @@ void H2CanvasDelegateTarget::decideHighlightingTriangle(bool highlighted, bool &
 
 void H2CanvasDelegateTarget::subRedrawBufferBack()
 {
-    if (!buffer.isMeshFunctionEmpty)
-    {
-        if (showTranslates)
-        {
-
-            for (const auto & meshArc : buffer.meshArcsTranslates)
-            {
-                drawH2GeodesicArc(meshArc, buffer.meshTranslatesColor, buffer.meshTranslatesWidth);
-            }
-
-            for (const auto & side : buffer.meshSidesTranslates)
-            {
-                drawH2GeodesicArc(side, "grey", 2);
-            }
-
-            /*for (const auto & meshPoint : buffer.meshPointsTranslates)
-        {
-            drawH2Point(meshPoint, "grey", 2);
-        }*/
-        }
-
-        for (const auto & meshArc : buffer.meshArcs)
-        {
-            drawH2GeodesicArc(meshArc, buffer.meshColor, buffer.meshWidth);
-        }
-
-        for (const auto & side : buffer.meshSides)
-        {
-            drawH2GeodesicArc(side, buffer.meshColor, 2);
-        }
-
-        /*for (const auto & meshPoint : buffer.meshPoints)
-        {
-            drawH2Point(meshPoint, "black", 2);
-        }*/
-    }
-    else
-    {
-        throw(QString("Error in H2CanvasDelegateTarget::subRedrawBufferBack: no mesh function in buffer?"));
-    }
 }
 
 void H2CanvasDelegateTarget::subRedrawBufferTop()
 {
-
 }
 
 void H2CanvasDelegateTarget::subMouseMove(QMouseEvent *mouseEvent)
@@ -637,14 +631,14 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
     }
 }
 
-void H2CanvasDelegate::addMeshTranslates(const std::vector<H2Isometry> &translations)
-{
-    buffer.addMeshTranslates(translations);
-}
-
 void H2CanvasDelegate::addMeshTranslates()
 {
-    buffer.addMeshTranslates();
+    addMeshTranslates(showTranslatesAroundVertex, showTranslatesAroundAllVertices);
+}
+
+void H2CanvasDelegate::addMeshTranslates(bool aroundVertex, bool aroundVertices)
+{
+    buffer.addMeshTranslates(aroundVertex, aroundVertices);
 }
 
 void H2CanvasDelegateTarget::refreshFunction()
@@ -652,12 +646,14 @@ void H2CanvasDelegateTarget::refreshFunction()
     buffer.refreshFunction();
 }
 
-void H2CanvasDelegate::addPolygonTranslates()
+void H2CanvasDelegate::setShowTranslates(bool showTranslatesAroundVertex, bool showTranslatesAroundAllVertices)
 {
-    buffer.addPolygonTranslates();
+    this->showTranslatesAroundVertex = showTranslatesAroundVertex;
+    this->showTranslatesAroundAllVertices = showTranslatesAroundAllVertices;
 }
 
-void H2CanvasDelegate::setShowTranslates(bool show)
+void H2CanvasDelegate::getShowTranslates(bool &aroundVertexOut, bool &aroundVerticesOut)
 {
-    showTranslates = show;
+    aroundVertexOut = showTranslatesAroundVertex;
+    aroundVerticesOut = showTranslatesAroundAllVertices;
 }

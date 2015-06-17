@@ -68,12 +68,13 @@ void ActionHandler::setFactory()
 
     leftDelegate->buffer.addElement(topFactory->subfactory.rhoDomain, "blue", 2);
     leftDelegate->buffer.addElement(&topFactory->subfactory.mesh, "red", 1);
-    leftDelegate->buffer.addElement(topFactory->subfactory.getPolygonTranslatesDomain(),"grey",1);
+    leftDelegate->buffer.setTranslations();
+    leftDelegate->addMeshTranslates();
 
     rightDelegate->buffer.addElement(topFactory->subfactory.rhoTarget, "blue", 2);
     rightDelegate->buffer.addElement(&topFactory->subfactory.function, "red", 1);
-    rightDelegate->buffer.setTranslations(topFactory->subfactory.rhoTarget.getSidePairingsNormalizedAroundVertices());
-    rightDelegate->buffer.addMeshTranslates();
+    rightDelegate->buffer.setTranslations();
+    rightDelegate->addMeshTranslates();
 }
 
 void ActionHandler::processMessage(actionHandlerMessage message, int parameter)
@@ -139,7 +140,8 @@ void ActionHandler::computeButtonClicked()
     topFactory->runHeatFlow();
     if (isShowingLive)
     {
-        rightDelegate->setShowTranslates(false);
+        rightDelegate->getShowTranslates(showTranslatesAroundVertexOld, showTranslatesAroundVerticesOld);
+        rightDelegate->setShowTranslates(false, false);
         rightDelegate->enableRedrawBuffer();
         rightCanvas->update();
     }
@@ -154,9 +156,47 @@ void ActionHandler::outputResetButtonClicked()
 
 void ActionHandler::iterateButtonClicked()
 {
-    iterateDiscreteFlow(50);
+    iterateDiscreteFlow(outputMenu->getNbIterations());
     updateFunction();
     outputMenu->enableReset();
+}
+
+void ActionHandler::outputShowTranslatesChoice(int choice)
+{
+    bool aroundVertexOld, aroundVerticesOld, aroundVertexNew, aroundVerticesNew;
+    rightDelegate->getShowTranslates(aroundVertexOld, aroundVerticesOld);
+
+    switch(choice)
+    {
+    case SHOW_TRANSLATES_CHOOSE:
+        aroundVertexNew = aroundVertexOld;
+        aroundVerticesNew = aroundVerticesOld;
+        break;
+
+    case SHOW_TRANSLATES_DOMAIN:
+        aroundVertexNew = false;
+        aroundVerticesNew = false;
+        break;
+
+    case SHOW_TRANSLATES_VERTEX:
+        aroundVertexNew = true;
+        aroundVerticesNew = false;
+        break;
+
+    case SHOW_TRANSLATES_VERTICES:
+        aroundVertexNew = false;
+        aroundVerticesNew = true;
+        break;
+
+    default:
+        throw(QString("Error in ActionHandler::outputShowTranslatesChoice: not supposed to land here"));
+    }
+
+    if ((aroundVertexNew != aroundVertexOld) || (aroundVerticesNew != aroundVerticesOld))
+    {
+        rightDelegate->setShowTranslates(aroundVertexNew, aroundVerticesNew);
+        updateFunction(true);
+    }
 }
 
 void ActionHandler::iterateDiscreteFlow(int N)
@@ -176,6 +216,10 @@ void ActionHandler::updateFunction(bool updateTranslates)
     {
         rightDelegate->addMeshTranslates();
     }
+    else
+    {
+        rightDelegate->addMeshTranslates(false, false);
+    }
     rightDelegate->enableRedrawBuffer(true, false);
     rightCanvas->update();
 }
@@ -189,6 +233,6 @@ void ActionHandler::finishedComputing()
     outputMenu->switchStopToComputeButton();
     outputMenu->enableAll();
 
-    rightDelegate->setShowTranslates(true);
-    updateFunction();
+    rightDelegate->setShowTranslates(showTranslatesAroundVertexOld, showTranslatesAroundVerticesOld);
+    updateFunction(true);
 }

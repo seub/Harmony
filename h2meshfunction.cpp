@@ -96,6 +96,11 @@ std::vector<H2Point> H2MeshFunction::getPoints() const
     return values;
 }
 
+IsomH2Representation H2MeshFunction::getTargetRepresentation() const
+{
+    return rhoImage;
+}
+
 std::vector<H2GeodesicArc> H2MeshFunction::getExteriorSides() const
 {
     std::vector<H2Point> vertices;

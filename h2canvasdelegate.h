@@ -23,10 +23,8 @@ protected:
     void drawH2Geodesic(const H2Geodesic &L, const QColor &color = "black", int width = 1, bool back = true);
     void drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color = "black", int width = 2, bool back = true);
 
-    void addMeshTranslates(const H2Isometry & A);
-    void addMeshTranslates(const std::vector<H2Isometry> & translations);
     void addMeshTranslates();
-    void addPolygonTranslates();
+    void addMeshTranslates(bool aroundVertex, bool aroundVertices);
 
     virtual void decideHighlighting(const H2Point &) {}
     void getMeshIndexHighlighted(bool &highlighted, int &meshIndexHighted) const;
@@ -34,9 +32,11 @@ protected:
     virtual void decideHighlightingMeshPoints(bool, bool&, int) {}
     virtual void decideHighlightingTriangle(bool, bool&, int, int, int) {}
     void resetHighlighted();
-    void setShowTranslates(bool show);
+    void setShowTranslates(bool showTranslatesAroundVertex, bool showTranslatesAroundAllVertices);
+    void getShowTranslates(bool &aroundVertexOut, bool &aroundVerticesOut);
 
     void redrawBuffer(bool back = true, bool top = true, const H2Isometry &mobius = H2Isometry::identity());
+    void redrawMeshOrFunction();
     virtual void redrawBufferBack();
     virtual void redrawBufferTop();
     virtual void subRedrawBufferBack() {}
@@ -58,7 +58,7 @@ protected:
     bool arePointsHighlightedRed;
     bool arePointsHighlightedGreen;
     bool arePointsHighlightedBlue;
-    bool showTranslates;
+    bool showTranslatesAroundVertex, showTranslatesAroundAllVertices;
 };
 
 

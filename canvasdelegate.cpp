@@ -410,7 +410,7 @@ void CanvasDelegate::drawArcCounterClockwise(const Complex &center, double radiu
 {
     if (dealWithAlmostStraightArc(center, radius, endpoint1, endpoint2, color, width, back))
     {
-
+        ++nbAlmostStraightArcs;
     }
     else
     {

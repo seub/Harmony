@@ -5,7 +5,7 @@
 
 #include "tools.h"
 
-class QGridLayout; class QLabel; class QCheckBox; class QPushButton;
+class QGridLayout; class QLabel; class QCheckBox; class QPushButton; class QSpinBox; class QComboBox;
 
 class Window; class ActionHandler;
 
@@ -20,13 +20,15 @@ public:
     int maxRightColWidth() const;
     int maxWidth() const;
     int maxHeight() const;
+    int getNbIterations() const;
 
 private:
     OutputMenu(Window * const window, ActionHandler *handler);
     void resizeEvent(QResizeEvent *event);
-    void enterEvent(QEvent *);
     void resetMenu();
-    void createStandardMenu();
+
+    void createLayout();
+    void createButtons();
 
     void enableAll();
     void disableAllButStop();
@@ -39,8 +41,10 @@ private:
     QGridLayout *layout;
 
     QPushButton *resetButton, *computeButton, *iterateButton;
-    QLabel *showLiveLabel;
+    QLabel *showLiveLabel, *nbIterationsLabel;
     QCheckBox *showLiveCheckbox;
+    QSpinBox *nbIterationsSpinBox;
+    QComboBox *showTranslatesComboBox;
 
     int vertSpace;
     int buttonHeight;
