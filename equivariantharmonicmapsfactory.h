@@ -15,6 +15,7 @@ class EquivariantHarmonicMapsFactory : public QThread
     Q_OBJECT
 
     friend class ActionHandler;
+    friend class TopFactory;
 
 public:
     EquivariantHarmonicMapsFactory();

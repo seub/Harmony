@@ -23,12 +23,14 @@ protected:
     void drawH2Geodesic(const H2Geodesic &L, const QColor &color = "black", int width = 1, bool back = true);
     void drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color = "black", int width = 2, bool back = true);
 
-    void addMeshTranslates(const H2Isometry & A);
-    void addMeshTranslates(const std::vector<H2Isometry> & translations);
     void addMeshTranslates();
+<<<<<<< HEAD
     void addPolygonTranslatesDomain();
     void addPolygonTranslatesTarget();
     void addPolygonAndMeshTranslates();
+=======
+    void addMeshTranslates(bool aroundVertex, bool aroundVertices);
+>>>>>>> b47d343100b672841a7a5dd741236c66169008aa
 
     virtual void decideHighlighting(const H2Point &) {}
     void getMeshIndexHighlighted(bool &highlighted, int &meshIndexHighted) const;
@@ -36,8 +38,11 @@ protected:
     virtual void decideHighlightingMeshPoints(bool, bool&, int) {}
     virtual void decideHighlightingTriangle(bool, bool&, int, int, int) {}
     void resetHighlighted();
+    void setShowTranslates(bool showTranslatesAroundVertex, bool showTranslatesAroundAllVertices);
+    void getShowTranslates(bool &aroundVertexOut, bool &aroundVerticesOut);
 
     void redrawBuffer(bool back = true, bool top = true, const H2Isometry &mobius = H2Isometry::identity());
+    void redrawMeshOrFunction();
     virtual void redrawBufferBack();
     virtual void redrawBufferTop();
     virtual void subRedrawBufferBack() {}
@@ -59,6 +64,7 @@ protected:
     bool arePointsHighlightedRed;
     bool arePointsHighlightedGreen;
     bool arePointsHighlightedBlue;
+    bool showTranslatesAroundVertex, showTranslatesAroundAllVertices;
 };
 
 
@@ -66,10 +72,15 @@ protected:
 class H2CanvasDelegateDomain : public H2CanvasDelegate
 {
     friend class Canvas;
+    friend class ActionHandler;
+
 public:
 
 private:
     explicit H2CanvasDelegateDomain(int sizeX, int sizeY, ActionHandler *handler = 0);
+
+    void refreshMesh();
+
     void decideHighlighting(const H2Point &pointUnderMouse);
     void decideHighlightingMeshPoints(bool highlighted, bool &update, int meshIndexHighlighted = -1);
     void decideHighlightingTriangle(bool highlighted, bool& update, int triangleMeshIndex1 = -1, int triangleMeshIndex2 = -1, int triangleMeshIndex3 = -1);
@@ -82,6 +93,7 @@ class H2CanvasDelegateTarget : public H2CanvasDelegate
 {
     friend class Canvas;
     friend class ActionHandler;
+
 public:
 
 private:

@@ -171,6 +171,7 @@ void EquivariantHarmonicMapsFactory::run()
     {
         iterator.iterate();
     }
+    refreshFunction();
 }
 
 void EquivariantHarmonicMapsFactory::stopRunning()

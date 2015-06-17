@@ -2,7 +2,7 @@
 #define MATHSCONTAINER_H
 
 #include "tools.h"
-#include "equivariantharmonicmapsfactory.h"
+#include "topfactory.h"
 
 class MathsContainer
 {
@@ -12,7 +12,7 @@ public:
     MathsContainer();
 
 private:
-    EquivariantHarmonicMapsFactory factory;
+    TopFactory topFactory;
 };
 
 #endif // MATHSCONTAINER_H

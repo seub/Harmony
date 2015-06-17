@@ -73,7 +73,12 @@ void Canvas::changeDelegate(CanvasDelegateType delegateType, bool left, bool rig
 
 void Canvas::paintEvent(QPaintEvent *event)
 {
-    //std::cout << "Entering Canvas::paintEvent for canvas" << this << std::endl;
+    //std::cout << "Entering Canvas::paintEvent at time " << clock()*1.0/CLOCKS_PER_SEC << std::endl;
+
+    if (!hasFocus())
+    {
+        delegate->leave();
+    }
 
     delegate->redrawBuffer(delegate->enableRedrawBufferBack, delegate->enableRedrawBufferTop);
     delegate->enableRedrawBuffer(false, false);
@@ -82,6 +87,8 @@ void Canvas::paintEvent(QPaintEvent *event)
     canvasPainter.setClipRegion(event->region());
     canvasPainter.drawImage(0, 0, *(delegate->getImageBack()));
     canvasPainter.drawImage(0, 0, *(delegate->getImageTop()));
+
+    delegate->handler->processMessage(END_CANVAS_REPAINT, delegate->delegateType);
 
     //std::cout << "Leaving Canvas::paintEvent" << std::endl;
 }

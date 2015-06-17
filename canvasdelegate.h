@@ -80,6 +80,8 @@ protected:
 
     bool enableRedrawBufferBack, enableRedrawBufferTop;
 
+    int nbArcs, nbStraightArcs, nbAlmostStraightArcs;
+
     void rescale(int sizeX, int sizeY);
     void resetView(int sizeX, int sizeY);
     Complex PixelToComplexCoordinates(int x, int y) const;
