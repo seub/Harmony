@@ -177,16 +177,3 @@ void EquivariantHarmonicMapsFactory::stopRunning()
 {
     stop = true;
 }
-
-std::vector<H2GeodesicArc> EquivariantHarmonicMapsFactory::getPolygonTranslatesDomain() const
-{
-    std::vector<H2GeodesicArc> sides, sidesImages, temp;
-    sides = mesh.fundamentalDomain.getSides();
-    sidesImages.reserve(64*genus*genus*genus - 32*genus*genus);
-    for (const auto & A : rhoDomain.getSidePairingsNormalizedAroundVertices())
-    {
-        temp = A*sides;
-        sidesImages.insert(sidesImages.end(),temp.begin(),temp.end());
-    }
-    return sidesImages;
-}

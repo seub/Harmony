@@ -179,7 +179,25 @@ void H2Buffer::refreshFunction()
     }
 }
 
-void H2Buffer::addPolygonTranslates(const std::vector<H2Isometry> &translations, const QColor &color, int width)
+void H2Buffer::addPolygonTranslatesDomain(const std::vector<H2Isometry> &translations, const QColor &color, int width)
+{
+    int genus = mesh->getRepresentation().getDiscreteGroup().getGenerators().size()/2;
+
+    meshTranslatesColor = color;
+    meshTranslatesWidth = width;
+    std::vector<H2GeodesicArc> arcsTranslates, sides;
+    sides = mesh->getSides();
+    meshArcsTranslates.clear();
+    meshArcsTranslates.reserve(sides.size()*(16*genus*genus - 8*genus));
+
+    for (const auto & A : translations)
+    {
+        arcsTranslates = A*sides;
+        meshArcsTranslates.insert(meshArcsTranslates.end(), arcsTranslates.begin(), arcsTranslates.end());
+    }
+}
+
+void H2Buffer::addPolygonTranslatesTarget(const std::vector<H2Isometry> &translations, const QColor &color, int width)
 {
     int genus = function->getRepresentation().getDiscreteGroup().getGenerators().size()/2;
 
@@ -198,9 +216,14 @@ void H2Buffer::addPolygonTranslates(const std::vector<H2Isometry> &translations,
     }
 }
 
-void H2Buffer::addPolygonTranslates(const QColor &color, int width)
+void H2Buffer::addPolygonTranslatesDomain(const QColor &color, int width)
 {
-    addPolygonTranslates(translations, color, width);
+    addPolygonTranslatesDomain(translations, color, width);
+}
+
+void H2Buffer::addPolygonTranslatesTarget(const QColor &color, int width)
+{
+    addPolygonTranslatesTarget(translations, color, width);
 }
 
 void H2Buffer::addPolygonAndMeshTranslates(const std::vector<H2Isometry> &someTranslations, const QColor &color, int width)

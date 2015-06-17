@@ -34,8 +34,6 @@ public:
     void initialize();
     void iterate(int n=1);
 
-    std::vector<H2GeodesicArc> getPolygonTranslatesDomain() const;
-
 public slots:
     void run();
     void stopRunning();

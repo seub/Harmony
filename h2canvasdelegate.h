@@ -26,7 +26,8 @@ protected:
     void addMeshTranslates(const H2Isometry & A);
     void addMeshTranslates(const std::vector<H2Isometry> & translations);
     void addMeshTranslates();
-    void addPolygonTranslates();
+    void addPolygonTranslatesDomain();
+    void addPolygonTranslatesTarget();
     void addPolygonAndMeshTranslates();
 
     virtual void decideHighlighting(const H2Point &) {}

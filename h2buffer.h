@@ -43,8 +43,10 @@ public:
 
     void addPolygonAndMeshTranslates(const std::vector<H2Isometry> &sideTranslations, const QColor &color = "grey", int width = 1);
 
-    void addPolygonTranslates(const std::vector<H2Isometry> &translations, const QColor &color = "grey", int width = 1);
-    void addPolygonTranslates(const QColor &color = "grey", int width = 1);
+    void addPolygonTranslatesDomain(const std::vector<H2Isometry> &translations, const QColor &color = "grey", int width = 1);
+    void addPolygonTranslatesTarget(const std::vector<H2Isometry> &translations, const QColor &color = "grey", int width = 1);
+    void addPolygonTranslatesDomain(const QColor &color = "grey", int width = 1);
+    void addPolygonTranslatesTarget(const QColor &color = "grey", int width = 1);
 
     void addMeshTranslates(const std::vector<H2Isometry> & translations, const QColor &color = "grey", int width = 1);
     void addMeshTranslates(const QColor &color = "grey", int width = 1);

@@ -56,17 +56,17 @@ void ActionHandler::setFactory()
 
     leftDelegate->buffer.addElement(factory->rhoDomain, "blue", 2);
     leftDelegate->buffer.addElement(&factory->mesh, "red", 1);
-
-    leftDelegate->buffer.addElement(factory->getPolygonTranslatesDomain(),"grey",1);
+    leftDelegate->buffer.setTranslations(factory->rhoDomain.getSidePairingsNormalizedAroundVertices());
+    leftDelegate->buffer.addPolygonTranslatesDomain();
 
 
     rightDelegate->buffer.addElement(factory->rhoTarget, "blue", 2);
     rightDelegate->buffer.addElement(&factory->function, "red", 1);
     rightDelegate->buffer.setTranslations(factory->rhoTarget.getSidePairingsNormalizedAroundVertices());
 
-    //rightDelegate->addPolygonAndMeshTranslates();
+    rightDelegate->addPolygonAndMeshTranslates();
 
-    rightDelegate->buffer.addMeshTranslates();
+    //rightDelegate->buffer.addMeshTranslates();
 }
 
 void ActionHandler::processMessage(actionHandlerMessage message, int timeOut)
@@ -119,7 +119,8 @@ void ActionHandler::outputResetButtonClicked()
     factory->resetInit();
     window->outputMenu->resetMenu();
     ((H2CanvasDelegateTarget *) rightDelegate)->refreshFunction();
-    rightDelegate->addMeshTranslates();
+    //rightDelegate->addMeshTranslates();
+    rightDelegate->addPolygonAndMeshTranslates();
     rightDelegate->enableRedrawBuffer();
     window->rightCanvas->update();
 }
@@ -128,7 +129,8 @@ void ActionHandler::iterateButtonClicked()
 {
     iterateDiscreteFlow(50);
     ((H2CanvasDelegateTarget *) rightDelegate)->refreshFunction();
-    rightDelegate->addMeshTranslates();
+    //rightDelegate->addMeshTranslates();
+    rightDelegate->addPolygonAndMeshTranslates();
     rightDelegate->enableRedrawBuffer();
     window->rightCanvas->update();
     window->outputMenu->enableReset();

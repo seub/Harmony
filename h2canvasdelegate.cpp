@@ -635,7 +635,7 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
 
         //addMeshTranslates();
         //addPolygonTranslates();
-        //addPolygonAndMeshTranslates();
+        addPolygonAndMeshTranslates();
 
         break;
     }
@@ -656,9 +656,14 @@ void H2CanvasDelegateTarget::refreshFunction()
     buffer.refreshFunction();
 }
 
-void H2CanvasDelegate::addPolygonTranslates()
+void H2CanvasDelegate::addPolygonTranslatesDomain()
 {
-    buffer.addPolygonTranslates();
+    buffer.addPolygonTranslatesDomain();
+}
+
+void H2CanvasDelegate::addPolygonTranslatesTarget()
+{
+    buffer.addPolygonTranslatesTarget();
 }
 
 void H2CanvasDelegate::addPolygonAndMeshTranslates()
