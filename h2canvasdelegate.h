@@ -22,9 +22,14 @@ protected:
     void drawH2Point(const H2Point &p, const QColor &color = "black", int width = 4, bool back = true);
     void drawH2Geodesic(const H2Geodesic &L, const QColor &color = "black", int width = 1, bool back = true);
     void drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color = "black", int width = 2, bool back = true);
+    void drawH2Triangle(const H2Triangle &triangle, const QColor &color, int width, bool back = true);
 
-    void addMeshTranslates();
-    void addMeshTranslates(bool aroundVertex, bool aroundVertices);
+    void setIsMeshEmpty(bool isMeshEmpty);
+    void setIsRhoEmpty(bool isRhoEmpty);
+    void setIsFunctionEmpty(bool isFunctionEmpty);
+
+    void refreshTranslates();
+    void refreshTranslates(bool aroundVertex, bool aroundVertices);
 
     virtual void decideHighlighting(const H2Point &) {}
     void getMeshIndexHighlighted(bool &highlighted, int &meshIndexHighted) const;
@@ -37,8 +42,8 @@ protected:
 
     void redrawBuffer(bool back = true, bool top = true, const H2Isometry &mobius = H2Isometry::identity());
     void redrawMeshOrFunction();
-    virtual void redrawBufferBack();
-    virtual void redrawBufferTop();
+    void redrawBufferBack();
+    void redrawBufferTop();
     virtual void subRedrawBufferBack() {}
     virtual void subRedrawBufferTop() {}
 

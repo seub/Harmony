@@ -75,12 +75,22 @@ void DisplayMenu::createLayout()
     showTranslatesDomainComboBox->setEnabled(true);
 
     layout->addWidget(imageLabel, 5, 0, 1, 2);
-    domainLabel->setVisible(true);
-    domainLabel->setEnabled(true);
+    imageLabel->setVisible(true);
+    imageLabel->setEnabled(true);
 
     layout->addWidget(showTranslatesImageComboBox, 7, 0, 1, 2);
     showTranslatesImageComboBox->setVisible(true);
     showTranslatesImageComboBox->setEnabled(true);
+}
+
+void DisplayMenu::setReady(bool left, bool right)
+{
+    setEnabled(left);
+    if (left)
+    {
+        imageLabel->setEnabled(right);
+        showTranslatesImageComboBox->setEnabled(right);
+    }
 }
 
 int DisplayMenu::maxLeftColWidth() const

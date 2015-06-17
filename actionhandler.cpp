@@ -1,6 +1,7 @@
 #include "actionhandler.h"
 
 #include <QCheckBox>
+#include <QComboBox>
 
 #include "equivariantharmonicmapsfactory.h"
 #include "topfactory.h"
@@ -15,6 +16,13 @@
 ActionHandler::ActionHandler()
 {
     isShowingLive = false;
+    isRhoDomainSet = false;
+    isRhoImageSet = false;
+
+    showTranslatesAroundVertexLeft = false;
+    showTranslatesAroundVertexRight = false;
+    showTranslatesAroundVerticesLeft = false;
+    showTranslatesAroundVerticesRight = false;
 }
 
 void ActionHandler::setWindow(Window *window)
@@ -25,58 +33,43 @@ void ActionHandler::setWindow(Window *window)
     outputMenu = window->outputMenu;
     leftCanvas = window->leftCanvas;
     rightCanvas = window->rightCanvas;
-
-    leftDelegate = (H2CanvasDelegate *) window->leftCanvas->delegate;
-    rightDelegate = (H2CanvasDelegate *) window->rightCanvas->delegate;
 }
 
 void ActionHandler::setContainer(MathsContainer *container)
 {
     this->container = container;
     setFactory();
+    resetDelegatePointers();
+}
+
+void ActionHandler::resetDelegatePointers()
+{
+    leftDelegate = (H2CanvasDelegate*) leftCanvas->delegate;
+    rightDelegate = (H2CanvasDelegate*) rightCanvas->delegate;
+
+    leftDelegate->buffer.setRhoPointer(&topFactory->subfactory.rhoDomain, "blue");
+    leftDelegate->buffer.setMeshPointer(&topFactory->subfactory.mesh, "red");
+
+    rightDelegate->buffer.setRhoPointer(&topFactory->subfactory.rhoTarget, "blue");
+    rightDelegate->buffer.setFunctionPointer(&topFactory->subfactory.function, "red");
 }
 
 void ActionHandler::setFactory()
 {
     topFactory = &(this->container->topFactory);
     topFactory->setHandler(this);
+    topFactory->setGenus(inputMenu->getGenus());
+    topFactory->setMeshDepth(inputMenu->getMeshDepth());
+    resetDelegatePointers();
 
-    int g = 2;
-    std::vector<double> lengths1,lengths2;
-    std::vector<double> twists1,twists2;
-    for (int i=0; i<3*g-3; i++)
+}
+
+void ActionHandler::setReadyToCompute()
+{
+    if (!isReadyToCompute())
     {
-        twists1.push_back(0.0);
-        //twists1.push_back(0.0);
-        twists2.push_back(0.0);
+        throw(QString("Error in ActionHandler::setReadyToCompute: test failed"));
     }
-    twists2[1] = -2.0*M_PI;
-
-    for (int i=0; i<3*g-3; i++)
-    {
-        lengths1.push_back(2.0);
-        lengths2.push_back(2.0);
-    }
-
-    topFactory->subfactory.setGenus(2);
-    //factory->setNiceRhoDomain();
-    topFactory->subfactory.setRhoDomain(lengths1, twists1);
-    //factory->setRhoTarget(lengths2, twists2);
-    topFactory->subfactory.setNiceRhoTarget();
-
-    topFactory->subfactory.setMeshDepth(3);
-
-    topFactory->initializeSubfactory();
-
-    leftDelegate->buffer.addElement(topFactory->subfactory.rhoDomain, "blue", 2);
-    leftDelegate->buffer.addElement(&topFactory->subfactory.mesh, "red", 1);
-    leftDelegate->buffer.setTranslations();
-    leftDelegate->addMeshTranslates();
-
-    rightDelegate->buffer.addElement(topFactory->subfactory.rhoTarget, "blue", 2);
-    rightDelegate->buffer.addElement(&topFactory->subfactory.function, "red", 1);
-    rightDelegate->buffer.setTranslations();
-    rightDelegate->addMeshTranslates();
 }
 
 void ActionHandler::processMessage(actionHandlerMessage message, int parameter)
@@ -88,30 +81,31 @@ void ActionHandler::processMessage(actionHandlerMessage message, int parameter)
     switch(message)
     {
     case HIGHLIGHTED_LEFT:
-        leftDelegate->getMeshTriangleIndicesHighlighted(isTriangleHighlighted, index1, index2, index3);
-        leftDelegate->getMeshIndexHighlighted(isVertexHighlighted, meshIndexHighlighted);
-        rightDelegate->decideHighlightingTriangle(isTriangleHighlighted, update, index1, index2, index3);
-        rightDelegate->decideHighlightingMeshPoints(isVertexHighlighted, update, meshIndexHighlighted);
         leftDelegate->enableRedrawBuffer(false, true);
-        rightDelegate->enableRedrawBuffer(false, true);
         leftCanvas->update();
-        rightCanvas->update();
+        if (isReadyToCompute())
+        {
+            leftDelegate->getMeshTriangleIndicesHighlighted(isTriangleHighlighted, index1, index2, index3);
+            leftDelegate->getMeshIndexHighlighted(isVertexHighlighted, meshIndexHighlighted);
+            rightDelegate->decideHighlightingTriangle(isTriangleHighlighted, update, index1, index2, index3);
+            rightDelegate->decideHighlightingMeshPoints(isVertexHighlighted, update, meshIndexHighlighted);
+            rightDelegate->enableRedrawBuffer(false, true);
+            rightCanvas->update();
+        }
         break;
 
     case HIGHLIGHTED_RIGHT:
-        rightDelegate->getMeshTriangleIndicesHighlighted(isTriangleHighlighted, index1, index2, index3);
-        rightDelegate->getMeshIndexHighlighted(isVertexHighlighted, meshIndexHighlighted);
-        leftDelegate->decideHighlightingTriangle(isTriangleHighlighted, update, index1, index2, index3);
-        leftDelegate->decideHighlightingMeshPoints(isVertexHighlighted, update, meshIndexHighlighted);
-        leftDelegate->enableRedrawBuffer(false, true);
         rightDelegate->enableRedrawBuffer(false, true);
-        leftCanvas->update();
         rightCanvas->update();
-        break;
-
-    case HIGHLIGHTED_RESET:
-        leftDelegate->resetHighlighted();
-        rightDelegate->resetHighlighted();
+        if (isReadyToCompute())
+        {
+            rightDelegate->getMeshTriangleIndicesHighlighted(isTriangleHighlighted, index1, index2, index3);
+            rightDelegate->getMeshIndexHighlighted(isVertexHighlighted, meshIndexHighlighted);
+            leftDelegate->decideHighlightingTriangle(isTriangleHighlighted, update, index1, index2, index3);
+            leftDelegate->decideHighlightingMeshPoints(isVertexHighlighted, update, meshIndexHighlighted);
+            leftDelegate->enableRedrawBuffer(false, true);
+            leftCanvas->update();
+        }
         break;
 
     case END_CANVAS_REPAINT:
@@ -143,7 +137,7 @@ void ActionHandler::computeButtonClicked()
     topFactory->runHeatFlow();
     if (isShowingLive)
     {
-        rightDelegate->getShowTranslates(showTranslatesAroundVertexOld, showTranslatesAroundVerticesOld);
+        rightDelegate->getShowTranslates(showTranslatesAroundVertexRight, showTranslatesAroundVerticesRight);
         rightDelegate->setShowTranslates(false, false);
         rightDelegate->enableRedrawBuffer();
         rightCanvas->update();
@@ -166,8 +160,8 @@ void ActionHandler::iterateButtonClicked()
 
 void ActionHandler::imageShowTranslatesClicked(int choice)
 {
-    bool aroundVertexOld, aroundVerticesOld, aroundVertexNew, aroundVerticesNew;
-    rightDelegate->getShowTranslates(aroundVertexOld, aroundVerticesOld);
+    bool aroundVertexOld = showTranslatesAroundVertexRight, aroundVerticesOld = showTranslatesAroundVerticesRight;
+    bool aroundVertexNew, aroundVerticesNew;
 
     switch(choice)
     {
@@ -197,6 +191,8 @@ void ActionHandler::imageShowTranslatesClicked(int choice)
 
     if ((aroundVertexNew != aroundVertexOld) || (aroundVerticesNew != aroundVerticesOld))
     {
+        showTranslatesAroundVertexRight = aroundVertexNew;
+        showTranslatesAroundVerticesRight = aroundVerticesNew;
         rightDelegate->setShowTranslates(aroundVertexNew, aroundVerticesNew);
         updateFunction(true);
     }
@@ -204,8 +200,8 @@ void ActionHandler::imageShowTranslatesClicked(int choice)
 
 void ActionHandler::domainShowTranslatesClicked(int choice)
 {
-    bool aroundVertexOld, aroundVerticesOld, aroundVertexNew, aroundVerticesNew;
-    leftDelegate->getShowTranslates(aroundVertexOld, aroundVerticesOld);
+    bool aroundVertexOld = showTranslatesAroundVertexLeft, aroundVerticesOld = showTranslatesAroundVerticesLeft;
+    bool aroundVertexNew, aroundVerticesNew;
 
     switch(choice)
     {
@@ -235,6 +231,8 @@ void ActionHandler::domainShowTranslatesClicked(int choice)
 
     if ((aroundVertexNew != aroundVertexOld) || (aroundVerticesNew != aroundVerticesOld))
     {
+        showTranslatesAroundVertexLeft = aroundVertexNew;
+        showTranslatesAroundVerticesLeft = aroundVerticesNew;
         leftDelegate->setShowTranslates(aroundVertexNew, aroundVerticesNew);
         updateMesh(true);
     }
@@ -242,22 +240,181 @@ void ActionHandler::domainShowTranslatesClicked(int choice)
 
 void ActionHandler::setRhoDomainClicked(int choice)
 {
+    //std::cout << "Entering ActionHandler::setRhoDomainClicked" << std::endl;
 
+    switch(choice)
+    {
+    case SET_RHO_CHOOSE:
+        isRhoDomainSet = false;
+        topFactory->subfactory.resetRhoDomain();
+        break;
+
+    case SET_RHO_NICE:
+        if (inputMenu->getGenus() == 2)
+        {
+            isRhoDomainSet = true;
+            topFactory->subfactory.setNiceRhoDomain();
+        }
+        else
+        {
+            throw(QString("Popup Warning message: nice rep only available for genus 2"));
+            isRhoDomainSet = false;
+            inputMenu->setRhoDomainComboBox->setCurrentIndex(SET_RHO_CHOOSE);
+            topFactory->subfactory.resetRhoTarget();
+        }
+        break;
+
+    case SET_RHO_RANDOM:
+        break;
+
+    case SET_RHO_FN:
+        break;
+
+    default:
+        throw(QString("Error in ActionHandler::setRhoDomainClicked: not supposed to land here"));
+    }
+
+    dealRhosReady();
 }
 
 void ActionHandler::setRhoImageClicked(int choice)
 {
+    //std::cout << "Entering ActionHandler::setRhoImageClicked" << std::endl;
 
+    switch(choice)
+    {
+    case SET_RHO_CHOOSE:
+        isRhoImageSet = false;
+        topFactory->subfactory.resetRhoTarget();
+        break;
+
+    case SET_RHO_NICE:
+        if (inputMenu->getGenus() == 2)
+        {
+            isRhoImageSet = true;
+            topFactory->subfactory.setNiceRhoTarget();
+        }
+        else
+        {
+            throw(QString("Popup Warning message: nice rep only available for genus 2"));
+            isRhoImageSet = false;
+            inputMenu->setRhoImageComboBox->setCurrentIndex(SET_RHO_CHOOSE);
+            topFactory->subfactory.resetRhoTarget();
+        }
+        break;
+
+    case SET_RHO_RANDOM:
+        break;
+
+    case SET_RHO_FN:
+        break;
+
+    case SET_RHO_DEHNTWIST:
+        break;
+
+    default:
+        throw(QString("Error in ActionHandler::setRhoImageClicked: not supposed to land here"));
+    }
+
+    dealRhosReady();
+}
+
+void ActionHandler::dealRhosReady()
+{
+    if (isRhoDomainSet)
+    {
+        leftDelegate->setIsRhoEmpty(false);
+        leftDelegate->buffer.refreshRho();
+        leftDelegate->setIsMeshEmpty(false);
+        leftDelegate->buffer.refreshMesh();
+        leftCanvas->setEnabled(true);
+        updateMesh(true);
+
+        if (isRhoImageSet)
+        {
+            rightDelegate->setIsRhoEmpty(false);
+            rightDelegate->buffer.refreshRho();
+            rightDelegate->setIsFunctionEmpty(false);
+            rightDelegate->buffer.refreshFunction();
+            rightCanvas->setEnabled(true);
+
+            updateFunction(true);
+            setDisplayMenuReady(true, true);
+            outputMenu->setEnabled(true);
+            setReadyToCompute();
+        }
+        else
+        {
+            rightCanvas->setEnabled(false);
+            rightDelegate->setIsRhoEmpty(true);
+            rightDelegate->setIsFunctionEmpty(true);
+            setDisplayMenuReady(true, false);
+            outputMenu->setEnabled(false);
+        }
+    }
+    else
+    {
+        leftCanvas->setEnabled(false);
+        rightCanvas->setEnabled(isRhoImageSet);
+        displayMenu->setEnabled(false);
+        outputMenu->setEnabled(false);
+
+        leftDelegate->setIsRhoEmpty(true);
+        leftDelegate->setIsMeshEmpty(true);
+
+        rightDelegate->setIsRhoEmpty(!isRhoImageSet);
+        if (isRhoImageSet)
+        {
+            rightDelegate->buffer.refreshRho();
+        }
+        rightDelegate->setIsFunctionEmpty(true);
+    }
+
+    leftDelegate->resetHighlighted();
+    rightDelegate->resetHighlighted();
+    leftDelegate->enableRedrawBuffer();
+    rightDelegate->enableRedrawBuffer();
+    leftCanvas->update();
+    rightCanvas->update();
+}
+
+void ActionHandler::setDisplayMenuReady(bool left, bool right)
+{
+    displayMenu->setReady(left, right);
+}
+
+bool ActionHandler::isReadyToCompute() const
+{
+    bool test1 = (isRhoDomainSet && isRhoImageSet);
+    bool test2 = topFactory->isFunctionInitialized();
+    bool test3 = !(leftDelegate->buffer.isMeshEmpty || rightDelegate->buffer.isFunctionEmpty);
+    bool test4 = outputMenu->isEnabled();
+    bool test5 = leftCanvas->isEnabled() && rightCanvas->isEnabled();
+
+    bool test = test1 || test2 || test3 || test4 || test5;
+    if (test != (test1 && test2 && test3 && test4 && test5))
+    {
+        throw(QString("Error in ActionHandler::isReadyToCompute: test failed"));
+    }
+    return test;
 }
 
 void ActionHandler::genusClicked(int choice)
 {
+    inputMenu->resetRhos();
+    topFactory->setGenus(choice);
 
+    isRhoDomainSet = false;
+    isRhoImageSet = false;
+
+    dealRhosReady();
 }
 
 void ActionHandler::meshDepthClicked(int choice)
 {
+    topFactory->setMeshDepth(choice);
 
+    dealRhosReady();
 }
 
 void ActionHandler::iterateDiscreteFlow(int N)
@@ -272,14 +429,19 @@ void ActionHandler::stopButtonClicked()
 
 void ActionHandler::updateMesh(bool updateTranslates)
 {
+    if (!topFactory->isMeshInitialized())
+    {
+        throw(QString("Error in ActionHandler::updateMesh: not supposed to happen"));
+    }
+
     ((H2CanvasDelegateDomain *) leftDelegate)->refreshMesh();
     if (updateTranslates)
     {
-        leftDelegate->addMeshTranslates();
+        leftDelegate->refreshTranslates();
     }
     else
     {
-        leftDelegate->addMeshTranslates(false, false);
+        leftDelegate->refreshTranslates(false, false);
     }
     leftDelegate->enableRedrawBuffer(true, false);
     leftCanvas->update();
@@ -288,14 +450,19 @@ void ActionHandler::updateMesh(bool updateTranslates)
 
 void ActionHandler::updateFunction(bool updateTranslates)
 {
+    if (!topFactory->isFunctionInitialized())
+    {
+        throw(QString("Error in ActionHandler::updateFunction: not supposed to happen"));
+    }
+
     ((H2CanvasDelegateTarget *) rightDelegate)->refreshFunction();
     if (updateTranslates)
     {
-        rightDelegate->addMeshTranslates();
+        rightDelegate->refreshTranslates();
     }
     else
     {
-        rightDelegate->addMeshTranslates(false, false);
+        rightDelegate->refreshTranslates(false, false);
     }
     rightDelegate->enableRedrawBuffer(true, false);
     rightCanvas->update();
@@ -311,6 +478,6 @@ void ActionHandler::finishedComputing()
     outputMenu->switchStopToComputeButton();
     outputMenu->enableAll();
 
-    rightDelegate->setShowTranslates(showTranslatesAroundVertexOld, showTranslatesAroundVerticesOld);
+    rightDelegate->setShowTranslates(showTranslatesAroundVertexRight, showTranslatesAroundVerticesRight);
     updateFunction(true);
 }

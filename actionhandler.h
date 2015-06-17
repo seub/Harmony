@@ -13,13 +13,9 @@ class ActionHandler : public QObject
     Q_OBJECT
 
     friend class Canvas;
+    friend class MainApplication;
 
 public:
-    ActionHandler();
-
-    void setWindow(Window *window);
-    void setContainer(MathsContainer *container);
-    void setFactory();
     void processMessage(actionHandlerMessage message, int parameter = 0);
 
 private slots:
@@ -39,8 +35,22 @@ private slots:
     void updateMesh(bool updateTranslates);
 
 private:
+    ActionHandler();
+
+    void setWindow(Window *window);
+    void setContainer(MathsContainer *container);
+    void setFactory();
+    void inputReset();
+
+
+    void setReadyToCompute();
+    void setDisplayMenuReady(bool left, bool right);
+    void dealRhosReady();
+    bool isReadyToCompute() const;
+
     void runDiscreteFlow();
     void iterateDiscreteFlow(int N);
+    void resetDelegatePointers();
 
     Window *window;
     Canvas *leftCanvas, *rightCanvas;
@@ -53,7 +63,9 @@ private:
 
     H2CanvasDelegate *leftDelegate, *rightDelegate;
     bool isShowingLive;
-    bool showTranslatesAroundVertexOld, showTranslatesAroundVerticesOld;
+    bool showTranslatesAroundVertexLeft, showTranslatesAroundVerticesLeft;
+    bool showTranslatesAroundVertexRight, showTranslatesAroundVerticesRight;
+    bool isRhoDomainSet, isRhoImageSet;
 };
 
 #endif // ACTIONHANDLER_H

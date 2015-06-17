@@ -17,10 +17,13 @@ class TopFactory : public QObject
 public:
     TopFactory();
 
+    bool isMeshInitialized() const;
+    bool isFunctionInitialized() const;
 
     void resetInitSubfactory();
     void iterateSubfactory(int N);
-    void initializeSubfactory();
+    void setGenus(int genus);
+    void setMeshDepth(int meshDepth);
 
     void runHeatFlow();
     void stopHeatFlow();

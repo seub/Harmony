@@ -11,7 +11,7 @@
 #include "window.h"
 #include "actionhandler.h"
 
-Canvas::Canvas(CanvasDelegateType delegateType, Window *const window, bool left, bool right, ActionHandler *handler) :
+Canvas::Canvas(CanvasDelegateType delegateType, Window *const window, ActionHandler *handler) :
     window(window)
 {
     setParent(window);
@@ -23,7 +23,7 @@ Canvas::Canvas(CanvasDelegateType delegateType, Window *const window, bool left,
     setEnabled(true);
 
     delegate = 0;
-    changeDelegate(delegateType, left, right, handler);
+    changeDelegate(delegateType, handler);
 }
 
 Canvas::~Canvas()
@@ -31,7 +31,7 @@ Canvas::~Canvas()
     delete delegate;
 }
 
-void Canvas::changeDelegate(CanvasDelegateType delegateType, bool left, bool right, ActionHandler* handler)
+void Canvas::changeDelegate(CanvasDelegateType delegateType, ActionHandler *handler)
 {
 
     delete delegate;
@@ -56,29 +56,12 @@ void Canvas::changeDelegate(CanvasDelegateType delegateType, bool left, bool rig
     default:
         throw(QString("ERROR in Canvas::changeDelegate: delegate type undefined"));
     }
-
-    if (handler != 0)
-    {
-        if (left)
-        {
-            handler->leftDelegate = (H2CanvasDelegate*) delegate;
-        }
-        if (right)
-        {
-            handler->rightDelegate = (H2CanvasDelegate*) delegate;
-        }
-    }
 }
 
 
 void Canvas::paintEvent(QPaintEvent *event)
 {
     //std::cout << "Entering Canvas::paintEvent at time " << clock()*1.0/CLOCKS_PER_SEC << std::endl;
-
-    if (!hasFocus())
-    {
-        delegate->leave();
-    }
 
     delegate->redrawBuffer(delegate->enableRedrawBufferBack, delegate->enableRedrawBufferTop);
     delegate->enableRedrawBuffer(false, false);

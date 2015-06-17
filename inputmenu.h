@@ -21,6 +21,8 @@ public:
     int maxRightColWidth() const;
     int maxWidth() const;
     int maxHeight() const;
+    int getGenus() const;
+    int getMeshDepth() const;
 
 
 signals:
@@ -33,6 +35,7 @@ private:
 
     void createLayout();
     void createButtons();
+    void resetRhos();
 
     ActionHandler *handler;
 

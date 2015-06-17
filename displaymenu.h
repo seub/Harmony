@@ -33,6 +33,7 @@ private:
 
     void createLayout();
     void createButtons();
+    void setReady(bool left, bool right);
 
     ActionHandler *handler;
 

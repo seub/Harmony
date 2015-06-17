@@ -23,20 +23,23 @@ public:
     void setMeshDepth(int meshDepth);
     void setRhoDomain(const std::vector<double> & FNlengths, const std::vector<double> FNtwists);
     void setRhoTarget(const std::vector<double> & FNlengths, const std::vector<double> FNtwists);
+
+    void resetRhoDomain();
+    void resetRhoTarget();
+
     void setNiceRhoDomain();
     void setNiceRhoTarget();
     void resetInit();
+    void initializeMesh();
+    void initializeFunction();
+    void initializeRhoDomain();
+    void initializeRhoTarget();
 
     IsomH2Representation getRhoDomain() const;
     IsomH2Representation getRhoTarget() const;
 
     void reset();
-
-    void initialize();
     void iterate(int n=1);
-
-    std::vector<H2GeodesicArc> getPolygonTranslatesDomain() const;
-    //std::vector<H2GeodesicArc> getPolygonTranslatesTarget() const;
 
 public slots:
     void run();
@@ -49,7 +52,7 @@ private:
 
     int genus, meshDepth;
     DiscreteGroup Gamma;
-    bool isGenusSet, isMeshDepthSet, isRhoDomainSet, isRhoTargetSet, isInitialized;
+    bool isGenusSet, isMeshDepthSet, isRhoDomainSet, isRhoTargetSet, isMeshInitialized, isInitialized;
     bool stop;
     std::vector<double> FNLengthsDomain, FNTwistsDomain, FNLengthsTarget, FNTwistsTarget;
     IsomH2Representation rhoDomain, rhoTarget;

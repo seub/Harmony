@@ -34,25 +34,25 @@ void InputMenu::createButtons()
 
     setRhoDomainComboBox = new QComboBox;
     setRhoDomainComboBox->addItem(QString("Set %1 domain...").arg(QChar(961)), SET_RHO_CHOOSE);
-    setRhoDomainComboBox->addItem(QString("Token %1nice%2 %3").arg(8220).arg(961).arg(8221), SET_RHO_NICE);
-    setRhoDomainComboBox->addItem(QString("Set random %1").arg(QChar(961)), SET_RHO_RANDOM);
+    setRhoDomainComboBox->addItem(QString("Token %1nice%2 %3").arg(QChar(8220)).arg(QChar(8221)).arg(QChar(961)), SET_RHO_NICE);
+    setRhoDomainComboBox->addItem(QString("Token random %1").arg(QChar(961)), SET_RHO_RANDOM);
     setRhoDomainComboBox->addItem("Fenchel-Nielsen...", SET_RHO_FN);
     setRhoDomainComboBox->setToolTip("Set domain representation...");
     connect(setRhoDomainComboBox, SIGNAL(activated(int)), handler, SLOT(setRhoDomainClicked(int)));
 
     setRhoImageComboBox = new QComboBox;
     setRhoImageComboBox->addItem(QString("Set %1 image...").arg(QChar(961)), SET_RHO_CHOOSE);
-    setRhoImageComboBox->addItem(QString("Token %1nice%2 %3").arg(8220).arg(961).arg(8221), SET_RHO_NICE);
-    setRhoImageComboBox->addItem(QString("Set random %1").arg(QChar(961)), SET_RHO_RANDOM);
+    setRhoImageComboBox->addItem(QString("Token %1nice%2 %3").arg(QChar(8220)).arg(QChar(8221)).arg(QChar(961)), SET_RHO_NICE);
+    setRhoImageComboBox->addItem(QString("Token random %1").arg(QChar(961)), SET_RHO_RANDOM);
     setRhoImageComboBox->addItem("Fenchel-Nielsen...", SET_RHO_FN);
     setRhoImageComboBox->addItem("Dehn twist...", SET_RHO_DEHNTWIST);
     setRhoImageComboBox->setToolTip("Set image representation...");
-    connect(setRhoDomainComboBox, SIGNAL(activated(int)), handler, SLOT(setRhoImageClicked(int)));
+    connect(setRhoImageComboBox, SIGNAL(activated(int)), handler, SLOT(setRhoImageClicked(int)));
 
     meshDepthLabel = new QLabel("Mesh depth: ");
 
     meshDepthSpinBox = new QSpinBox();
-    meshDepthSpinBox->setRange(0, 8);
+    meshDepthSpinBox->setRange(0, 6);
     meshDepthSpinBox->setValue(3);
     meshDepthSpinBox->setToolTip("Choose depth of the mesh");
     connect(meshDepthSpinBox, SIGNAL(valueChanged(int)), handler, SLOT(meshDepthClicked(int)));
@@ -65,6 +65,12 @@ void InputMenu::createButtons()
     meshDepthLabel->setFixedHeight(buttonHeight);
     meshDepthSpinBox->setFixedHeight(buttonHeight);
 
+}
+
+void InputMenu::resetRhos()
+{
+    setRhoDomainComboBox->setCurrentIndex(SET_RHO_CHOOSE);
+    setRhoImageComboBox->setCurrentIndex(SET_RHO_CHOOSE);
 }
 
 void InputMenu::createLayout()
@@ -138,6 +144,16 @@ int InputMenu::maxHeight() const
 {
     int absurdMargin = 1;
     return QStyle::CE_HeaderLabel + absurdMargin + 4*buttonHeight + 10*vertSpace;
+}
+
+int InputMenu::getGenus() const
+{
+    return genusSpinBox->value();
+}
+
+int InputMenu::getMeshDepth() const
+{
+    return meshDepthSpinBox->value();
 }
 
 void InputMenu::resizeEvent(QResizeEvent *)

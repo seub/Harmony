@@ -91,6 +91,14 @@ void H2CanvasDelegate::drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &c
     }
 }
 
+void H2CanvasDelegate::drawH2Triangle(const H2Triangle &triangle, const QColor &color, int width, bool back)
+{
+    std::vector<H2GeodesicArc> sides = triangle.getSides();
+    for (const auto &side : sides)
+    {
+        drawH2GeodesicArc(side, color, width, back);
+    }
+}
 
 void H2CanvasDelegate::redrawBuffer(bool back, bool top, const H2Isometry &mobius)
 {
@@ -125,32 +133,21 @@ void H2CanvasDelegate::redrawBufferBack()
 
     subRedrawBufferBack();
 
-    if (buffer.isMeshEmpty != buffer.isMeshFunctionEmpty)
+    if (buffer.isMeshEmpty != buffer.isFunctionEmpty)
     {
         redrawMeshOrFunction();
     }
-    else
+    else if (!buffer.isMeshEmpty)
     {
-        throw(QString("Error in H2CanvasDelegate::redrawBufferBack(): mesh and function are both empty or nonempty?"));
+        throw(QString("Error in H2CanvasDelegate::redrawBufferBack(): mesh and function are both nonempty?"));
     }
 
-    unsigned int i;
-    unsigned int nbGeodesicArcs = buffer.geodesicArcs.size();
-    for (i = 0; i < nbGeodesicArcs; i++)
+    if (!buffer.isRhoEmpty)
     {
-        drawH2GeodesicArc(buffer.geodesicArcs[i], buffer.geodesicArcsColors[i], buffer.geodesicArcsWidths[i]);
-    }
-
-    unsigned int nbGeodesics = buffer.geodesics.size();
-    for (i = 0; i < nbGeodesics; i++)
-    {
-        drawH2Geodesic(buffer.geodesics[i], buffer.geodesicsColors[i], buffer.geodesicsWidths[i]);
-    }
-
-    unsigned int nbPoints = buffer.points.size();
-    for (i = 0; i < nbPoints; i++)
-    {
-        drawH2Point(buffer.points[i], buffer.pointsColors[i], buffer.pointsWidths[i]);
+        for (const auto & geodesic : buffer.rhoAxes)
+        {
+            drawH2Geodesic(geodesic, buffer.rhoColor, 2);
+        }
     }
 
     drawCircle(0, 1);
@@ -158,53 +155,37 @@ void H2CanvasDelegate::redrawBufferBack()
 
 void H2CanvasDelegate::redrawMeshOrFunction()
 {
-    if (buffer.isMeshFunctionEmpty != buffer.isMeshEmpty)
+    if (buffer.isFunctionEmpty != buffer.isMeshEmpty)
     {
         if (showTranslatesAroundAllVertices)
         {
-
-            for (const auto & meshArc : buffer.meshArcsTranslatesAroundVertices)
+            for (const auto & meshArc : buffer.meshOrFunctionArcsTranslatesAroundVertices)
             {
-                drawH2GeodesicArc(meshArc, buffer.meshTranslatesColor, buffer.meshTranslatesWidth);
+                drawH2GeodesicArc(meshArc, "grey", 1);
             }
-
-            /*for (const auto & meshPoint : buffer.meshPointsTranslatesAroundVertices)
-            {
-                drawH2Point(meshPoint, "grey", 2);
-            }*/
         }
         if (showTranslatesAroundVertex)
         {
-            for (const auto & meshArc : buffer.meshArcsTranslatesAroundVertex)
+            for (const auto & meshArc : buffer.meshOrFunctionArcsTranslatesAroundVertex)
             {
-                drawH2GeodesicArc(meshArc, buffer.meshTranslatesColor, buffer.meshTranslatesWidth);
+                drawH2GeodesicArc(meshArc, "grey", 1);
             }
-
-            /*for (const auto & meshPoint : buffer.meshPointsTranslatesAroundVertex)
-            {
-                drawH2Point(meshPoint, "grey", 2);
-            }*/
         }
 
-        for (const auto & side : buffer.meshSidesTranslatesAroundVertices)
+        for (const auto & side : buffer.meshOrFunctionSidesTranslatesAroundVertices)
         {
             drawH2GeodesicArc(side, "black", 1);
         }
 
-        for (const auto & meshArc : buffer.meshArcs)
+        for (const auto & meshArc : buffer.meshOrFunctionArcs)
         {
-            drawH2GeodesicArc(meshArc, buffer.meshColor, buffer.meshWidth);
+            drawH2GeodesicArc(meshArc, buffer.meshOrFunctionColor, 1);
         }
 
-        for (const auto & side : buffer.meshSides)
+        for (const auto & side : buffer.meshOrFunctionSides)
         {
-            drawH2GeodesicArc(side, buffer.meshColor, 2);
+            drawH2GeodesicArc(side, buffer.meshOrFunctionColor, 2);
         }
-
-        /*for (const auto & meshPoint : buffer.meshPoints)
-        {
-            drawH2Point(meshPoint, "black", 2);
-        }*/
     }
     else
     {
@@ -218,15 +199,7 @@ void H2CanvasDelegate::redrawBufferTop()
     imageTop->fill(qRgba(0, 0, 0, 0));
     if (isTriangleHighlighted)
     {
-        H2GeodesicArc L;
-        H2Point a, b, c;
-        buffer.triangleHighlighted.getPoints(a, b, c);
-        L.setPoints(a, b);
-        drawH2GeodesicArc(L, "red", 2, false);
-        L.setPoints(a, c);
-        drawH2GeodesicArc(L, "red", 2, false);
-        L.setPoints(b, c);
-        drawH2GeodesicArc(L, "red", 2, false);
+        drawH2Triangle(buffer.triangleHighlighted, "red", 2, false);
     }
 
     if (arePointsHighlightedRed)
@@ -236,18 +209,19 @@ void H2CanvasDelegate::redrawBufferTop()
             drawH2Point(p, "red", 8, false);
         }
     }
+
     if (arePointsHighlightedGreen)
     {
         for (const auto &p : buffer.pointsHighlightedGreen)
         {
-            drawH2Point(p, "green", 6, false);
+            drawH2Point(p, "green", 5, false);
         }
     }
     if (arePointsHighlightedBlue)
     {
         for (const auto &p : buffer.pointsHighlightedBlue)
         {
-            drawH2Point(p, "blue", 6, false);
+            drawH2Point(p, "blue", 5, false);
         }
     }
     subRedrawBufferTop();
@@ -273,6 +247,24 @@ void H2CanvasDelegate::mousePress(QMouseEvent *mouseEvent)
 
     //std::cout << "Point clicked: " << PixelToComplexCoordinates(mouseX, mouseY) << std::endl;
 }
+
+
+void H2CanvasDelegate::setIsFunctionEmpty(bool isFunctionEmpty)
+{
+    buffer.setIsFunctionEmpty(isFunctionEmpty);
+}
+
+void H2CanvasDelegate::setIsMeshEmpty(bool isMeshEmpty)
+{
+    buffer.setIsMeshEmpty(isMeshEmpty);
+}
+
+void H2CanvasDelegate::setIsRhoEmpty(bool isRhoEmpty)
+{
+    buffer.setIsRhoEmpty(isRhoEmpty);
+}
+
+
 
 void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
 {
@@ -451,7 +443,6 @@ void H2CanvasDelegateDomain::decideHighlightingTriangle(bool highlighted, bool &
         }
         update = true;
     }
-
 }
 
 void H2CanvasDelegateDomain::decideHighlighting(const H2Point &pointUnderMouse)
@@ -485,10 +476,6 @@ void H2CanvasDelegateDomain::decideHighlighting(const H2Point &pointUnderMouse)
             handler->processMessage(HIGHLIGHTED_LEFT);
         }
     }
-    else
-    {
-        throw(QString("Error in H2CanvasDelegateDomain::decideHighlighting, no mesh in buffer?"));
-    }
 }
 
 void H2CanvasDelegateDomain::subMouseMove(QMouseEvent *mouseEvent)
@@ -502,13 +489,12 @@ void H2CanvasDelegateDomain::subRedrawBufferBack()
 
 void H2CanvasDelegateDomain::subRedrawBufferTop()
 {
-
 }
 
 void H2CanvasDelegateTarget::decideHighlighting(const H2Point &pointUnderMouse)
 {
     bool update1 = false, update2 = false;
-    if (!buffer.isMeshFunctionEmpty)
+    if (!buffer.isFunctionEmpty)
     {
         int index1, index2, index3;
         H2Triangle triangle;
@@ -535,10 +521,6 @@ void H2CanvasDelegateTarget::decideHighlighting(const H2Point &pointUnderMouse)
         {
             handler->processMessage(HIGHLIGHTED_RIGHT);
         }
-    }
-    else
-    {
-        throw(QString("Error in H2CanvasDelegateTarget::decideHighlighting, no mesh function in buffer?"));
     }
 }
 
@@ -583,6 +565,7 @@ void H2CanvasDelegateTarget::decideHighlightingMeshPoints(bool highlighted, bool
 
 void H2CanvasDelegateTarget::decideHighlightingTriangle(bool highlighted, bool &update, int triangleMeshIndex1, int triangleMeshIndex2, int triangleMeshIndex3)
 {
+
     if (((highlighted==false) && (isTriangleHighlighted==false)) || ((highlighted==isTriangleHighlighted) && (triangleMeshIndex1 == this->triangleMeshIndex1) &&
                                                                      (triangleMeshIndex2 == this->triangleMeshIndex2) && (triangleMeshIndex3 == this->triangleMeshIndex3)))
     {
@@ -631,23 +614,31 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
     }
 }
 
-void H2CanvasDelegate::addMeshTranslates()
+void H2CanvasDelegate::refreshTranslates()
 {
-    addMeshTranslates(showTranslatesAroundVertex, showTranslatesAroundAllVertices);
+    refreshTranslates(showTranslatesAroundVertex, showTranslatesAroundAllVertices);
 }
 
-void H2CanvasDelegate::addMeshTranslates(bool aroundVertex, bool aroundVertices)
+void H2CanvasDelegate::refreshTranslates(bool aroundVertex, bool aroundVertices)
 {
-    buffer.addMeshTranslates(aroundVertex, aroundVertices);
+    buffer.refreshMeshOrFunctionTranslates(aroundVertex, aroundVertices);
 }
 
 void H2CanvasDelegateDomain::refreshMesh()
 {
+    if (buffer.isMeshEmpty)
+    {
+        throw(QString("Error in H2CanvasDelegateDomain::refreshMesh: no mesh in buffer?"));
+    }
     buffer.refreshMesh();
 }
 
 void H2CanvasDelegateTarget::refreshFunction()
 {
+    if (buffer.isFunctionEmpty)
+    {
+        throw(QString("Error in H2CanvasDelegateTarget::refreshFunction(): no mesh function in buffer?"));
+    }
     buffer.refreshFunction();
 }
 

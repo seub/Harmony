@@ -7,10 +7,8 @@
 #include "tools.h"
 #include "h2point.h"
 #include "h2geodesic.h"
-#include "h2polygon.h"
 #include "grouprepresentation.h"
 #include "h2mesh.h"
-#include "h2trianglesubdivision.h"
 #include "h2meshfunction.h"
 
 
@@ -19,66 +17,53 @@ class H2Buffer
     friend class H2CanvasDelegate;
     friend class H2CanvasDelegateDomain;
     friend class H2CanvasDelegateTarget;
+    friend class ActionHandler;
+
 
 public:
-    H2Buffer();
-
-    void addElement(const H2Point & point, const QColor & color = "black", int width = 3);
-    void addElement(const std::vector<H2Point> & points, const QColor & color = "black", int width = 2);
-    void addElement(const H2Geodesic & geodesic, const QColor & color = "black", int width = 1);
-    void addElement(const H2GeodesicArc & geodesicArc, const QColor & color = "black", int width = 1);
-    void addElement(const std::vector<H2GeodesicArc> & geodesicArcs, const QColor & color = "black", int width = 1);
-    void addElement(const H2Polygon & polygon, const QColor & color = "black", int width = 3);
-    void addElement(const H2Triangle & triangle, const QColor & color = "black", int width = 1);
-    void addElement(const std::vector<H2Triangle> & triangles, const QColor & color = "black", int width = 1);
-    void addElement(const H2Isometry & isometry, const QColor & color = "black", int width = 1);
-    void addElement(const IsomH2Representation & rho, const QColor & color = "black", int width = 1);
-    void addElement(const std::vector<H2Isometry> &V, const QColor & color = "black", int width = 1);
-    void addElement(const std::vector<H2Polygon> &V, const QColor & color = "black", int width = 1);
-    void addElement(const H2TriangleSubdivision &T, const QColor & color = "black", int width = 1);
-    void addElement(const H2Mesh *mesh, const QColor & color = "black", int width = 1);
-    void addElement(H2MeshFunction *function, const QColor & color = "black", int width = 1);
-    void refreshFunction();
-    void refreshMesh();
-    void addSideTranslates(const std::vector<H2Isometry> &translationsAroundVertices, const QColor &color = "grey", int width = 1);
-    void addSideTranslates(const QColor &color = "grey", int width = 1);
-
-    void addMeshTranslatesAroundVertex(const QColor &color = "grey", int width = 1);
-    void addMeshTranslatesAroundVertices(const QColor &color = "grey", int width = 1);
-    void addMeshTranslates(bool aroundVertex, bool aroundVertices, const QColor &color = "grey", int width = 1);
-
-    void setTranslations();
-    void setTranslations(const IsomH2Representation &rho);
-
+    bool getIsMeshEmpty() const;
+    bool getIsRhoEmpty() const;
+    bool getIsFunctionEmpty() const;
 
 private:
-    std::vector<H2Point> points;
-    std::vector<QColor> pointsColors;
-    std::vector<int> pointsWidths;
+    H2Buffer();
 
-    std::vector<H2Geodesic> geodesics;
-    std::vector<QColor> geodesicsColors;
-    std::vector<int> geodesicsWidths;
+    void setIsMeshEmpty(bool isMeshEmpty);
+    void setIsFunctionEmpty(bool isFunctionEmpty);
+    void setIsRhoEmpty(bool isRhoEmpty);
 
-    std::vector<H2GeodesicArc> geodesicArcs;
-    std::vector<QColor> geodesicArcsColors;
-    std::vector<int> geodesicArcsWidths;
+    void setRhoPointer(IsomH2Representation *rho, const QColor &color);
+    void setFunctionPointer(H2MeshFunction *function, const QColor &color);
+    void setMeshPointer(H2Mesh *mesh, const QColor &color);
+
+    void refreshRho();
+    void refreshFunction();
+    void refreshMesh();
+
+    void refreshMeshOrFunctionSideTranslates();
+    void refreshMeshOrFunctionArcsTranslatesAroundVertex();
+    void refreshMeshOrFunctionArcsTranslatesAroundVertices();
+    void refreshMeshOrFunctionTranslates(bool aroundVertex, bool aroundVertices);
+
+    IsomH2Representation *rho;
+    bool isRhoEmpty;
+    std::vector<H2Geodesic> rhoAxes;
+    QColor rhoColor;
 
     std::vector<H2Isometry> translationsAroundVertex, translationsAroundVertices;
 
-    const H2Mesh *mesh;
+    H2Mesh *mesh;
     bool isMeshEmpty;
-    std::vector<H2Point> meshPoints;
-    std::vector<H2GeodesicArc> meshArcs;
-    std::vector<H2GeodesicArc> meshSides;
-    std::vector<H2Point> meshPointsTranslatesAroundVertex, meshPointsTranslatesAroundVertices;
-    std::vector<H2GeodesicArc> meshArcsTranslatesAroundVertex, meshArcsTranslatesAroundVertices;
-    std::vector<H2GeodesicArc> meshSidesTranslatesAroundVertex, meshSidesTranslatesAroundVertices;
-    QColor meshColor, meshTranslatesColor;
-    int meshWidth, meshTranslatesWidth;
-    H2MeshFunction *function;
-    bool isMeshFunctionEmpty;
 
+    H2MeshFunction *function;
+    bool isFunctionEmpty;
+
+    std::vector<H2GeodesicArc> meshOrFunctionArcs;
+    std::vector<H2GeodesicArc> meshOrFunctionSides;
+    QColor meshOrFunctionColor;
+
+    std::vector<H2GeodesicArc> meshOrFunctionArcsTranslatesAroundVertex, meshOrFunctionArcsTranslatesAroundVertices;
+    std::vector<H2GeodesicArc> meshOrFunctionSidesTranslatesAroundVertex, meshOrFunctionSidesTranslatesAroundVertices;
 
     H2Triangle triangleHighlighted;
     std::vector<H2Point> pointsHighlightedRed;
