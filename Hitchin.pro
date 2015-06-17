@@ -56,7 +56,8 @@ SOURCES += main.cpp \
     mainapplication.cpp \
     mathscontainer.cpp \
     actionhandler.cpp \
-    topfactory.cpp
+    topfactory.cpp \
+    displaymenu.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -98,7 +99,8 @@ HEADERS += \
     mainapplication.h \
     mathscontainer.h \
     actionhandler.h \
-    topfactory.h
+    topfactory.h \
+    displaymenu.h
 
 OTHER_FILES += \
     TODO.txt

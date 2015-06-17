@@ -11,6 +11,7 @@
 #include "topmenu.h"
 #include "inputmenu.h"
 #include "outputmenu.h"
+#include "displaymenu.h"
 #include "h2canvasdelegate.h"
 
 
@@ -25,6 +26,7 @@ void Window::createWindow(ActionHandler *handler)
     leftCanvas = new Canvas(H2DELEGATEDOMAIN, this, true, false, handler);
     rightCanvas = new Canvas(H2DELEGATETARGET, this, false, true, handler);
     inputMenu = new InputMenu(this, handler);
+    displayMenu = new DisplayMenu(this, handler);
     outputMenu = new OutputMenu(this, handler);
     statusBar= new QStatusBar(this);
     statusBar->setSizeGripEnabled(false);
@@ -41,16 +43,18 @@ void Window::createWindow(ActionHandler *handler)
 
 
     layout->setColumnMinimumWidth(0, menuWidth());
-    int leftColMenuSize = std::max(inputMenu->maxLeftColWidth(), outputMenu->maxLeftColWidth());
+    int leftColMenuSize = std::max(std::max(inputMenu->maxLeftColWidth(), outputMenu->maxLeftColWidth()), displayMenu->maxLeftColWidth());
     inputMenu->layout->setColumnMinimumWidth(0, leftColMenuSize);
+    displayMenu->layout->setColumnMinimumWidth(0, leftColMenuSize);
     outputMenu->layout->setColumnMinimumWidth(0, leftColMenuSize);
 
 
-    layout->addWidget(leftCanvas, 0, 1, 2, 1);
-    layout->addWidget(rightCanvas, 0, 2, 2, 1);
+    layout->addWidget(leftCanvas, 0, 1, 3, 1);
+    layout->addWidget(rightCanvas, 0, 2, 3, 1);
     layout->addWidget(inputMenu, 0, 0, Qt::AlignTop);
-    layout->addWidget(outputMenu, 1, 0, Qt::AlignTop);
-    layout->addWidget(statusBar, 2, 0, 1, 3);
+    layout->addWidget(displayMenu, 1, 0, Qt::AlignTop);
+    layout->addWidget(outputMenu, 2, 0, Qt::AlignTop);
+    layout->addWidget(statusBar, 3, 0, 1, 3);
     setLayout(layout);
 
 
@@ -169,7 +173,7 @@ void Window::resizeCanvases()
 
 int Window::menuWidth() const
 {
-    return std::max(inputMenu->maxWidth(), outputMenu->maxWidth());
+    return std::max(std::max(inputMenu->maxWidth(), displayMenu->maxWidth()), outputMenu->maxWidth());
 }
 
 void Window::optimalSize(unsigned int &outputWidth, unsigned int &outputHeight) const
@@ -177,15 +181,15 @@ void Window::optimalSize(unsigned int &outputWidth, unsigned int &outputHeight) 
     unsigned int screenWidth = QApplication::desktop()->width();
     unsigned int screenHeight = QApplication::desktop()->height();
 
-    int canvasOptimalSize = std::max(inputMenu->maxHeight() + outputMenu->maxHeight() +layout->verticalSpacing(),
+    int canvasOptimalSize = std::max(inputMenu->maxHeight() + outputMenu->maxHeight() + displayMenu->maxHeight() + 2*layout->verticalSpacing(),
                                        Tools::intRound((0.9*screenWidth - menuWidth() - 2*layout->margin() - 2*layout->spacing())/2));
 
-    outputHeight = std::max(inputMenu->maxHeight() + outputMenu->maxHeight()
-                 +layout->verticalSpacing(),canvasOptimalSize) + 2*layout->margin() + statusBar->height() +layout->verticalSpacing() + topMenu->sizeHint().height();
+    outputHeight = std::max(inputMenu->maxHeight() + outputMenu->maxHeight() + displayMenu->maxHeight()
+                 + 2*layout->verticalSpacing(), canvasOptimalSize) + 2*layout->margin() + statusBar->height() + 2*layout->verticalSpacing() + topMenu->sizeHint().height();
     if(outputHeight > screenHeight)
     {
-        outputHeight = 0.9*(inputMenu->maxHeight() + outputMenu->maxHeight()
-                 +layout->verticalSpacing() + 2*layout->margin() + statusBar->height() +layout->verticalSpacing() + topMenu->height());
+        outputHeight = 0.9*(inputMenu->maxHeight() + outputMenu->maxHeight() + displayMenu->maxHeight()
+                 + 2*layout->verticalSpacing() + 2*layout->margin() + statusBar->height() + layout->verticalSpacing() + topMenu->height());
     }
     outputWidth = std::min(menuWidth() + 2*layout->margin() + 2*canvasOptimalSize + 2*layout->horizontalSpacing(), Tools::intRound(0.9*screenWidth));
 }

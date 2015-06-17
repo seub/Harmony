@@ -8,7 +8,7 @@
 
 class QGridLayout; class QStatusBar; class QLabel;
 
-class Canvas; class InputMenu; class OutputMenu; class TopMenu;
+class Canvas; class InputMenu; class OutputMenu; class TopMenu; class DisplayMenu;
 class ActionHandler;
 
 class Window : public QWidget
@@ -38,6 +38,7 @@ private:
     Canvas *rightCanvas;
     QGridLayout* layout;
     InputMenu* inputMenu;
+    DisplayMenu *displayMenu;
     OutputMenu* outputMenu;
     QStatusBar* statusBar;
     QLabel* statusBarLabel;

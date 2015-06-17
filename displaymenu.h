@@ -1,15 +1,15 @@
-#ifndef INPUTMENU_H
-#define INPUTMENU_H
+#ifndef DISPLAYMENU_H
+#define DISPLAYMENU_H
 
 #include <QGroupBox>
 
 #include "tools.h"
 
-class QGridLayout; class QComboBox; class QLabel; class QSpinBox;
+class QGridLayout; class QComboBox; class QLabel;
 
 class Window; class ActionHandler;
 
-class InputMenu : public QGroupBox
+class DisplayMenu : public QGroupBox
 {
     Q_OBJECT
 
@@ -28,7 +28,7 @@ signals:
 public slots:
 
 private:
-    InputMenu(Window *window, ActionHandler *handler);
+    DisplayMenu(Window *window, ActionHandler *handler);
     void resizeEvent(QResizeEvent *);
 
     void createLayout();
@@ -37,13 +37,12 @@ private:
     ActionHandler *handler;
 
     QGridLayout *layout;
-    QComboBox *setRhoDomainComboBox, *setRhoImageComboBox;
-    QLabel *genusLabel, *meshDepthLabel;
-    QSpinBox *genusSpinBox, *meshDepthSpinBox;
-
+    QLabel *domainLabel, *imageLabel;
+    QComboBox *showTranslatesDomainComboBox, *showTranslatesImageComboBox;
 
     int vertSpace;
     int buttonHeight;
+
 };
 
-#endif // INPUTMENU_H
+#endif // DISPLAYMENU_H

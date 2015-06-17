@@ -44,7 +44,6 @@ private:
     QLabel *showLiveLabel, *nbIterationsLabel;
     QCheckBox *showLiveCheckbox;
     QSpinBox *nbIterationsSpinBox;
-    QComboBox *showTranslatesComboBox;
 
     int vertSpace;
     int buttonHeight;

@@ -10,6 +10,7 @@
 #include "canvas.h"
 #include "outputmenu.h"
 #include "inputmenu.h"
+#include "displaymenu.h"
 
 ActionHandler::ActionHandler()
 {
@@ -20,6 +21,7 @@ void ActionHandler::setWindow(Window *window)
 {
     this->window = window;
     inputMenu = window->inputMenu;
+    displayMenu = window->displayMenu;
     outputMenu = window->outputMenu;
     leftCanvas = window->leftCanvas;
     rightCanvas = window->rightCanvas;
@@ -132,6 +134,7 @@ void ActionHandler::computeButtonClicked()
     leftCanvas->setEnabled(false);
     rightCanvas->setEnabled(false);
     inputMenu->setEnabled(false);
+    displayMenu->setEnabled(false);
     outputMenu->disableAllButStop();
     outputMenu->switchComputeToStopButton();
     outputMenu->update();
@@ -161,7 +164,7 @@ void ActionHandler::iterateButtonClicked()
     outputMenu->enableReset();
 }
 
-void ActionHandler::outputShowTranslatesChoice(int choice)
+void ActionHandler::imageShowTranslatesClicked(int choice)
 {
     bool aroundVertexOld, aroundVerticesOld, aroundVertexNew, aroundVerticesNew;
     rightDelegate->getShowTranslates(aroundVertexOld, aroundVerticesOld);
@@ -199,7 +202,7 @@ void ActionHandler::outputShowTranslatesChoice(int choice)
     }
 }
 
-void ActionHandler::inputShowTranslatesChoice(int choice)
+void ActionHandler::domainShowTranslatesClicked(int choice)
 {
     bool aroundVertexOld, aroundVerticesOld, aroundVertexNew, aroundVerticesNew;
     leftDelegate->getShowTranslates(aroundVertexOld, aroundVerticesOld);
@@ -237,6 +240,25 @@ void ActionHandler::inputShowTranslatesChoice(int choice)
     }
 }
 
+void ActionHandler::setRhoDomainClicked(int choice)
+{
+
+}
+
+void ActionHandler::setRhoImageClicked(int choice)
+{
+
+}
+
+void ActionHandler::genusClicked(int choice)
+{
+
+}
+
+void ActionHandler::meshDepthClicked(int choice)
+{
+
+}
 
 void ActionHandler::iterateDiscreteFlow(int N)
 {
@@ -285,6 +307,7 @@ void ActionHandler::finishedComputing()
     leftCanvas->setEnabled(true);
     rightCanvas->setEnabled(true);
     inputMenu->setEnabled(true);
+    displayMenu->setEnabled(true);
     outputMenu->switchStopToComputeButton();
     outputMenu->enableAll();
 

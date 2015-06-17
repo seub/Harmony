@@ -14,7 +14,7 @@
 OutputMenu::OutputMenu(Window *window, ActionHandler* handler) : handler(handler)
 {
     setParent(window);
-    setTitle("Output");
+    setTitle("Discrete heat flow");
 
     vertSpace = 5;
 
@@ -46,16 +46,8 @@ void OutputMenu::createButtons()
     nbIterationsSpinBox->setValue(20);
     nbIterationsSpinBox->setToolTip("Choose N for number of iterations");
 
-    showTranslatesComboBox = new QComboBox;
-    showTranslatesComboBox->addItem("Show translates...", SHOW_TRANSLATES_CHOOSE);
-    showTranslatesComboBox->addItem("Domain boundary", SHOW_TRANSLATES_DOMAIN);
-    showTranslatesComboBox->addItem("Around a vertex", SHOW_TRANSLATES_VERTEX);
-    showTranslatesComboBox->addItem("Around all vertices", SHOW_TRANSLATES_VERTICES);
-    showTranslatesComboBox->setToolTip("Show translates under the representation...");
-    connect(showTranslatesComboBox, SIGNAL(activated(int)), handler, SLOT(outputShowTranslatesChoice(int)));
 
-
-    buttonHeight = showTranslatesComboBox->sizeHint().height();
+    buttonHeight = computeButton->sizeHint().height();
     computeButton->setFixedHeight(buttonHeight);
     iterateButton->setFixedHeight(buttonHeight);
     resetButton->setFixedHeight(buttonHeight);
@@ -63,7 +55,6 @@ void OutputMenu::createButtons()
     showLiveCheckbox->setFixedHeight(buttonHeight);
     nbIterationsLabel->setFixedHeight(buttonHeight);
     nbIterationsSpinBox->setFixedHeight(buttonHeight);
-    showTranslatesComboBox->setFixedHeight(buttonHeight);
 }
 
 void OutputMenu::createLayout()
@@ -71,7 +62,7 @@ void OutputMenu::createLayout()
     layout = new QGridLayout;
     layout->setSpacing(0);
 
-    layout->setRowMinimumHeight(0, vertSpace);
+    layout->setRowMinimumHeight(0, 2*vertSpace);
     layout->setRowMinimumHeight(1, buttonHeight);
     layout->setRowMinimumHeight(2, 4*vertSpace);
     layout->setRowMinimumHeight(3, buttonHeight);
@@ -81,8 +72,6 @@ void OutputMenu::createLayout()
     layout->setRowMinimumHeight(7, buttonHeight);
     layout->setRowMinimumHeight(8, vertSpace);
     layout->setRowMinimumHeight(9, buttonHeight);
-    layout->setRowMinimumHeight(10, 4*vertSpace);
-    layout->setRowMinimumHeight(11, buttonHeight);
 
 
 
@@ -110,12 +99,11 @@ void OutputMenu::createLayout()
 
     layout->addWidget(nbIterationsLabel, 9, 0, 1, 1, Qt::AlignRight);
     nbIterationsLabel->setVisible(true);
+    nbIterationsLabel->setEnabled(true);
+
     layout->addWidget(nbIterationsSpinBox, 9, 1, 1, 1);
     nbIterationsSpinBox->setVisible(true);
-
-    layout->addWidget(showTranslatesComboBox, 11, 0, 1, 2);
-    showTranslatesComboBox->setVisible(true);
-    showTranslatesComboBox->setEnabled(true);
+    nbIterationsSpinBox->setEnabled(true);
 }
 
 void OutputMenu::resizeEvent(QResizeEvent *)
@@ -138,8 +126,6 @@ void OutputMenu::resetMenu()
 
     nbIterationsLabel->setEnabled(true);
     nbIterationsSpinBox->setEnabled(true);
-
-    showTranslatesComboBox->setEnabled(true);
 }
 
 void OutputMenu::disableAllButStop()
@@ -150,7 +136,6 @@ void OutputMenu::disableAllButStop()
     showLiveCheckbox->setEnabled(false);
     nbIterationsLabel->setEnabled(false);
     nbIterationsSpinBox->setEnabled(false);
-    showTranslatesComboBox->setEnabled(false);
 }
 
 void OutputMenu::enableAll()
@@ -161,7 +146,6 @@ void OutputMenu::enableAll()
     showLiveCheckbox->setEnabled(true);
     nbIterationsLabel->setEnabled(true);
     nbIterationsSpinBox->setEnabled(true);
-    showTranslatesComboBox->setEnabled(true);
 }
 
 void OutputMenu::switchComputeToStopButton()
@@ -203,14 +187,13 @@ int OutputMenu::maxWidth() const
     maxi = std::max(maxi, computeButton->sizeHint().width());
     maxi = std::max(maxi, iterateButton->sizeHint().width());
     maxi = std::max(maxi, resetButton->sizeHint().width());
-    maxi = std::max(maxi, showTranslatesComboBox->sizeHint().width());
     return maxi + layout->margin() + QStyle::CE_MenuHMargin;
 }
 
 int OutputMenu::maxHeight() const
 {
     int absurdMargin = 1;
-    return QStyle::CE_HeaderLabel + 6*buttonHeight + 15*vertSpace + absurdMargin;
+    return QStyle::CE_HeaderLabel + 5*buttonHeight + 12*vertSpace + absurdMargin;
 }
 
 int OutputMenu::getNbIterations() const

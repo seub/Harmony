@@ -75,6 +75,11 @@ void Canvas::paintEvent(QPaintEvent *event)
 {
     //std::cout << "Entering Canvas::paintEvent at time " << clock()*1.0/CLOCKS_PER_SEC << std::endl;
 
+    if (!hasFocus())
+    {
+        delegate->leave();
+    }
+
     delegate->redrawBuffer(delegate->enableRedrawBufferBack, delegate->enableRedrawBufferTop);
     delegate->enableRedrawBuffer(false, false);
 

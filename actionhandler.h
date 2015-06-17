@@ -6,7 +6,7 @@
 #include "tools.h"
 
 class MathsContainer; class H2CanvasDelegate; class EquivariantHarmonicMapsFactory; class Window; class Canvas;
-class InputMenu; class OutputMenu; class Canvas; class TopFactory;
+class InputMenu; class DisplayMenu; class OutputMenu; class Canvas; class TopFactory;
 
 class ActionHandler : public QObject
 {
@@ -23,15 +23,20 @@ public:
     void processMessage(actionHandlerMessage message, int parameter = 0);
 
 private slots:
+    void genusClicked(int choice);
+    void meshDepthClicked(int choice);
+    void setRhoDomainClicked(int choice);
+    void setRhoImageClicked(int choice);
     void computeButtonClicked();
     void stopButtonClicked();
-    void finishedComputing();
     void iterateButtonClicked();
     void outputResetButtonClicked();
+    void imageShowTranslatesClicked(int choice);
+    void domainShowTranslatesClicked(int choice);
+
+    void finishedComputing();
     void updateFunction(bool updateTranslates);
     void updateMesh(bool updateTranslates);
-    void outputShowTranslatesChoice(int choice);
-    void inputShowTranslatesChoice(int choice);
 
 private:
     void runDiscreteFlow();
@@ -41,6 +46,7 @@ private:
     Canvas *leftCanvas, *rightCanvas;
     InputMenu* inputMenu;
     OutputMenu* outputMenu;
+    DisplayMenu* displayMenu;
 
     MathsContainer *container;
     TopFactory *topFactory;
