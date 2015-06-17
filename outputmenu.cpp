@@ -65,7 +65,7 @@ void OutputMenu::createStandardMenu()
     showLiveLabel->setVisible(true);
     layout->addWidget(showLiveCheckbox, 5, 1, 1, 1);
     showLiveCheckbox->setVisible(true);
-    showLiveCheckbox->setChecked(false);
+    showLiveCheckbox->setChecked(true);
 
     layout->addWidget(iterateButton, 7, 0, 1, 2);
     iterateButton->setVisible(true);
@@ -88,7 +88,7 @@ void OutputMenu::resetMenu()
     showLiveLabel->setEnabled(true);
 
     showLiveCheckbox->setEnabled(true);
-    showLiveCheckbox->setChecked(false);
+    //showLiveCheckbox->setChecked(false);
 }
 
 void OutputMenu::disableAllButStop()
@@ -97,6 +97,28 @@ void OutputMenu::disableAllButStop()
     iterateButton->setEnabled(false);
     showLiveLabel->setEnabled(false);
     showLiveCheckbox->setEnabled(false);
+}
+
+void OutputMenu::enableAll()
+{
+    resetButton->setEnabled(true);
+    iterateButton->setEnabled(true);
+    showLiveLabel->setEnabled(true);
+    showLiveCheckbox->setEnabled(true);
+}
+
+void OutputMenu::switchComputeToStopButton()
+{
+    computeButton->setText(tr("Stop"));
+    disconnect(computeButton, SIGNAL(clicked()), handler, SLOT(computeButtonClicked()));
+    connect(computeButton, SIGNAL(clicked()), handler, SLOT(stopButtonClicked()));
+}
+
+void OutputMenu::switchStopToComputeButton()
+{
+    computeButton->setText(QString("Run discrete flow (%1)").arg(QChar(0x221E)));
+    disconnect(computeButton, SIGNAL(clicked()), handler, SLOT(stopButtonClicked()));
+    connect(computeButton, SIGNAL(clicked()), handler, SLOT(computeButtonClicked()));
 }
 
 void OutputMenu::enableReset()

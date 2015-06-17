@@ -34,6 +34,7 @@ protected:
     virtual void decideHighlightingMeshPoints(bool, bool&, int) {}
     virtual void decideHighlightingTriangle(bool, bool&, int, int, int) {}
     void resetHighlighted();
+    void setShowTranslates(bool show);
 
     void redrawBuffer(bool back = true, bool top = true, const H2Isometry &mobius = H2Isometry::identity());
     virtual void redrawBufferBack();
@@ -57,6 +58,7 @@ protected:
     bool arePointsHighlightedRed;
     bool arePointsHighlightedGreen;
     bool arePointsHighlightedBlue;
+    bool showTranslates;
 };
 
 

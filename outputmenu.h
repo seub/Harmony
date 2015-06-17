@@ -27,8 +27,13 @@ private:
     void enterEvent(QEvent *);
     void resetMenu();
     void createStandardMenu();
+
+    void enableAll();
     void disableAllButStop();
     void enableReset();
+
+    void switchComputeToStopButton();
+    void switchStopToComputeButton();
 
     ActionHandler *handler;
     QGridLayout *layout;

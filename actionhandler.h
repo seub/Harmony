@@ -6,6 +6,7 @@
 #include "tools.h"
 
 class MathsContainer; class H2CanvasDelegate; class EquivariantHarmonicMapsFactory; class Window; class Canvas;
+class InputMenu; class OutputMenu; class Canvas; class TopFactory;
 
 class ActionHandler : public QObject
 {
@@ -19,22 +20,30 @@ public:
     void setWindow(Window *window);
     void setContainer(MathsContainer *container);
     void setFactory();
-    void processMessage(actionHandlerMessage message, int timeOut = 0);
+    void processMessage(actionHandlerMessage message, int parameter = 0);
 
 private slots:
     void computeButtonClicked();
+    void stopButtonClicked();
+    void finishedComputing();
     void iterateButtonClicked();
     void outputResetButtonClicked();
+    void updateFunction(bool updateTranslates = true);
 
 private:
     void runDiscreteFlow();
     void iterateDiscreteFlow(int N);
 
     Window *window;
+    Canvas *leftCanvas, *rightCanvas;
+    InputMenu* inputMenu;
+    OutputMenu* outputMenu;
+
     MathsContainer *container;
-    EquivariantHarmonicMapsFactory *factory;
+    TopFactory *topFactory;
 
     H2CanvasDelegate *leftDelegate, *rightDelegate;
+    bool isShowingLive;
 };
 
 #endif // ACTIONHANDLER_H

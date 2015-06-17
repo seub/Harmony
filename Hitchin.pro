@@ -55,7 +55,8 @@ SOURCES += main.cpp \
     equivariantharmonicmapsfactory.cpp \
     mainapplication.cpp \
     mathscontainer.cpp \
-    actionhandler.cpp
+    actionhandler.cpp \
+    topfactory.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -96,7 +97,8 @@ HEADERS += \
     equivariantharmonicmapsfactory.h \
     mainapplication.h \
     mathscontainer.h \
-    actionhandler.h
+    actionhandler.h \
+    topfactory.h
 
 OTHER_FILES += \
     TODO.txt

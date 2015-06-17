@@ -20,6 +20,7 @@ H2CanvasDelegate::H2CanvasDelegate(int sizeX, int sizeY, ActionHandler *handler)
     //std::cout << "Entering H2CanvasDelegate::CanvasDelegate" << std::endl;
     delegateType = H2DELEGATE;
     mobius.setIdentity();
+    showTranslates = true;
     drawCircle(0, 1);
     resetHighlighted();
 
@@ -577,20 +578,24 @@ void H2CanvasDelegateTarget::subRedrawBufferBack()
 {
     if (!buffer.isMeshFunctionEmpty)
     {
-        for (const auto & meshArc : buffer.meshArcsTranslates)
+        if (showTranslates)
         {
-            drawH2GeodesicArc(meshArc, buffer.meshTranslatesColor, buffer.meshTranslatesWidth);
-        }
 
-        for (const auto & side : buffer.meshSidesTranslates)
-        {
-            drawH2GeodesicArc(side, "grey", 2);
-        }
+            for (const auto & meshArc : buffer.meshArcsTranslates)
+            {
+                drawH2GeodesicArc(meshArc, buffer.meshTranslatesColor, buffer.meshTranslatesWidth);
+            }
 
-        /*for (const auto & meshPoint : buffer.meshPointsTranslates)
+            for (const auto & side : buffer.meshSidesTranslates)
+            {
+                drawH2GeodesicArc(side, "grey", 2);
+            }
+
+            /*for (const auto & meshPoint : buffer.meshPointsTranslates)
         {
             drawH2Point(meshPoint, "grey", 2);
         }*/
+        }
 
         for (const auto & meshArc : buffer.meshArcs)
         {
@@ -650,4 +655,9 @@ void H2CanvasDelegateTarget::refreshFunction()
 void H2CanvasDelegate::addPolygonTranslates()
 {
     buffer.addPolygonTranslates();
+}
+
+void H2CanvasDelegate::setShowTranslates(bool show)
+{
+    showTranslates = show;
 }
