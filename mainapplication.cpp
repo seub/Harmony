@@ -31,7 +31,7 @@ void MainApplication::createWindow()
     handler.setContainer(&(this->container));
 
     window->show();
-    window->resizeCanvases();
+    window->canvasResized();
     window->setEnabled(true);
     window->setFocus();
 }

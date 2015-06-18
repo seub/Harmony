@@ -13,6 +13,7 @@ class H2CanvasDelegate : public CanvasDelegate
 {
     friend class ActionHandler;
     friend class Canvas;
+    friend class FenchelNielsenUser;
 
 protected:
     explicit H2CanvasDelegate(int sizeX, int sizeY, ActionHandler* handler = 0);

@@ -57,7 +57,9 @@ SOURCES += main.cpp \
     mathscontainer.cpp \
     actionhandler.cpp \
     topfactory.cpp \
-    displaymenu.cpp
+    displaymenu.cpp \
+    fenchelnielsenuser.cpp \
+    canvascontainer.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -100,7 +102,9 @@ HEADERS += \
     mathscontainer.h \
     actionhandler.h \
     topfactory.h \
-    displaymenu.h
+    displaymenu.h \
+    fenchelnielsenuser.h \
+    canvascontainer.h
 
 OTHER_FILES += \
     TODO.txt

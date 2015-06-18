@@ -18,6 +18,8 @@ class ActionHandler : public QObject
 public:
     void processMessage(actionHandlerMessage message, int parameter = 0);
     static void randomFNcoordinates(int genus, std::vector<double> &lengthsOut, std::vector<double> &twistsOut);
+    void receiveFNcoordinates(const std::vector<double> &lengths, const std::vector<double> &twists);
+    void discardReceiveFNcoordinates();
 
 private slots:
     void genusClicked(int choice);
@@ -47,6 +49,8 @@ private:
     void errorMessageForSetRhoNice();
     void setRhoRandomDomain();
     void setRhoRandomTarget();
+    void setRhoFNDomain();
+    void setRhoFNTarget();
 
 
     void setReadyToCompute();
@@ -72,6 +76,7 @@ private:
     bool showTranslatesAroundVertexLeft, showTranslatesAroundVerticesLeft;
     bool showTranslatesAroundVertexRight, showTranslatesAroundVerticesRight;
     bool isRhoDomainSet, isRhoImageSet;
+    bool expectingFNdomain, expectingFNtarget;
 };
 
 #endif // ACTIONHANDLER_H

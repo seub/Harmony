@@ -8,15 +8,19 @@
 class CanvasDelegate;
 class Window;
 class ActionHandler;
+class FenchelNielsenUser;
+class CanvasContainer;
 
 class Canvas : public QWidget
 {
     Q_OBJECT
 
     friend class Window;
+    friend class FenchelNielsenUser;
 
 public:
-    explicit Canvas(CanvasDelegateType delegateType, Window *const window = 0, ActionHandler* handler = 0);
+    explicit Canvas(CanvasDelegateType delegateType, Window *window = 0, ActionHandler* handler = 0);
+    explicit Canvas(FenchelNielsenUser *FNuser);
     ~Canvas();
 
     void changeDelegate(CanvasDelegateType delegateType, ActionHandler *handler = 0);
@@ -46,7 +50,7 @@ private:
 
     void rescale();
 
-    Window* window;
+    CanvasContainer* container;
 };
 
 #endif // CANVAS_H

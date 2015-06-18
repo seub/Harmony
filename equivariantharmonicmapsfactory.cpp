@@ -128,6 +128,9 @@ void EquivariantHarmonicMapsFactory::setRhoDomain(const std::vector<double> &FNL
     }
     FNLengthsDomain = FNLengths;
     FNTwistsDomain = FNTwists;
+
+    std::cout << "lengths = " << FNLengths << ", twists = " << FNTwists << std::endl;
+
     FenchelNielsenConstructor FN(FNLengths, FNTwists);
     rhoDomain = FN.getRepresentation(&Gamma);
     isRhoDomainSet = true;
@@ -164,7 +167,6 @@ void EquivariantHarmonicMapsFactory::resetRhoDomain()
 void EquivariantHarmonicMapsFactory::resetRhoTarget()
 {
     isRhoTargetSet = false;
-    isMeshInitialized = false;
     isInitialized = false;
 }
 

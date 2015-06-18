@@ -15,6 +15,7 @@
 #include "outputmenu.h"
 #include "inputmenu.h"
 #include "displaymenu.h"
+#include "fenchelnielsenuser.h"
 
 ActionHandler::ActionHandler()
 {
@@ -26,6 +27,9 @@ ActionHandler::ActionHandler()
     showTranslatesAroundVertexRight = false;
     showTranslatesAroundVerticesLeft = false;
     showTranslatesAroundVerticesRight = false;
+
+    expectingFNdomain = false;
+    expectingFNtarget = false;
 }
 
 void ActionHandler::setWindow(Window *window)
@@ -236,6 +240,7 @@ void ActionHandler::setRhoDomainClicked(int choice)
         break;
 
     case SET_RHO_FN:
+        setRhoFNDomain();
         break;
 
     default:
@@ -254,24 +259,26 @@ void ActionHandler::setRhoImageClicked(int choice)
     case SET_RHO_CHOOSE:
         isRhoImageSet = false;
         topFactory->subfactory.resetRhoTarget();
+        dealRhosReady();
         break;
 
     case SET_RHO_NICE:
         setRhoNiceTarget();
+        dealRhosReady();
         break;
 
     case SET_RHO_RANDOM:
         setRhoRandomTarget();
+        dealRhosReady();
         break;
 
     case SET_RHO_FN:
+        setRhoFNTarget();
         break;
 
     default:
         throw(QString("Error in ActionHandler::setRhoImageClicked: not supposed to land here"));
     }
-
-    dealRhosReady();
 }
 
 void ActionHandler::setRhoNiceDomain()
@@ -343,6 +350,69 @@ void ActionHandler::setRhoRandomTarget()
     topFactory->subfactory.setRhoTarget(lengths, twists);
 }
 
+void ActionHandler::setRhoFNDomain()
+{
+    expectingFNdomain = true;
+    window->setEnabled(false);
+    FenchelNielsenUser *FNuser = new FenchelNielsenUser(this, inputMenu->getGenus());
+    FNuser->show();
+}
+
+void ActionHandler::setRhoFNTarget()
+{
+    expectingFNtarget = true;
+    window->setEnabled(false);
+    FenchelNielsenUser *FNuser = new FenchelNielsenUser(this, inputMenu->getGenus());
+    FNuser->show();
+}
+
+void ActionHandler::receiveFNcoordinates(const std::vector<double> &lengths, const std::vector<double> &twists)
+{
+    if (expectingFNdomain == expectingFNtarget)
+    {
+        throw(QString("Error in ActionHandler::receiveFNcoordinates: was expecting coordinates for neither/both domain and target"));
+    }
+    if (expectingFNdomain)
+    {
+        isRhoDomainSet = true;
+        topFactory->subfactory.setRhoDomain(lengths, twists);
+        expectingFNdomain = false;
+    }
+    if (expectingFNtarget)
+    {
+        isRhoImageSet = true;
+        topFactory->subfactory.setRhoTarget(lengths, twists);
+        expectingFNtarget = false;
+    }
+    window->setEnabled(true);
+    dealRhosReady();
+}
+
+void ActionHandler::discardReceiveFNcoordinates()
+{
+    if (expectingFNdomain == expectingFNtarget)
+    {
+        throw(QString("Error in ActionHandler::discardReceiveFNcoordinates: was expecting coordinates for neither/both domain and target"));
+    }
+    if (expectingFNdomain)
+    {
+        isRhoDomainSet = false;
+        inputMenu->setRhoImageComboBox->setCurrentIndex(SET_RHO_CHOOSE);
+        topFactory->subfactory.resetRhoDomain();
+        expectingFNdomain = false;
+    }
+    if (expectingFNtarget)
+    {
+        isRhoImageSet = false;
+        inputMenu->setRhoImageComboBox->setCurrentIndex(SET_RHO_CHOOSE);
+        topFactory->subfactory.resetRhoTarget();
+        expectingFNtarget = false;
+    }
+    window->setEnabled(true);
+    dealRhosReady();
+}
+
+
 void ActionHandler::dealRhosReady()
 {
     if (isRhoDomainSet)
@@ -412,11 +482,11 @@ bool ActionHandler::isReadyToCompute() const
     bool test1 = (isRhoDomainSet && isRhoImageSet);
     bool test2 = topFactory->isFunctionInitialized();
     bool test3 = !(leftDelegate->buffer.isMeshEmpty || rightDelegate->buffer.isFunctionEmpty);
-    bool test4 = outputMenu->isEnabled();
+    //bool test4 = outputMenu->isEnabled();
     bool test5 = leftCanvas->isEnabled() && rightCanvas->isEnabled();
 
-    bool test = test1 || test2 || test3 || test4 || test5;
-    if (test != (test1 && test2 && test3 && test4 && test5))
+    bool test = test1 || test2 || test3 || test5;
+    if (test != (test1 && test2 && test3 && test5))
     {
         throw(QString("Error in ActionHandler::isReadyToCompute: test failed"));
     }

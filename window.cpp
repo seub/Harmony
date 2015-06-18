@@ -82,13 +82,13 @@ void Window::createWindow(ActionHandler *handler)
 
 void Window::resizeEvent(QResizeEvent * event)
 {
-    int delta_width = abs(event->size().width() - event->oldSize().width());
-    int delta_height = abs(event->size().height() - event->oldSize().height());
+    int deltaWidth = abs(event->size().width() - event->oldSize().width());
+    int deltaHeight = abs(event->size().height() - event->oldSize().height());
 
-    if (delta_width >= 1 || delta_height >= 1 || leftCanvas->width()!=leftCanvas->height())
+    if (deltaWidth >= 1 || deltaHeight >= 1 || leftCanvas->width()!=leftCanvas->height())
     {
         enableCanvasesUpdates(false);
-        resizeCanvases();
+        canvasResized();
         enableCanvasesUpdates(true);
     }
 }
@@ -99,7 +99,7 @@ void Window::enableCanvasesUpdates(bool b)
     rightCanvas->setUpdatesEnabled(b);
 }
 
-void Window::resizeCanvases()
+void Window::canvasResized()
 {
     int margin = layout->margin();
     int extMarginV = std::max(inputMenu->geometry().top(), margin);
