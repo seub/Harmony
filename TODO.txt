@@ -115,3 +115,7 @@ parfois isTriangleHighlighted est true à tort ?
 construire le mesh et la fonction dans un thread
 
 hunt memory leaks
+
+improve triangulater:
+1. make different choices of Steiner points?
+2. even assuming the current choice, make different choices for cuts? For instance, idea: make the longest cut as small as possible
