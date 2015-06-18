@@ -135,6 +135,7 @@ void EquivariantHarmonicMapsFactory::setRhoDomain(const std::vector<double> &FNL
     rhoDomain = FN.getRepresentation(&Gamma);
     isRhoDomainSet = true;
 
+    std::cout << rhoDomain << std::endl;
     initializeRhoDomain();
 }
 
