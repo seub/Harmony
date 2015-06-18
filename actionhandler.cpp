@@ -50,7 +50,8 @@ void ActionHandler::setFactory()
         //twists1.push_back(0.0);
         twists2.push_back(0.0);
     }
-    twists2[1] = -2.0*M_PI;
+    twists1[0] = -2.0*M_PI;
+    twists2[0] = -2.0*M_PI;
 
     for (int i=0; i<3*g-3; i++)
     {
@@ -59,31 +60,14 @@ void ActionHandler::setFactory()
     }
 
     topFactory->subfactory.setGenus(2);
-    //factory->setNiceRhoDomain();
+    //topFactory->subfactory.setNiceRhoDomain();
     topFactory->subfactory.setRhoDomain(lengths1, twists1);
-    //factory->setRhoTarget(lengths2, twists2);
+    //topFactory->subfactory.setRhoTarget(lengths2, twists2);
     topFactory->subfactory.setNiceRhoTarget();
 
-    topFactory->subfactory.setMeshDepth(3);
-
-<<<<<<< HEAD
-
-    factory->initialize();
-
-    leftDelegate->buffer.addElement(factory->rhoDomain, "blue", 2);
-    leftDelegate->buffer.addElement(&factory->mesh, "red", 1);
-    leftDelegate->buffer.setTranslations(factory->rhoDomain.getSidePairingsNormalizedAroundVertices());
-    leftDelegate->buffer.addPolygonTranslatesDomain();
+    topFactory->subfactory.setMeshDepth(5);
 
 
-    rightDelegate->buffer.addElement(factory->rhoTarget, "blue", 2);
-    rightDelegate->buffer.addElement(&factory->function, "red", 1);
-    rightDelegate->buffer.setTranslations(factory->rhoTarget.getSidePairingsNormalizedAroundVertices());
-
-    rightDelegate->addPolygonAndMeshTranslates();
-
-    //rightDelegate->buffer.addMeshTranslates();
-=======
     topFactory->initializeSubfactory();
 
     leftDelegate->buffer.addElement(topFactory->subfactory.rhoDomain, "blue", 2);
@@ -95,7 +79,6 @@ void ActionHandler::setFactory()
     rightDelegate->buffer.addElement(&topFactory->subfactory.function, "red", 1);
     rightDelegate->buffer.setTranslations();
     rightDelegate->addMeshTranslates();
->>>>>>> b47d343100b672841a7a5dd741236c66169008aa
 }
 
 void ActionHandler::processMessage(actionHandlerMessage message, int parameter)
@@ -171,32 +154,13 @@ void ActionHandler::computeButtonClicked()
 
 void ActionHandler::outputResetButtonClicked()
 {
-<<<<<<< HEAD
-    factory->resetInit();
-    window->outputMenu->resetMenu();
-    ((H2CanvasDelegateTarget *) rightDelegate)->refreshFunction();
-    //rightDelegate->addMeshTranslates();
-    rightDelegate->addPolygonAndMeshTranslates();
-    rightDelegate->enableRedrawBuffer();
-    window->rightCanvas->update();
-=======
     topFactory->resetInitSubfactory();
     outputMenu->resetMenu();
     updateFunction(true);
->>>>>>> b47d343100b672841a7a5dd741236c66169008aa
 }
 
 void ActionHandler::iterateButtonClicked()
 {
-<<<<<<< HEAD
-    iterateDiscreteFlow(50);
-    ((H2CanvasDelegateTarget *) rightDelegate)->refreshFunction();
-    //rightDelegate->addMeshTranslates();
-    rightDelegate->addPolygonAndMeshTranslates();
-    rightDelegate->enableRedrawBuffer();
-    window->rightCanvas->update();
-    window->outputMenu->enableReset();
-=======
     iterateDiscreteFlow(outputMenu->getNbIterations());
     updateFunction(true);
     outputMenu->enableReset();
@@ -296,7 +260,6 @@ void ActionHandler::genusClicked(int choice)
 void ActionHandler::meshDepthClicked(int choice)
 {
 
->>>>>>> b47d343100b672841a7a5dd741236c66169008aa
 }
 
 void ActionHandler::iterateDiscreteFlow(int N)

@@ -24,13 +24,8 @@ protected:
     void drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color = "black", int width = 2, bool back = true);
 
     void addMeshTranslates();
-<<<<<<< HEAD
-    void addPolygonTranslatesDomain();
-    void addPolygonTranslatesTarget();
-    void addPolygonAndMeshTranslates();
-=======
+
     void addMeshTranslates(bool aroundVertex, bool aroundVertices);
->>>>>>> b47d343100b672841a7a5dd741236c66169008aa
 
     virtual void decideHighlighting(const H2Point &) {}
     void getMeshIndexHighlighted(bool &highlighted, int &meshIndexHighted) const;

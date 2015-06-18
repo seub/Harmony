@@ -271,7 +271,3 @@ void H2MeshFunction::refreshSubdivisions()
     }
 }
 
-IsomH2Representation H2MeshFunction::getRepresentation() const
-{
-    return rhoImage;
-}

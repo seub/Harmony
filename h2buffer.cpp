@@ -179,8 +179,8 @@ void H2Buffer::refreshFunction()
     }
 }
 
-<<<<<<< HEAD
-void H2Buffer::addPolygonTranslatesDomain(const std::vector<H2Isometry> &translations, const QColor &color, int width)
+
+/*void H2Buffer::addPolygonTranslatesDomain(const std::vector<H2Isometry> &translations, const QColor &color, int width)
 {
     int genus = mesh->getRepresentation().getDiscreteGroup().getGenerators().size()/2;
 
@@ -201,11 +201,10 @@ void H2Buffer::addPolygonTranslatesDomain(const std::vector<H2Isometry> &transla
 void H2Buffer::addPolygonTranslatesTarget(const std::vector<H2Isometry> &translations, const QColor &color, int width)
 {
     int genus = function->getRepresentation().getDiscreteGroup().getGenerators().size()/2;
+}*/
 
-=======
 void H2Buffer::addSideTranslates(const std::vector<H2Isometry> &translations, const QColor &color, int width)
 {
->>>>>>> b47d343100b672841a7a5dd741236c66169008aa
     meshTranslatesColor = color;
     meshTranslatesWidth = width;
 
@@ -221,7 +220,7 @@ void H2Buffer::addSideTranslates(const std::vector<H2Isometry> &translations, co
     }
 }
 
-<<<<<<< HEAD
+/*
 void H2Buffer::addPolygonTranslatesDomain(const QColor &color, int width)
 {
     addPolygonTranslatesDomain(translations, color, width);
@@ -231,6 +230,7 @@ void H2Buffer::addPolygonTranslatesTarget(const QColor &color, int width)
 {
     addPolygonTranslatesTarget(translations, color, width);
 }
+
 
 void H2Buffer::addPolygonAndMeshTranslates(const std::vector<H2Isometry> &someTranslations, const QColor &color, int width)
 {
@@ -265,11 +265,11 @@ void H2Buffer::addPolygonAndMeshTranslates(const std::vector<H2Isometry> &someTr
         arcsTranslates = A*sides;
         meshArcsTranslates.insert(meshArcsTranslates.end(), arcsTranslates.begin(), arcsTranslates.end());
     }
-=======
+}*/
+
 void H2Buffer::addSideTranslates(const QColor &color, int width)
 {
     addSideTranslates(translationsAroundVertices, color, width);
->>>>>>> b47d343100b672841a7a5dd741236c66169008aa
 }
 
 void H2Buffer::addElement(const std::vector<H2Point> & points, const QColor & color, int width)

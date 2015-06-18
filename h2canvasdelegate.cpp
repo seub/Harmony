@@ -632,9 +632,9 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
 
         buffer.refreshFunction();
 
-        //addMeshTranslates();
+        addMeshTranslates();
         //addPolygonTranslates();
-        addPolygonAndMeshTranslates();
+        //addPolygonAndMeshTranslates();
 
         break;
     }
@@ -660,21 +660,6 @@ void H2CanvasDelegateTarget::refreshFunction()
     buffer.refreshFunction();
 }
 
-<<<<<<< HEAD
-void H2CanvasDelegate::addPolygonTranslatesDomain()
-{
-    buffer.addPolygonTranslatesDomain();
-}
-
-void H2CanvasDelegate::addPolygonTranslatesTarget()
-{
-    buffer.addPolygonTranslatesTarget();
-}
-
-void H2CanvasDelegate::addPolygonAndMeshTranslates()
-{
-    buffer.addPolygonAndMeshTranslates(buffer.function->getRepresentation().getSidePairingsForNormalizedFundamentalDomain());
-=======
 void H2CanvasDelegate::setShowTranslates(bool showTranslatesAroundVertex, bool showTranslatesAroundAllVertices)
 {
     this->showTranslatesAroundVertex = showTranslatesAroundVertex;
@@ -685,5 +670,4 @@ void H2CanvasDelegate::getShowTranslates(bool &aroundVertexOut, bool &aroundVert
 {
     aroundVertexOut = showTranslatesAroundVertex;
     aroundVerticesOut = showTranslatesAroundAllVertices;
->>>>>>> b47d343100b672841a7a5dd741236c66169008aa
 }
