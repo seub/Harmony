@@ -5,13 +5,14 @@
 
 #include "tools.h"
 #include "equivariantharmonicmapsfactory.h"
+#include "canvascontainer.h"
 
 class QGridLayout; class QStatusBar; class QLabel;
 
 class Canvas; class InputMenu; class OutputMenu; class TopMenu; class DisplayMenu;
 class ActionHandler;
 
-class Window : public QWidget
+class Window : public QWidget, public CanvasContainer
 {
     Q_OBJECT
 
@@ -30,7 +31,7 @@ public slots:
 private:
     void createWindow(ActionHandler *handler = 0);
     void enableCanvasesUpdates(bool b);
-    void resizeCanvases();
+    void canvasResized();
     int menuWidth() const;
     void optimalSize(unsigned int &outputWidth, unsigned int &outputHeight) const;
 

@@ -27,7 +27,7 @@ void InputMenu::createButtons()
     genusLabel = new QLabel("Genus: ");
 
     genusSpinBox = new QSpinBox();
-    genusSpinBox->setRange(2, 10);
+    genusSpinBox->setRange(2, 6);
     genusSpinBox->setValue(2);
     genusSpinBox->setToolTip("Set genus of the surface");
     connect(genusSpinBox, SIGNAL(valueChanged(int)), handler, SLOT(genusClicked(int)));

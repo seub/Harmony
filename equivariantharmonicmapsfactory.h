@@ -16,6 +16,7 @@ class EquivariantHarmonicMapsFactory : public QThread
 
     friend class ActionHandler;
     friend class TopFactory;
+    friend class FenchelNielsenUser;
 
 public:
     EquivariantHarmonicMapsFactory();

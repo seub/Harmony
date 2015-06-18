@@ -18,6 +18,7 @@ class H2Buffer
     friend class H2CanvasDelegateDomain;
     friend class H2CanvasDelegateTarget;
     friend class ActionHandler;
+    friend class FenchelNielsenUser;
 
 
 public:

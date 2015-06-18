@@ -10,9 +10,11 @@
 #include "h2canvasdelegate.h"
 #include "window.h"
 #include "actionhandler.h"
+#include "fenchelnielsenuser.h"
+#include "canvascontainer.h"
 
-Canvas::Canvas(CanvasDelegateType delegateType, Window *const window, ActionHandler *handler) :
-    window(window)
+Canvas::Canvas(CanvasDelegateType delegateType, Window *window, ActionHandler *handler) :
+    container((CanvasContainer*) window)
 {
     setParent(window);
     setBackgroundRole(QPalette::Base);
@@ -25,6 +27,20 @@ Canvas::Canvas(CanvasDelegateType delegateType, Window *const window, ActionHand
     delegate = 0;
     changeDelegate(delegateType, handler);
 }
+
+Canvas::Canvas(FenchelNielsenUser *FNuser) : container((CanvasContainer*) FNuser)
+{
+    setParent(FNuser);
+    setBackgroundRole(QPalette::Base);
+    setAutoFillBackground(true);
+    setFocusPolicy(Qt::WheelFocus);
+    setMouseTracking(true);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setEnabled(true);
+
+    delegate = new H2CanvasDelegate(width(), height());
+}
+
 
 Canvas::~Canvas()
 {
@@ -71,7 +87,11 @@ void Canvas::paintEvent(QPaintEvent *event)
     canvasPainter.drawImage(0, 0, *(delegate->getImageBack()));
     canvasPainter.drawImage(0, 0, *(delegate->getImageTop()));
 
-    delegate->handler->processMessage(END_CANVAS_REPAINT, delegate->delegateType);
+    if (delegate->delegateType == H2DELEGATETARGET)
+    {
+        delegate->handler->processMessage(END_CANVAS_REPAINT, delegate->delegateType);
+    }
+
 
     //std::cout << "Leaving Canvas::paintEvent" << std::endl;
 }
@@ -88,7 +108,7 @@ void Canvas::resizeEvent(QResizeEvent *resizeEvent)
 
     if (newSize.width()!=newSize.height())
     {
-        window->resizeCanvases();
+        container->canvasResized();
     }
     //update();
 }
