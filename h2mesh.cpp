@@ -13,8 +13,6 @@ H2Mesh::H2Mesh(const IsomH2Representation &rho, int depth) : rho(rho), depth(dep
     //std::cout << "Time to generate fundamental domain: " << (end - start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
 
     H2MeshConstructor(this);
-
-    std::cout << "In mesh constructor: mesh pointer is " << this << std::endl;
 }
 
 H2Mesh::H2Mesh(const H2Mesh &other)

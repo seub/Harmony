@@ -33,6 +33,11 @@ double Tools::mod2Pi(double t)
     }
 }
 
+double Tools::randDouble(double min, double max)
+{
+    return min + static_cast <double> (rand()) / ( static_cast <double> (RAND_MAX/(max - min)));
+}
+
 
 
 std::string Tools::convertToString(int i)

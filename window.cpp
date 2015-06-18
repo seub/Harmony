@@ -23,11 +23,21 @@ Window::Window(ActionHandler *handler)
 
 void Window::createWindow(ActionHandler *handler)
 {
-    leftCanvas = new Canvas(H2DELEGATEDOMAIN, this, true, false, handler);
-    rightCanvas = new Canvas(H2DELEGATETARGET, this, false, true, handler);
+    leftCanvas = new Canvas(H2DELEGATEDOMAIN, this, handler);
+    leftCanvas->setEnabled(false);
+
+    rightCanvas = new Canvas(H2DELEGATETARGET, this, handler);
+    rightCanvas->setEnabled(false);
+
     inputMenu = new InputMenu(this, handler);
+    inputMenu->setEnabled(true);
+
     displayMenu = new DisplayMenu(this, handler);
+    displayMenu->setEnabled(false);
+
     outputMenu = new OutputMenu(this, handler);
+    outputMenu->setEnabled(false);
+
     statusBar= new QStatusBar(this);
     statusBar->setSizeGripEnabled(false);
     statusBar->setFixedHeight(25);
@@ -52,8 +62,8 @@ void Window::createWindow(ActionHandler *handler)
     layout->addWidget(leftCanvas, 0, 1, 3, 1);
     layout->addWidget(rightCanvas, 0, 2, 3, 1);
     layout->addWidget(inputMenu, 0, 0, Qt::AlignTop);
-    layout->addWidget(displayMenu, 1, 0, Qt::AlignTop);
-    layout->addWidget(outputMenu, 2, 0, Qt::AlignTop);
+    layout->addWidget(outputMenu, 1, 0, Qt::AlignTop);
+    layout->addWidget(displayMenu, 2, 0, Qt::AlignTop);
     layout->addWidget(statusBar, 3, 0, 1, 3);
     setLayout(layout);
 

@@ -13,14 +13,11 @@ class ActionHandler : public QObject
     Q_OBJECT
 
     friend class Canvas;
+    friend class MainApplication;
 
 public:
-    ActionHandler();
-
-    void setWindow(Window *window);
-    void setContainer(MathsContainer *container);
-    void setFactory();
     void processMessage(actionHandlerMessage message, int parameter = 0);
+    static void randomFNcoordinates(int genus, std::vector<double> &lengthsOut, std::vector<double> &twistsOut);
 
 private slots:
     void genusClicked(int choice);
@@ -31,16 +28,35 @@ private slots:
     void stopButtonClicked();
     void iterateButtonClicked();
     void outputResetButtonClicked();
-    void imageShowTranslatesClicked(int choice);
-    void domainShowTranslatesClicked(int choice);
+    void showTranslatesClicked(int choice);
 
     void finishedComputing();
     void updateFunction(bool updateTranslates);
     void updateMesh(bool updateTranslates);
 
 private:
+    ActionHandler();
+
+    void setWindow(Window *window);
+    void setContainer(MathsContainer *container);
+    void setFactory();
+    void inputReset();
+
+    void setRhoNiceDomain();
+    void setRhoNiceTarget();
+    void errorMessageForSetRhoNice();
+    void setRhoRandomDomain();
+    void setRhoRandomTarget();
+
+
+    void setReadyToCompute();
+    void setDisplayMenuReady(bool left);
+    void dealRhosReady();
+    bool isReadyToCompute() const;
+
     void runDiscreteFlow();
     void iterateDiscreteFlow(int N);
+    void resetDelegatePointers();
 
     Window *window;
     Canvas *leftCanvas, *rightCanvas;
@@ -53,7 +69,9 @@ private:
 
     H2CanvasDelegate *leftDelegate, *rightDelegate;
     bool isShowingLive;
-    bool showTranslatesAroundVertexOld, showTranslatesAroundVerticesOld;
+    bool showTranslatesAroundVertexLeft, showTranslatesAroundVerticesLeft;
+    bool showTranslatesAroundVertexRight, showTranslatesAroundVerticesRight;
+    bool isRhoDomainSet, isRhoImageSet;
 };
 
 #endif // ACTIONHANDLER_H

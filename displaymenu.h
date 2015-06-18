@@ -33,13 +33,13 @@ private:
 
     void createLayout();
     void createButtons();
+    void setReady(bool left);
 
     ActionHandler *handler;
 
     QGridLayout *layout;
-    QLabel *domainLabel, *imageLabel;
-    QComboBox *showTranslatesDomainComboBox, *showTranslatesImageComboBox;
-
+    QLabel *showTranslatesLabel;
+    QComboBox *showTranslatesComboBox;
     int vertSpace;
     int buttonHeight;
 
