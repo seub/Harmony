@@ -10,6 +10,8 @@
 #include <cassert>
 #include <algorithm>
 #include <time.h>
+#include <cstdlib>
+#include <ctime>
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
@@ -26,6 +28,7 @@ namespace Tools
 
 int intRound(double x);
 double mod2Pi(double t);
+double randDouble(double min, double max);
 
 template <typename T> T exponentiation(T base, int power)
 {    

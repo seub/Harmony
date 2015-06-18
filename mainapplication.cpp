@@ -7,6 +7,8 @@
 MainApplication::MainApplication(int &argc, char **argv) : QApplication(argc, argv)
 {
     errorCaught = false;
+    srand (static_cast <unsigned> (time(0))); // Seed the random number generator
+
     try
     {
         createWindow();

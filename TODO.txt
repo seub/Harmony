@@ -112,3 +112,4 @@ remplacer les friend class par des friend functions
 
 parfois isTriangleHighlighted est true à tort ?
 
+construire le mesh et la fonction dans un thread

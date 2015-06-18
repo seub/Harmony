@@ -2,6 +2,9 @@
 
 #include <QCheckBox>
 #include <QComboBox>
+#include <QMessageBox>
+#include <QSpacerItem>
+#include <QGridLayout>
 
 #include "equivariantharmonicmapsfactory.h"
 #include "topfactory.h"
@@ -158,83 +161,59 @@ void ActionHandler::iterateButtonClicked()
     outputMenu->enableReset();
 }
 
-void ActionHandler::imageShowTranslatesClicked(int choice)
+void ActionHandler::showTranslatesClicked(int choice)
 {
-    bool aroundVertexOld = showTranslatesAroundVertexRight, aroundVerticesOld = showTranslatesAroundVerticesRight;
-    bool aroundVertexNew, aroundVerticesNew;
+    bool aroundVertexOldLeft = showTranslatesAroundVertexLeft, aroundVerticesOldLeft = showTranslatesAroundVerticesLeft;
+    bool aroundVertexOldRight = showTranslatesAroundVertexRight, aroundVerticesOldRight = showTranslatesAroundVerticesRight;
+    bool aroundVertexNewLeft, aroundVerticesNewLeft, aroundVertexNewRight, aroundVerticesNewRight;
 
     switch(choice)
     {
-    case SHOW_TRANSLATES_CHOOSE:
-        aroundVertexNew = aroundVertexOld;
-        aroundVerticesNew = aroundVerticesOld;
-        break;
-
     case SHOW_TRANSLATES_DOMAIN:
-        aroundVertexNew = false;
-        aroundVerticesNew = false;
+        aroundVertexNewLeft = false;
+        aroundVerticesNewLeft = false;
+        aroundVertexNewRight = false;
+        aroundVerticesNewRight = false;
         break;
 
     case SHOW_TRANSLATES_VERTEX:
-        aroundVertexNew = true;
-        aroundVerticesNew = false;
+        aroundVertexNewLeft = true;
+        aroundVerticesNewLeft = false;
+        aroundVertexNewRight = true;
+        aroundVerticesNewRight = false;
         break;
 
     case SHOW_TRANSLATES_VERTICES:
-        aroundVertexNew = false;
-        aroundVerticesNew = true;
+        aroundVertexNewLeft = false;
+        aroundVerticesNewLeft = true;
+        aroundVertexNewRight = false;
+        aroundVerticesNewRight = true;
         break;
 
     default:
-        throw(QString("Error in ActionHandler::outputShowTranslatesChoice: not supposed to land here"));
+        throw(QString("Error in ActionHandler::showTranslatesChoice: not supposed to land here"));
     }
 
-    if ((aroundVertexNew != aroundVertexOld) || (aroundVerticesNew != aroundVerticesOld))
+    if ((aroundVertexNewLeft != aroundVertexOldLeft) || (aroundVerticesNewLeft != aroundVerticesOldLeft))
     {
-        showTranslatesAroundVertexRight = aroundVertexNew;
-        showTranslatesAroundVerticesRight = aroundVerticesNew;
-        rightDelegate->setShowTranslates(aroundVertexNew, aroundVerticesNew);
-        updateFunction(true);
-    }
-}
-
-void ActionHandler::domainShowTranslatesClicked(int choice)
-{
-    bool aroundVertexOld = showTranslatesAroundVertexLeft, aroundVerticesOld = showTranslatesAroundVerticesLeft;
-    bool aroundVertexNew, aroundVerticesNew;
-
-    switch(choice)
-    {
-    case SHOW_TRANSLATES_CHOOSE:
-        aroundVertexNew = aroundVertexOld;
-        aroundVerticesNew = aroundVerticesOld;
-        break;
-
-    case SHOW_TRANSLATES_DOMAIN:
-        aroundVertexNew = false;
-        aroundVerticesNew = false;
-        break;
-
-    case SHOW_TRANSLATES_VERTEX:
-        aroundVertexNew = true;
-        aroundVerticesNew = false;
-        break;
-
-    case SHOW_TRANSLATES_VERTICES:
-        aroundVertexNew = false;
-        aroundVerticesNew = true;
-        break;
-
-    default:
-        throw(QString("Error in ActionHandler::outputShowTranslatesChoice: not supposed to land here"));
+        showTranslatesAroundVertexLeft = aroundVertexNewLeft;
+        showTranslatesAroundVerticesLeft = aroundVerticesNewLeft;
+        leftDelegate->setShowTranslates(aroundVertexNewLeft, aroundVerticesNewLeft);
+        if (isRhoDomainSet)
+        {
+            updateMesh(true);
+        }
     }
 
-    if ((aroundVertexNew != aroundVertexOld) || (aroundVerticesNew != aroundVerticesOld))
+    if ((aroundVertexNewRight != aroundVertexOldRight) || (aroundVerticesNewRight != aroundVerticesOldRight))
     {
-        showTranslatesAroundVertexLeft = aroundVertexNew;
-        showTranslatesAroundVerticesLeft = aroundVerticesNew;
-        leftDelegate->setShowTranslates(aroundVertexNew, aroundVerticesNew);
-        updateMesh(true);
+        showTranslatesAroundVertexRight = aroundVertexNewRight;
+        showTranslatesAroundVerticesRight = aroundVerticesNewRight;
+        rightDelegate->setShowTranslates(aroundVertexNewRight, aroundVerticesNewRight);
+        if (isReadyToCompute())
+        {
+            updateFunction(true);
+        }
     }
 }
 
@@ -250,21 +229,11 @@ void ActionHandler::setRhoDomainClicked(int choice)
         break;
 
     case SET_RHO_NICE:
-        if (inputMenu->getGenus() == 2)
-        {
-            isRhoDomainSet = true;
-            topFactory->subfactory.setNiceRhoDomain();
-        }
-        else
-        {
-            throw(QString("Popup Warning message: nice rep only available for genus 2"));
-            isRhoDomainSet = false;
-            inputMenu->setRhoDomainComboBox->setCurrentIndex(SET_RHO_CHOOSE);
-            topFactory->subfactory.resetRhoTarget();
-        }
+        setRhoNiceDomain();
         break;
 
     case SET_RHO_RANDOM:
+        setRhoRandomDomain();
         break;
 
     case SET_RHO_FN:
@@ -289,27 +258,14 @@ void ActionHandler::setRhoImageClicked(int choice)
         break;
 
     case SET_RHO_NICE:
-        if (inputMenu->getGenus() == 2)
-        {
-            isRhoImageSet = true;
-            topFactory->subfactory.setNiceRhoTarget();
-        }
-        else
-        {
-            throw(QString("Popup Warning message: nice rep only available for genus 2"));
-            isRhoImageSet = false;
-            inputMenu->setRhoImageComboBox->setCurrentIndex(SET_RHO_CHOOSE);
-            topFactory->subfactory.resetRhoTarget();
-        }
+        setRhoNiceTarget();
         break;
 
     case SET_RHO_RANDOM:
+        setRhoRandomTarget();
         break;
 
     case SET_RHO_FN:
-        break;
-
-    case SET_RHO_DEHNTWIST:
         break;
 
     default:
@@ -317,6 +273,75 @@ void ActionHandler::setRhoImageClicked(int choice)
     }
 
     dealRhosReady();
+}
+
+void ActionHandler::setRhoNiceDomain()
+{
+    if (inputMenu->getGenus() == 2)
+    {
+        isRhoDomainSet = true;
+        topFactory->subfactory.setNiceRhoDomain();
+    }
+    else
+    {
+        errorMessageForSetRhoNice();
+        isRhoDomainSet = false;
+        inputMenu->setRhoDomainComboBox->setCurrentIndex(SET_RHO_CHOOSE);
+        topFactory->subfactory.resetRhoTarget();
+    }
+}
+
+void ActionHandler::setRhoNiceTarget()
+{
+    if (inputMenu->getGenus() == 2)
+    {
+        isRhoImageSet = true;
+        topFactory->subfactory.setNiceRhoTarget();
+    }
+    else
+    {
+        errorMessageForSetRhoNice();
+        isRhoImageSet = false;
+        inputMenu->setRhoImageComboBox->setCurrentIndex(SET_RHO_CHOOSE);
+        topFactory->subfactory.resetRhoTarget();
+    }
+}
+
+void ActionHandler::errorMessageForSetRhoNice()
+{
+    QMessageBox messageBox;
+    QString message = QString("%1Nice%2 representation can only be set for genus 2").arg(QChar(8220)).arg(QChar(8221));
+
+
+    QSpacerItem* horizontalSpacer = new QSpacerItem(500, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+    messageBox.setIcon(QMessageBox::Warning);
+    messageBox.setInformativeText(message);
+
+    QGridLayout* layout = (QGridLayout*)messageBox.layout();
+    layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
+
+    messageBox.exec();
+
+}
+
+
+void ActionHandler::setRhoRandomDomain()
+{
+    std::vector<double> lengths, twists;
+    int genus = inputMenu->getGenus();
+    ActionHandler::randomFNcoordinates(genus, lengths, twists);
+    isRhoDomainSet = true;
+    topFactory->subfactory.setRhoDomain(lengths, twists);
+}
+
+void ActionHandler::setRhoRandomTarget()
+{
+    std::vector<double> lengths, twists;
+    int genus = inputMenu->getGenus();
+    ActionHandler::randomFNcoordinates(genus, lengths, twists);
+    isRhoImageSet = true;
+    topFactory->subfactory.setRhoTarget(lengths, twists);
 }
 
 void ActionHandler::dealRhosReady()
@@ -339,7 +364,7 @@ void ActionHandler::dealRhosReady()
             rightCanvas->setEnabled(true);
 
             updateFunction(true);
-            setDisplayMenuReady(true, true);
+            setDisplayMenuReady(true);
             outputMenu->setEnabled(true);
             setReadyToCompute();
         }
@@ -348,7 +373,7 @@ void ActionHandler::dealRhosReady()
             rightCanvas->setEnabled(false);
             rightDelegate->setIsRhoEmpty(true);
             rightDelegate->setIsFunctionEmpty(true);
-            setDisplayMenuReady(true, false);
+            setDisplayMenuReady(true);
             outputMenu->setEnabled(false);
         }
     }
@@ -378,9 +403,9 @@ void ActionHandler::dealRhosReady()
     rightCanvas->update();
 }
 
-void ActionHandler::setDisplayMenuReady(bool left, bool right)
+void ActionHandler::setDisplayMenuReady(bool left)
 {
-    displayMenu->setReady(left, right);
+    displayMenu->setReady(left);
 }
 
 bool ActionHandler::isReadyToCompute() const
@@ -447,6 +472,23 @@ void ActionHandler::updateMesh(bool updateTranslates)
     leftCanvas->update();
 }
 
+void ActionHandler::randomFNcoordinates(int genus, std::vector<double> &lengthsOut, std::vector<double> &twistsOut)
+{
+    lengthsOut.clear();
+    twistsOut.clear();
+    int N = 3*genus - 3;
+    lengthsOut.reserve(N);
+    twistsOut.reserve(N);
+
+    for (int i=0; i!=N; ++i)
+    {
+        lengthsOut.push_back(Tools::randDouble(1.0, 4.0));
+        twistsOut.push_back(Tools::randDouble(-0.5, 0.5));
+    }
+
+    std::cout << "lengths = " << lengthsOut << std::endl;
+    std::cout << "twists = " << twistsOut << std::endl;
+}
 
 void ActionHandler::updateFunction(bool updateTranslates)
 {

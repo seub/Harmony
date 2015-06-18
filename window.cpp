@@ -62,8 +62,8 @@ void Window::createWindow(ActionHandler *handler)
     layout->addWidget(leftCanvas, 0, 1, 3, 1);
     layout->addWidget(rightCanvas, 0, 2, 3, 1);
     layout->addWidget(inputMenu, 0, 0, Qt::AlignTop);
-    layout->addWidget(displayMenu, 1, 0, Qt::AlignTop);
-    layout->addWidget(outputMenu, 2, 0, Qt::AlignTop);
+    layout->addWidget(outputMenu, 1, 0, Qt::AlignTop);
+    layout->addWidget(displayMenu, 2, 0, Qt::AlignTop);
     layout->addWidget(statusBar, 3, 0, 1, 3);
     setLayout(layout);
 

@@ -17,6 +17,7 @@ class ActionHandler : public QObject
 
 public:
     void processMessage(actionHandlerMessage message, int parameter = 0);
+    static void randomFNcoordinates(int genus, std::vector<double> &lengthsOut, std::vector<double> &twistsOut);
 
 private slots:
     void genusClicked(int choice);
@@ -27,8 +28,7 @@ private slots:
     void stopButtonClicked();
     void iterateButtonClicked();
     void outputResetButtonClicked();
-    void imageShowTranslatesClicked(int choice);
-    void domainShowTranslatesClicked(int choice);
+    void showTranslatesClicked(int choice);
 
     void finishedComputing();
     void updateFunction(bool updateTranslates);
@@ -42,9 +42,15 @@ private:
     void setFactory();
     void inputReset();
 
+    void setRhoNiceDomain();
+    void setRhoNiceTarget();
+    void errorMessageForSetRhoNice();
+    void setRhoRandomDomain();
+    void setRhoRandomTarget();
+
 
     void setReadyToCompute();
-    void setDisplayMenuReady(bool left, bool right);
+    void setDisplayMenuReady(bool left);
     void dealRhosReady();
     bool isReadyToCompute() const;
 
