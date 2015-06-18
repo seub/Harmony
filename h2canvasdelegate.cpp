@@ -615,9 +615,7 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
 
         buffer.refreshFunction();
 
-        addMeshTranslates();
-        //addPolygonTranslates();
-        //addPolygonAndMeshTranslates();
+        refreshTranslates();
 
         break;
     }

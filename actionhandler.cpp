@@ -64,7 +64,7 @@ void ActionHandler::setFactory()
     topFactory->setGenus(inputMenu->getGenus());
     topFactory->setMeshDepth(inputMenu->getMeshDepth());
     resetDelegatePointers();
-
+}
 
 void ActionHandler::setReadyToCompute()
 {
