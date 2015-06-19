@@ -669,6 +669,7 @@ template <> IsomH2Representation IsomH2Representation::doHNNextensionOverInverse
 
 
 
+
 template class GroupRepresentation<H2Isometry>;
 template class GroupRepresentation<H3Isometry>;
 template class GroupRepresentation<SL2RMatrix>;
