@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QColor>
 #include <QMouseEvent>
+#include <QBrush>
 
 #include "canvas.h"
 #include "circle.h"
@@ -24,12 +25,14 @@ CanvasDelegate::CanvasDelegate(int sizeX, int sizeY, ActionHandler *handler) : h
     painterBack->setRenderHint(QPainter::Antialiasing, true);
     painterBack->eraseRect(0, 0, sizeX, sizeY);
     painterBack->setPen(*penBack);
+    painterBack->setClipRect(0, 0, sizeX, sizeY);
 
     painterTop = new QPainter(imageTop);
     painterTop->setRenderHint(QPainter::Antialiasing, true);
     painterTop->eraseRect(0, 0, sizeX, sizeY);
     imageTop->fill(qRgba(0, 0, 0, 0));
     painterTop->setPen(*penTop);
+    painterTop->setClipRect(0, 0, sizeX, sizeY);
 
     enableRedrawBufferBack = false;
     enableRedrawBufferTop = false;
@@ -240,20 +243,53 @@ bool CanvasDelegate::dealWithAlmostStraightArc(const Complex &center, double rad
     double scale = scaleX > scaleY ? scaleX : scaleY;
     int pixelError = 8.0;
     Complex z1, z2;
+    bool intersects = intersectionsOfFullCircleWithCanvasBoundary(center, radius, endpoint1, endpoint2, z1, z2);
     if(radius*scale*angleMin > pixelError)
     {
-        intersectsCanvasBoundary(center, radius, endpoint1, endpoint2, z1, z2);
         drawSegment(z1, z2, color, width, back);
         return true;
     }
-    else
+    else if ((!intersects) && (!isInside(endpoint1)) && (!isInside(endpoint2)))
     {
-        return false;
+        // Arc is outside of canvas
+        return true;
     }
+    else if (isAlmostStraightArc(center, radius, endpoint1, endpoint2))
+    {
+        drawSegment(endpoint1, endpoint2, color, width, back);
+        return true;
+    }
+    else return false;
 }
 
-void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radius,
-                                              const Complex &endpoint1, const Complex &endpoint2, Complex &zOut1, Complex &zOut2)
+bool CanvasDelegate::isAlmostStraightArc(const Complex &center, double radius, const Complex &endpoint1, const Complex &endpoint2) const
+{
+    Complex endpoint2nor = (endpoint2 - center)*conj(endpoint1 - center)/(radius*radius);
+    double X2 = real(endpoint2nor), Y2 = imag(endpoint2nor);
+
+    double arcMidpointX = sqrt(0.5*(1.0 + X2)), arcMidpointY = sqrt(0.5*(1.0 - X2));
+    arcMidpointY = (Y2 > 0) ? arcMidpointY : -arcMidpointY;
+
+    Complex arcMidpoint(arcMidpointX, arcMidpointY);
+    Complex lineMidpoint = 0.5*(1.0 + endpoint2nor);
+
+    int pixelDeltaSquared = Tools::intRound(norm(arcMidpoint - lineMidpoint)*radius*radius*scaleX*scaleY);
+    int pixelTolSquared = 1;
+
+    return pixelDeltaSquared <= pixelTolSquared;
+}
+
+bool CanvasDelegate::isInside(const Complex &point) const
+{
+    double xMax = xMin + sizeX/scaleX;
+    double yMin = yMax - sizeY/scaleY;
+    double x = real(point), y = imag(point);
+
+    return (x>xMin) && (x<xMax) && (y>yMin) && (y<yMax);
+}
+
+bool CanvasDelegate::intersectionsOfFullCircleWithCanvasBoundary(const Complex &center, double radius,
+                                                                 const Complex &endpoint1, const Complex &endpoint2, Complex &zOut1, Complex &zOut2) const
 {
     //std::cout << "Entering CanvasDelegate::intersectsCanvasBoundary" << std::endl;
 
@@ -363,6 +399,7 @@ void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radi
     case 0:
         zOut1 = endpoint1;
         zOut2 = endpoint2;
+        return false;
         break;
 
     case 1:
@@ -378,8 +415,9 @@ void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radi
         }
         else
         {
-            throw(QString("ERROR in CanvasDelegate::intersectsCanvasBoundary: interior endpoint not found"));
+            std::cout << "Warning in CanvasDelegate::intersectsCanvasBoundary: interior endpoint not found" << std::endl;
         }
+        return true;
         break;
 
     case 2:
@@ -395,10 +433,12 @@ void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radi
             zOut1 = intersections[0] + 2.0*(intersections[1]-intersections[0]);
             zOut2 = intersections[1] + 2.0*(intersections[0]-intersections[1]);
         }
+        return true;
         break;
 
     default:
-        throw(QString("ERROR in CanvasDelegate::intersectsCanvasBoundary: too many intersections!"));
+        std::cout << "Warning in CanvasDelegate::intersectsCanvasBoundary: found >2 intersections of arc with canvas boundary" << std::endl;
+        return true;
         break;
     }
 

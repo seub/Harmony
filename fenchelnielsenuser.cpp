@@ -126,12 +126,17 @@ void FenchelNielsenUser::refresh()
 {
     std::vector<double> lengths, twists;
     selector->getFNcoordinates(lengths, twists);
+
+
     factory.setRhoDomain(lengths, twists);
+
     delegate->setIsRhoEmpty(false);
     delegate->setIsMeshEmpty(false);
+
     delegate->buffer.refreshRho();
     delegate->buffer.refreshMesh();
     delegate->refreshTranslates();
+
     delegate->enableRedrawBuffer(true, true);
     canvas->update();
 }

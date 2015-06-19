@@ -27,8 +27,6 @@ private:
     void setNormalizedLengths();
     void splitAugmentedLengthsAndTwists();
 
-    static void getNormalizedLengths(const std::vector<double> lengthsIn, std::vector<double> &coshHalfFlengths, std::vector<double> &sinhHalflengths);
-
     int genus, gLeft, gRight;
     double firstTwist;
     std::vector<double> lengths, cLengths, sLengths, cLengthsLeft, cLengthsRight, sLengthsLeft, sLengthsRight;

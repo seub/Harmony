@@ -48,6 +48,7 @@ private:
     Canvas(const Canvas &other); // Copy constructor
     Canvas & operator=(Canvas other); // Copy-assignment operator
 
+    void initialize();
     void rescale();
 
     CanvasContainer* container;

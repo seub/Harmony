@@ -237,10 +237,6 @@ void FenchelNielsenConstructor::splitAugmentedLengthsAndTwists()
         nTwistsRight.push_back(nTwists[j2 + 3*gLeft -1]);
     }
 
-    std::cout << "twists  = " << nTwists << std::endl;
-    std::cout << "twists left = " << nTwistsLeft << std::endl;
-    std::cout << "twists right = " << nTwistsRight << std::endl;
-
 }
 
 IsomH2Representation FenchelNielsenConstructor::getUnnormalizedRepresentation(DiscreteGroup *group)

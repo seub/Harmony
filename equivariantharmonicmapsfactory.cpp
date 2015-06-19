@@ -59,6 +59,7 @@ void EquivariantHarmonicMapsFactory::setNiceRhoDomain()
 
 void EquivariantHarmonicMapsFactory::initializeRhoDomain()
 {
+
     if (!(isGenusSet && isRhoDomainSet))
     {
         throw(QString("Error in EquivariantHarmonicMapsFactory::initializeRhoDomain(): not ready to initialize rho domain"));
@@ -69,6 +70,7 @@ void EquivariantHarmonicMapsFactory::initializeRhoDomain()
     {
         initializeMesh();
     }
+
 }
 
 void EquivariantHarmonicMapsFactory::initializeRhoTarget()
@@ -118,6 +120,8 @@ void EquivariantHarmonicMapsFactory::setMeshDepth(int meshDepth)
 
 void EquivariantHarmonicMapsFactory::setRhoDomain(const std::vector<double> &FNLengths, const std::vector<double> FNTwists)
 {
+
+
     if (!isGenusSet)
     {
         throw(QString("Error in EquivariantHarmonicMapsFactory::setRhoDomain(): genus has not been set"));
@@ -131,6 +135,8 @@ void EquivariantHarmonicMapsFactory::setRhoDomain(const std::vector<double> &FNL
 
     FenchelNielsenConstructor FN(FNLengths, FNTwists);
     rhoDomain = FN.getRepresentation(&Gamma);
+
+
     isRhoDomainSet = true;
 
     initializeRhoDomain();
@@ -198,7 +204,9 @@ void EquivariantHarmonicMapsFactory::initializeMesh()
     {
         throw(QString("Error in EquivariantHarmonicMapsFactory::initializeMesh(): not ready to initialize mesh"));
     }
+
     mesh = H2Mesh(rhoDomain, meshDepth);
+
     isMeshInitialized = true;
     if (isRhoTargetSet)
     {

@@ -208,6 +208,9 @@ template <> void IsomH2Representation::generatePolygon(const H2Point &basePoint,
 
 template <> H2Polygon IsomH2Representation::generatePolygon(int tilingSize) const
 {
+    clock_t start, end;
+    start = clock();
+
     double step = 1.0/tilingSize;
 
     H2Point p;
@@ -242,6 +245,8 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int tilingSize) cons
         }
     }
 
+    end = clock();
+    qDebug() << (end - start)*1.0/CLOCKS_PER_SEC << " time spend in (stupid) IsomH2Representation::generatePolygon(int tilingSize)";
     return bestPolygon;
 }
 
