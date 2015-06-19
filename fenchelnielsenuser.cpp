@@ -72,6 +72,7 @@ void FenchelNielsenUser::createFactory()
     delegate = (H2CanvasDelegate*) canvas->delegate;
     delegate->buffer.setRhoPointer(&(factory.rhoDomain), "blue");
     delegate->buffer.setMeshPointer(&(factory.mesh), "red");
+    delegate->setShowTranslates(false, false);
 }
 
 void FenchelNielsenUser::optimalSize(unsigned int &outputWidth, unsigned int &outputHeight) const
@@ -131,6 +132,7 @@ void FenchelNielsenUser::refresh()
     delegate->setIsMeshEmpty(false);
     delegate->buffer.refreshRho();
     delegate->buffer.refreshMesh();
+    delegate->refreshTranslates();
     delegate->enableRedrawBuffer(true, true);
     canvas->update();
 }

@@ -391,15 +391,12 @@ void ActionHandler::receiveFNcoordinates(const std::vector<double> &lengths, con
 
 void ActionHandler::discardReceiveFNcoordinates()
 {
-    std::cout << "alice" << std::endl;
-
     if (expectingFNdomain == expectingFNtarget)
     {
         throw(QString("Error in ActionHandler::discardReceiveFNcoordinates: was expecting coordinates for neither/both domain and target"));
     }
     if (expectingFNdomain)
     {
-        std::cout << "bob" << std::endl;
         isRhoDomainSet = false;
         inputMenu->setRhoDomainComboBox->setCurrentIndex(SET_RHO_CHOOSE);
         topFactory->subfactory.resetRhoDomain();

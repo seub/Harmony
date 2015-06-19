@@ -161,20 +161,21 @@ void H2CanvasDelegate::redrawMeshOrFunction()
         {
             for (const auto & meshArc : buffer.meshOrFunctionArcsTranslatesAroundVertices)
             {
-                drawH2GeodesicArc(meshArc, "grey", 1);
+                drawH2GeodesicArc(meshArc, "lightgrey", 1);
             }
         }
         if (showTranslatesAroundVertex)
         {
             for (const auto & meshArc : buffer.meshOrFunctionArcsTranslatesAroundVertex)
             {
-                drawH2GeodesicArc(meshArc, "grey", 1);
+                drawH2GeodesicArc(meshArc, "lightgrey", 1);
             }
         }
 
+        QColor vDarkGrey(90, 90, 90);
         for (const auto & side : buffer.meshOrFunctionSidesTranslatesAroundVertices)
         {
-            drawH2GeodesicArc(side, "black", 1);
+            drawH2GeodesicArc(side, vDarkGrey, 1);
         }
 
         for (const auto & meshArc : buffer.meshOrFunctionArcs)
