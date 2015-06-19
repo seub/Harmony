@@ -20,6 +20,7 @@ class FenchelNielsenUser : public QWidget, public CanvasContainer
 public:
     FenchelNielsenUser(ActionHandler *handler, int genus);
     void resizeEvent(QResizeEvent *event);
+    void showEvent(QShowEvent *);
 
 public slots:
     void saveCoordinates();
@@ -39,9 +40,11 @@ private:
 
     QGridLayout* layout;
     FNselector* selector;
+    QLabel* infoLabel;
     FNmenu* menu;
     Canvas *canvas;
     H2CanvasDelegate *delegate;
+    int vertSpace;
 
     bool saveFNcoordinates;
 
@@ -95,7 +98,7 @@ public:
     int maxHeight() const;
 
 private:
-    FNmenu(FenchelNielsenUser *user);
+    FNmenu(FenchelNielsenUser *user, int minWidth = 0);
 
     void resizeEvent(QResizeEvent *);
 
@@ -104,10 +107,11 @@ private:
 
     QGridLayout* layout;
     QPushButton *setButton, *discardButton;
+    QLabel *questionLabel;
     FenchelNielsenUser *user;
 
     int vertSpace;
-    int buttonHeight;
+    int buttonHeight, buttonMaxWidth;
 };
 
 

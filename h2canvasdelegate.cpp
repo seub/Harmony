@@ -102,7 +102,7 @@ void H2CanvasDelegate::drawH2Triangle(const H2Triangle &triangle, const QColor &
 
 void H2CanvasDelegate::redrawBuffer(bool back, bool top, const H2Isometry &mobius)
 {
-    clock_t start = clock();
+    //clock_t start = clock();
     nbArcs = 0;
     nbStraightArcs = 0;
     nbAlmostStraightArcs = 0;
@@ -124,7 +124,7 @@ void H2CanvasDelegate::redrawBuffer(bool back, bool top, const H2Isometry &mobiu
     enableRedrawBufferTop = false;
 
     //std::cout << "redraw buffer for delegate type " << delegateType << " :" << (clock() - start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
-    //std::cout << "nbArcs = " << nbArcs << ", nbStraightArcs = " << nbStraightArcs << ", nbAlmostStraightArcs = " << nbAlmostStraightArcs << std::endl;
+    std::cout << "nbArcs = " << nbArcs << ", nbStraightArcs = " << nbStraightArcs << ", nbAlmostStraightArcs = " << nbAlmostStraightArcs << std::endl;
 }
 
 void H2CanvasDelegate::redrawBufferBack()
@@ -161,20 +161,21 @@ void H2CanvasDelegate::redrawMeshOrFunction()
         {
             for (const auto & meshArc : buffer.meshOrFunctionArcsTranslatesAroundVertices)
             {
-                drawH2GeodesicArc(meshArc, "grey", 1);
+                drawH2GeodesicArc(meshArc, "lightgrey", 1);
             }
         }
         if (showTranslatesAroundVertex)
         {
             for (const auto & meshArc : buffer.meshOrFunctionArcsTranslatesAroundVertex)
             {
-                drawH2GeodesicArc(meshArc, "grey", 1);
+                drawH2GeodesicArc(meshArc, "lightgrey", 1);
             }
         }
 
+        QColor vDarkGrey(90, 90, 90);
         for (const auto & side : buffer.meshOrFunctionSidesTranslatesAroundVertices)
         {
-            drawH2GeodesicArc(side, "black", 1);
+            drawH2GeodesicArc(side, vDarkGrey, 1);
         }
 
         for (const auto & meshArc : buffer.meshOrFunctionArcs)

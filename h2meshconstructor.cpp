@@ -445,7 +445,7 @@ void H2MeshConstructor::createExteriorNeighbors()
             }
             else
             {
-                std::cout << "A BoundaryPoint is paired with a SteinerPoint or something" << std::endl;
+                throw(QString("A BoundaryPoint is paired with a SteinerPoint or something"));
             }
         }
         side += 1 + jumpNext*2;
@@ -703,9 +703,11 @@ bool H2MeshConstructor::checkNumberOfNeighbors() const
         {
             if (m->neighborsIndices.size() != 6)
             {
-                std::cout << "ERROR in H2MeshConstructor::checkNumberOfNeighbors: failed ("
-                          << "point has " << m->neighborsIndices.size() << " neighbors)" << std::endl;
-                std::cout << m->neighborsIndices << std::endl;
+                std::stringstream errorMessage;
+                errorMessage << "ERROR in H2MeshConstructor::checkNumberOfNeighbors: failed ("
+                             << "point has " << m->neighborsIndices.size() << " neighbors)" << std::endl
+                             << m->neighborsIndices << std::endl;
+                throw(QString::fromStdString(errorMessage.str()));
                 ++failed;
             }
         }

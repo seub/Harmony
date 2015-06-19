@@ -64,32 +64,37 @@ private:
     CanvasDelegate(); // Dummy constructor
     CanvasDelegate(const CanvasDelegate &other); // Copy constructor
 
+    bool isInside(const Complex &point) const;
+    void rescale(int sizeX, int sizeY);
+    void resetView(int sizeX, int sizeY);
+    void ComplexToPixelCoordinates(int & xOut, int & yOut, Complex z) const;
+    bool intersectionsOfFullCircleWithCanvasBoundary(const Complex &center, double radius,
+                                                     const Complex &endpoint1, const Complex &endpoint2, Complex &zOut1, Complex &zOut2) const;
+    bool dealWithAlmostStraightArc(const Complex &center, double radius,
+                                   const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1, bool back = true);
+    bool isAlmostStraightArc(const Complex &center, double radius, const Complex &endpoint1, const Complex &endpoint2) const;
+
+
+    QPen *penBack, *penTop;
+    QPainter *painterBack, *painterTop;
+
 protected:
+    Complex PixelToComplexCoordinates(int x, int y) const;
+
+    QImage *imageBack, *imageTop;
+
     CanvasDelegateType delegateType;
     int sizeX, sizeY;
     double scaleX, scaleY;
     double xMin, yMax;
+    int nbArcs, nbStraightArcs, nbAlmostStraightArcs;
+
     double xMinSave, yMaxSave;
     int mouseX, mouseY;
     int detectionRadius;
+
     ActionHandler *handler;
-
-    QPen *penBack, *penTop;
-    QImage *imageBack, *imageTop;
-    QPainter *painterBack, *painterTop;
-
     bool enableRedrawBufferBack, enableRedrawBufferTop;
-
-    int nbArcs, nbStraightArcs, nbAlmostStraightArcs;
-
-    void rescale(int sizeX, int sizeY);
-    void resetView(int sizeX, int sizeY);
-    Complex PixelToComplexCoordinates(int x, int y) const;
-    void ComplexToPixelCoordinates(int & xOut, int & yOut, Complex z) const;
-    void intersectsCanvasBoundary(const Complex &center, double radius,
-                                  const Complex &endpoint1, const Complex &endpoint2, Complex &zOut1, Complex &zOut2);
-    bool dealWithAlmostStraightArc(const Complex &center, double radius,
-                                   const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1, bool back = true);
 
 };
 

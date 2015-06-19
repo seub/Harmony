@@ -15,7 +15,7 @@ template<typename T> GroupRepresentation<T>::GroupRepresentation(DiscreteGroup *
 {
     if(listOfMatrices.size() != (Gamma -> getGenerators()).size())
     {
-        std::cout << "WARNING : The list of matrices doesn't match the list of generators." << std::endl;
+        throw(QString("Error in GroupRepresentation<T>::GroupRepresentation : The list of matrices doesn't match the list of generators"));
     }
 }
 
@@ -65,7 +65,10 @@ template <typename T> bool GroupRepresentation<T>::getGeneratorImage(const gener
         }
         ++i;
     }
-    std::cout << "could not find generator name " << a << " in " << *this << std::endl;
+
+    std::stringstream errorMessage;
+    errorMessage << "Error in GroupRepresentation<T>::getGeneratorImage: could not find generator name " << a << " in " << *this << std::endl;
+    throw(QString::fromStdString(errorMessage.str()));
     return false;
 }
 
@@ -158,8 +161,7 @@ template<> H2Polygon IsomH2Representation::generatePolygon(const H2Point &basePo
     }
     else
     {
-        std::cout << "WARNING in IsomH2Representation::generatePolygon(const H2Point &basePoint):"
-                  << " not a closed surface group representation" << std::endl;
+        throw(QString("Error in IsomH2Representation::generatePolygon(const H2Point &basePoint): not a closed surface group representation"));
     }
 
     if (!res.isConvex())
@@ -206,6 +208,9 @@ template <> void IsomH2Representation::generatePolygon(const H2Point &basePoint,
 
 template <> H2Polygon IsomH2Representation::generatePolygon(int tilingSize) const
 {
+    clock_t start, end;
+    start = clock();
+
     double step = 1.0/tilingSize;
 
     H2Point p;
@@ -240,6 +245,8 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int tilingSize) cons
         }
     }
 
+    end = clock();
+    qDebug() << (end - start)*1.0/CLOCKS_PER_SEC << " time spend in (stupid) IsomH2Representation::generatePolygon(int tilingSize)";
     return bestPolygon;
 }
 
@@ -308,7 +315,7 @@ template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormali
     output.reserve(Tools::exponentiation(4*genus,n));
     if (n<=0)
     {
-        std::cout << "Error in IsomH2Representation::getSidePairingsNormalizedToDepth: Side pairings of 'negative'' depth" << std::endl;
+        throw(QString("Error in IsomH2Representation::getSidePairingsNormalizedToDepth: Side pairings of 'negative'' depth"));
     }
     if (n==1)
     {
@@ -380,8 +387,7 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
 {
     if (length1 < 0 || length2 < 0 || length3 < 0)
     {
-        std::cout << "ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: you gave me a negative length (seriously?)"
-                  << std::endl;
+        throw(QString("ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: you gave me a negative length (seriously?)"));
     }
     if (normalized == c3)
     {
@@ -432,9 +438,7 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
     }
     else
     {
-        std::cout << "ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: ";
-        std::cout << "Normalizer has to be one of the generators!" << std::endl;
-        return;
+        throw(QString("ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: Normalizer has to be one of the generators!"));
     }
 }
 
@@ -446,8 +450,7 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
 {
     if (S1<0 || S2 < 0 || S3 < 0)
     {
-        std::cout << "ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: you gave me a negative length (seriously?)"
-                  << std::endl;
+        throw(QString("ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: you gave me a negative length (seriously?)"));
     }
     if (normalized == c3)
     {
@@ -495,9 +498,7 @@ template <> void IsomH2Representation::setNormalizedPairOfPantsRepresentation(ge
     }
     else
     {
-        std::cout << "ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: ";
-        std::cout << "Normalizer has to be one of the generators!" << std::endl;
-        return;
+        throw(QString("ERROR in IsomH2Representation::setNormalizedPairOfPantsRepresentation: Normalizer has to be one of the generators!"));
     }
 }
 
@@ -574,20 +575,16 @@ template <> bool IsomH2Representation::checkCompatibilityOfFNcoordinates(const s
     int N = lengths.size();
     if ((int) twists.size() != N)
     {
-        std::cout << "ERROR in IsomH2Representation::setFenchelNielsenCoordinatesUnnormalized: ";
-        std::cout << "number of lengths and twists don't match!" << std::endl;
+        throw(QString("ERROR in IsomH2Representation::setFenchelNielsenCoordinatesUnnormalized: number of lengths and twists don't match!"));
         return false;
     }
     else if (N%3 != 0)
     {
-        std::cout << "ERROR in IsomH2Representation::setFenchelNielsenCoordinatesUnnormalized: ";
-        std::cout << "number of lengths and twists has to be a multiple of 3!" << std::endl;
-        return false;
+        throw(QString("ERROR in IsomH2Representation::setFenchelNielsenCoordinatesUnnormalized: number of lengths and twists has to be a multiple of 3!"));
     }
     else if (N<3)
     {
-        std::cout << "ERROR in IsomH2Representation::setFenchelNielsenCoordinatesUnnormalized: ";
-        std::cout << "at least 3 lengths and twists are needed!" << std::endl;
+        throw(QString("ERROR in IsomH2Representation::setFenchelNielsenCoordinatesUnnormalized: at least 3 lengths and twists are needed!"));
         return false;
     }
     return true;

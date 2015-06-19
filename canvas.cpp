@@ -17,12 +17,8 @@ Canvas::Canvas(CanvasDelegateType delegateType, Window *window, ActionHandler *h
     container((CanvasContainer*) window)
 {
     setParent(window);
-    setBackgroundRole(QPalette::Base);
-    setAutoFillBackground(true);
-    setFocusPolicy(Qt::WheelFocus);
-    setMouseTracking(true);
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    setEnabled(true);
+
+    initialize();
 
     delegate = 0;
     changeDelegate(delegateType, handler);
@@ -31,14 +27,20 @@ Canvas::Canvas(CanvasDelegateType delegateType, Window *window, ActionHandler *h
 Canvas::Canvas(FenchelNielsenUser *FNuser) : container((CanvasContainer*) FNuser)
 {
     setParent(FNuser);
+
+    initialize();
+
+    delegate = new H2CanvasDelegate(width(), height());
+}
+
+void Canvas::initialize()
+{
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
     setFocusPolicy(Qt::WheelFocus);
     setMouseTracking(true);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setEnabled(true);
-
-    delegate = new H2CanvasDelegate(width(), height());
 }
 
 
@@ -77,22 +79,29 @@ void Canvas::changeDelegate(CanvasDelegateType delegateType, ActionHandler *hand
 
 void Canvas::paintEvent(QPaintEvent *event)
 {
-    //std::cout << "Entering Canvas::paintEvent at time " << clock()*1.0/CLOCKS_PER_SEC << std::endl;
+    //std::cout << "Entering Canvas::paintEvent at time " << std::endl;
+    clock_t t0, t1, t2;
+    t0 = clock();
+
 
     delegate->redrawBuffer(delegate->enableRedrawBufferBack, delegate->enableRedrawBufferTop);
     delegate->enableRedrawBuffer(false, false);
+
+    t1 = clock();
 
     QPainter canvasPainter(this);
     canvasPainter.setClipRegion(event->region());
     canvasPainter.drawImage(0, 0, *(delegate->getImageBack()));
     canvasPainter.drawImage(0, 0, *(delegate->getImageTop()));
 
+    t2 = clock();
+
     if (delegate->delegateType == H2DELEGATETARGET)
     {
         delegate->handler->processMessage(END_CANVAS_REPAINT, delegate->delegateType);
     }
 
-
+    std::cout << "time spend painting canvas: " << (t2 -t0)*1.0/CLOCKS_PER_SEC << "s, including " << (t1 -t0)*1.0/CLOCKS_PER_SEC << "s to redraw buffer" << std::endl;
     //std::cout << "Leaving Canvas::paintEvent" << std::endl;
 }
 

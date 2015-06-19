@@ -342,7 +342,7 @@ bool H2TriangleSubdivision::triangleContaining(const H2Point &point, H2Triangle 
             }
             else
             {
-                std::cout << "ERROR in H2TriangleSubdivision::getTriangleContaining: not supposed to happen" << std::endl;
+                throw(QString("Error in H2TriangleSubdivision::getTriangleContaining: not supposed to happen"));
                 return false;
             }
         }
@@ -396,11 +396,11 @@ std::vector<bool> H2TriangleSubdivision::areBoundaryPoints() const
 {
     if (depth != totalDepth)
     {
-        std::cout << "WARNING in H2TriangleSubdivision::areBoundaryPoints : not a root subdivision" << std::endl;
+        throw(QString("ERROR in H2TriangleSubdivision::areBoundaryPoints : not a root subdivision"));
     }
     if (empty)
     {
-        std::cout << "ERROR in H2TriangleSubdivision::areBoundaryPoints : empty subdivision" << std::endl;
+        throw(QString("ERROR in H2TriangleSubdivision::areBoundaryPoints : empty subdivision"));
     }
 
     std::vector<bool> res(points->size());
@@ -427,11 +427,11 @@ std::vector< std::vector<int> > H2TriangleSubdivision::neighborsIndices() const
 {
     if (depth != totalDepth)
     {
-        std::cout << "WARNING in H2TriangleSubdivision::areBoundaryPoints : not a root subdivision" << std::endl;
+        throw(QString("ERROR in H2TriangleSubdivision::neighborsIndices : not a root subdivision"));
     }
     if (empty)
     {
-        std::cout << "ERROR in H2TriangleSubdivision::areBoundaryPoints : empty subdivision" << std::endl;
+        throw(QString("ERROR in H2TriangleSubdivision::neighborsIndices : empty subdivision"));
     }
 
     std::vector< std::vector<int> > res;
@@ -536,8 +536,8 @@ std::vector<int> H2TriangleSubdivision::sidePointsIndices(int vertexIndex1, int 
     }
     else
     {
-        std::cout << "ERROR in H2TriangleSubdivision::SidePointsIndices: wrong indices "
-                  << vertexIndex1 << " and " << vertexIndex2 << std::endl;
+        QString errorMessage = QString("ERROR in H2TriangleSubdivision::SidePointsIndices: wrong indices %1 and %2").arg(QString::number(vertexIndex1)).arg(QString::number(vertexIndex2));
+        throw(errorMessage);
     }
 
     return res;

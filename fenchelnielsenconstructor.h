@@ -7,6 +7,37 @@
 #include "topologicalsurface.h"
 
 
+class PantsTree;
+
+class FenchelNielsenConstructor
+{
+public:
+    FenchelNielsenConstructor(const std::vector<double> & lengths, const std::vector<double> & twists);
+    ~FenchelNielsenConstructor();
+
+    IsomH2Representation getUnnormalizedRepresentation(DiscreteGroup *group);
+    IsomH2Representation getRepresentation(DiscreteGroup *group);
+
+private:
+    FenchelNielsenConstructor(); //Dummy constructor
+    FenchelNielsenConstructor(const FenchelNielsenConstructor &other); // Copy constructor
+    FenchelNielsenConstructor & operator=(FenchelNielsenConstructor other); //Copy-assignment operator
+
+    void setNormalizedTwists();
+    void setNormalizedLengths();
+    void splitAugmentedLengthsAndTwists();
+
+    int genus, gLeft, gRight;
+    double firstTwist;
+    std::vector<double> lengths, cLengths, sLengths, cLengthsLeft, cLengthsRight, sLengthsLeft, sLengthsRight;
+    std::vector<double> twists, nTwists, nTwistsLeft, nTwistsRight;
+    PantsTree * LeftTree;
+    PantsTree * RightTree;
+};
+
+
+
+
 
 class PantsTree
 {
@@ -62,28 +93,6 @@ private:
     PantsTreeLeaf(const PantsTreeLeaf &other); // Copy constructor
     PantsTreeLeaf & operator=(PantsTreeLeaf other); // Copy-assignment operator
 };
-
-
-class FenchelNielsenConstructor
-{
-public:
-    FenchelNielsenConstructor(const std::vector<double> & lengths, const std::vector<double> & twists);
-    ~FenchelNielsenConstructor();
-
-    IsomH2Representation getUnnormalizedRepresentation(DiscreteGroup *group);
-    IsomH2Representation getRepresentation(DiscreteGroup *group);
-
-private:
-    FenchelNielsenConstructor(); //Dummy constructor
-    FenchelNielsenConstructor(const FenchelNielsenConstructor &other); // Copy constructor
-    FenchelNielsenConstructor & operator=(FenchelNielsenConstructor other); //Copy-assignment operator
-
-    int genus;
-    double firstTwist;
-    PantsTree * LeftTree;
-    PantsTree * RightTree;
-};
-
 
 
 #endif // FENCHELNIELSENCONSTRUCTOR_H

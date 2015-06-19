@@ -59,6 +59,7 @@ void EquivariantHarmonicMapsFactory::setNiceRhoDomain()
 
 void EquivariantHarmonicMapsFactory::initializeRhoDomain()
 {
+
     if (!(isGenusSet && isRhoDomainSet))
     {
         throw(QString("Error in EquivariantHarmonicMapsFactory::initializeRhoDomain(): not ready to initialize rho domain"));
@@ -69,6 +70,7 @@ void EquivariantHarmonicMapsFactory::initializeRhoDomain()
     {
         initializeMesh();
     }
+
 }
 
 void EquivariantHarmonicMapsFactory::initializeRhoTarget()
@@ -96,7 +98,7 @@ void EquivariantHarmonicMapsFactory::setNiceRhoTarget()
     }
     if (genus != 2)
     {
-        std::cout << "Error in EquivariantHarmonicMapsFactory::setNiceRhoTarget(): genus needs to be 2" << std::endl;
+        throw(QString("Error in EquivariantHarmonicMapsFactory::setNiceRhoTarget(): genus needs to be 2"));
     }
     rhoTarget.setNiceRepresentation();
 
@@ -118,21 +120,23 @@ void EquivariantHarmonicMapsFactory::setMeshDepth(int meshDepth)
 
 void EquivariantHarmonicMapsFactory::setRhoDomain(const std::vector<double> &FNLengths, const std::vector<double> FNTwists)
 {
+
+
     if (!isGenusSet)
     {
-        std::cout << "Error in EquivariantHarmonicMapsFactory::setRhoDomain(): genus has not been set" << std::endl;
+        throw(QString("Error in EquivariantHarmonicMapsFactory::setRhoDomain(): genus has not been set"));
     }
     else if ((3*genus != (int) (3+FNLengths.size())) || (3*genus != (int) (3+FNTwists.size())))
     {
-        std::cout << "Error in EquivariantHarmonicMapsFactory::setRhoDomain(): genus does not match number of FN coordinates" << std::endl;
+        throw(QString("Error in EquivariantHarmonicMapsFactory::setRhoDomain(): genus does not match number of FN coordinates"));
     }
     FNLengthsDomain = FNLengths;
     FNTwistsDomain = FNTwists;
 
-    std::cout << "lengths = " << FNLengths << ", twists = " << FNTwists << std::endl;
-
     FenchelNielsenConstructor FN(FNLengths, FNTwists);
     rhoDomain = FN.getRepresentation(&Gamma);
+
+
     isRhoDomainSet = true;
 
     initializeRhoDomain();
@@ -142,11 +146,11 @@ void EquivariantHarmonicMapsFactory::setRhoTarget(const std::vector<double> &FNL
 {
     if (!isGenusSet)
     {
-        std::cout << "Error in EquivariantHarmonicMapsFactory::setRhoTarget(): genus has not been set" << std::endl;
+        throw(QString("Error in EquivariantHarmonicMapsFactory::setRhoTarget(): genus has not been set"));
     }
     else if ((3*genus != (int) (3+FNLengths.size())) || (3*genus != (int) (3+FNTwists.size())))
     {
-        std::cout << "Error in EquivariantHarmonicMapsFactory::setRhoTarget(): genus does not match number of FN coordinates" << std::endl;
+        throw(QString("Error in EquivariantHarmonicMapsFactory::setRhoTarget(): genus does not match number of FN coordinates"));
     }
     FNLengthsTarget = FNLengths;
     FNTwistsTarget = FNTwists;
@@ -200,7 +204,9 @@ void EquivariantHarmonicMapsFactory::initializeMesh()
     {
         throw(QString("Error in EquivariantHarmonicMapsFactory::initializeMesh(): not ready to initialize mesh"));
     }
+
     mesh = H2Mesh(rhoDomain, meshDepth);
+
     isMeshInitialized = true;
     if (isRhoTargetSet)
     {
@@ -217,7 +223,7 @@ void EquivariantHarmonicMapsFactory::resetInit()
 {
     if (!(isGenusSet && isMeshDepthSet && isRhoDomainSet && isRhoTargetSet && isMeshInitialized))
     {
-        std::cout << "Error in EquivariantHarmonicMapsFactory::resetInit: Factory not ready to reset Init" << std::endl;
+        throw(QString("Error in EquivariantHarmonicMapsFactory::resetInit: Factory not ready to reset Init"));
     }
     function = functionInit;
 
@@ -234,7 +240,7 @@ void EquivariantHarmonicMapsFactory::iterate(int n)
 {
     if (!isReady())
     {
-        std::cout << "Error in void EquivariantHarmonicMapsFactory::iterate(): not ready" << std::endl;
+        throw(QString("Error in void EquivariantHarmonicMapsFactory::iterate(): not ready"));
     }
     iterator.iterate(n);
     refreshFunction();

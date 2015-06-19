@@ -101,7 +101,7 @@ std::vector<Word> DiscreteGroup::getWordsOfLengthEqualTo(int n) const
     int numberOfGenerators = generators.size();
     if (n <= 0)
     {
-        std::cout << "There are no words of negative length" << std::endl;
+        throw(QString("Error in DiscreteGroup::getWordsOfLengthEqualTo: no words of negative length"));
     }
     if (n==1)
     {
@@ -158,7 +158,7 @@ std::vector<Word> DiscreteGroup::getWordsOfNonRepeatingLettersLengthEqualTo(int 
     int numberOfGenerators = generators.size();
     if (n <= 0)
     {
-        std::cout << "There are no Words of negative length" << std::endl;
+        throw(QString("Error in DiscreteGroup::getWordsOfNonRepeatingLettersLengthEqualTo: no words of negative length"));
     }
     if (n==1)
     {
@@ -441,7 +441,7 @@ DiscreteGroup DiscreteGroup::amalgamateOverInverse(const DiscreteGroup &Gamma1, 
     int i1, j1;
     if (!Gamma1.findGeneratorIndex(i1, a1) || !Gamma2.findGeneratorIndex(j1, a1inverse))
     {
-        std::cout << "WARNING in DiscreteGroup::amalgamateOverInverse: generator is not in the group!" << std::endl;
+        throw(QString("Error in DiscreteGroup::amalgamateOverInverse: generator is not in the group!"));
     }
 
     std::vector<generatorName> outputGenerators;
@@ -484,7 +484,7 @@ DiscreteGroup DiscreteGroup::doHNNextensionOverInverse(const DiscreteGroup & Gam
     int i1, j1;
     if (!Gamma.findGeneratorIndex(i1, a) || !Gamma.findGeneratorIndex(j1, ainverse))
     {
-        std::cout << "WARNING in DiscreteGroup::amalgamateOverInverse: generator is not in the group!" << std::endl;
+        throw(QString("Error in DiscreteGroup::doHNNextensionOverInverse: generator is not in the group!"));
     }
 
     std::vector<generatorName> outputGenerators;

@@ -30,7 +30,7 @@ PantsTree::PantsTree(int index, const std::vector<double> &CoshHalfLengthsAugmen
 }
 
 PantsTreeNode::PantsTreeNode(int index, const std::vector<double> & coshHalfLengthsAugmented, const std::vector<double> & sinhHalfLengthsAugmented,
-                              const std::vector<double> & twistsNormalized, const std::string & genericCurveName)
+                             const std::vector<double> & twistsNormalized, const std::string & genericCurveName)
     : PantsTree(index, coshHalfLengthsAugmented, sinhHalfLengthsAugmented, genericCurveName)
 {
 
@@ -124,101 +124,119 @@ IsomH2Representation PantsTreeLeaf::getRepresentation(DiscreteGroup *group, H2Is
 
 FenchelNielsenConstructor::FenchelNielsenConstructor(const std::vector<double> &lengths, const std::vector<double> &twists)
 {
-    double l, t;
-    std::vector<double> twistsNormalized;
-    twistsNormalized.reserve(twists.size());
-    for (unsigned int k=0; k<twists.size(); k++)
+    this->lengths = lengths;
+    this->twists = twists;
+    genus=lengths.size()/3 + 1;
+    gLeft = genus/2;
+    gRight = genus - gLeft;
+
+    setNormalizedLengths();
+    setNormalizedTwists();
+    splitAugmentedLengthsAndTwists();
+
+
+    firstTwist = nTwists[0];
+    if(gLeft>1)
     {
-        l = cosh(twists[k]);
-        t = sqrt((l-1.0)/(l+1.0));
-        if (twists[k] < 0)
-        {
-            t = -t;
-        }
-        twistsNormalized.push_back(t);
-    }
-
-
-    std::vector<double> twistsNormalizedAugmentedLeft, twistsNormalizedAugmentedRight;
-    std::vector<double> coshHalfLengthsAugmentedLeft, coshHalfLengthsAugmentedRight, sinhHalfLengthsAugmentedLeft, sinhHalfLengthsAugmentedRight;
-    double S, C;
-
-    int g = lengths.size()/3 + 1;
-    genus = g;
-
-    int gleft = g/2;
-    int gright = g - gleft;
-
-    for (int i1=0; i1<2*gleft - 1; i1++)
-    {
-        coshHalfLengthsAugmentedLeft.push_back(cosh(0.5*lengths[i1]));
-        sinhHalfLengthsAugmentedLeft.push_back(sinh(0.5*lengths[i1]));
-        twistsNormalizedAugmentedLeft.push_back(twistsNormalized[i1]);
-    }
-
-    for (int i2=2*gleft-1; i2<3*gleft - 1; i2++)
-    {
-        C = cosh(0.5*lengths[i2]);
-        S = sinh(0.5*lengths[i2]);
-        coshHalfLengthsAugmentedLeft.push_back(C);
-        sinhHalfLengthsAugmentedLeft.push_back(S);
-        twistsNormalizedAugmentedLeft.push_back(twistsNormalized[i2]);
-        coshHalfLengthsAugmentedLeft.push_back(C);
-        sinhHalfLengthsAugmentedLeft.push_back(S);
-        twistsNormalizedAugmentedLeft.push_back(twistsNormalized[i2]);
-    }
-
-
-    coshHalfLengthsAugmentedRight.push_back(coshHalfLengthsAugmentedLeft[0]);
-    sinhHalfLengthsAugmentedRight.push_back(sinhHalfLengthsAugmentedLeft[0]);
-    twistsNormalizedAugmentedRight.push_back(twistsNormalized[0]);
-
-    for (int j1=0; j1<2*gright - 2; j1++)
-    {
-        coshHalfLengthsAugmentedRight.push_back(cosh(0.5*lengths[j1 + 3*gleft - 1]));
-        sinhHalfLengthsAugmentedRight.push_back(sinh(0.5*lengths[j1 + 3*gleft - 1]));
-        twistsNormalizedAugmentedRight.push_back(twistsNormalized[j1 + 3*gleft - 1]);
-    }
-
-    for (int j2=2*gright-2; j2<3*gright - 2; j2++)
-    {
-        C = cosh(0.5*lengths[j2 + 3*gleft - 3]);
-        S = sinh(0.5*lengths[j2 + 3*gleft - 3]);
-        coshHalfLengthsAugmentedRight.push_back(C);
-        sinhHalfLengthsAugmentedRight.push_back(S);
-        twistsNormalizedAugmentedRight.push_back(twistsNormalized[j2 + 3*gleft -3]);
-        coshHalfLengthsAugmentedRight.push_back(C);
-        sinhHalfLengthsAugmentedRight.push_back(S);
-        twistsNormalizedAugmentedRight.push_back(twistsNormalized[j2 + 3*gleft -3]);
-    }
-
-    firstTwist = twistsNormalized[0];
-    if(gleft>1)
-    {
-        LeftTree = new PantsTreeNode(1, coshHalfLengthsAugmentedLeft, sinhHalfLengthsAugmentedLeft, twistsNormalizedAugmentedLeft, "c");
+        LeftTree = new PantsTreeNode(1, cLengthsLeft, sLengthsLeft, nTwistsLeft, "c");
 
     }
     else
     {
-        LeftTree = new PantsTreeLeaf(1, coshHalfLengthsAugmentedLeft, sinhHalfLengthsAugmentedLeft, twistsNormalizedAugmentedLeft, "c");
+        LeftTree = new PantsTreeLeaf(1, cLengthsLeft, sLengthsLeft, nTwistsLeft, "c");
     }
 
-    if(gright>1)
+    if(gRight>1)
     {
-        RightTree = new PantsTreeNode(1, coshHalfLengthsAugmentedRight, sinhHalfLengthsAugmentedRight, twistsNormalizedAugmentedRight, "d");
+        RightTree = new PantsTreeNode(1, cLengthsRight, sLengthsRight, nTwistsRight, "d");
     }
     else
     {
-        RightTree = new PantsTreeLeaf(1, coshHalfLengthsAugmentedRight, sinhHalfLengthsAugmentedRight, twistsNormalizedAugmentedRight, "d");
+        RightTree = new PantsTreeLeaf(1, cLengthsRight, sLengthsRight, nTwistsRight, "d");
     }
 
 }
-
 
 FenchelNielsenConstructor::~FenchelNielsenConstructor()
 {
     delete LeftTree;
     delete RightTree;
+}
+
+void FenchelNielsenConstructor::setNormalizedTwists()
+{
+    double l, twistOut;
+    nTwists.clear();
+    nTwists.reserve(twists.size());
+    for (auto twist : twists)
+    {
+        l = cosh(twist);
+        twistOut = sqrt((l-1.0)/(l+1.0));
+        if (twist < 0)
+        {
+            twistOut = -twistOut;
+        }
+        nTwists.push_back(twistOut);
+    }
+}
+
+void FenchelNielsenConstructor::setNormalizedLengths()
+{
+    cLengths.clear();
+    sLengths.clear();
+    cLengths.reserve(lengths.size());
+    sLengths.reserve(lengths.size());
+
+    for (const auto length : lengths)
+    {
+        cLengths.push_back(cosh(0.5*length));
+        sLengths.push_back(sinh(0.5*length));
+    }
+}
+
+void FenchelNielsenConstructor::splitAugmentedLengthsAndTwists()
+{
+    for (int i1=0; i1<2*gLeft - 1; i1++)
+    {
+        cLengthsLeft.push_back(cLengths[i1]);
+        sLengthsLeft.push_back(sLengths[i1]);
+        nTwistsLeft.push_back(nTwists[i1]);
+    }
+
+    // what follows is for the leaves
+    for (int i2=2*gLeft-1; i2<3*gLeft - 1; i2++)
+    {
+        cLengthsLeft.push_back(cLengths[i2]);
+        sLengthsLeft.push_back(sLengths[i2]);
+        nTwistsLeft.push_back(nTwists[i2]);
+        cLengthsLeft.push_back(cLengths[i2]);
+        sLengthsLeft.push_back(sLengths[i2]);
+        nTwistsLeft.push_back(nTwists[i2]);
+    }
+
+
+    cLengthsRight.push_back(cLengthsLeft[0]);
+    sLengthsRight.push_back(sLengthsLeft[0]);
+    nTwistsRight.push_back(nTwists[0]);
+
+    for (int j1=0; j1<2*gRight - 2; j1++)
+    {
+        cLengthsRight.push_back(cLengths[j1 + 3*gLeft - 1]);
+        sLengthsRight.push_back(sLengths[j1 + 3*gLeft - 1]);
+        nTwistsRight.push_back(nTwists[j1 + 3*gLeft - 1]);
+    }
+
+    // what follows is for the leaves
+    for (int j2=2*gRight-2; j2<3*gRight - 2; j2++)
+    {
+        cLengthsRight.push_back(cLengths[j2 + 3*gLeft - 1]);
+        sLengthsRight.push_back(sLengths[j2 + 3*gLeft - 1]);
+        nTwistsRight.push_back(nTwists[j2 + 3*gLeft - 1]);
+        cLengthsRight.push_back(cLengths[j2 + 3*gLeft - 1]);
+        sLengthsRight.push_back(sLengths[j2 + 3*gLeft - 1]);
+        nTwistsRight.push_back(nTwists[j2 + 3*gLeft -1]);
+    }
+
 }
 
 IsomH2Representation FenchelNielsenConstructor::getUnnormalizedRepresentation(DiscreteGroup *group)
@@ -322,7 +340,7 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
         bi.append("s").append(s);
         if(!rhoU.getGeneratorImage(bi,tempIsom))
         {
-            std::cout << "problem" << std::endl;
+            throw(QString("Error in FenchelNielsenConstructor::getRepresentation"));
         }
         rhoIsometry.push_back(tempIsom.inverse());
 
@@ -331,7 +349,7 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
         ai.append(s).append("up");
         if(!rhoU.getGeneratorImage(ai,tempIsom))
         {
-            std::cout << "problem" << std::endl;
+            throw(QString("Error in FenchelNielsenConstructor::getRepresentation"));
         }
         rhoIsometry.push_back(tempIsom);
     }
@@ -343,7 +361,7 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
         bi.append("s").append(s);
         if(!rhoU.getGeneratorImage(bi,tempIsom))
         {
-            std::cout << "problem" << std::endl;
+            throw(QString("Error in FenchelNielsenConstructor::getRepresentation"));
         }
         rhoIsometry.push_back(tempIsom.inverse());
 
@@ -352,7 +370,7 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
         ai.append(s).append("up");
         if(!rhoU.getGeneratorImage(ai,tempIsom))
         {
-            std::cout << "problem" << std::endl;
+            throw(QString("Error in FenchelNielsenConstructor::getRepresentation"));
         }
         rhoIsometry.push_back(tempIsom);
 

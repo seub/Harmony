@@ -21,7 +21,6 @@ FenchelNielsenUser::FenchelNielsenUser(ActionHandler *handler, int genus) : hand
 
     createWindow();
     createFactory();
-    refresh();
 }
 
 void FenchelNielsenUser::createWindow()
@@ -32,19 +31,28 @@ void FenchelNielsenUser::createWindow()
     selector = new FNselector(this, N);
     selector->setEnabled(true);
 
-    menu = new FNmenu(this);
+    QString message = QString("NB: The canvas shows the fundamental domain and initial triangulation ")
+            .append(QString(tr("that would be chosen for a <i> domain </i> representation")));
+    infoLabel = new QLabel(message);
+    infoLabel->setWordWrap(true);
+    infoLabel->setVisible(true);
+    infoLabel->setEnabled(true);
+
+    menu = new FNmenu(this, selector->sizeHint().width());
     menu->setEnabled(true);
 
     layout = new QGridLayout;
     layout->setMargin(9);
-    layout->setSpacing(20);
+    layout->setSpacing(6);
 
-    layout->setColumnMinimumWidth(0, menuWidth());
+    //layout->setColumnMinimumWidth(0, menuWidth());
 
-
-    layout->addWidget(canvas, 0, 1, 2, 1);
+    vertSpace = 20;
+    layout->setRowMinimumHeight(1, vertSpace);
+    layout->addWidget(canvas, 0, 1, 4, 1);
     layout->addWidget(selector, 0, 0, Qt::AlignTop);
-    layout->addWidget(menu, 1, 0, Qt::AlignTop);
+    layout->addWidget(infoLabel, 2, 0, Qt::AlignTop);
+    layout->addWidget(menu, 3, 0, Qt::AlignTop);
     setLayout(layout);
 
     setWindowTitle("Fenchel-Nielsen coordinates selector");
@@ -63,6 +71,7 @@ void FenchelNielsenUser::createFactory()
     delegate = (H2CanvasDelegate*) canvas->delegate;
     delegate->buffer.setRhoPointer(&(factory.rhoDomain), "blue");
     delegate->buffer.setMeshPointer(&(factory.mesh), "red");
+    delegate->setShowTranslates(false, false);
 }
 
 void FenchelNielsenUser::optimalSize(unsigned int &outputWidth, unsigned int &outputHeight) const
@@ -72,14 +81,14 @@ void FenchelNielsenUser::optimalSize(unsigned int &outputWidth, unsigned int &ou
 
     int canvasOptimalSize = 0.7*screenHeight;
 
-    outputHeight = std::max(selector->maxHeight() + menu->maxHeight() +
-                            + layout->verticalSpacing(), canvasOptimalSize) + 2*layout->margin() + 2*layout->verticalSpacing();
+    outputHeight = std::max(selector->maxHeight() + menu->maxHeight() + infoLabel->sizeHint().height() + vertSpace
+                            + 2*layout->verticalSpacing(), canvasOptimalSize) + layout->margin();
     if(outputHeight > screenHeight)
     {
-        outputHeight = 0.7*(selector->maxHeight() + menu->maxHeight() +
-                            + 2*layout->verticalSpacing() + 2*layout->margin() + layout->verticalSpacing());
+        outputHeight = 0.7*(selector->maxHeight() + menu->maxHeight() + infoLabel->sizeHint().height() + vertSpace
+                            + 2*layout->verticalSpacing() + layout->margin());
     }
-    outputWidth = std::min(selector->sizeHint().width() + 2*layout->margin() + canvasOptimalSize + layout->horizontalSpacing(), Tools::intRound(0.9*screenWidth));
+    outputWidth = std::min(selector->sizeHint().width() + 2*layout->margin() + canvasOptimalSize + layout->horizontalSpacing(), Tools::intRound(0.7*screenWidth));
 }
 
 int FenchelNielsenUser::menuWidth() const
@@ -117,11 +126,17 @@ void FenchelNielsenUser::refresh()
 {
     std::vector<double> lengths, twists;
     selector->getFNcoordinates(lengths, twists);
+
+
     factory.setRhoDomain(lengths, twists);
+
     delegate->setIsRhoEmpty(false);
     delegate->setIsMeshEmpty(false);
+
     delegate->buffer.refreshRho();
     delegate->buffer.refreshMesh();
+    delegate->refreshTranslates();
+
     delegate->enableRedrawBuffer(true, true);
     canvas->update();
 }
@@ -135,6 +150,21 @@ void FenchelNielsenUser::resizeEvent(QResizeEvent * event)
     {
         canvasResized();
     }
+
+    menu->setMinimumWidth(std::max(selector->sizeHint().width(), menu->sizeHint().width()));
+
+    /*std::cout << "selector width = " << selector->width() << std::endl;
+    std::cout << "selector hint width = " << selector->sizeHint().width() << std::endl;
+    std::cout << "selector maxwidth = " << selector->maxWidth() << std::endl;
+    std::cout << "menu width = " << menu->width() << std::endl;
+    std::cout << "menu hint width = " << menu->width() << std::endl;
+    std::cout << "menu maxWidth = " << menu->maxWidth() << std::endl;
+    std::cout << "menuWidth() = " << menuWidth() << std::endl;*/
+}
+
+void FenchelNielsenUser::showEvent(QShowEvent *)
+{
+    refresh();
 }
 
 void FenchelNielsenUser::canvasResized()
@@ -142,20 +172,20 @@ void FenchelNielsenUser::canvasResized()
     int margin = layout->margin();
     int extMarginV = std::max(selector->geometry().top(), margin);
     int extMarginH = selector->geometry().left();
-    int statusBarHeight = 0;
+    int infoLabelHeight = infoLabel->height() + vertSpace;
     int inputMenuWidth = selector->width();
     int interWidth = layout->horizontalSpacing();
-    int interHeight = layout->verticalSpacing();
+    int interHeight = 0;
 
     int maxWidthH = (width() - (2*extMarginH + inputMenuWidth + interWidth));
-    int maxHeightH = height() - (statusBarHeight + interHeight + extMarginV + margin);
+    int maxHeightH = height() - (interHeight + extMarginV + margin);
 
     int newSizeH, extraWidthH, extraHeightH;
     if (maxWidthH < maxHeightH)
     {
         newSizeH = maxWidthH;
         extraWidthH = 0;
-        extraHeightH = std::max(height() - (statusBarHeight + interHeight + extMarginV + margin) - newSizeH, 0);
+        extraHeightH = std::max(height() - (infoLabelHeight + interHeight + extMarginV + margin) - newSizeH, 0);
     }
     else
     {
@@ -240,8 +270,8 @@ void FNselector::createLayout()
 
     layout->setColumnMinimumWidth(0, maxFirstColWidth());
     //layout->setColumnMinimumWidth(1, maxSecondColWidth());
-    layout->setColumnMinimumWidth(3, vertSpace);
-    layout->setColumnMinimumWidth(2, maxThirdColWidth());
+    layout->setColumnMinimumWidth(2, 4*vertSpace);
+    layout->setColumnMinimumWidth(3, maxThirdColWidth());
     //layout->setColumnMinimumWidth(3, maxFourthColWidth());
 
     setLayout(layout);
@@ -308,7 +338,7 @@ int FNselector::maxFourthColWidth() const
 
 int FNselector::maxWidth() const
 {
-    return maxFirstColWidth() + maxSecondColWidth() + maxThirdColWidth() + maxFourthColWidth() + vertSpace;
+    return maxFirstColWidth() + maxSecondColWidth() + maxThirdColWidth() + maxFourthColWidth() + 4*vertSpace;
 }
 
 int FNselector::maxHeight() const
@@ -340,26 +370,34 @@ void FNselector::getFNcoordinates(std::vector<double> &lengthsOut, std::vector<d
 
 
 
-FNmenu::FNmenu(FenchelNielsenUser *user) : user(user)
+FNmenu::FNmenu(FenchelNielsenUser *user, int minWidth) : user(user)
 {
     setParent(user);
     vertSpace = 5;
 
     createButtons();
     createLayout();
+
+    setMinimumWidth(minWidth);
 }
 
 void FNmenu::createButtons()
 {
-    setButton = new QPushButton("Save coordinates");
+    setButton = new QPushButton("Proceed");
 
     buttonHeight = setButton->sizeHint().height();
+
     setButton->setFixedHeight(buttonHeight);
+    setButton->setMaximumWidth(setButton->sizeHint().width());
     connect(setButton, SIGNAL(clicked()), user, SLOT(saveCoordinates()));
 
     discardButton = new QPushButton("Discard");
     discardButton->setFixedHeight(buttonHeight);
+    discardButton->setMaximumWidth(discardButton->sizeHint().width());
     connect(discardButton, SIGNAL(clicked()), user, SLOT(discard()));
+
+    questionLabel = new QLabel("Save these Fenchel-Nielsen coordinates?");
+    questionLabel->setWordWrap(true);
 }
 
 void FNmenu::createLayout()
@@ -368,31 +406,35 @@ void FNmenu::createLayout()
     layout->setSpacing(0);
 
     layout->setRowMinimumHeight(0, 2*vertSpace);
-    layout->setRowMinimumHeight(1, buttonHeight);
-    layout->setRowMinimumHeight(2, 2*vertSpace);
+    layout->setRowMinimumHeight(1, 4*vertSpace);
+    layout->setRowMinimumHeight(2, 3*vertSpace);
     layout->setRowMinimumHeight(3, buttonHeight);
 
     //layout->setColumnMinimumWidth(0, maxWidth());
     setLayout(layout);
 
-    layout->addWidget(setButton, 1, 0, 1, 1);
+    layout->addWidget(questionLabel, 1, 0, 1, 2);
+    questionLabel->setVisible(true);
+    questionLabel->setEnabled(true);
+
+    layout->addWidget(setButton, 3, 0, 1, 1);
     setButton->setVisible(true);
     setButton->setEnabled(true);
 
-    layout->addWidget(discardButton, 3, 0, 1, 1);
+    layout->addWidget(discardButton, 3, 1, 1, 1);
     discardButton->setVisible(true);
     discardButton->setEnabled(true);
 }
 
 int FNmenu::maxWidth() const
 {
-    return std::max(setButton->sizeHint().width(), discardButton->sizeHint().width());
+    return setButton->sizeHint().width() + discardButton->sizeHint().width();
 }
 
 int FNmenu::maxHeight() const
 {
     int absurdMargin = 1;
-    return QStyle::CE_HeaderLabel + absurdMargin + 2*buttonHeight + 4*vertSpace;
+    return QStyle::CE_HeaderLabel + absurdMargin + 2*buttonHeight + 9*vertSpace;
 }
 
 void FNmenu::resizeEvent(QResizeEvent *)

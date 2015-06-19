@@ -397,7 +397,7 @@ void ActionHandler::discardReceiveFNcoordinates()
     if (expectingFNdomain)
     {
         isRhoDomainSet = false;
-        inputMenu->setRhoImageComboBox->setCurrentIndex(SET_RHO_CHOOSE);
+        inputMenu->setRhoDomainComboBox->setCurrentIndex(SET_RHO_CHOOSE);
         topFactory->subfactory.resetRhoDomain();
         expectingFNdomain = false;
     }
@@ -555,6 +555,7 @@ void ActionHandler::randomFNcoordinates(int genus, std::vector<double> &lengthsO
         twistsOut.push_back(Tools::randDouble(-0.5, 0.5));
     }
 
+    std::cout << "Chosen lengths and twists in selector: " << std::endl;
     std::cout << "lengths = " << lengthsOut << std::endl;
     std::cout << "twists = " << twistsOut << std::endl;
 }

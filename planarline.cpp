@@ -8,8 +8,7 @@ PlanarLine::PlanarLine(const Complex & p1, const Complex & p2)
 {
     if (p1 == p2)
     {
-        std::cout << "Planar Line won't draw a line from a point to itself!" << std::endl;
-        return;
+        throw(QString("Error in PlanarLine::PlanarLine: identical endpoints"));
     }
     point = p1;
     direction = p1 - p2;
@@ -27,7 +26,7 @@ void PlanarLine::setPointAndDirection(Complex & point, Complex & direction)
 {
     if (direction == 0.0)
     {
-        std::cout << "PlanarLine::setPointAndDirection may not assign direction 0" << std::endl;
+       throw(QString("Error in PlanarLine::setPointAndDirection: direction cannot be zero"));
     }
     this->point = point;
     this->direction = direction;
@@ -38,7 +37,7 @@ void PlanarLine::setPerpendicularBisector(const Complex &z1, const Complex &z2)
 {
     if  (z1 == z2)
     {
-        std::cout << "PlanarLine::setValuesForPerpindicularBisector : A point and itself don't have a perpindicular bisector" << std::endl;
+        throw(QString("Error in PlanarLine::setPerpendicularBisector: identical points"));
     }
     point = (z1 + z2) / 2.0;
     direction = I*(z1 - z2) / 2.0;
