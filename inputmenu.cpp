@@ -27,7 +27,7 @@ void InputMenu::createButtons()
     genusLabel = new QLabel("Genus: ");
 
     genusSpinBox = new QSpinBox();
-    genusSpinBox->setRange(2, 7);
+    genusSpinBox->setRange(2, 6);
     genusSpinBox->setValue(2);
     genusSpinBox->setToolTip("Set genus of the surface");
     connect(genusSpinBox, SIGNAL(valueChanged(int)), handler, SLOT(genusClicked(int)));
@@ -51,8 +51,8 @@ void InputMenu::createButtons()
     meshDepthLabel = new QLabel("Mesh depth: ");
 
     meshDepthSpinBox = new QSpinBox();
-    meshDepthSpinBox->setRange(0, 7);
-    meshDepthSpinBox->setValue(3);
+    meshDepthSpinBox->setRange(0, 6);
+    meshDepthSpinBox->setValue(4);
     meshDepthSpinBox->setToolTip("Choose depth of the mesh");
     connect(meshDepthSpinBox, SIGNAL(valueChanged(int)), handler, SLOT(meshDepthClicked(int)));
 

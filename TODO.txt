@@ -105,6 +105,7 @@ rendre affichage plus efficace:
 2. réécrire le dessin des arcs
 
 afficher l'erreur dans la statusbar, permettre à l'algo de s'arrêter quand l'erreur est petite
+what is a good choice of error? maybe L2 norm of tension field
 afficher plein de merde dans la statusbar
 
 mettre des throw Qstring partout où y a des erreurs possibles (track down les cout)
@@ -121,3 +122,9 @@ improve triangulater:
 2. even assuming the current choice, make different choices for cuts? For instance, idea: make the longest cut as small as possible
 
 faire un truc plus propre avec les enum (see basic drawing example of Qt)
+
+try dirichlet domain?
+
+in "show only translates of fundamental domain" (around all vertices), show the translates to depth 2?
+
+le zoom avec wheel marche pas super bien

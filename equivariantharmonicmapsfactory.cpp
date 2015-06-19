@@ -206,6 +206,7 @@ void EquivariantHarmonicMapsFactory::initializeMesh()
     }
 
     mesh = H2Mesh(rhoDomain, meshDepth);
+    emit meshCreated(mesh.nbPoints());
 
     isMeshInitialized = true;
     if (isRhoTargetSet)
@@ -248,9 +249,11 @@ void EquivariantHarmonicMapsFactory::iterate(int n)
 
 void EquivariantHarmonicMapsFactory::run()
 {
+    nbIterations = 0;
     while(!stop)
     {
         iterator.iterate();
+        ++nbIterations;
     }
     refreshFunction();
 }

@@ -69,7 +69,7 @@ void H2MeshFunction::initializePL(const H2Point &basePoint)
 
 void H2MeshFunction::initializePLsmart()
 {
-    H2Point basept = rhoImage.generatePolygon(100).getVertex(0);
+    H2Point basept = rhoImage.generatePolygon().getVertex(0);
     initializePL(basept);
 }
 

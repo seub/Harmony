@@ -6,7 +6,7 @@
 #include "tools.h"
 
 class MathsContainer; class H2CanvasDelegate; class EquivariantHarmonicMapsFactory; class Window; class Canvas;
-class InputMenu; class DisplayMenu; class OutputMenu; class Canvas; class TopFactory;
+class InputMenu; class DisplayMenu; class OutputMenu; class Canvas; class TopFactory; class QStatusBar;
 
 class ActionHandler : public QObject
 {
@@ -14,6 +14,7 @@ class ActionHandler : public QObject
 
     friend class Canvas;
     friend class MainApplication;
+    friend class TopFactory;
 
 public:
     void processMessage(actionHandlerMessage message, int parameter = 0);
@@ -33,8 +34,7 @@ private slots:
     void showTranslatesClicked(int choice);
 
     void finishedComputing();
-    void updateFunction(bool updateTranslates);
-    void updateMesh(bool updateTranslates);
+    void meshCreated(int nbMeshPoints);
 
 private:
     ActionHandler();
@@ -52,14 +52,17 @@ private:
     void setRhoFNDomain();
     void setRhoFNTarget();
 
+    void resetStatusBarMessage();
+
+    void updateFunction(bool updateTranslates);
+    void updateMesh(bool updateTranslates);
+
 
     void setReadyToCompute();
     void setDisplayMenuReady(bool left);
     void dealRhosReady();
     bool isReadyToCompute() const;
 
-    void runDiscreteFlow();
-    void iterateDiscreteFlow(int N);
     void resetDelegatePointers();
 
     Window *window;
@@ -67,6 +70,7 @@ private:
     InputMenu* inputMenu;
     OutputMenu* outputMenu;
     DisplayMenu* displayMenu;
+    QStatusBar *statusBar;
 
     MathsContainer *container;
     TopFactory *topFactory;

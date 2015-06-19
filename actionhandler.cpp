@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QSpacerItem>
 #include <QGridLayout>
+#include <QStatusBar>
 
 #include "equivariantharmonicmapsfactory.h"
 #include "topfactory.h"
@@ -40,6 +41,7 @@ void ActionHandler::setWindow(Window *window)
     outputMenu = window->outputMenu;
     leftCanvas = window->leftCanvas;
     rightCanvas = window->rightCanvas;
+    statusBar = window->statusBar;
 }
 
 void ActionHandler::setContainer(MathsContainer *container)
@@ -67,6 +69,7 @@ void ActionHandler::setFactory()
     topFactory->setHandler(this);
     topFactory->setGenus(inputMenu->getGenus());
     topFactory->setMeshDepth(inputMenu->getMeshDepth());
+    connect(&(topFactory->subfactory), SIGNAL(meshCreated(int)), this, SLOT(meshCreated(int)));
     resetDelegatePointers();
 
 }
@@ -77,6 +80,11 @@ void ActionHandler::setReadyToCompute()
     {
         throw(QString("Error in ActionHandler::setReadyToCompute: test failed"));
     }
+}
+
+void ActionHandler::meshCreated(int nbMeshPoints)
+{
+    statusBar->showMessage(QString("Mesh created with %1 meshpoints").arg(QString::number(nbMeshPoints)), 7000);
 }
 
 void ActionHandler::processMessage(actionHandlerMessage message, int parameter)
@@ -160,7 +168,11 @@ void ActionHandler::outputResetButtonClicked()
 
 void ActionHandler::iterateButtonClicked()
 {
-    iterateDiscreteFlow(outputMenu->getNbIterations());
+    int N = outputMenu->getNbIterations();
+    topFactory->iterateSubfactory(N);
+    statusBar->showMessage(QString("%1 iterations computed in %2s")
+                           .arg(QString::number(N))
+                           .arg(QString::number(topFactory->getTimeElapsed())), 7000);
     updateFunction(true);
     outputMenu->enableReset();
 }
@@ -206,6 +218,25 @@ void ActionHandler::showTranslatesClicked(int choice)
         if (isRhoDomainSet)
         {
             updateMesh(true);
+        }
+
+        int nbMeshpoints = leftDelegate->buffer.mesh->nbPoints(), nbMeshPointsTranslates, nbTranslations;
+        if (aroundVertexNewLeft)
+        {
+            nbTranslations = leftDelegate->buffer.translationsAroundVertex.size();
+            nbMeshPointsTranslates = nbTranslations*nbMeshpoints;
+            statusBar->showMessage(QString("Showing %1 mesh points and %2 translates").arg(QString::number(nbMeshpoints)).arg(QString::number(nbMeshPointsTranslates)), 7000);
+        }
+        else
+        {
+            nbTranslations = leftDelegate->buffer.translationsAroundVertices.size();
+            nbMeshPointsTranslates = nbTranslations*nbMeshpoints;
+            if (aroundVerticesNewLeft)
+            {
+                statusBar->showMessage(QString("Showing %1 mesh points and %2 translates").arg(QString::number(nbMeshpoints)).arg(QString::number(nbMeshPointsTranslates)), 7000);
+            }
+            else statusBar->showMessage(QString("Showing %1 mesh points and %2 fundamental domain translates").
+                                        arg(QString::number(nbMeshpoints)).arg(QString::number(nbTranslations)), 7000);
         }
     }
 
@@ -317,7 +348,7 @@ void ActionHandler::setRhoNiceTarget()
 void ActionHandler::errorMessageForSetRhoNice()
 {
     QMessageBox messageBox;
-    QString message = QString("%1Nice%2 representation can only be set for genus 2").arg(QChar(8220)).arg(QChar(8221));
+    QString message = QString("%1Nice%2 representation is only available for genus 2").arg(QChar(8220)).arg(QChar(8221));
 
 
     QSpacerItem* horizontalSpacer = new QSpacerItem(500, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
@@ -512,11 +543,6 @@ void ActionHandler::meshDepthClicked(int choice)
     dealRhosReady();
 }
 
-void ActionHandler::iterateDiscreteFlow(int N)
-{
-    topFactory->iterateSubfactory(N);
-}
-
 void ActionHandler::stopButtonClicked()
 {
     topFactory->stopHeatFlow();
@@ -555,10 +581,6 @@ void ActionHandler::randomFNcoordinates(int genus, std::vector<double> &lengthsO
         lengthsOut.push_back(Tools::randDouble(1.0, 4.0));
         twistsOut.push_back(Tools::randDouble(-0.5, 0.5));
     }
-
-    std::cout << "Chosen lengths and twists in selector: " << std::endl;
-    std::cout << "lengths = " << lengthsOut << std::endl;
-    std::cout << "twists = " << twistsOut << std::endl;
 }
 
 void ActionHandler::updateFunction(bool updateTranslates)
@@ -590,6 +612,10 @@ void ActionHandler::finishedComputing()
     displayMenu->setEnabled(true);
     outputMenu->switchStopToComputeButton();
     outputMenu->enableAll();
+
+    statusBar->showMessage(QString("%1 iterations computed in %2s")
+                           .arg(QString::number(topFactory->getNbIterations()))
+                           .arg(QString::number(topFactory->getTimeElapsed())), 7000);
 
     rightDelegate->setShowTranslates(showTranslatesAroundVertexRight, showTranslatesAroundVerticesRight);
     updateFunction(true);

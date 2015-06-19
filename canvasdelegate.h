@@ -72,7 +72,7 @@ private:
                                                      const Complex &endpoint1, const Complex &endpoint2, Complex &zOut1, Complex &zOut2) const;
     bool dealWithAlmostStraightArc(const Complex &center, double radius,
                                    const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1, bool back = true);
-    bool isAlmostStraightArc(const Complex &center, double radius, const Complex &endpoint1, const Complex &endpoint2) const;
+    bool isAlmostStraightArc(const Complex &center, double radius, const Complex &endpoint1, const Complex &endpoint2);
 
 
     QPen *penBack, *penTop;

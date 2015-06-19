@@ -46,6 +46,9 @@ public slots:
     void run();
     void stopRunning();
 
+signals:
+    void meshCreated(int nbMeshPoints);
+
 private:
     void resetBooleans();
     bool isReady() const;
@@ -60,6 +63,7 @@ private:
     H2Mesh mesh;
     H2MeshFunction functionInit, function;
     H2MeshFunctionIterator iterator;
+    int nbIterations;
 };
 
 #endif // EQUIVARIANTHARMONICMAPSFACTORY_H

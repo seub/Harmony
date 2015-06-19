@@ -256,13 +256,15 @@ bool CanvasDelegate::dealWithAlmostStraightArc(const Complex &center, double rad
     }
     else if (isAlmostStraightArc(center, radius, endpoint1, endpoint2))
     {
+        //drawSegment(endpoint1, endpoint2, "green", width, back);
+        //return false;
         drawSegment(endpoint1, endpoint2, color, width, back);
         return true;
     }
     else return false;
 }
 
-bool CanvasDelegate::isAlmostStraightArc(const Complex &center, double radius, const Complex &endpoint1, const Complex &endpoint2) const
+bool CanvasDelegate::isAlmostStraightArc(const Complex &center, double radius, const Complex &endpoint1, const Complex &endpoint2)
 {
     Complex endpoint2nor = (endpoint2 - center)*conj(endpoint1 - center)/(radius*radius);
     double X2 = real(endpoint2nor), Y2 = imag(endpoint2nor);

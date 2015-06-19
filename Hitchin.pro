@@ -4,6 +4,11 @@
 #
 #-------------------------------------------------
 
+unix:QMAKE_CXXFLAGS_RELEASE -= -O
+unix:QMAKE_CXXFLAGS_RELEASE -= -O1
+unix:QMAKE_CXXFLAGS_RELEASE -= -O2
+unix:QMAKE_CXXFLAGS_RELEASE *= -O3
+
 QT += core \
     widgets \
     opengl

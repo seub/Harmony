@@ -124,7 +124,7 @@ void H2CanvasDelegate::redrawBuffer(bool back, bool top, const H2Isometry &mobiu
     enableRedrawBufferTop = false;
 
     //std::cout << "redraw buffer for delegate type " << delegateType << " :" << (clock() - start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
-    std::cout << "nbArcs = " << nbArcs << ", nbStraightArcs = " << nbStraightArcs << ", nbAlmostStraightArcs = " << nbAlmostStraightArcs << std::endl;
+    //std::cout << "nbArcs = " << nbArcs << ", nbStraightArcs = " << nbStraightArcs << ", nbAlmostStraightArcs = " << nbAlmostStraightArcs << std::endl;
 }
 
 void H2CanvasDelegate::redrawBufferBack()

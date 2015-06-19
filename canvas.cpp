@@ -80,28 +80,23 @@ void Canvas::changeDelegate(CanvasDelegateType delegateType, ActionHandler *hand
 void Canvas::paintEvent(QPaintEvent *event)
 {
     //std::cout << "Entering Canvas::paintEvent at time " << std::endl;
-    clock_t t0, t1, t2;
-    t0 = clock();
+    //clock_t t0 = clock()
 
 
     delegate->redrawBuffer(delegate->enableRedrawBufferBack, delegate->enableRedrawBufferTop);
     delegate->enableRedrawBuffer(false, false);
-
-    t1 = clock();
 
     QPainter canvasPainter(this);
     canvasPainter.setClipRegion(event->region());
     canvasPainter.drawImage(0, 0, *(delegate->getImageBack()));
     canvasPainter.drawImage(0, 0, *(delegate->getImageTop()));
 
-    t2 = clock();
-
     if (delegate->delegateType == H2DELEGATETARGET)
     {
         delegate->handler->processMessage(END_CANVAS_REPAINT, delegate->delegateType);
     }
 
-    std::cout << "time spend painting canvas: " << (t2 -t0)*1.0/CLOCKS_PER_SEC << "s, including " << (t1 -t0)*1.0/CLOCKS_PER_SEC << "s to redraw buffer" << std::endl;
+    //std::cout << "time spend painting canvas: " << (clock() -t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     //std::cout << "Leaving Canvas::paintEvent" << std::endl;
 }
 
