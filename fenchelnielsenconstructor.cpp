@@ -322,7 +322,7 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
         bi.append("s").append(s);
         if(!rhoU.getGeneratorImage(bi,tempIsom))
         {
-            std::cout << "problem" << std::endl;
+            throw(QString("Error in FenchelNielsenConstructor::getRepresentation"));
         }
         rhoIsometry.push_back(tempIsom.inverse());
 
@@ -331,7 +331,7 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
         ai.append(s).append("up");
         if(!rhoU.getGeneratorImage(ai,tempIsom))
         {
-            std::cout << "problem" << std::endl;
+            throw(QString("Error in FenchelNielsenConstructor::getRepresentation"));
         }
         rhoIsometry.push_back(tempIsom);
     }
@@ -343,7 +343,7 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
         bi.append("s").append(s);
         if(!rhoU.getGeneratorImage(bi,tempIsom))
         {
-            std::cout << "problem" << std::endl;
+            throw(QString("Error in FenchelNielsenConstructor::getRepresentation"));
         }
         rhoIsometry.push_back(tempIsom.inverse());
 
@@ -352,7 +352,7 @@ IsomH2Representation FenchelNielsenConstructor::getRepresentation(DiscreteGroup 
         ai.append(s).append("up");
         if(!rhoU.getGeneratorImage(ai,tempIsom))
         {
-            std::cout << "problem" << std::endl;
+            throw(QString("Error in FenchelNielsenConstructor::getRepresentation"));
         }
         rhoIsometry.push_back(tempIsom);
 

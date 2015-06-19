@@ -20,6 +20,7 @@ class FenchelNielsenUser : public QWidget, public CanvasContainer
 public:
     FenchelNielsenUser(ActionHandler *handler, int genus);
     void resizeEvent(QResizeEvent *event);
+    void showEvent(QShowEvent *);
 
 public slots:
     void saveCoordinates();

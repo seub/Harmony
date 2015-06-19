@@ -211,8 +211,8 @@ void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std
 {
     if (neighbors.size() != 6)
     {
-        std::cout << "Error in H2Point::computeQuadraticWeights: there needs to be 6 neighbors (you gave me "
-                     << neighbors.size() << ")" << std::endl;
+        QString errorMessage = QString("Error in H2Point::computeQuadraticWeights: there needs to be 6 neighbors (you gave me %1) ").arg(QString::number(neighbors.size()));
+        throw(errorMessage);
     }
 
     std::vector<double> neighborsInTangentSpaceX, neighborsInTangentSpaceY;
@@ -245,7 +245,7 @@ void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std
     vec(0) = 1; vec(1) = 0; vec(2) = 0; vec(3) = 0;
     vec(4) = epsilon*epsilon/4.0; vec(5) = epsilon*epsilon/4.0;
 
-    std::cout << "List of angles:";
+    //std::cout << "List of angles:";
     for(int j=0; j<6; ++j)
     {
         xj = neighborsInTangentSpaceX[j];
@@ -256,9 +256,9 @@ void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std
         m(3,j) = xj*yj;
         m(4,j) = xj*xj;
         m(5,j) = yj*yj;
-        std::cout << atan2(yj, xj) << ", ";
+        //std::cout << atan2(yj, xj) << ", ";
     }
-    std::cout << std::endl;
+    //std::cout << std::endl;
 
     out = m.colPivHouseholderQr().solve(vec);
 
@@ -269,7 +269,7 @@ void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std
 
 
     //Tests
-    int counter=0;
+    /*int counter=0;
     std::cout << "List of weights: ";
     for(int j=0; j<6; ++j)
     {
@@ -280,7 +280,7 @@ void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std
         std::cout << out(j) << ", ";
     }
     std::cout << std::endl;
-    std::cout << "Number of negative weights:" << counter << std::endl;
+    std::cout << "Number of negative weights:" << counter << std::endl;*/
 
 
     /*sum=0.0;
@@ -349,7 +349,7 @@ H2Point H2Point::centroid(const std::vector<H2Point> &points, const std::vector<
 
     if (points.size() != weights.size())
     {
-        std::cout << "error in centroid" << std::endl;
+        throw(QString("Error in  H2Point::centroid: number of points does not match number of weights"));
     }
 
     std::vector<double> X,Y,Z;

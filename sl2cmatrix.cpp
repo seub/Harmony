@@ -89,12 +89,11 @@ SL2CMatrix SL2CMatrix::adjoint() const
 
 void SL2CMatrix::getRealPart(SL2RMatrix & output) const
 {
-    if(isReal())
+    if(!isReal())
     {
-        output = SL2RMatrix(real(a),real(b),real(c),real(d));
-        return;
+        std::cout << "Warning in getRealPart: some entries are far from real" << std::endl;
     }
-    else std::cout << "That's not a real matrix." << std::endl;
+    output = SL2RMatrix(real(a),real(b),real(c),real(d));
 }
 
 

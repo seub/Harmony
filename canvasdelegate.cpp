@@ -378,7 +378,7 @@ void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radi
         }
         else
         {
-            std::cout << "ERROR in CanvasDelegate::intersectsCanvasBoundary: interior endpoint not found" << std::endl;
+            throw(QString("ERROR in CanvasDelegate::intersectsCanvasBoundary: interior endpoint not found"));
         }
         break;
 
@@ -398,7 +398,7 @@ void CanvasDelegate::intersectsCanvasBoundary(const Complex &center, double radi
         break;
 
     default:
-        std::cout << "ERROR in CanvasDelegate::intersectsCanvasBoundary: too many intersections!" << std::endl;
+        throw(QString("ERROR in CanvasDelegate::intersectsCanvasBoundary: too many intersections!"));
         break;
     }
 

@@ -300,7 +300,7 @@ void H2PolygonTriangulater::completeCutsAndSides()
         {
             if (filledSides[i1])
             {
-                std::cout << "ERROR in H2PolygonTriangulater::completeCutsAndSides: side already affected" << std::endl;
+                throw(QString("Error in H2PolygonTriangulater::completeCutsAndSides: side already affected"));
             }
             sideTrianglesIndices[i1] = i;
             sideTrianglesBoundarySideIndices[i1] = 0;
@@ -310,7 +310,7 @@ void H2PolygonTriangulater::completeCutsAndSides()
         {
             if (filledRight[N*i1 + i2])
             {
-                std::cout << "ERROR in H2PolygonTriangulater::completeCutsAndSides: right already affected" << std::endl;
+                throw(QString("Error in H2PolygonTriangulater::completeCutsAndSides: right already affected"));
             }
             right[N*i1 + i2] = i;
             filledRight[N*i1 + i2] = true;
@@ -319,7 +319,7 @@ void H2PolygonTriangulater::completeCutsAndSides()
         {
             if (filledSides[i2])
             {
-                std::cout << "ERROR in H2PolygonTriangulater::completeCutsAndSides: side already affected" << std::endl;
+                throw(QString("Error in H2PolygonTriangulater::completeCutsAndSides: side already affected"));
             }
             sideTrianglesIndices[i2] = i;
             sideTrianglesBoundarySideIndices[i2] = 1;
@@ -329,7 +329,7 @@ void H2PolygonTriangulater::completeCutsAndSides()
         {
             if (filledRight[N*i2 + i3])
             {
-                std::cout << "ERROR in H2PolygonTriangulater::completeCutsAndSides: right already affected" << std::endl;
+                throw(QString("Error in H2PolygonTriangulater::completeCutsAndSides: right already affected"));
             }
             right[N*i2 + i3] = i;
             filledRight[N*i2 + i3] = true;
@@ -338,7 +338,7 @@ void H2PolygonTriangulater::completeCutsAndSides()
         {
             if (filledSides[N-1])
             {
-                std::cout << "ERROR in H2PolygonTriangulater::completeCutsAndSides: side already affected" << std::endl;
+                throw(QString("Error in H2PolygonTriangulater::completeCutsAndSides: side already affected"));
             }
             sideTrianglesIndices[N-1] = i;
             sideTrianglesBoundarySideIndices[N-1] = 2;
@@ -348,7 +348,7 @@ void H2PolygonTriangulater::completeCutsAndSides()
         {
             if (filledLeft[N*i1 + i3])
             {
-                std::cout << "ERROR in H2PolygonTriangulater::completeCutsAndSides: left already affected" << std::endl;
+                throw(QString("Error in H2PolygonTriangulater::completeCutsAndSides: left already affected"));
             }
 
             left[N*i1 + i3] = i;
@@ -363,11 +363,11 @@ void H2PolygonTriangulater::completeCutsAndSides()
             k = N*i + j;
             if (j < i + 2 && (filledLeft[k] || filledRight[k]))
             {
-                std::cout << "ERROR in H2PolygonTriangulater::completeCutsAndSides: not supposed to be filled" << std::endl;
+                throw(QString("Error in H2PolygonTriangulater::completeCutsAndSides: not supposed to be filled"));
             }
             if (filledLeft[k] ^ filledRight[k])
             {
-                std::cout << "ERROR in H2PolygonTriangulater::completeCutsAndSides: left and right don't match" << std::endl;
+                throw(QString("Error in H2PolygonTriangulater::completeCutsAndSides: left and right don't match"));
             }
             if (filledLeft[k] && filledRight[k])
             {
@@ -380,16 +380,14 @@ void H2PolygonTriangulater::completeCutsAndSides()
     {
         if (!filledSides[i])
         {
-            std::cout << "ERROR in H2PolygonTriangulater::completeCutsAndSides: not all sides were filled" << std::endl;
+            throw(QString("Error in H2PolygonTriangulater::completeCutsAndSides: not all sides were filled"));
         }
     }
 
     if (triangles.size() != 1 + cuts.size())
     {
-        std::cout << "ERROR in H2PolygonTriangulater::completeCutsAndSides: Euler test failed" << std::endl;
+        throw(QString("Error in H2PolygonTriangulater::completeCutsAndSides: Euler test failed"));
     }
-
-    return;
 }
 
 void H2PolygonTriangulater::triangulate()

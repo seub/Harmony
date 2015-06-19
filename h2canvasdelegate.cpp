@@ -102,7 +102,7 @@ void H2CanvasDelegate::drawH2Triangle(const H2Triangle &triangle, const QColor &
 
 void H2CanvasDelegate::redrawBuffer(bool back, bool top, const H2Isometry &mobius)
 {
-    clock_t start = clock();
+    //clock_t start = clock();
     nbArcs = 0;
     nbStraightArcs = 0;
     nbAlmostStraightArcs = 0;

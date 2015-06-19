@@ -27,7 +27,7 @@ Complex CP1Point::getComplexCoordinate() const
     }
     else
     {
-        std::cout << "Infinity is not in C" << std::endl;
+        std::cout << "Warning in CP1Point::getComplexCoordinate(): [1 : 0] is not a complex number" << std::endl;
         return Complex(1.0/0.0);
     }
 }

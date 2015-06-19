@@ -66,7 +66,7 @@ void H3Isometry::setByMappingThreeCP1PointsToZeroOneInfinity(const CP1Point &p1,
     Complex a, b, c, d, z1, z2, z3;
     if (p1==p2 || p2==p3 || p1==p2)
     {
-        std::cout << "ERROR in H3Isometry::setByMappingThreeCP1PointsToZeroOneInfinity: the points are not distinct!" << std::endl;
+        throw(QString("ERROR in H3Isometry::setByMappingThreeCP1PointsToZeroOneInfinity: the points are not distinct!"));
     }
     else
     {

@@ -72,7 +72,7 @@ bool intersectCircleAndLine(Circle &C, PlanarLine &L, Complex &out1, Complex &ou
     double Delta = b*b - a*c;
     if (Delta < 0.0)
     {
-        std::cout <<  "Error in intersectCircleAndLine" << std::endl;
+        throw(QString("Error in global function intersectCircleAndLine"));
         return false;
     }
     double s1 = (-b - sqrt(Delta)) / a;

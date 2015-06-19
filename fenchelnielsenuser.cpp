@@ -21,7 +21,6 @@ FenchelNielsenUser::FenchelNielsenUser(ActionHandler *handler, int genus) : hand
 
     createWindow();
     createFactory();
-    refresh();
 }
 
 void FenchelNielsenUser::createWindow()
@@ -156,6 +155,11 @@ void FenchelNielsenUser::resizeEvent(QResizeEvent * event)
     std::cout << "menu hint width = " << menu->width() << std::endl;
     std::cout << "menu maxWidth = " << menu->maxWidth() << std::endl;
     std::cout << "menuWidth() = " << menuWidth() << std::endl;*/
+}
+
+void FenchelNielsenUser::showEvent(QShowEvent *)
+{
+    refresh();
 }
 
 void FenchelNielsenUser::canvasResized()

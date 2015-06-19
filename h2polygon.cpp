@@ -313,7 +313,7 @@ void H2Polygon::optimalMobius(H2Isometry &output) const
         }
         else
         {
-            std::cout << "ERROR in H2Polygon::optimalMobius(): geodesic is neither circle nor line ?!" << std::endl;
+            throw(QString("ERROR in H2Polygon::optimalMobius(): geodesic is neither circle nor line ?!"));
         }
     }
     
