@@ -21,6 +21,7 @@ H2CanvasDelegate::H2CanvasDelegate(int sizeX, int sizeY, ActionHandler *handler)
     //std::cout << "Entering H2CanvasDelegate::CanvasDelegate" << std::endl;
     delegateType = H2DELEGATE;
     mobius.setIdentity();
+    mobiusing = false;
     showTranslatesAroundAllVertices = true;
     drawCircle(0, 1);
     resetHighlighted();
@@ -274,7 +275,11 @@ void H2CanvasDelegate::mousePress(QMouseEvent *mouseEvent)
         }
         else
         {
-            savedMobius = mobius;
+            if (norm(PixelToComplexCoordinates(mouseX, mouseY)) < 1.0)
+            {
+                mobiusing = true;
+                savedMobius = mobius;
+            }
         }
     }
 
@@ -309,7 +314,7 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
         {
             mouseShift(mouseEvent->x(), mouseEvent->y());
         }
-        else
+        else if (mobiusing)
         {
             Complex mouseNew(PixelToComplexCoordinates(mouseEvent->x(), mouseEvent->y()));
             if (norm(mouseNew)< 1.0)
@@ -327,9 +332,20 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
     subMouseMove(mouseEvent);
 }
 
+void H2CanvasDelegate::mouseRelease(QMouseEvent *)
+{
+    mobiusing = false;
+}
+
+void H2CanvasDelegate::enter()
+{
+    mobiusing = false;
+}
+
 void H2CanvasDelegate::leave()
 {
     resetHighlighted();
+    mobiusing = false;
 }
 
 void H2CanvasDelegate::resetHighlighted()

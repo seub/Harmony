@@ -5,7 +5,7 @@
 
 #include "tools.h"
 
-class QGridLayout; class QComboBox; class QLabel;
+class QGridLayout; class QComboBox; class QLabel; class QPushButton;
 
 class Window; class ActionHandler;
 
@@ -38,6 +38,7 @@ private:
     ActionHandler *handler;
 
     QGridLayout *layout;
+    QPushButton *resetViewButton;
     QLabel *showTranslatesLabel;
     QComboBox *showTranslatesComboBox;
     int vertSpace;

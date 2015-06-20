@@ -123,9 +123,16 @@ void Canvas::mouseMoveEvent(QMouseEvent *mouseEvent)
     update();
 }
 
+void Canvas::mouseReleaseEvent(QMouseEvent *mouseEvent)
+{
+    delegate->mouseRelease(mouseEvent);
+    update();
+}
+
 void Canvas::enterEvent(QEvent *)
 {
     setFocus();
+    delegate->enter();
 }
 
 void Canvas::leaveEvent(QEvent *)

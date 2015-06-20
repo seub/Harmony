@@ -50,10 +50,12 @@ public:
 
     void enableRedrawBuffer(bool back = true, bool top = true);
 
-    virtual void mousePress(QMouseEvent * mouseEvent) = 0;
-    virtual void mouseMove(QMouseEvent * mouseEvent) = 0;
-    virtual void keyPress(QKeyEvent * keyEvent) = 0;
-    virtual void leave() = 0;
+    virtual void mousePress(QMouseEvent *) {}
+    virtual void mouseMove(QMouseEvent *) {}
+    virtual void mouseRelease(QMouseEvent *) {}
+    virtual void keyPress(QKeyEvent *) {}
+    virtual void enter() {}
+    virtual void leave() {}
 
 private:
     CanvasDelegate(); // Dummy constructor

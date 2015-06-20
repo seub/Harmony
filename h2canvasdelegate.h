@@ -51,10 +51,15 @@ protected:
 
     virtual void mousePress(QMouseEvent * mouseEvent);
     virtual void mouseMove(QMouseEvent * mouseEvent);
+    virtual void mouseRelease(QMouseEvent *);
     virtual void keyPress(QKeyEvent * keyEvent);
     virtual void subMouseMove(QMouseEvent *) {}
     virtual void subKeyPress(QKeyEvent *) {}
+    virtual void enter();
     virtual void leave();
+
+
+    bool mobiusing;
 
     H2Buffer buffer;
     H2Isometry mobius;

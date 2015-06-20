@@ -246,7 +246,7 @@ template <> H2Polygon IsomH2Representation::generatePolygon(int tilingSize) cons
     }
 
     end = clock();
-    qDebug() << (end - start)*1.0/CLOCKS_PER_SEC << " time spend in (stupid) IsomH2Representation::generatePolygon(int tilingSize)";
+    qDebug() << (end - start)*1.0/CLOCKS_PER_SEC << " time spent in (stupid) IsomH2Representation::generatePolygon(int tilingSize)";
     return bestPolygon;
 }
 

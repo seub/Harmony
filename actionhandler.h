@@ -32,6 +32,8 @@ private slots:
     void computeButtonClicked();
     void stopButtonClicked();
     void iterateButtonClicked();
+
+    void resetViewButtonClicked();
     void showTranslatesClicked(int choice);
 
     void finishedComputing();

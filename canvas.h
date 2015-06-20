@@ -37,6 +37,7 @@ public:
     void resizeEvent(QResizeEvent *resizeEvent);
     void mousePressEvent(QMouseEvent *mouseEvent);
     void mouseMoveEvent(QMouseEvent *mouseEvent);
+    void mouseReleaseEvent(QMouseEvent *mouseEvent);
     void wheelEvent(QWheelEvent *wheelEvent);
     void keyPressEvent(QKeyEvent *keyEvent);
     void enterEvent(QEvent *);

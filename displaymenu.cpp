@@ -4,6 +4,7 @@
 #include <QStyle>
 #include <QComboBox>
 #include <QLabel>
+#include <QPushButton>
 
 #include "actionhandler.h"
 #include "window.h"
@@ -21,6 +22,9 @@ DisplayMenu::DisplayMenu(Window *window, ActionHandler *handler) : handler(handl
 
 void DisplayMenu::createButtons()
 {
+    resetViewButton = new QPushButton("Reset view");
+    connect(resetViewButton, SIGNAL(clicked()), handler, SLOT(resetViewButtonClicked()));
+
     showTranslatesLabel = new QLabel("Show translates: ");
 
     showTranslatesComboBox = new QComboBox;
@@ -33,6 +37,7 @@ void DisplayMenu::createButtons()
     buttonHeight = showTranslatesComboBox->sizeHint().height();
     showTranslatesComboBox->setFixedHeight(buttonHeight);
     showTranslatesLabel->setFixedHeight(buttonHeight);
+    resetViewButton->setFixedHeight(buttonHeight);
 }
 
 void DisplayMenu::createLayout()
@@ -42,18 +47,24 @@ void DisplayMenu::createLayout()
 
     layout->setRowMinimumHeight(0, 2*vertSpace);
     layout->setRowMinimumHeight(1, buttonHeight);
-    layout->setRowMinimumHeight(2, 1*vertSpace);
+    layout->setRowMinimumHeight(2, 2*vertSpace);
     layout->setRowMinimumHeight(3, buttonHeight);
+    layout->setRowMinimumHeight(4, 1*vertSpace);
+    layout->setRowMinimumHeight(5, buttonHeight);
 
     layout->setColumnMinimumWidth(0, maxLeftColWidth());
 
     setLayout(layout);
 
-    layout->addWidget(showTranslatesLabel, 1, 0, 1, 2);
+    layout->addWidget(resetViewButton, 1, 0, 1, 2);
+    resetViewButton->setVisible(true);
+    resetViewButton->setEnabled(true);
+
+    layout->addWidget(showTranslatesLabel, 3, 0, 1, 2);
     showTranslatesLabel->setVisible(true);
     showTranslatesLabel->setEnabled(true);
 
-    layout->addWidget(showTranslatesComboBox, 3, 0, 1, 2);
+    layout->addWidget(showTranslatesComboBox, 5, 0, 1, 2);
     showTranslatesComboBox->setVisible(true);
     showTranslatesComboBox->setEnabled(true);
 }
@@ -87,7 +98,7 @@ int DisplayMenu::maxWidth() const
 int DisplayMenu::maxHeight() const
 {
     int absurdMargin = 1;
-    return QStyle::CE_HeaderLabel + absurdMargin + 2*buttonHeight + 3*vertSpace;
+    return QStyle::CE_HeaderLabel + absurdMargin + 3*buttonHeight + 5*vertSpace;
 }
 
 void DisplayMenu::resizeEvent(QResizeEvent *)

@@ -179,6 +179,12 @@ void ActionHandler::iterateButtonClicked()
     outputMenu->enableReset();
 }
 
+void ActionHandler::resetViewButtonClicked()
+{
+    leftCanvas->resetView();
+    rightCanvas->resetView();
+}
+
 void ActionHandler::showTranslatesClicked(int choice)
 {
     bool aroundVertexOldLeft = showTranslatesAroundVertexLeft, aroundVerticesOldLeft = showTranslatesAroundVerticesLeft;
