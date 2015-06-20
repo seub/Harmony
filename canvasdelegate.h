@@ -34,17 +34,9 @@ public:
     void drawSegment(const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1, bool back = true);
 
     void drawCircle(const Complex &center, double radius, const QColor &color = "black", int width = 1, bool back = true);
-    void drawCircle(const Circle &C, const QColor &color = "black", int width = 1, bool back = true);
 
-    void drawArcCounterClockwise(const Complex &center, double radius, double angleStart, double angleEnd,
+    void drawSmallerArc(const Complex &center, double radius,
                                  const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1, bool back = true);
-    void drawArcCounterClockwise(const Circle &C, double angle1, double angle2,
-                                 const Complex &endpoint1, const Complex &endpoint2,const QColor &color = "black", int width = 1, bool back = true);
-
-    void drawSmallerArc(const Complex &center, double radius, double angle1, double angle2,
-                        const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1, bool back = true);
-    void drawSmallerArc(const Circle &C, double angle1, double angle2,
-                        const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1, bool back = true);
 
     virtual void redrawBuffer(bool back = true, bool top = true, const H2Isometry &mobius = H2Isometry::identity()) = 0;
 
@@ -52,6 +44,9 @@ public:
     void zoom(double coeff, int centerX, int centerY);
     void mouseShift(int x, int y);
     void shift(int x, int y);
+    void resetView();
+    double xMax() const;
+    double yMin() const;
 
     void enableRedrawBuffer(bool back = true, bool top = true);
 
@@ -67,27 +62,32 @@ private:
     bool isInside(const Complex &point) const;
     void rescale(int sizeX, int sizeY);
     void resetView(int sizeX, int sizeY);
+    virtual void subResetView() {}
     void ComplexToPixelCoordinates(int & xOut, int & yOut, Complex z) const;
-    bool intersectionsOfFullCircleWithCanvasBoundary(const Complex &center, double radius,
-                                                     const Complex &endpoint1, const Complex &endpoint2, Complex &zOut1, Complex &zOut2) const;
-    bool dealWithAlmostStraightArc(const Complex &center, double radius,
+
+    void bestLineSegmentApproximationOfSmallerArc(const Complex &center, double radius, const Complex &endpoint1, const Complex &endpoint2,
+                                                  Complex &newEndpoint1, Complex &newEndpoint2, bool &noBestApproximation, bool &arcOutsideCanvas, bool &failed);
+    bool circleIntersectsCanvasBoundary(const Complex &center, double radius, std::vector<Complex> &intersectionsOut) const;
+    bool dealWithExceptionalArc(const Complex &center, double radius,
                                    const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1, bool back = true);
-    bool isAlmostStraightArc(const Complex &center, double radius, const Complex &endpoint1, const Complex &endpoint2);
+    bool isAlmostSmallStraightArc(const Complex &center, double radius, const Complex &endpoint1, const Complex &endpoint2) const;
+    bool isAlmostInfiniteRadius(double radius) const;
+    static bool liesOnSmallerArc(const Complex &point, const Complex &center, const Complex &endpoint1, const Complex &endpoint2);
 
-
-    QPen *penBack, *penTop;
-    QPainter *painterBack, *painterTop;
 
 protected:
     Complex PixelToComplexCoordinates(int x, int y) const;
 
     QImage *imageBack, *imageTop;
+    QPen *penBack, *penTop;
+    QPainter *painterBack, *painterTop;
 
     CanvasDelegateType delegateType;
     int sizeX, sizeY;
     double scaleX, scaleY;
     double xMin, yMax;
-    int nbArcs, nbStraightArcs, nbAlmostStraightArcs;
+    int nbArcs, nbStraightArcs, nbAlmostStraightArcs; // For testing
+    int nbBestLineFails, nbBestLineCalls; // For testing
 
     double xMinSave, yMaxSave;
     int mouseX, mouseY;
@@ -95,6 +95,7 @@ protected:
 
     ActionHandler *handler;
     bool enableRedrawBufferBack, enableRedrawBufferTop;
+    bool resetPenBack;
 
 };
 

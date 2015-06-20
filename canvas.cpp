@@ -80,7 +80,7 @@ void Canvas::changeDelegate(CanvasDelegateType delegateType, ActionHandler *hand
 void Canvas::paintEvent(QPaintEvent *event)
 {
     //std::cout << "Entering Canvas::paintEvent at time " << std::endl;
-    //clock_t t0 = clock()
+    //clock_t t0 = clock();
 
 
     delegate->redrawBuffer(delegate->enableRedrawBufferBack, delegate->enableRedrawBufferTop);
@@ -96,7 +96,7 @@ void Canvas::paintEvent(QPaintEvent *event)
         delegate->handler->processMessage(END_CANVAS_REPAINT, delegate->delegateType);
     }
 
-    //std::cout << "time spend painting canvas: " << (clock() -t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+    //std::cout << "Time spent painting canvas: " << (clock() -t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     //std::cout << "Leaving Canvas::paintEvent" << std::endl;
 }
 
@@ -151,4 +151,10 @@ void Canvas::rescale()
     //delegate->rescale(width(), height());
     delegate->rescale(width(), width());
     //update();
+}
+
+void Canvas::resetView()
+{
+    delegate->resetView();
+    update();
 }

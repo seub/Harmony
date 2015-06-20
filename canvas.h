@@ -34,7 +34,6 @@ public:
     CanvasDelegate *delegate;
 
     void paintEvent(QPaintEvent *event);
-//public slots:
     void resizeEvent(QResizeEvent *resizeEvent);
     void mousePressEvent(QMouseEvent *mouseEvent);
     void mouseMoveEvent(QMouseEvent *mouseEvent);
@@ -42,6 +41,8 @@ public:
     void keyPressEvent(QKeyEvent *keyEvent);
     void enterEvent(QEvent *);
     void leaveEvent(QEvent *);
+
+    void resetView();
 
 private:
     Canvas(); // Dummy constructor

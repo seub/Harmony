@@ -21,8 +21,8 @@ public:
 
     bool isCircleInDiskModel() const;
     bool getCircleInDiskModel(Circle & output) const;
+    bool getCircleAndEndpointsInDiskModel(Complex &centerOut, double &radiusOut, Complex &endpoint1Out, Complex &endpoint2Out) const;
     bool getLineInDiskModel(PlanarLine & output) const;
-    bool getCircleAndAnglesInDiskModel(Circle & outC, double & outAngle1, double & outAngle2) const;
     bool contains(const H2Point & p) const;
     Complex closestPointToOriginInDiskModel() const;
     H2Geodesic swapOrientation() const;
@@ -54,6 +54,7 @@ public:
     Circle getCircleInDiskModel() const;
     Complex getCircleCenterInDiskModel() const;
     double getCircleRadiusInDiskModel() const;
+    bool getCircleAndEndpointsInDiskModel(Complex &centerOut, double &radiusOut, Complex &endpoint1Out, Complex &endpoint2Out) const;
 
     std::vector<H2Point> getEvenSubdivision(int nbCuts) const;
 
@@ -61,7 +62,6 @@ public:
 
     H2Geodesic getGeodesic() const;
     bool isLineSegmentInDiskModel() const;
-    bool getCircleAndAnglesInDiskModel(Circle & outC, double & outAngle1, double & outAngle2) const;
     void getEndpointsInDiskModel(Complex &output1, Complex &output2) const;
     void getEndpoints(H2Point &output1, H2Point &output2) const;
 

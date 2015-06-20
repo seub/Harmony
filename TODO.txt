@@ -128,3 +128,9 @@ try dirichlet domain?
 in "show only translates of fundamental domain" (around all vertices), show the translates to depth 2?
 
 le zoom avec wheel marche pas super bien
+
+
+
+Optimisation :
+-faire un truc semblable à super_compute_radii for CP. en tout cas envsiager de revenir à une méthode de flot où on choisit le pas.
+-expérimentalement: 2/3 du temps est passé dans convexoid, 1/3 dans evaulate rep. Déjà la partie dans evaluate rep peut être éliminée totalement en le faisant une fois pour toutes.

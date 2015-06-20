@@ -30,20 +30,23 @@ void H2Geodesic::getEndpointsInDiskModel(Complex &z1, Complex &z2) const
     return;
 }
 
-bool H2Geodesic::getCircleAndAnglesInDiskModel(Circle &outC, double &outAngle1, double &outAngle2) const
+bool H2Geodesic::getCircleAndEndpointsInDiskModel(Complex &centerOut, double &radiusOut, Complex &endpoint1Out, Complex &endpoint2Out) const
 {
-    if (!isCircleInDiskModel())
+    endpoint1Out = z1;
+    endpoint2Out = z2;
+
+    if (isCircleInDiskModel())
+    {
+        centerOut = 2.0*(z1*z2)/(z1 + z2);
+        radiusOut = abs(z1 - z2)/abs(z1 + z2);
+        return true;
+    }
+    else
     {
         return false;
     }
-    getCircleInDiskModel(outC);
-    double radius;
-    Complex center;
-    outC.getCenterAndRadius(center,radius);
-    outAngle1 = arg(z1 - center);
-    outAngle2 = arg(z2 - center);
-    return true;
 }
+
 
 bool H2Geodesic::contains(const H2Point & p) const
 {
@@ -340,23 +343,6 @@ bool H2GeodesicArc::isLineSegmentInDiskModel() const
     return imag(z2*conj(z1))==0;
 }
 
-bool H2GeodesicArc::getCircleAndAnglesInDiskModel(Circle &outC, double &outAngle1, double &outAngle2) const
-{
-    Complex z1 = p1.getDiskCoordinate();
-    Complex z2 = p2.getDiskCoordinate();
-    if (imag(z2*conj(z1)) != 0.0)
-    {        
-        outC = getCircleInDiskModel();
-        outAngle1 = arg(z1 - outC.getCenter());
-        outAngle2 = arg(z2 - outC.getCenter());
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
 void H2GeodesicArc::getEndpointsInDiskModel(Complex &output1, Complex &output2) const
 {
     output1 = p1.getDiskCoordinate();
@@ -382,6 +368,22 @@ Circle H2GeodesicArc::getCircleInDiskModel() const
     Complex c = (z2*(1.0+norm(z1)) - z1*(1.0+norm(z2)))/(2.0*I*imag(conj(z1)*z2));
     double r = sqrt(norm(c) - 1);
     return Circle(c, r);
+}
+
+bool H2GeodesicArc::getCircleAndEndpointsInDiskModel(Complex &centerOut, double &radiusOut, Complex &endpoint1Out, Complex &endpoint2Out) const
+{
+    endpoint1Out = p1.getDiskCoordinate();
+    endpoint2Out = p2.getDiskCoordinate();
+    if (imag(endpoint2Out*conj(endpoint1Out)) != 0.0)
+    {
+        centerOut = (endpoint2Out*(1.0+norm(endpoint1Out)) - endpoint1Out*(1.0+norm(endpoint2Out)))/(2.0*I*imag(conj(endpoint1Out)*endpoint2Out));
+        radiusOut = sqrt(norm(centerOut) - 1);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 Complex H2GeodesicArc::getCircleCenterInDiskModel() const

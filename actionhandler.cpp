@@ -163,6 +163,8 @@ void ActionHandler::outputResetButtonClicked()
 {
     topFactory->resetInitSubfactory();
     outputMenu->resetMenu();
+    leftCanvas->resetView();
+    rightCanvas->resetView();
     updateFunction(true);
 }
 
@@ -564,7 +566,7 @@ void ActionHandler::updateMesh(bool updateTranslates)
     {
         leftDelegate->refreshTranslates(false, false);
     }
-    leftDelegate->enableRedrawBuffer(true, false);
+    leftDelegate->enableRedrawBuffer(true, true);
     leftCanvas->update();
 }
 
@@ -599,7 +601,7 @@ void ActionHandler::updateFunction(bool updateTranslates)
     {
         rightDelegate->refreshTranslates(false, false);
     }
-    rightDelegate->enableRedrawBuffer(true, false);
+    rightDelegate->enableRedrawBuffer(true, true);
     rightCanvas->update();
 }
 

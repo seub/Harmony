@@ -24,13 +24,14 @@ public:
 
 private slots:
     void genusClicked(int choice);
-    void meshDepthClicked(int choice);
     void setRhoDomainClicked(int choice);
     void setRhoImageClicked(int choice);
+    void meshDepthClicked(int choice);
+
+    void outputResetButtonClicked();
     void computeButtonClicked();
     void stopButtonClicked();
     void iterateButtonClicked();
-    void outputResetButtonClicked();
     void showTranslatesClicked(int choice);
 
     void finishedComputing();

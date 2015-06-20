@@ -37,7 +37,7 @@ public:
 
     //Specialization to GroupRepresentation<H2ISometry> for closed surface group (i.e. IsomH2Representation)
     H2Polygon generatePolygon(const H2Point & basePoint) const;
-    H2Polygon generatePolygon(int tilingSize = 30) const;
+    H2Polygon generatePolygon(int tilingSize = 70) const;
 
     DiscreteGroup* getGroup() const;
     std::vector<H2Isometry> getSidePairingsForNormalizedFundamentalDomain() const;

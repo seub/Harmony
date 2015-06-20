@@ -47,6 +47,7 @@ protected:
     void redrawBufferTop();
     virtual void subRedrawBufferBack() {}
     virtual void subRedrawBufferTop() {}
+    virtual void subResetView();
 
     virtual void mousePress(QMouseEvent * mouseEvent);
     virtual void mouseMove(QMouseEvent * mouseEvent);

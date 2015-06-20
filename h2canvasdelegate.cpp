@@ -1,6 +1,7 @@
 #include "h2canvasdelegate.h"
 
 #include <QPen>
+#include <QPainter>
 #include <QMouseEvent>
 #include <QApplication>
 
@@ -34,6 +35,12 @@ H2Point H2CanvasDelegate::pixelToH2coordinate(int x, int y) const
     return mobius.inverse()*point;
 }
 
+void H2CanvasDelegate::subResetView()
+{
+    mobius.setIdentity();
+    resetHighlighted();
+}
+
 void H2CanvasDelegate::drawH2Point(const H2Point &p, const QColor &color, int width, bool back)
 {
     Complex z = (mobius*p).getDiskCoordinate();
@@ -51,43 +58,31 @@ void H2CanvasDelegate::drawComplexPointInDiskModel(const Complex &z, const QColo
 
 void H2CanvasDelegate::drawH2Geodesic(const H2Geodesic &L, const QColor &color, int width, bool back)
 {
-    H2Geodesic geodesic =  mobius*L;
-    if (geodesic.isCircleInDiskModel())
+    Complex center, endpoint1, endpoint2;
+    double radius;
+    if ((mobius*L).getCircleAndEndpointsInDiskModel(center, radius, endpoint1, endpoint2))
     {
-        Circle C;
-        double angle1, angle2;
-        geodesic.getCircleAndAnglesInDiskModel(C, angle1, angle2);
-        Complex endpoint1, endpoint2;
-        geodesic.getEndpointsInDiskModel(endpoint1, endpoint2);
-        drawSmallerArc(C, angle1, angle2, endpoint1, endpoint2, color, width, back);
+
+        drawSmallerArc(center, radius, endpoint1, endpoint2, color, width, back);
     }
     else
     {
-        Complex z1, z2;
-        geodesic.getEndpointsInDiskModel(z1, z2);
-        drawSegment(z1, z2, color, width, back);
+        drawSegment(endpoint1, endpoint2, color, width, back);
     }
 }
 
 void H2CanvasDelegate::drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color, int width, bool back)
 {
     ++nbArcs;
-    H2GeodesicArc arc =  mobius*L;
-    if(!arc.isLineSegmentInDiskModel())
+    Complex center, endpoint1, endpoint2;
+    double radius;
+    if((mobius*L).getCircleAndEndpointsInDiskModel(center, radius, endpoint1, endpoint2))
     {
-        Circle C;
-        double angle1, angle2;
-        arc.getCircleAndAnglesInDiskModel(C, angle1, angle2);
-        Complex endpoint1, endpoint2;
-        arc.getEndpointsInDiskModel(endpoint1, endpoint2);
-        drawSmallerArc(C, angle1, angle2, endpoint1, endpoint2, color, width, back);
+        drawSmallerArc(center, radius, endpoint1, endpoint2, color, width, back);
     }
     else
     {
-        ++nbStraightArcs;
-        Complex z1, z2;
-        arc.getEndpointsInDiskModel(z1, z2);
-        drawSegment(z1, z2, color, width, back);
+        drawSegment(endpoint1, endpoint2, color, width, back);
     }
 }
 
@@ -103,9 +98,13 @@ void H2CanvasDelegate::drawH2Triangle(const H2Triangle &triangle, const QColor &
 void H2CanvasDelegate::redrawBuffer(bool back, bool top, const H2Isometry &mobius)
 {
     //clock_t start = clock();
+    // *** For testing ***
     nbArcs = 0;
     nbStraightArcs = 0;
     nbAlmostStraightArcs = 0;
+    nbBestLineFails = 0;
+    nbBestLineCalls = 0;
+    // *** End for testing ***
 
     this->mobius = mobius*this->mobius;
 
@@ -125,6 +124,7 @@ void H2CanvasDelegate::redrawBuffer(bool back, bool top, const H2Isometry &mobiu
 
     //std::cout << "redraw buffer for delegate type " << delegateType << " :" << (clock() - start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
     //std::cout << "nbArcs = " << nbArcs << ", nbStraightArcs = " << nbStraightArcs << ", nbAlmostStraightArcs = " << nbAlmostStraightArcs << std::endl;
+    if (nbBestLineFails != 0) std::cout << "nbBestLineCalls = " << nbBestLineCalls << ", nbBestLineFails = " << nbBestLineFails << std::endl;
 }
 
 void H2CanvasDelegate::redrawBufferBack()
@@ -159,34 +159,66 @@ void H2CanvasDelegate::redrawMeshOrFunction()
     {
         if (showTranslatesAroundAllVertices)
         {
+            penBack->setColor("lightgrey");
+            penBack->setWidth(1);
+            painterBack->setPen(*penBack);
+            resetPenBack = false;
+
             for (const auto & meshArc : buffer.meshOrFunctionArcsTranslatesAroundVertices)
             {
-                drawH2GeodesicArc(meshArc, "lightgrey", 1);
+                drawH2GeodesicArc(meshArc);
             }
+
+            resetPenBack = true;
         }
+
         if (showTranslatesAroundVertex)
         {
+            penBack->setColor("lightgrey");
+            penBack->setWidth(1);
+            painterBack->setPen(*penBack);
+            resetPenBack = false;
+
             for (const auto & meshArc : buffer.meshOrFunctionArcsTranslatesAroundVertex)
             {
                 drawH2GeodesicArc(meshArc, "lightgrey", 1);
             }
+
+            resetPenBack = true;
         }
 
         QColor vDarkGrey(90, 90, 90);
+        penBack->setColor(vDarkGrey);
+        penBack->setWidth(1);
+        painterBack->setPen(*penBack);
+        resetPenBack = false;
+
         for (const auto & side : buffer.meshOrFunctionSidesTranslatesAroundVertices)
         {
-            drawH2GeodesicArc(side, vDarkGrey, 1);
+            drawH2GeodesicArc(side);
         }
+
+        penBack->setColor(buffer.meshOrFunctionColor);
+        penBack->setWidth(1);
+        painterBack->setPen(*penBack);
+        resetPenBack = false;
 
         for (const auto & meshArc : buffer.meshOrFunctionArcs)
         {
-            drawH2GeodesicArc(meshArc, buffer.meshOrFunctionColor, 1);
+            drawH2GeodesicArc(meshArc);
         }
+
+        penBack->setColor(buffer.meshOrFunctionColor);
+        penBack->setWidth(2);
+        painterBack->setPen(*penBack);
+        resetPenBack = false;
 
         for (const auto & side : buffer.meshOrFunctionSides)
         {
-            drawH2GeodesicArc(side, buffer.meshOrFunctionColor, 2);
+            drawH2GeodesicArc(side);
         }
+
+        resetPenBack = true;
     }
     else
     {
@@ -279,12 +311,15 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
         }
         else
         {
-            H2Isometry mobiusChange;
-            Complex mouseOld(PixelToComplexCoordinates(this->mouseX,this->mouseY));
             Complex mouseNew(PixelToComplexCoordinates(mouseEvent->x(), mouseEvent->y()));
+            if (norm(mouseNew)< 1.0)
+            {
+                H2Isometry mobiusChange;
+                Complex mouseOld(PixelToComplexCoordinates(this->mouseX,this->mouseY));
 
-            mobiusChange.setByMappingPointInDiskModelNormalized(mouseOld, mouseNew);
-            mobius = mobiusChange*savedMobius;
+                mobiusChange.setByMappingPointInDiskModelNormalized(mouseOld, mouseNew);
+                mobius = mobiusChange*savedMobius;
+            }
         }
         enableRedrawBuffer();
     }
