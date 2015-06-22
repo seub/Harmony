@@ -46,10 +46,10 @@ template <typename Point> void TriangularSubdivision<Point>::copy(const Triangul
     }
     else
     {
-        A = std::make_unique<TriangularSubdivision>();
-        B = std::make_unique<TriangularSubdivision>();
-        C = std::make_unique<TriangularSubdivision>();
-        O = std::make_unique<TriangularSubdivision>();
+        A = std::unique_ptr<TriangularSubdivision<Point> >(new TriangularSubdivision<Point>);
+        B = std::unique_ptr<TriangularSubdivision<Point> >(new TriangularSubdivision<Point>);
+        C = std::unique_ptr<TriangularSubdivision<Point> >(new TriangularSubdivision<Point>);
+        O = std::unique_ptr<TriangularSubdivision<Point> >(new TriangularSubdivision<Point>);
 
         A->copy(*other.A, points);
         B->copy(*other.B, points);
@@ -121,10 +121,10 @@ template <typename Point> void TriangularSubdivision<Point>::constructIndices(ui
         uint midacIndex = (midacn*(midacn+1))/2 + midacp;
         uint midbcIndex = (midbcn*(midbcn+1))/2 + midbcp;
 
-        A = std::make_unique<TriangularSubdivision>();
-        B = std::make_unique<TriangularSubdivision>();
-        C = std::make_unique<TriangularSubdivision>();
-        O = std::make_unique<TriangularSubdivision>();
+        A = std::unique_ptr<TriangularSubdivision<Point> >(new TriangularSubdivision<Point>);
+        B = std::unique_ptr<TriangularSubdivision<Point> >(new TriangularSubdivision<Point>);
+        C = std::unique_ptr<TriangularSubdivision<Point> >(new TriangularSubdivision<Point>);
+        O = std::unique_ptr<TriangularSubdivision<Point> >(new TriangularSubdivision<Point>);
 
         A->constructIndices(aIndex, midabIndex, midacIndex, depth - 1, totalDepth, an, midabn, midacn, ap, midabp, midacp, points);
         B->constructIndices(midabIndex, bIndex, midbcIndex, depth - 1, totalDepth, midabn, bn, midbcn, midabp, bp, midbcp, points);
