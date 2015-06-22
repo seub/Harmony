@@ -102,7 +102,6 @@ void H2Buffer::refreshMeshOrFunctionSideTranslates()
     {
         throw(QString("Error in H2Buffer::addMeshOrFunctionSideTranslates: mesh/function empty?"));
     }
-
     std::vector<H2GeodesicArc> sideTranslates;
     meshOrFunctionSidesTranslatesAroundVertices.clear();
     meshOrFunctionSidesTranslatesAroundVertices.reserve(translationsAroundVertices.size()*meshOrFunctionSides.size());

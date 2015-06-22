@@ -223,7 +223,6 @@ bool H2Geodesic::closestPoint(const H2Geodesic &L1, const H2Geodesic &L2, H2Poin
     }
     else if (!H2Geodesic::commonPerpendicular(L1,L2,Lperp))
     {
-
         intersectionH2Geodesics(L1,L2,q);
         p1 = q;
         return true;
@@ -256,6 +255,16 @@ bool H2Geodesic::commonPerpendicular(const H2Geodesic &L1, const H2Geodesic &L2,
     L.setEndpointsInDiskModel(c1, c2);
     output = L;
     return true;
+}
+
+double H2Geodesic::distanceGeodesics(const H2Geodesic &L1, const H2Geodesic &L2)
+{
+    H2Point p1,p2;
+    if (!closestPoint(L1,L2,p2) || !closestPoint(L2,L1,p1))
+    {
+        return 0.0;
+    }
+    return H2Point::distance(p1,p2);
 }
 
 bool H2Geodesic::commonEndpointInDiskModel(const H2Geodesic &L1, const H2Geodesic &L2, Complex &z)
@@ -502,7 +511,13 @@ std::vector<H2Point> H2GeodesicArc::getEvenSubdivision(uint nbCuts) const
 }
 
 
-
+bool H2GeodesicArc::shareEndpoint(const H2GeodesicArc &L1, const H2GeodesicArc &L2)
+{
+    H2Point p1,q1,p2,q2;
+    L1.getEndpoints(p1,q1);
+    L2.getEndpoints(p2,q2);
+    return (p1==p2)||(p1==q2)||(q1==p2)||(q1==q2);
+}
 
 
 

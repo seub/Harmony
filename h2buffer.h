@@ -20,7 +20,6 @@ class H2Buffer
     friend class ActionHandler;
     friend class FenchelNielsenUser;
 
-
 public:
     H2Buffer(const H2Buffer &) = delete;
     H2Buffer & operator=(const H2Buffer &) = delete;

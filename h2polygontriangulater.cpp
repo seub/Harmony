@@ -383,6 +383,7 @@ void H2PolygonTriangulater::completeCutsAndSides()
 void H2PolygonTriangulater::triangulate()
 {
     createSteinerPoints();
+    //createSteinerPointsDetailed();
 
     std::vector<uint> indices;
     uint i, N = fullPolygon.nbVertices();
@@ -546,6 +547,32 @@ void H2PolygonTriangulater::createSteinerPoints()
         nbSteinerPoints.push_back(Tools::intRound(2*sideLength/minlength)-1);
     }
 
+    steinerPolygon = H2SteinerPolygon(polygon->getVertices(), nbSteinerPoints);
+    fullPolygon = steinerPolygon.getFullPolygon();
+}
+
+void H2PolygonTriangulater:: createSteinerPointsDetailed()
+{
+    std::vector<uint> nbSteinerPoints;
+    std::vector<H2GeodesicArc> sides = polygon->getSides();
+    std::vector<double> sideDistances, sideLengths;
+    for (const auto & side : sides)
+    {
+        for (const auto & otherSide : sides)
+        {
+            if (!H2GeodesicArc::shareEndpoint(side,otherSide))
+            {
+                sideDistances.push_back(H2Geodesic::distanceGeodesics(side.getGeodesic(),otherSide.getGeodesic()));
+            }
+        }
+        sideLengths.push_back(side.length());
+    }
+    double minDistance;
+    minDistance = *std::min_element(sideDistances.begin(),sideDistances.end());
+    for (const auto & sideLength : sideLengths)
+    {
+        nbSteinerPoints.push_back(Tools::intRound(2*sideLength/minDistance)-1);
+    }
     steinerPolygon = H2SteinerPolygon(polygon->getVertices(), nbSteinerPoints);
     fullPolygon = steinerPolygon.getFullPolygon();
 }

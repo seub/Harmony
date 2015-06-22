@@ -258,3 +258,4 @@ void H2MeshFunction::refreshSubdivisions()
         functionSubdivisions.push_back(TriangularSubdivision<H2Point>(points, depth));
     }
 }
+

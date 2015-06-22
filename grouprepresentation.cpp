@@ -572,6 +572,7 @@ template <> GroupRepresentation<H2Isometry> GroupRepresentation<H2Isometry>::HNN
 
 
 
+
 template class GroupRepresentation<H2Isometry>;
 template class GroupRepresentation<H3Isometry>;
 template class GroupRepresentation<SL2RMatrix>;

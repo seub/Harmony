@@ -632,3 +632,4 @@ void ActionHandler::finishedComputing()
     rightDelegate->setShowTranslates(showTranslatesAroundVertexRight, showTranslatesAroundVerticesRight);
     updateFunction(true);
 }
+

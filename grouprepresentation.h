@@ -13,6 +13,7 @@
 template <typename T> class GroupRepresentation
 {    
     template<typename T2> friend std::ostream & operator<<(std::ostream & out, const GroupRepresentation<T2> & rho);
+    template<typename T2> friend bool operator ==(const GroupRepresentation<T2> &rho1, const GroupRepresentation<T2> &rho2);
     friend class FenchelNielsenConstructor;
 
 public:
@@ -95,6 +96,21 @@ template<typename T> std::ostream & operator<<(std::ostream & out, const GroupRe
         out << generators[i] << " -> " << rho.generatorImages[i] << std::endl;
     }
     return out;
+}
+
+template<typename T2> bool operator==(const GroupRepresentation<T2> &rho1, const GroupRepresentation<T2> &rho2)
+{
+    std::vector<T2> generatorImages1, generatorImages2;
+    generatorImages1 = rho1.getGeneratorImages();
+    generatorImages2 = rho2.getGeneratorImages();
+    bool output = 1;
+    int j=0;
+    while (output && j<(int)generatorImages1.size())
+    {
+        output = generatorImages1[j]==generatorImages2[j];
+        ++j;
+    }
+    return output;
 }
 
 #endif // GROUPREPRESENTATION_H

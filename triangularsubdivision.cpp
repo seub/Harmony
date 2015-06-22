@@ -51,6 +51,13 @@ template <typename Point> void TriangularSubdivision<Point>::copy(const Triangul
         C = std::unique_ptr<TriangularSubdivision<Point> >(new TriangularSubdivision<Point>);
         O = std::unique_ptr<TriangularSubdivision<Point> >(new TriangularSubdivision<Point>);
 
+        /* C++14
+        A = std::make_unique<TriangularSubdivision>();
+        B = std::make_unique<TriangularSubdivision>();
+        C = std::make_unique<TriangularSubdivision>();
+        O = std::make_unique<TriangularSubdivision>();
+        */
+
         A->copy(*other.A, points);
         B->copy(*other.B, points);
         C->copy(*other.C, points);
@@ -96,8 +103,8 @@ template <typename Point> TriangularSubdivision<Point>::TriangularSubdivision(ui
 }
 
 template <typename Point> void TriangularSubdivision<Point>::constructIndices(uint aIndex, uint bIndex, uint cIndex, uint depth, uint totalDepth,
-                                                                  uint an, uint bn, uint cn, uint ap, uint bp, uint cp,
-                                                                  std::shared_ptr< std::vector<Point> > points)
+                                                                              uint an, uint bn, uint cn, uint ap, uint bp, uint cp,
+                                                                              std::shared_ptr< std::vector<Point> > points)
 {
     this->aIndex = aIndex;
     this->bIndex = bIndex;
@@ -125,6 +132,13 @@ template <typename Point> void TriangularSubdivision<Point>::constructIndices(ui
         B = std::unique_ptr<TriangularSubdivision<Point> >(new TriangularSubdivision<Point>);
         C = std::unique_ptr<TriangularSubdivision<Point> >(new TriangularSubdivision<Point>);
         O = std::unique_ptr<TriangularSubdivision<Point> >(new TriangularSubdivision<Point>);
+
+        /* C++14
+        A = std::make_unique<TriangularSubdivision>();
+        B = std::make_unique<TriangularSubdivision>();
+        C = std::make_unique<TriangularSubdivision>();
+        O = std::make_unique<TriangularSubdivision>();
+        */
 
         A->constructIndices(aIndex, midabIndex, midacIndex, depth - 1, totalDepth, an, midabn, midacn, ap, midabp, midacp, points);
         B->constructIndices(midabIndex, bIndex, midbcIndex, depth - 1, totalDepth, midabn, bn, midbcn, midabp, bp, midbcp, points);
