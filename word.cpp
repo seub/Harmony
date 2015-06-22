@@ -80,13 +80,11 @@ std::vector<Word> Word::contract(std::vector<Word> V)
 void Word::clear()
 {
     letters.clear();
-    return;
 }
 
 void Word::push_back(const letter &l)
 {
     letters.push_back(l);
-    return;
 }
 
 letter & Word::back()
@@ -97,7 +95,6 @@ letter & Word::back()
 void Word::reserve(std::vector<letter>::size_type N)
 {
     letters.reserve(N);
-    return;
 }
 
 std::vector<letter>::size_type Word::size() const

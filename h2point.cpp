@@ -34,32 +34,27 @@ void H2Point::getHyperboloidCoordinate(double &x, double &y, double &z) const
     z = (2.0 / s) - 1.0;
     x = (2.0*real(this->z) / s);
     y = (2.0*imag(this->z) / s);
-    return;
 }
 
 void H2Point::setUpperHalfPlaneCoordinate(Complex z)
 {
     Complex I(0.0, 1.0);
     this->z = I*((z - I)/(z + I));
-    return;
 }
 
 void H2Point::setDiskCoordinate(Complex z)
 {
     this->z = z;
-    return;
 }
 
 void H2Point::setHyperboloidProjection(Complex z)
 {
     this->z = z / (1.0 + sqrt(1.0 + norm(z)));
-    return;
 }
 
 void H2Point::setKleinCoordinate(Complex z)
 {
     this->z = z / (1.0 + sqrt(1.0 - norm(z)));
-    return;
 }
 
 double H2Point::distance(const H2Point & p1, const H2Point & p2)
@@ -225,7 +220,7 @@ void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std
 
     H2Isometry A;
     outputWeights.clear();
-    A.setByMappingPointTo0(*this);
+    A.setByMappingPointToOrigin(*this);
     std::vector<H2Point> translatedNeighbors = A*neighbors;
 
     double epsilon = -1.0;
@@ -245,8 +240,7 @@ void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std
     vec(0) = 1; vec(1) = 0; vec(2) = 0; vec(3) = 0;
     vec(4) = epsilon*epsilon/4.0; vec(5) = epsilon*epsilon/4.0;
 
-    //std::cout << "List of angles:";
-    for(int j=0; j<6; ++j)
+    for(uint j=0; j!=6; ++j)
     {
         xj = neighborsInTangentSpaceX[j];
         yj = neighborsInTangentSpaceY[j];
@@ -256,13 +250,11 @@ void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std
         m(3,j) = xj*yj;
         m(4,j) = xj*xj;
         m(5,j) = yj*yj;
-        //std::cout << atan2(yj, xj) << ", ";
     }
-    //std::cout << std::endl;
 
     out = m.colPivHouseholderQr().solve(vec);
 
-    for(int j=0; j<6; ++j)
+    for(uint j=0; j!=6; ++j)
     {
         outputWeights.push_back(out(j));
     }
@@ -270,60 +262,59 @@ void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std
 
     //Tests
     /*int counter=0;
-    std::cout << "List of weights: ";
+    qDebug() << "List of weights: ";
     for(int j=0; j<6; ++j)
     {
         if (out(j)<0.0)
         {
             ++counter;
         }
-        std::cout << out(j) << ", ";
+        qDebug() << out(j);
     }
-    std::cout << std::endl;
-    std::cout << "Number of negative weights:" << counter << std::endl;*/
+    qDebug() << "Number of negative weights:" << counter;
 
 
-    /*sum=0.0;
+    sum=0.0;
     for(int j=0; j<6; ++j)
     {
         sum += out(j)*neighborsInTangentSpaceX[j];
     }
-    std::cout << "A mesh point has weighted sum of X coordinates " << sum << std::endl;
+    qDebug() << "A mesh point has weighted sum of X coordinates " << sum;
 
     sum=0.0;
     for(int j=0; j<6; ++j)
     {
         sum += out(j)*neighborsInTangentSpaceY[j];
     }
-    std::cout << "A mesh point has weighted sum of Y coordinates " << sum << std::endl;
+    qDebug() << "A mesh point has weighted sum of Y coordinates " << sum;
 
     sum=0.0;
     for(int j=0; j<6; ++j)
     {
         sum += out(j)*neighborsInTangentSpaceX[j]*neighborsInTangentSpaceY[j];
     }
-    std::cout << "A mesh point has weighted sum of X*Y coordinates " << sum << std::endl;
+    qDebug() << "A mesh point has weighted sum of X*Y coordinates " << sum;
 
     sum=0.0;
     for(int j=0; j<6; ++j)
     {
         sum += out(j)*neighborsInTangentSpaceX[j]*neighborsInTangentSpaceX[j];
     }
-    std::cout << "A mesh point has weighted sum of X^2 coordinates " << sum-(epsilon*epsilon/4.0) << std::endl;
+    qDebug() << "A mesh point has weighted sum of X^2 coordinates " << sum-(epsilon*epsilon/4.0);
 
     sum=0.0;
     for(int j=0; j<6; ++j)
     {
         sum += out(j)*neighborsInTangentSpaceY[j]*neighborsInTangentSpaceY[j];
     }
-    std::cout << "A mesh point has weighted sum of Y^2 coordinates " << sum-(epsilon*epsilon/4.0) << std::endl;
+    qDebug() << "A mesh point has weighted sum of Y^2 coordinates " << sum-(epsilon*epsilon/4.0);
 
     sum = 0.0;
     for (auto neighborWeight : outputWeights)
     {
         sum += neighborWeight;
     }
-    std::cout << "sum of weights = " << sum << std::endl;*/
+    qDebug() << "sum of weights = " << sum;*/
 }
 
 
@@ -345,7 +336,7 @@ bool operator ==(H2Point & p1, H2Point & p2)
 
 H2Point H2Point::centroid(const std::vector<H2Point> &points, const std::vector<double> &weights)
 {
-    //assert sum weights = 1
+    // Check sum of weights
 
     if (points.size() != weights.size())
     {
@@ -404,16 +395,3 @@ bool H2Point::compareAngles(const H2Point &p1, const H2Point &p2)
     }
     else return (y2<0.0);
 }
-
-bool compareTriples(const triple &t1, const triple &t2)
-{
-    //assert that std::get<0>(t1) and std::get<0>(t2) are the same.
-    H2Point p(std::get<0>(t1)), p1(std::get<1>(t1)), p2(std::get<1>(t2));
-    return p.compareAngles(p1, p2);
-}
-
-//bool compareQuadruples(const quadruple &q1, const quadruple &q2)
-//{
-//assert that std::get<0>(q1) and std::get<0>(q2) are the same.
-//    return std::get<0>(q1).compareAngles(std::get<1>(q1),std::get<1>(q2));
-//}

@@ -11,10 +11,8 @@
 #include "circle.h"
 #include "tools.h"
 
-CanvasDelegate::CanvasDelegate(int sizeX, int sizeY, ActionHandler *handler) : handler(handler)
+CanvasDelegate::CanvasDelegate(uint sizeX, uint sizeY, ActionHandler *handler) : handler(handler)
 {
-    //std::cout << "Entering CanvasDelegate::CanvasDelegate" << std::endl;
-
     penBack = new QPen;
     penTop = new QPen;
     resetPenBack = true;
@@ -40,8 +38,6 @@ CanvasDelegate::CanvasDelegate(int sizeX, int sizeY, ActionHandler *handler) : h
 
     detectionRadius = 20;
     resetView(sizeX, sizeY);
-
-    //std::cout << "Leaving CanvasDelegate::CanvasDelegate" << std::endl;
 }
 
 CanvasDelegate::~CanvasDelegate()
@@ -65,7 +61,7 @@ const QImage *CanvasDelegate::getImageTop() const
     return imageTop;
 }
 
-void CanvasDelegate::rescale(int sizeX, int sizeY)
+void CanvasDelegate::rescale(uint sizeX, uint sizeY)
 {
     delete painterBack;
     *imageBack = QImage(sizeX, sizeY, QImage::Format_RGB32);
@@ -95,7 +91,7 @@ void CanvasDelegate::rescale(int sizeX, int sizeY)
     enableRedrawBuffer();
 }
 
-void CanvasDelegate::resetView(int sizeX, int sizeY)
+void CanvasDelegate::resetView(uint sizeX, uint sizeY)
 {
     xMin = -1.1;
     yMax = 1.1;
@@ -107,7 +103,6 @@ void CanvasDelegate::resetView(int sizeX, int sizeY)
     scaleY = sizeY/2.2;
 
     subResetView();
-
     enableRedrawBuffer();
 }
 
@@ -154,15 +149,16 @@ void CanvasDelegate::zoom(double coeff, int centerX, int centerY)
 
 void CanvasDelegate::mouseShift(int x, int y)
 {
-    //std::cout << "Entering CanvasDelegate::shift" << std::endl;
     xMin = xMinSave + (mouseX - x)/scaleX;
     yMax = yMaxSave - (mouseY - y)/scaleY;
+    enableRedrawBuffer();
 }
 
 void CanvasDelegate::shift(int x, int y)
 {
     xMin += x/scaleX;
     yMax += y/scaleY;
+    enableRedrawBuffer();
 }
 
 void CanvasDelegate::enableRedrawBuffer(bool back, bool top)
@@ -315,7 +311,7 @@ bool CanvasDelegate::isInside(const Complex &point) const
 {
     double x = real(point), y = imag(point);
 
-    return (x>xMin) && (x<xMax()) && (y>yMin()) && (y<yMax);
+    return (x >= xMin) && (x <= xMax()) && (y >= yMin()) && (y <= yMax);
 }
 
 double CanvasDelegate::xMax() const
@@ -359,7 +355,7 @@ void CanvasDelegate::bestLineSegmentApproximationOfSmallerArc(const Complex &cen
     std::vector<Complex> intersections;
     Complex intersection1, intersection2;
     circleIntersectsCanvasBoundary(center, radius, intersections);
-    int nbIntersections = intersections.size();
+    uint nbIntersections = intersections.size();
 
     if (nbIntersections == 0)
     {
@@ -466,14 +462,6 @@ void CanvasDelegate::bestLineSegmentApproximationOfSmallerArc(const Complex &cen
         ++nbBestLineFails;
         return;
     }
-    else if (nbIntersections > 8)
-    {
-        qDebug() << "Warning in CanvasDelegate::bestLineSegmentApproximationOfArc: "
-                 << "Circle and Canvas boundary have more than 8 intersections?!";
-        failed = true;
-        ++nbBestLineFails;
-        return;
-    }
     else
     {
         noBestApproximation = true;
@@ -484,8 +472,6 @@ void CanvasDelegate::bestLineSegmentApproximationOfSmallerArc(const Complex &cen
 
 bool CanvasDelegate::circleIntersectsCanvasBoundary(const Complex &center, double radius, std::vector<Complex> &intersectionsOut) const
 {
-    //std::cout << "Entering CanvasDelegate::fullCircleIntersectsCanvasBoundary" << std::endl;
-
     intersectionsOut.clear();
 
     double xMax = xMin + sizeX/scaleX;

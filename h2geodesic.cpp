@@ -14,7 +14,6 @@ void H2Geodesic::setEndpointsInDiskModel(const Complex &z1, const Complex &z2)
     }
     this->z1 = z1;
     this->z2 = z2;
-    return;
 }
 
 void H2Geodesic::setPassingThroughTwoPoints(const H2Point & p1, const H2Point & p2)
@@ -27,7 +26,6 @@ void H2Geodesic::getEndpointsInDiskModel(Complex &z1, Complex &z2) const
 {
     z1 = this->z1;
     z2 = this->z2;
-    return;
 }
 
 bool H2Geodesic::getCircleAndEndpointsInDiskModel(Complex &centerOut, double &radiusOut, Complex &endpoint1Out, Complex &endpoint2Out) const
@@ -66,7 +64,7 @@ bool H2Geodesic::contains(const H2Point & p) const
 
 bool H2Geodesic::isCircleInDiskModel() const
 {
-    return (std::abs(imag(z1 / z2)) > ERROR);
+    return (std::abs(imag(z1 / z2)) > 0);
 }
 
 bool H2Geodesic::getCircleInDiskModel(Circle &output) const
@@ -104,10 +102,10 @@ H2Geodesic H2Geodesic::swapOrientation() const
     return L;
 }
 
-bool intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2Point & p)
+bool H2Geodesic::intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2Point & p)
 {
     Complex p1,p2;
-    if (!doIntersect(l1,l2))
+    if (!H2Geodesic::doIntersect(l1,l2))
     {
         return false;
     }
@@ -119,7 +117,7 @@ bool intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2Poi
         {
             Circle C2;
             l2.getCircleInDiskModel(C2);
-            intersectCircles(C1,C2,p1,p2);
+            Circle::intersectCircles(C1,C2,p1,p2);
             if (abs(p1) > abs(p2))
             {
                 p.setDiskCoordinate(p2);
@@ -134,7 +132,7 @@ bool intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2Poi
         {
             PlanarLine L2;
             l2.getLineInDiskModel(L2);
-            if  (intersectCircleAndLine(C1,L2,p1,p2))
+            if  (Circle::intersectCircleAndLine(C1,L2,p1,p2))
             {
                 if (abs(p1) > abs(p2))
                 {
@@ -160,7 +158,7 @@ bool intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic & l2, H2Poi
         {
             Circle C2;
             l2.getCircleInDiskModel(C2);
-            if  (intersectCircleAndLine(C2,L1,p1,p2))
+            if  (Circle::intersectCircleAndLine(C2,L1,p1,p2))
             {
                 if (abs(p1) > abs(p2))
                 {
@@ -199,10 +197,10 @@ bool H2Geodesic::closestPoints(const H2Geodesic &L1, const H2Geodesic &L2, H2Poi
 {
     H2Geodesic Lperp;
     H2Point q;
-    if (commonEndpoint(L1,L2))
+    if (H2Geodesic::commonEndpoint(L1,L2))
     {
         return false;
-    } else if (!commonPerpendicular(L1,L2,Lperp))
+    } else if (!H2Geodesic::commonPerpendicular(L1,L2,Lperp))
     {
 
         intersectionH2Geodesics(L1,L2,q);
@@ -219,11 +217,11 @@ bool H2Geodesic::closestPoint(const H2Geodesic &L1, const H2Geodesic &L2, H2Poin
 {
     H2Geodesic Lperp;
     H2Point q;
-    if (commonEndpoint(L1,L2))
+    if (H2Geodesic::commonEndpoint(L1,L2))
     {
         return false;
     }
-    else if (!commonPerpendicular(L1,L2,Lperp))
+    else if (!H2Geodesic::commonPerpendicular(L1,L2,Lperp))
     {
 
         intersectionH2Geodesics(L1,L2,q);
@@ -234,10 +232,10 @@ bool H2Geodesic::closestPoint(const H2Geodesic &L1, const H2Geodesic &L2, H2Poin
     return true;
 }
 
-bool commonPerpendicular(const H2Geodesic &L1, const H2Geodesic &L2, H2Geodesic &output)
+bool H2Geodesic::commonPerpendicular(const H2Geodesic &L1, const H2Geodesic &L2, H2Geodesic &output)
 {
     H2Point p;
-    if (intersectionH2Geodesics(L1,L2,p) || commonEndpoint(L1,L2))
+    if (H2Geodesic::intersectionH2Geodesics(L1,L2,p) || H2Geodesic::commonEndpoint(L1,L2))
     {
         return false;
     }
@@ -260,7 +258,7 @@ bool commonPerpendicular(const H2Geodesic &L1, const H2Geodesic &L2, H2Geodesic 
     return true;
 }
 
-bool commonEndpointInDiskModel(const H2Geodesic &L1, const H2Geodesic &L2, Complex &z)
+bool H2Geodesic::commonEndpointInDiskModel(const H2Geodesic &L1, const H2Geodesic &L2, Complex &z)
 {
     Complex z1,z2,w1,w2;
     L1.getEndpointsInDiskModel(z1,z2);
@@ -278,7 +276,7 @@ bool commonEndpointInDiskModel(const H2Geodesic &L1, const H2Geodesic &L2, Compl
     return false;
 }
 
-bool commonEndpoint(const H2Geodesic & L1, const H2Geodesic & L2)
+bool H2Geodesic::commonEndpoint(const H2Geodesic & L1, const H2Geodesic & L2)
 {
     Complex z1,z2,w1,w2;
     L1.getEndpointsInDiskModel(z1,z2);
@@ -290,7 +288,7 @@ bool commonEndpoint(const H2Geodesic & L1, const H2Geodesic & L2)
     return false;
 }
 
-bool doIntersect(const H2Geodesic &L1, const H2Geodesic &L2)
+bool H2Geodesic::doIntersect(const H2Geodesic &L1, const H2Geodesic &L2)
 {
     Complex a1,a2,b1,b2;
     L1.getEndpointsInDiskModel(a1,a2);
@@ -314,7 +312,6 @@ void H2GeodesicArc::setPoints(const H2Point &p1, const H2Point &p2)
 {
     this->p1 = p1;
     this->p2 = p2;
-    return;
 }
 
 H2Geodesic H2GeodesicArc::getGeodesic() const
@@ -347,7 +344,6 @@ void H2GeodesicArc::getEndpointsInDiskModel(Complex &output1, Complex &output2) 
 {
     output1 = p1.getDiskCoordinate();
     output2 = p2.getDiskCoordinate();
-    return;
 }
 
 double H2GeodesicArc::length() const
@@ -358,8 +354,7 @@ double H2GeodesicArc::length() const
 void H2GeodesicArc::getEndpoints(H2Point &output1, H2Point &output2) const
 {
     output1 = p1;
-    output2 = p2;
-    return;
+    output2 = p2; 
 }
 
 Circle H2GeodesicArc::getCircleInDiskModel() const
@@ -488,14 +483,20 @@ std::ostream & operator<<(std::ostream & out, const H2Geodesic & L)
     return out;
 }
 
-std::vector<H2Point> H2GeodesicArc::getEvenSubdivision(int nbCuts) const
+std::ostream & operator<<(std::ostream & out, const H2GeodesicArc &arc)
+{
+    out << "{p1=" << arc.p1 << ", p2=" << arc.p2 << "}";
+    return out;
+}
+
+std::vector<H2Point> H2GeodesicArc::getEvenSubdivision(uint nbCuts) const
 {
     std::vector<H2Point> output;
-    output.reserve(nbCuts+2);
+    output.reserve(nbCuts + 2);
 
-    for(int j=0; j<nbCuts+2; ++j)
+    for(uint j=0; j<nbCuts+2; ++j)
     {
-        output.push_back(H2Point::proportionalPoint(p1,p2,j*1.0/(nbCuts+1)));
+        output.push_back(H2Point::proportionalPoint(p1, p2, j*1.0/(nbCuts+1)));
     }
     return output;
 }

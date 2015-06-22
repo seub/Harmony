@@ -14,20 +14,19 @@ class FenchelNielsenConstructor
 public:
     FenchelNielsenConstructor(const std::vector<double> & lengths, const std::vector<double> & twists);
     ~FenchelNielsenConstructor();
+    FenchelNielsenConstructor() = delete;
+    FenchelNielsenConstructor(const FenchelNielsenConstructor &) = delete;
+    FenchelNielsenConstructor & operator=(FenchelNielsenConstructor) = delete;
 
-    IsomH2Representation getUnnormalizedRepresentation(DiscreteGroup *group);
-    IsomH2Representation getRepresentation(DiscreteGroup *group);
+    GroupRepresentation<H2Isometry> getUnnormalizedRepresentation();
+    GroupRepresentation<H2Isometry> getRepresentation();
 
 private:
-    FenchelNielsenConstructor(); //Dummy constructor
-    FenchelNielsenConstructor(const FenchelNielsenConstructor &other); // Copy constructor
-    FenchelNielsenConstructor & operator=(FenchelNielsenConstructor other); //Copy-assignment operator
-
     void setNormalizedTwists();
     void setNormalizedLengths();
     void splitAugmentedLengthsAndTwists();
 
-    int genus, gLeft, gRight;
+    uint genus, gLeft, gRight;
     double firstTwist;
     std::vector<double> lengths, cLengths, sLengths, cLengthsLeft, cLengthsRight, sLengthsLeft, sLengthsRight;
     std::vector<double> twists, nTwists, nTwistsLeft, nTwistsRight;
@@ -44,15 +43,16 @@ class PantsTree
     friend class PantsTreeNode;
     friend class PantsTreeRoot;
     friend class FenchelNielsenConstructor;
+
 public:
-    PantsTree(int index, const std::vector<double> & CoshHalfLengthsAugmented,
+    PantsTree(uint index, const std::vector<double> & CoshHalfLengthsAugmented,
               const std::vector<double> &SinhHalfLengthsAugmented, const std::string & genericCurveName);
     virtual ~PantsTree() {}
-    virtual IsomH2Representation getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator, const std::string & genericCurveName) = 0;
+    virtual GroupRepresentation<H2Isometry> getRepresentation(H2Isometry &totalConjugator, const std::string & genericCurveName) = 0;
+
 protected:
-    DiscreteGroup Gamma;
-    IsomH2Representation *rho;
-    int index;
+    GroupRepresentation<H2Isometry> rho;
+    uint index;
     double twistCorrection;
 
 private:
@@ -63,11 +63,11 @@ private:
 class PantsTreeNode : public PantsTree
 {
 public:
-    PantsTreeNode(int index, const std::vector<double> & coshHalfLengthsAugmented, const std::vector<double> & sinhHalfLengthsAugmented,
+    PantsTreeNode(uint index, const std::vector<double> & coshHalfLengthsAugmented, const std::vector<double> & sinhHalfLengthsAugmented,
                   const std::vector<double> & twistsNormalized, const std::string & genericCurveName);
     ~PantsTreeNode();
 
-    IsomH2Representation getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator, const std::string & genericCurveName);
+    GroupRepresentation<H2Isometry> getRepresentation(H2Isometry &totalConjugator, const std::string & genericCurveName);
 private:
     PantsTree *leftChild;
     PantsTree *rightChild;
@@ -82,11 +82,11 @@ private:
 class PantsTreeLeaf : public PantsTree
 {
 public:
-    PantsTreeLeaf(int index, const std::vector<double> & coshHalfLengthsAugmented,
+    PantsTreeLeaf(uint index, const std::vector<double> & coshHalfLengthsAugmented,
                   const std::vector<double> & sinhHalfLengthsAugmented, const std::vector<double> & twistsNormalized,
                   const std::string &genericCurveName);
     ~PantsTreeLeaf();
-    IsomH2Representation getRepresentation(DiscreteGroup *group, H2Isometry &totalConjugator, const std::string &genericCurveName);
+    GroupRepresentation<H2Isometry> getRepresentation(H2Isometry &totalConjugator, const std::string &genericCurveName);
 private:
     H2Isometry hNNconjugator;
     PantsTreeLeaf(); // Dummy constructor

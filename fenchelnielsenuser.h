@@ -18,7 +18,12 @@ class FenchelNielsenUser : public QWidget, public CanvasContainer
     friend class ActionHandler;
 
 public:
-    FenchelNielsenUser(ActionHandler *handler, int genus);
+    FenchelNielsenUser(ActionHandler *handler, uint genus);
+    FenchelNielsenUser() = delete;
+    FenchelNielsenUser(const FenchelNielsenUser &) = delete;
+    FenchelNielsenUser & operator=(FenchelNielsenUser) = delete;
+
+
     void resizeEvent(QResizeEvent *event);
     void showEvent(QShowEvent *);
 
@@ -33,7 +38,7 @@ private:
     void createFactory();
     void canvasResized();
     int menuWidth() const;
-    void optimalSize(unsigned int &outputWidth, unsigned int &outputHeight) const;
+    void optimalSize(uint &outputWidth, uint &outputHeight) const;
 
 
     ActionHandler *handler;
@@ -49,7 +54,7 @@ private:
     bool saveFNcoordinates;
 
     EquivariantHarmonicMapsFactory factory;
-    int N;
+    uint nbLengths;
 };
 
 class FNselector : public QGroupBox
@@ -69,7 +74,7 @@ public:
     void getFNcoordinates(std::vector<double> &lengthsOut, std::vector<double> &twistsOut) const;
 
 private:
-    FNselector(FenchelNielsenUser *user, int N);
+    FNselector(FenchelNielsenUser *user, uint nbLengths);
 
     void resizeEvent(QResizeEvent *);
 
@@ -82,7 +87,7 @@ private:
     std::vector<QLabel*> lengthsLabels, twistsLabels;
     std::vector<QDoubleSpinBox*> lengthsBoxes, twistsBoxes;
 
-    int N;
+    uint nbLengths;
     int vertSpace;
     int buttonHeight;
 };

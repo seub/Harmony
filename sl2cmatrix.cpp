@@ -6,7 +6,7 @@ SL2CMatrix::SL2CMatrix()
     setIdentity();
 }
 
-SL2CMatrix::SL2CMatrix(int i)
+SL2CMatrix::SL2CMatrix(uint i)
 {
     assert(i==1);
     setIdentity();
@@ -14,9 +14,12 @@ SL2CMatrix::SL2CMatrix(int i)
 
 SL2CMatrix::SL2CMatrix(const Complex &a, const Complex &b, const Complex &c, const Complex &d) : a(a), b(b), c(c), d(d)
 {
-    if (norm(det() - Complex(1.0,0.0)) > ERROR)
+    double tol = 0.000000001;
+    if (norm(det() - Complex(1.0,0.0)) > tol)
     {
-        std::cout << "WARNING in SL2Cmatrix::SL2Cmatrix: the determinant is not 1 (it is equal to " << det() <<" )" << std::endl;
+        std::stringstream errorMessage;
+        errorMessage << "WARNING in SL2Cmatrix::SL2Cmatrix: the determinant is not 1 (it is equal to " << det() <<" )";
+        qDebug() << QString::fromStdString(errorMessage.str());
     }
 }
 
@@ -26,7 +29,6 @@ void SL2CMatrix::getCoefficients(Complex & a, Complex & b, Complex & c, Complex 
     b = this->b;
     c = this->c;
     d = this->d;
-    return;
 }
 
 void SL2CMatrix::setIdentity()
@@ -59,7 +61,8 @@ void SL2CMatrix::eigenvalues(Complex & lambda1, Complex & lambda2) const
 
 bool SL2CMatrix::isReal() const
 {
-    return std::abs(imag(a))<ERROR && std::abs(imag(b))<ERROR && std::abs(imag(c))<ERROR && std::abs(imag(d))<ERROR;
+    double tol = 0.000000001;
+    return std::abs(imag(a))<tol && std::abs(imag(b))<tol && std::abs(imag(c))<tol && std::abs(imag(d))<tol;
 }
 
 double SL2CMatrix::error() const
@@ -91,7 +94,7 @@ void SL2CMatrix::getRealPart(SL2RMatrix & output) const
 {
     if(!isReal())
     {
-        std::cout << "Warning in getRealPart: some entries are far from real" << std::endl;
+        qDebug() << "Warning in getRealPart: some entries are far from real";
     }
     output = SL2RMatrix(real(a),real(b),real(c),real(d));
 }
@@ -112,13 +115,14 @@ CP1Point operator *(const SL2CMatrix & A, const CP1Point & z)
     return CP1Point(A.a*z.z1+A.b*z.z2,A.c*z.z1+A.d*z.z2);
 }
 
-bool operator ==(const SL2CMatrix & A1, const SL2CMatrix & A2)
+bool SL2CMatrix::almostEqual(const SL2CMatrix & A1, const SL2CMatrix & A2)
 {
+    double tol = 0.000000001;
     bool test =
-            std::abs(A1.a - A2.a) < ERROR &&
-            std::abs(A1.b - A2.b) < ERROR &&
-            std::abs(A1.c - A2.c) < ERROR &&
-            std::abs(A1.d - A2.d) < ERROR;
+            std::abs(A1.a - A2.a) < tol &&
+            std::abs(A1.b - A2.b) < tol &&
+            std::abs(A1.c - A2.c) < tol &&
+            std::abs(A1.d - A2.d) < tol;
     return test;
 }
 

@@ -13,12 +13,13 @@ class SL2CMatrix
     friend SL2CMatrix operator *(const SL2CMatrix & A1, const SL2CMatrix & A2);
     friend CP1Point operator *(const SL2CMatrix & A, const CP1Point & z);
     friend std::ostream & operator<<(std::ostream & out, const SL2CMatrix & A);
-    friend bool operator ==(const SL2CMatrix & A1, const SL2CMatrix & A2);
 
 public:
     SL2CMatrix();
-    SL2CMatrix(int i);
     SL2CMatrix(const Complex & a, const Complex & b, const Complex & c, const Complex & d);
+    SL2CMatrix(uint i);
+
+    static bool almostEqual(const SL2CMatrix & A1, const SL2CMatrix & A2);
 
 
     void getCoefficients(Complex & a1, Complex & a2, Complex & a3, Complex & a4) const;

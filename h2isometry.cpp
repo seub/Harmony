@@ -5,9 +5,10 @@
 
 H2Isometry::H2Isometry()
 {
+    setIdentity();
 }
 
-H2Isometry::H2Isometry(int i)
+H2Isometry::H2Isometry(uint i)
 {
     assert(i==1);
     setIdentity();
@@ -93,7 +94,7 @@ void H2Isometry::setByMappingGeodesic(const H2Geodesic &L1, const H2Geodesic &L2
     *this = f2.inverse()*f1;
 }
 
-void H2Isometry::setByMappingPointTo0(const H2Point &p)
+void H2Isometry::setByMappingPointToOrigin(const H2Point &p)
 {
     u = 1.0;
     a = p.getDiskCoordinate();
@@ -230,13 +231,12 @@ H2Point operator *(const H2Isometry & f, const H2Point & p)
 
 H2Polygon operator*(const H2Isometry &f, const H2Polygon &P)
 {
-    H2Polygon res;
-    std::vector<H2Point> vertices = P.getVertices();
-    for(unsigned int i=0; i<vertices.size(); i++)
+    H2Polygon out;
+    for(const auto &vertex : P.getVertices())
     {
-        res.addVertex(f*vertices[i]);
+        out.addVertex(f*vertex);
     }
-    return res;
+    return out;
 }
 
 
@@ -270,7 +270,6 @@ void H2Isometry::setByMappingToVerticalUp(const H2Geodesic &L)
     L.getEndpointsInDiskModel(a1,a2);
     a = L.closestPointToOriginInDiskModel();
     u = I*((conj(a)*(a1 + a2) - 2.0)/(a1 - a2));
-    return;
 }
 
 void H2Isometry::setByMappingToVerticalDown(const H2Geodesic &L)
@@ -279,7 +278,6 @@ void H2Isometry::setByMappingToVerticalDown(const H2Geodesic &L)
     L.getEndpointsInDiskModel(a1,a2);
     a = L.closestPointToOriginInDiskModel();
     u = -I*((conj(a)*(a1 + a2) - 2.0)/(a1 - a2));
-    return;
 }
 
 void H2Isometry::setByNormalizingPairOnLeftHandSide(const H2Isometry &f1, const H2Isometry &f1left)
@@ -293,7 +291,6 @@ void H2Isometry::setByNormalizingPairOnLeftHandSide(const H2Isometry &f1, const 
     double t = H2Isometry::geodesicNormalizer(L1leftNew);
     fSecond.setVerticalTranslation(t);
     *this = fSecond*fFirst;
-    return;
 }
 
 void H2Isometry::setByNormalizingPairOnRightHandSide(const H2Isometry &f1, const H2Isometry &f1left)
@@ -307,17 +304,15 @@ void H2Isometry::setByNormalizingPairOnRightHandSide(const H2Isometry &f1, const
     double t = H2Isometry::geodesicNormalizer(L1leftNew);
     fSecond.setVerticalTranslation(t);
     *this = fSecond*fFirst;
-    return;
 }
 
 H2Isometry H2Isometry::findConjugatorForGluing(const H2Isometry & f1, const H2Isometry & f1left,
                                            const H2Isometry & f2, const H2Isometry &f2left, double twistNormalized)
 {
-    if (std::abs(f1.traceSquared()-f2.traceSquared()) > ERROR)
+    double error = 0.00000001;
+    if (std::abs(f1.traceSquared()-f2.traceSquared()) > error)
     {
-        //std::cout << f1 << std::endl;
-        //std::cout << f2 << std::endl;
-        throw(QString("ERROR in H2Isometry::findConjugatorForGluing: not the same translation lengths!"));
+        throw(QString("ERROR in H2Isometry::findConjugatorForGluing: different translation lengths!"));
     }
 
     H2Isometry c1, c2, c;
@@ -343,9 +338,10 @@ H2Isometry H2Isometry::findConjugatorForGluing(const H2Isometry & f1, const H2Is
 
 
 
-bool operator ==(const H2Isometry & f1, const H2Isometry & f2)
+bool H2Isometry::almostEqual(const H2Isometry & f1, const H2Isometry & f2)
 {
-    return (norm(f1.u -f2.u) + norm(f1.a - f2.a)<ERROR);
+    double tol = 0.000000001;
+    return (norm(f1.u -f2.u) + norm(f1.a - f2.a)<tol);
 }
 
 std::ostream & operator<<(std::ostream & out, const H2Isometry &f)
@@ -375,13 +371,6 @@ std::ostream & operator<<(std::ostream & out, const H2Isometry &f)
     }
     out << "   {u= " << f.u << ", a= " << f.a << "}";
     return out;
-}
-
-H2Isometry H2Isometry::identity()
-{
-    H2Isometry identity;
-    identity.setIdentity();
-    return identity;
 }
 
 double H2Isometry::geodesicNormalizer(const H2Geodesic &L)

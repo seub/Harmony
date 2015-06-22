@@ -6,7 +6,7 @@ H3Isometry::H3Isometry()
     setIdentity();
 }
 
-H3Isometry::H3Isometry(int i)
+H3Isometry::H3Isometry(uint i)
 {
     assert(i==1);
     setIdentity();
@@ -30,7 +30,6 @@ void H3Isometry::fixedPointsOnCP1(CP1Point &p1, CP1Point &p2) const
         p1 = CP1Point((M.a - M.d + delta) / (2.0*M.c));
         p2 = CP1Point((M.a - M.d - delta) / (2.0*M.c));
     }
-    return;
 }
 
 bool H3Isometry::isElliptic() const
@@ -119,7 +118,6 @@ void H3Isometry::setByImagesOfThreeCP1Points(const CP1Point &p1, const CP1Point 
     f1.setByMappingThreeCP1PointsToZeroOneInfinity(p1, p2, p3);
     f2.setByMappingThreeCP1PointsToZeroOneInfinity(p1out, p2out, p3out);
     *this = f2.inverse()*f1;
-    return;
 }
 
 void H3Isometry::setIdentity()
@@ -152,9 +150,9 @@ H3Point operator *(const H3Isometry & f, const H3Point & p)
     return q;
 }
 
-bool operator ==(const H3Isometry & f1, const H3Isometry & f2)
+bool H3Isometry::almostEqual(const H3Isometry & f1, const H3Isometry & f2)
 {
-    return f1.M == f2.M;
+    return SL2CMatrix::almostEqual(f1.M, f2.M);
 }
 
 std::ostream & operator<<(std::ostream & out, const H3Isometry & A)

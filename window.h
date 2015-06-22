@@ -21,7 +21,10 @@ class Window : public QWidget, public CanvasContainer
     friend class Canvas;
 
 public:
-    Window(ActionHandler* handler = 0);
+    Window(ActionHandler* handler = nullptr);
+    Window() = delete;
+    Window(const Window &) = delete;
+    Window & operator =(Window) = delete;
 
     void resizeEvent(QResizeEvent *event);
 signals:
@@ -29,11 +32,11 @@ signals:
 public slots:
 
 private:
-    void createWindow(ActionHandler *handler = 0);
+    void createWindow(ActionHandler *handler = nullptr);
     void enableCanvasesUpdates(bool b);
     void canvasResized();
     int menuWidth() const;
-    void optimalSize(unsigned int &outputWidth, unsigned int &outputHeight) const;
+    void optimalSize(uint &outputWidth, uint &outputHeight) const;
 
     Canvas *leftCanvas;
     Canvas *rightCanvas;

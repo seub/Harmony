@@ -8,18 +8,17 @@ class TopologicalSurface
 {
 public:
     TopologicalSurface();
-    TopologicalSurface(int genus, int numberOfPunctures);
+    TopologicalSurface(uint genus, uint numberOfPunctures);
 
-    int getGenus() const;
-    int getNumberOfPunctures() const;
+    uint getGenus() const;
+    uint getNumberOfPunctures() const;
+    bool isClosedHyperbolicSurface() const;
 
     std::vector<DiscreteGroup> getPantsDecomposition() const;
 
-
-
 private:
-    int genus;
-    int numberOfPunctures;
+    uint genus;
+    uint numberOfPunctures;
 };
 
 #endif // TOPOLOGICALSURFACE_H

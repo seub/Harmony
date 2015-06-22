@@ -30,20 +30,22 @@ public:
     static bool closestPoints(const H2Geodesic & L1, const H2Geodesic &  L2, H2Point & p1, H2Point & p2);
     static bool closestPoint(const H2Geodesic & L1, const H2Geodesic &  L2, H2Point & p1);
 
+    static bool doIntersect(const H2Geodesic & L1, const H2Geodesic & L2);
+    static bool intersectionH2Geodesics(const H2Geodesic & L1, const H2Geodesic & L2, H2Point & p);
+    static bool commonPerpendicular(const H2Geodesic & L1, const H2Geodesic & L2, H2Geodesic &output);
+    static bool commonEndpointInDiskModel(const H2Geodesic & L1, const H2Geodesic & L2, Complex & z);
+    static bool commonEndpoint(const H2Geodesic & L1, const H2Geodesic & L2);
+
 private:
     Complex z1, z2;
-
 };
 
-bool doIntersect(const H2Geodesic & L1, const H2Geodesic & L2);
-bool intersectionH2Geodesics(const H2Geodesic & L1, const H2Geodesic & L2, H2Point & p);
-bool commonPerpendicular(const H2Geodesic & L1, const H2Geodesic & L2, H2Geodesic &output);
-bool commonEndpointInDiskModel(const H2Geodesic & L1, const H2Geodesic & L2, Complex & z);
-bool commonEndpoint(const H2Geodesic & L1, const H2Geodesic & L2);
+
 
 
 class H2GeodesicArc
 {
+    friend std::ostream & operator<<(std::ostream & out, const H2GeodesicArc &arc);
 public:
     H2GeodesicArc();
     H2GeodesicArc(const H2Point & p1, const H2Point & p2);
@@ -56,7 +58,7 @@ public:
     double getCircleRadiusInDiskModel() const;
     bool getCircleAndEndpointsInDiskModel(Complex &centerOut, double &radiusOut, Complex &endpoint1Out, Complex &endpoint2Out) const;
 
-    std::vector<H2Point> getEvenSubdivision(int nbCuts) const;
+    std::vector<H2Point> getEvenSubdivision(uint nbCuts) const;
 
     void getExtremalCoordinatesInHyperboloidProjection(double & xMin, double & xMax, double & yMin, double & yMax);
 

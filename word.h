@@ -4,6 +4,10 @@
 #include "tools.h"
 
 
+typedef std::string generatorName;
+typedef int generatorIndex;
+typedef std::pair<generatorIndex, int> letter;
+
 class Word
 {
     friend Word operator*(Word w1, const Word &w2);

@@ -14,13 +14,14 @@
 #include "canvasdelegate.h"
 #include "h2canvasdelegate.h"
 
-FenchelNielsenUser::FenchelNielsenUser(ActionHandler *handler, int genus) : handler(handler)
+FenchelNielsenUser::FenchelNielsenUser(ActionHandler *handler, uint genus) : handler(handler)
 {
-    N = 3*genus - 3;
+    nbLengths = 3*genus - 3;
     saveFNcoordinates = false;
 
     createWindow();
     createFactory();
+    setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void FenchelNielsenUser::createWindow()
@@ -28,7 +29,7 @@ void FenchelNielsenUser::createWindow()
     canvas = new Canvas(this);
     canvas->setEnabled(true);
 
-    selector = new FNselector(this, N);
+    selector = new FNselector(this, nbLengths);
     selector->setEnabled(true);
 
     QString message = QString("NB: The canvas shows the fundamental domain and initial triangulation ")
@@ -57,7 +58,7 @@ void FenchelNielsenUser::createWindow()
 
     setWindowTitle("Fenchel-Nielsen coordinates selector");
 
-    unsigned int width, height;
+    uint width, height;
     optimalSize(width, height);
     resize(width, height);
 
@@ -66,9 +67,9 @@ void FenchelNielsenUser::createWindow()
 
 void FenchelNielsenUser::createFactory()
 {
-    factory.setGenus((N+3)/3);
+    factory.setGenus((nbLengths+3)/3);
     factory.setMeshDepth(0);
-    delegate = (H2CanvasDelegate*) canvas->delegate;
+    delegate = static_cast<H2CanvasDelegate*>(canvas->delegate);
     delegate->buffer.setRhoPointer(&(factory.rhoDomain), "blue");
     delegate->buffer.setMeshPointer(&(factory.mesh), "red");
     delegate->setShowTranslates(false, false);
@@ -76,8 +77,8 @@ void FenchelNielsenUser::createFactory()
 
 void FenchelNielsenUser::optimalSize(unsigned int &outputWidth, unsigned int &outputHeight) const
 {
-    unsigned int screenWidth = QApplication::desktop()->width();
-    unsigned int screenHeight = QApplication::desktop()->height();
+    uint screenWidth = QApplication::desktop()->width();
+    uint screenHeight = QApplication::desktop()->height();
 
     int canvasOptimalSize = 0.7*screenHeight;
 
@@ -136,8 +137,6 @@ void FenchelNielsenUser::refresh()
     delegate->buffer.refreshRho();
     delegate->buffer.refreshMesh();
     delegate->refreshTranslates();
-
-    delegate->enableRedrawBuffer(true, true);
     canvas->update();
 }
 
@@ -152,14 +151,6 @@ void FenchelNielsenUser::resizeEvent(QResizeEvent * event)
     }
 
     menu->setMinimumWidth(std::max(selector->sizeHint().width(), menu->sizeHint().width()));
-
-    /*std::cout << "selector width = " << selector->width() << std::endl;
-    std::cout << "selector hint width = " << selector->sizeHint().width() << std::endl;
-    std::cout << "selector maxwidth = " << selector->maxWidth() << std::endl;
-    std::cout << "menu width = " << menu->width() << std::endl;
-    std::cout << "menu hint width = " << menu->width() << std::endl;
-    std::cout << "menu maxWidth = " << menu->maxWidth() << std::endl;
-    std::cout << "menuWidth() = " << menuWidth() << std::endl;*/
 }
 
 void FenchelNielsenUser::showEvent(QShowEvent *)
@@ -212,7 +203,7 @@ void FenchelNielsenUser::canvasResized()
     }
 }
 
-FNselector::FNselector(FenchelNielsenUser *user, int N) : user(user), N(N)
+FNselector::FNselector(FenchelNielsenUser *user, uint nbLengths) : user(user), nbLengths(nbLengths)
 {
     setParent(user);
     vertSpace = 5;
@@ -228,7 +219,7 @@ void FNselector::createButtons()
     QString numi;
     QDoubleSpinBox *lengthBox, *twistBox;
     QLabel *lengthLabel, *twistLabel;
-    for (int i=0; i<N; ++i)
+    for (uint i=0; i!=nbLengths; ++i)
     {
         numi = QString::number(i+1);
 
@@ -262,7 +253,7 @@ void FNselector::createLayout()
     layout = new QGridLayout;
     layout->setSpacing(0);
 
-    for (int i=0; i!=N; ++i)
+    for (uint i=0; i!=nbLengths; ++i)
     {
         layout->setRowMinimumHeight(2*i, vertSpace);
         layout->setRowMinimumHeight(2*i+1, buttonHeight);
@@ -276,7 +267,7 @@ void FNselector::createLayout()
 
     setLayout(layout);
 
-    for (int i=0; i!=N; ++i)
+    for (uint i=0; i!=nbLengths; ++i)
     {
         layout->addWidget(lengthsLabels[i], 2*i+1, 0, 1, 1, Qt::AlignRight);
         lengthsLabels[i]->setVisible(true);
@@ -298,7 +289,7 @@ void FNselector::createLayout()
 
 int FNselector::maxFirstColWidth() const
 {
-    std::vector<unsigned int> widths;
+    std::vector<uint> widths;
     for (auto item : lengthsLabels)
     {
         widths.push_back(item->sizeHint().width());
@@ -308,7 +299,7 @@ int FNselector::maxFirstColWidth() const
 
 int FNselector::maxSecondColWidth() const
 {
-    std::vector<unsigned int> widths;
+    std::vector<uint> widths;
     for (auto item : lengthsBoxes)
     {
         widths.push_back(item->sizeHint().width());
@@ -318,7 +309,7 @@ int FNselector::maxSecondColWidth() const
 
 int FNselector::maxThirdColWidth() const
 {
-    std::vector<unsigned int> widths;
+    std::vector<uint> widths;
     for (auto item : twistsLabels)
     {
         widths.push_back(item->sizeHint().width());
@@ -328,7 +319,7 @@ int FNselector::maxThirdColWidth() const
 
 int FNselector::maxFourthColWidth() const
 {
-    std::vector<unsigned int> widths;
+    std::vector<uint> widths;
     for (auto item : twistsBoxes)
     {
         widths.push_back(item->sizeHint().width());
@@ -344,7 +335,7 @@ int FNselector::maxWidth() const
 int FNselector::maxHeight() const
 {
     int absurdMargin = 1;
-    return QStyle::CE_HeaderLabel + absurdMargin + N*buttonHeight + N*vertSpace;
+    return QStyle::CE_HeaderLabel + absurdMargin + nbLengths*buttonHeight + nbLengths*vertSpace;
 }
 
 void FNselector::resizeEvent(QResizeEvent *)
@@ -359,9 +350,9 @@ void FNselector::getFNcoordinates(std::vector<double> &lengthsOut, std::vector<d
 {
     lengthsOut.clear();
     twistsOut.clear();
-    lengthsOut.reserve(N);
-    twistsOut.reserve(N);
-    for (int i=0; i!=N; ++i)
+    lengthsOut.reserve(nbLengths);
+    twistsOut.reserve(nbLengths);
+    for (uint i=0; i!=nbLengths; ++i)
     {
         lengthsOut.push_back(lengthsBoxes[i]->value());
         twistsOut.push_back(twistsBoxes[i]->value());

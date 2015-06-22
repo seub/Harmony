@@ -16,17 +16,9 @@
 #include "h2canvasdelegate.h"
 #include "actionhandler.h"
 
-H2CanvasDelegate::H2CanvasDelegate(int sizeX, int sizeY, ActionHandler *handler) : CanvasDelegate(sizeX, sizeY, handler)
+H2CanvasDelegate::H2CanvasDelegate(uint sizeX, uint sizeY, ActionHandler *handler) : CanvasDelegate(sizeX, sizeY, handler)
 {
-    //std::cout << "Entering H2CanvasDelegate::CanvasDelegate" << std::endl;
-    delegateType = H2DELEGATE;
-    mobius.setIdentity();
-    mobiusing = false;
-    showTranslatesAroundAllVertices = true;
-    drawCircle(0, 1);
-    resetHighlighted();
-
-    //std::cout << "Leaving H2CanvasDelegate::CanvasDelegate" << std::endl;
+    subResetView();
 }
 
 H2Point H2CanvasDelegate::pixelToH2coordinate(int x, int y) const
@@ -39,6 +31,9 @@ H2Point H2CanvasDelegate::pixelToH2coordinate(int x, int y) const
 void H2CanvasDelegate::subResetView()
 {
     mobius.setIdentity();
+    mobiusing = false;
+
+    setShowTranslates(false, false);
     resetHighlighted();
 }
 
@@ -46,7 +41,6 @@ void H2CanvasDelegate::drawH2Point(const H2Point &p, const QColor &color, int wi
 {
     Complex z = (mobius*p).getDiskCoordinate();
     drawPoint(z, color, width, back);
-    return;
 }
 
 void H2CanvasDelegate::drawComplexPointInDiskModel(const Complex &z, const QColor &color, int width, bool back)
@@ -54,7 +48,6 @@ void H2CanvasDelegate::drawComplexPointInDiskModel(const Complex &z, const QColo
     H2Point P;
     P.setDiskCoordinate(z);
     drawH2Point(P, color, width, back);
-    return;
 }
 
 void H2CanvasDelegate::drawH2Geodesic(const H2Geodesic &L, const QColor &color, int width, bool back)
@@ -96,7 +89,7 @@ void H2CanvasDelegate::drawH2Triangle(const H2Triangle &triangle, const QColor &
     }
 }
 
-void H2CanvasDelegate::redrawBuffer(bool back, bool top, const H2Isometry &mobius)
+void H2CanvasDelegate::redrawBuffer(bool back, bool top)
 {
     //clock_t start = clock();
     // *** For testing ***
@@ -106,8 +99,6 @@ void H2CanvasDelegate::redrawBuffer(bool back, bool top, const H2Isometry &mobiu
     nbBestLineFails = 0;
     nbBestLineCalls = 0;
     // *** End for testing ***
-
-    this->mobius = mobius*this->mobius;
 
     if (back)
     {
@@ -120,12 +111,11 @@ void H2CanvasDelegate::redrawBuffer(bool back, bool top, const H2Isometry &mobiu
         subRedrawBufferTop();
     }
 
-    enableRedrawBufferBack = false;
-    enableRedrawBufferTop = false;
+    enableRedrawBuffer(false, false);
 
-    //std::cout << "redraw buffer for delegate type " << delegateType << " :" << (clock() - start)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
-    //std::cout << "nbArcs = " << nbArcs << ", nbStraightArcs = " << nbStraightArcs << ", nbAlmostStraightArcs = " << nbAlmostStraightArcs << std::endl;
-    if (nbBestLineFails != 0) std::cout << "nbBestLineCalls = " << nbBestLineCalls << ", nbBestLineFails = " << nbBestLineFails << std::endl;
+    //qDebug() << "redraw buffer for delegate type " << delegateType << " :" << (clock() - start)*1.0/CLOCKS_PER_SEC << "s";
+    //qDebug() << "nbArcs = " << nbArcs << ", nbStraightArcs = " << nbStraightArcs << ", nbAlmostStraightArcs = " << nbAlmostStraightArcs;
+    if (nbBestLineFails != 0) qDebug() << "Number of bestLine fails: " << nbBestLineFails << " out of " << nbBestLineCalls;
 }
 
 void H2CanvasDelegate::redrawBufferBack()
@@ -282,31 +272,31 @@ void H2CanvasDelegate::mousePress(QMouseEvent *mouseEvent)
             }
         }
     }
-
-    //std::cout << "Point clicked: " << PixelToComplexCoordinates(mouseX, mouseY) << std::endl;
 }
 
 
 void H2CanvasDelegate::setIsFunctionEmpty(bool isFunctionEmpty)
 {
     buffer.setIsFunctionEmpty(isFunctionEmpty);
+    enableRedrawBuffer();
 }
 
 void H2CanvasDelegate::setIsMeshEmpty(bool isMeshEmpty)
 {
     buffer.setIsMeshEmpty(isMeshEmpty);
+    enableRedrawBuffer();
 }
 
 void H2CanvasDelegate::setIsRhoEmpty(bool isRhoEmpty)
 {
     buffer.setIsRhoEmpty(isRhoEmpty);
+    enableRedrawBuffer();
 }
 
 
 
 void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
 {
-    //std::cout << "Entering H2CanvasDelegate::mouseMove" << std::endl;
 
     if (mouseEvent->buttons() == Qt::LeftButton)
     {
@@ -354,15 +344,16 @@ void H2CanvasDelegate::resetHighlighted()
     arePointsHighlightedBlue = false;
     arePointsHighlightedGreen = false;
     arePointsHighlightedRed = false;
+    enableRedrawBuffer(false, true);
 }
 
-void H2CanvasDelegate::getMeshIndexHighlighted(bool &highlighted, int &meshIndexHighted) const
+void H2CanvasDelegate::getMeshIndexHighlighted(bool &highlighted, uint &meshIndexHighted) const
 {
     highlighted = arePointsHighlightedRed;
     meshIndexHighted = this->meshIndexHighlighted;
 }
 
-void H2CanvasDelegate::getMeshTriangleIndicesHighlighted(bool &highlighted, int &index1, int &index2, int &index3) const
+void H2CanvasDelegate::getMeshTriangleIndicesHighlighted(bool &highlighted, uint &index1, uint &index2, uint &index3) const
 {
     highlighted = isTriangleHighlighted;
     index1 = triangleMeshIndex1;
@@ -372,13 +363,8 @@ void H2CanvasDelegate::getMeshTriangleIndicesHighlighted(bool &highlighted, int 
 
 void H2CanvasDelegate::keyPress(QKeyEvent *keyEvent)
 {
-    //std::cout << "Entering H2CanvasDelegate::keyPress" << std::endl;
-
     switch(keyEvent->key())
     {
-    /*case Qt::Key_Control :
-    delegate->ctrl_pressed();
-    break;*/
 
     case Qt::Key_Left :
         xMinSave = xMin;
@@ -413,24 +399,19 @@ void H2CanvasDelegate::keyPress(QKeyEvent *keyEvent)
         break;
     }
     subKeyPress(keyEvent);
-    enableRedrawBuffer();
 }
 
 
 
-H2CanvasDelegateDomain::H2CanvasDelegateDomain(int sizeX, int sizeY, ActionHandler * handler) : H2CanvasDelegate(sizeX, sizeY, handler)
+H2CanvasDelegateDomain::H2CanvasDelegateDomain(uint sizeX, uint sizeY, ActionHandler * handler) : H2CanvasDelegate(sizeX, sizeY, handler)
 {
-    delegateType = H2DELEGATEDOMAIN;
-    setShowTranslates(false, false);
 }
 
 H2CanvasDelegateTarget::H2CanvasDelegateTarget(int sizeX, int sizeY, ActionHandler *handler) : H2CanvasDelegate(sizeX, sizeY, handler)
 {
-    delegateType = H2DELEGATETARGET;
-    setShowTranslates(false, false);
 }
 
-void H2CanvasDelegateDomain::decideHighlightingMeshPoints(bool highlighted, bool &update, int meshIndexHighlighted)
+void H2CanvasDelegateDomain::decideHighlightingMeshPoints(bool highlighted, bool &update, uint meshIndexHighlighted)
 {
     if (((highlighted==false) && (arePointsHighlightedRed==false)) || ((highlighted == arePointsHighlightedRed) && (meshIndexHighlighted == this->meshIndexHighlighted)))
     {
@@ -466,10 +447,11 @@ void H2CanvasDelegateDomain::decideHighlightingMeshPoints(bool highlighted, bool
             arePointsHighlightedRed = false;
         }
         update = true;
+        enableRedrawBuffer(false, true);
     }
 }
 
-void H2CanvasDelegateDomain::decideHighlightingTriangle(bool highlighted, bool &update, int triangleMeshIndex1, int triangleMeshIndex2, int triangleMeshIndex3)
+void H2CanvasDelegateDomain::decideHighlightingTriangle(bool highlighted, bool &update, uint triangleMeshIndex1, uint triangleMeshIndex2, uint triangleMeshIndex3)
 {
     if (((highlighted==false) && (isTriangleHighlighted==false)) || ((highlighted==isTriangleHighlighted) && (triangleMeshIndex1 == this->triangleMeshIndex1) &&
                                                                      (triangleMeshIndex2 == this->triangleMeshIndex2) && (triangleMeshIndex3 == this->triangleMeshIndex3)))
@@ -494,6 +476,7 @@ void H2CanvasDelegateDomain::decideHighlightingTriangle(bool highlighted, bool &
             arePointsHighlightedBlue = false;
         }
         update = true;
+        enableRedrawBuffer(false, true);
     }
 }
 
@@ -502,12 +485,12 @@ void H2CanvasDelegateDomain::decideHighlighting(const H2Point &pointUnderMouse)
     bool update1 = false, update2 = false;
     if (!buffer.isMeshEmpty)
     {
-        int index1, index2, index3;
+        uint index1, index2, index3;
         H2Triangle triangle;
         if (buffer.mesh->triangleContaining(pointUnderMouse, triangle, index1, index2, index3))
         {
             decideHighlightingTriangle(true, update1, index1, index2, index3);
-            int vertexIndex;
+            uint vertexIndex;
             double detectionRadiusSquared = detectionRadius/scaleX;
             detectionRadiusSquared *= detectionRadiusSquared;
             if ((mobius*triangle).isVertexCloseInDiskModel(mobius*pointUnderMouse, detectionRadiusSquared, vertexIndex))
@@ -516,16 +499,17 @@ void H2CanvasDelegateDomain::decideHighlighting(const H2Point &pointUnderMouse)
             }
             else
             {
-                decideHighlightingMeshPoints(false, update2);
+                decideHighlightingMeshPoints(false, update2, 0);
             }
         }
         else
         {
-            decideHighlightingTriangle(false, update1);
+            decideHighlightingTriangle(false, update1, 0, 0, 0);
         }
         if (update1 || update2)
         {
-            handler->processMessage(HIGHLIGHTED_LEFT);
+            enableRedrawBuffer(false, true);
+            handler->processMessage(ActionHandlerMessage::HIGHLIGHTED_LEFT);
         }
     }
 }
@@ -548,12 +532,12 @@ void H2CanvasDelegateTarget::decideHighlighting(const H2Point &pointUnderMouse)
     bool update1 = false, update2 = false;
     if (!buffer.isFunctionEmpty)
     {
-        int index1, index2, index3;
+        uint index1, index2, index3;
         H2Triangle triangle;
         if (buffer.function->triangleContaining(pointUnderMouse, triangle, index1, index2, index3))
         {
             decideHighlightingTriangle(true, update1, index1, index2, index3);
-            int vertexIndex;
+            uint vertexIndex;
             double detectionRadiusSquared = detectionRadius/scaleX;
             detectionRadiusSquared *= detectionRadiusSquared;
             if ((mobius*triangle).isVertexCloseInDiskModel(mobius*pointUnderMouse, detectionRadiusSquared, vertexIndex))
@@ -562,21 +546,22 @@ void H2CanvasDelegateTarget::decideHighlighting(const H2Point &pointUnderMouse)
             }
             else
             {
-                decideHighlightingMeshPoints(false, update2);
+                decideHighlightingMeshPoints(false, update2, 0);
             }
         }
         else
         {
-            decideHighlightingTriangle(false, update1);
+            decideHighlightingTriangle(false, update1, 0, 0, 0);
         }
         if (update1 || update2)
         {
-            handler->processMessage(HIGHLIGHTED_RIGHT);
+            enableRedrawBuffer(false, true);
+            handler->processMessage(ActionHandlerMessage::HIGHLIGHTED_RIGHT);
         }
     }
 }
 
-void H2CanvasDelegateTarget::decideHighlightingMeshPoints(bool highlighted, bool &update, int meshIndexHighlighted)
+void H2CanvasDelegateTarget::decideHighlightingMeshPoints(bool highlighted, bool &update, uint meshIndexHighlighted)
 {
     if (((highlighted==false) && (arePointsHighlightedRed==false)) || ((highlighted == arePointsHighlightedRed) && (meshIndexHighlighted == this->meshIndexHighlighted)))
     {
@@ -612,10 +597,11 @@ void H2CanvasDelegateTarget::decideHighlightingMeshPoints(bool highlighted, bool
             arePointsHighlightedRed = false;
         }
         update = true;
+        enableRedrawBuffer(false, true);
     }
 }
 
-void H2CanvasDelegateTarget::decideHighlightingTriangle(bool highlighted, bool &update, int triangleMeshIndex1, int triangleMeshIndex2, int triangleMeshIndex3)
+void H2CanvasDelegateTarget::decideHighlightingTriangle(bool highlighted, bool &update, uint triangleMeshIndex1, uint triangleMeshIndex2, uint triangleMeshIndex3)
 {
 
     if (((highlighted==false) && (isTriangleHighlighted==false)) || ((highlighted==isTriangleHighlighted) && (triangleMeshIndex1 == this->triangleMeshIndex1) &&
@@ -641,6 +627,7 @@ void H2CanvasDelegateTarget::decideHighlightingTriangle(bool highlighted, bool &
             arePointsHighlightedBlue = false;
         }
         update = true;
+        enableRedrawBuffer(false, true);
     }
 }
 
@@ -674,6 +661,7 @@ void H2CanvasDelegate::refreshTranslates()
 void H2CanvasDelegate::refreshTranslates(bool aroundVertex, bool aroundVertices)
 {
     buffer.refreshMeshOrFunctionTranslates(aroundVertex, aroundVertices);
+    enableRedrawBuffer(true, true);
 }
 
 void H2CanvasDelegateDomain::refreshMesh()
@@ -683,6 +671,7 @@ void H2CanvasDelegateDomain::refreshMesh()
         throw(QString("Error in H2CanvasDelegateDomain::refreshMesh: no mesh in buffer?"));
     }
     buffer.refreshMesh();
+    enableRedrawBuffer(true, true);
 }
 
 void H2CanvasDelegateTarget::refreshFunction()
@@ -692,12 +681,14 @@ void H2CanvasDelegateTarget::refreshFunction()
         throw(QString("Error in H2CanvasDelegateTarget::refreshFunction(): no mesh function in buffer?"));
     }
     buffer.refreshFunction();
+    enableRedrawBuffer(true, true);
 }
 
 void H2CanvasDelegate::setShowTranslates(bool showTranslatesAroundVertex, bool showTranslatesAroundAllVertices)
 {
     this->showTranslatesAroundVertex = showTranslatesAroundVertex;
     this->showTranslatesAroundAllVertices = showTranslatesAroundAllVertices;
+    enableRedrawBuffer();
 }
 
 void H2CanvasDelegate::getShowTranslates(bool &aroundVertexOut, bool &aroundVerticesOut)

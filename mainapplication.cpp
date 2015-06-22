@@ -36,10 +36,6 @@ void MainApplication::createWindow()
     window->setFocus();
 }
 
-MainApplication::~MainApplication()
-{
-}
-
 bool MainApplication::notify(QObject * receiver, QEvent * event)
 {
     try

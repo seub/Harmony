@@ -17,17 +17,18 @@ class InputMenu : public QGroupBox
     friend class ActionHandler;
 
 public:
+    enum SetRhoChoice {SET_RHO_CHOOSE, SET_RHO_NICE, SET_RHO_RANDOM, SET_RHO_FN};
+
+    InputMenu() = delete;
+    InputMenu(const InputMenu &) = delete;
+    InputMenu & operator=(InputMenu) = delete;
+
     int maxLeftColWidth() const;
     int maxRightColWidth() const;
     int maxWidth() const;
     int maxHeight() const;
     int getGenus() const;
     int getMeshDepth() const;
-
-
-signals:
-
-public slots:
 
 private:
     InputMenu(Window *window, ActionHandler *handler);

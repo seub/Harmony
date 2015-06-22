@@ -19,14 +19,15 @@
 Window::Window(ActionHandler *handler)
 {
     createWindow(handler);
+    setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void Window::createWindow(ActionHandler *handler)
 {
-    leftCanvas = new Canvas(H2DELEGATEDOMAIN, this, handler);
+    leftCanvas = new Canvas(DelegateType::H2DELEGATEDOMAIN, this, handler);
     leftCanvas->setEnabled(false);
 
-    rightCanvas = new Canvas(H2DELEGATETARGET, this, handler);
+    rightCanvas = new Canvas(DelegateType::H2DELEGATETARGET, this, handler);
     rightCanvas->setEnabled(false);
 
     inputMenu = new InputMenu(this, handler);
@@ -73,10 +74,9 @@ void Window::createWindow(ActionHandler *handler)
     //QIcon icon(":/images/icon.png");
     //setWindowIcon(icon);
 
-    unsigned int w, h;
+    uint w, h;
     optimalSize(w,h);
     resize(w, h);
-
     move(QApplication::desktop()->screen()->rect().center() - rect().center());
 }
 
@@ -91,12 +91,19 @@ void Window::resizeEvent(QResizeEvent * event)
         canvasResized();
         enableCanvasesUpdates(true);
     }
+    leftCanvas->updateRefresh(true, true);
+    rightCanvas->updateRefresh(true, true);
 }
 
 void Window::enableCanvasesUpdates(bool b)
 {
     leftCanvas->setUpdatesEnabled(b);
     rightCanvas->setUpdatesEnabled(b);
+    if (b)
+    {
+        leftCanvas->updateRefresh(true, true);
+        rightCanvas->updateRefresh(true, true);
+    }
 }
 
 void Window::canvasResized()
@@ -186,20 +193,20 @@ int Window::menuWidth() const
     return std::max(std::max(inputMenu->maxWidth(), displayMenu->maxWidth()), outputMenu->maxWidth());
 }
 
-void Window::optimalSize(unsigned int &outputWidth, unsigned int &outputHeight) const
+void Window::optimalSize(uint &outputWidth, uint &outputHeight) const
 {
-    unsigned int screenWidth = QApplication::desktop()->width();
-    unsigned int screenHeight = QApplication::desktop()->height();
+    uint screenWidth = QApplication::desktop()->width();
+    uint screenHeight = QApplication::desktop()->height();
 
     int canvasOptimalSize = std::max(inputMenu->maxHeight() + outputMenu->maxHeight() + displayMenu->maxHeight() + 2*layout->verticalSpacing(),
-                                       Tools::intRound((0.9*screenWidth - menuWidth() - 2*layout->margin() - 2*layout->spacing())/2));
+                                     Tools::intRound((0.9*screenWidth - menuWidth() - 2*layout->margin() - 2*layout->spacing())/2));
 
     outputHeight = std::max(inputMenu->maxHeight() + outputMenu->maxHeight() + displayMenu->maxHeight()
-                 + 2*layout->verticalSpacing(), canvasOptimalSize) + 2*layout->margin() + statusBar->height() + 2*layout->verticalSpacing() + topMenu->sizeHint().height();
+                            + 2*layout->verticalSpacing(), canvasOptimalSize) + 2*layout->margin() + statusBar->height() + 2*layout->verticalSpacing() + topMenu->sizeHint().height();
     if(outputHeight > screenHeight)
     {
         outputHeight = 0.9*(inputMenu->maxHeight() + outputMenu->maxHeight() + displayMenu->maxHeight()
-                 + 2*layout->verticalSpacing() + 2*layout->margin() + statusBar->height() + layout->verticalSpacing() + topMenu->height());
+                            + 2*layout->verticalSpacing() + 2*layout->margin() + statusBar->height() + layout->verticalSpacing() + topMenu->height());
     }
     outputWidth = std::min(menuWidth() + 2*layout->margin() + 2*canvasOptimalSize + 2*layout->horizontalSpacing(), Tools::intRound(0.9*screenWidth));
 }

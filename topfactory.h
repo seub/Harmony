@@ -14,22 +14,24 @@ class TopFactory : public QObject
     Q_OBJECT
 
     friend class ActionHandler;
+    friend class MathsContainer;
 
 public:
-    TopFactory();
+    TopFactory(const TopFactory &) = delete;
+    TopFactory & operator=(TopFactory) = delete;
 
     bool isMeshInitialized() const;
     bool isFunctionInitialized() const;
 
     void resetInitSubfactory();
-    void iterateSubfactory(int N);
-    void setGenus(int genus);
-    void setMeshDepth(int meshDepth);
+    void iterateSubfactory(uint N);
+    void setGenus(uint genus);
+    void setMeshDepth(uint meshDepth);
 
     void runHeatFlow();
     void stopHeatFlow();
     double getTimeElapsed() const;
-    int getNbIterations() const;
+    uint getNbIterations() const;
 
 signals:
 
@@ -37,6 +39,7 @@ private slots:
     void finishedComputing();
 
 private:
+    TopFactory();
     void setHandler(ActionHandler *handler);
 
     ActionHandler *handler;

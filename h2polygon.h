@@ -5,9 +5,8 @@
 #include "h2point.h"
 #include "h2triangle.h"
 
-class H2GeodesicArc;
-class H2Geodesic;
-class H2Isometry;
+class H2GeodesicArc; class H2Geodesic; class H2Isometry;
+template <typename T> class GroupRepresentation;
 
 class H2Polygon
 {
@@ -24,8 +23,8 @@ public:
     void clearVertices();
     void setVertices(const std::vector<H2Point> & newVertices);
 
-    int nbVertices() const;
-    H2Point getVertex(int index) const;
+    uint nbVertices() const;
+    H2Point getVertex(uint index) const;
     std::vector<H2Point> getVertices() const;
     std::vector<Complex> getVerticesInDiskModel() const;
     std::vector<Complex> getVerticesInKleinModel() const;
@@ -45,7 +44,7 @@ public:
     bool contains(const H2Point & point) const;
     bool isConvex() const;
 
-    H2GeodesicArc getSide(int index) const;
+    H2GeodesicArc getSide(uint index) const;
     std::vector<H2GeodesicArc> getSides() const;
     std::vector<H2Geodesic> getCompletedSides() const;
 
@@ -64,19 +63,19 @@ class H2SteinerPolygon : H2Polygon
 
 public:
     H2SteinerPolygon() {}
-    H2SteinerPolygon(std::vector<H2Point> vertices, std::vector<int> nbSteinerPoints);
+    H2SteinerPolygon(std::vector<H2Point> vertices, std::vector<uint> nbSteinerPoints);
 
-    std::vector<H2Point> getPointsOnSide(int side) const;
+    std::vector<H2Point> getPointsOnSide(uint side) const;
     H2Polygon getFullPolygon() const;
-    std::vector<int> getVectorNbSteinerPoints() const;
-    int getTotalNbSteinerPoints() const;
-    int getNbSteinerPointsOnSide(int side) const;
-    int getIndexOfFullVertex(int vertexIndex) const;
-    int getActualSide(int vertexInFullPolygon) const;
-    bool lieOnSameActualSide(int vertexInFullPolygon1, int vertexInFullPolygon2) const;
+    std::vector<uint> getVectorNbSteinerPoints() const;
+    uint getTotalNbSteinerPoints() const;
+    uint getNbSteinerPointsOnSide(uint side) const;
+    uint getIndexOfFullVertex(uint vertexIndex) const;
+    uint getActualSide(uint vertexInFullPolygon) const;
+    bool lieOnSameActualSide(uint vertexInFullPolygon1, uint vertexInFullPolygon2) const;
 
 private:
-    std::vector<int> nbSteinerPoints;
+    std::vector<uint> nbSteinerPoints;
 
 };
 

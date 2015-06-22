@@ -12,8 +12,11 @@ class Window;
 class MainApplication : public QApplication
 {
 public:
-    explicit MainApplication(int& argc, char ** argv);
-    virtual ~MainApplication();
+    MainApplication(int& argc, char ** argv);
+
+    MainApplication() = delete;
+    MainApplication(const MainApplication &) = delete;
+    MainApplication & operator=(MainApplication) = delete;
 
     virtual bool notify(QObject *receiver, QEvent *sender);
 

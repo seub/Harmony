@@ -1,134 +1,52 @@
-******************************** MISC ********************************
 
-Think about ERROR:
--size
--rel error
--needed at all?
+******************************** IMPROVE CODE ********************************
 
-different coordinates for complex numbers?
-disk model : z = (1 - exp(u)) e^(it)
-upper half plane model : z = x + i e^u
-or maybe in disk model : angle + hyperbolic distance to the origin
+assert vs throw
+track down code duplication
+move semantics http://stackoverflow.com/questions/3106110/what-are-move-semantics
+boost library
+hunt memory leaks, test with valgrind
+use smart pointers
+use functions, lambda ? http://www.codeproject.com/Articles/570638/Ten-Cplusplus-Features-Every-Cplusplus-Developer
 
+foutre des auto partout
+
+
+******************************** BUGS: ********************************
+
+Sometimes buffer back is cleared white?
+parfois isTriangleHighlighted est true à tort ?
+In MainApplication::notify: errorMessage =  "Error in ActionHandler::isReadyToCompute: test failed"
+
+******************************** NEXT FEATURES ********************************
 
 add rotations to mobiusing
 add shift (only keys ?)
 add zoom keys
 le zoom marche pas avec le complex to pixel...
-
-
-******************************** BUGS: ********************************
-parfois "there is no h2geodesic between point and itself" pendant l'affichage??
-mesh constructor fails for depth 11
-
-test memory leaks with valgrind
-
-******************************** MISC 2 ********************************
-
-
-add steiner points
-
-use v.at(i) instead of v[i] where necessary
-
-Move on to C++11:
-- use V = {1, 2}
-- use for(auto i : V) or for([const] auto &i : V)
-- use std::vector<int> V(3);
-- ?
-
-y a un petit truc qui déconne dans la détection
-repenser l'implémentation des meshpoints et du mesh ?
-
-gérer les copy constructor et cie pour les classes gérant des ressources
-
-
-
-******************************** Update 3 Oct 2014 ********************************
-
-Notes:
-1. I'm not sure why we made the constructor of Canvas. Anyway, it might not be a totally stupid idea to make all constructors explicit.
-2. Are there "const" everywhere there needs to be?
-3. I've decided to remove the "return;" line for void functions
-4. Why are the events "public slots" in Canvas, except paintEvent which is "private"?
-
-What is the function template <> std::vector<H2Isometry> IsomH2Representation::getSidePairingsNormalizedAroundVerticesToDepth(int n) good for?
-What about IsomH2Representation::getSidePairingsNormalizedToDepth(int n) const ?
-
-use assert and exceptions everywhere instead of if() cout error... as in assert(("Length can't possibly be negative! Tell jsmith", length >= 0));
-"The rule of thumb is that you should use assertions when you are trying to catch your own errors,
-and exceptions when trying to catch other people's errors.
-In other words, you should use exceptions to check the preconditions for the public API functions, and whenever you get any data that are external to your system. You should use asserts for the functions or data that are internal to your system.
-
-classes à relire :
-h2mesh***
-fenchelnielsenconstructor
-h2polygontrangulator
-h2trianglesubdivision
-h3***
-
-track down code duplication
-ma fonction swap pour H2TriangleSubdivision ne marche pas (?)
-H2Polygon & operator=(H2PolygonTriangulater); c'est quoi cette merde ??
-niquer les //private
-
-******************************** BUGS: ********************************
-
-(Figure out why program doesn't like it when the canvas is closed by user)
-
-
-
-
-************************* Update 10 Juin 2015 ***************************
-regarder les explicit
-décommenter les private
-rule of 5 (c++11)
-
-traiter proprement l'inclusion de factory dans window et dans les canvas
-
-************************* Update 12 Juin 2015 ***************************
-
-0. Don't break keys off in locks.
-1. Think about estimating Lebesgue measure on the circle for quadratic functions ("createQuadWeights"?)
-2. Think about equivariance: Explain the picture of the (almost) harmonic map from a rho to its Dehn twist.
-3. Add vertices to sides of the fundamental domain before triangulating (to cut down on triangles with very narrow angles).
-4. Think about how to properly choose a basepoint for the fundamental domain, instead of just trying lots of them.
-5. Think about automating in a totally different way: Fix a weighted graph that triangulates the surface ahead of time (relations on weights?), and use the algorithm to embed it "harmonically" on the surface.
-6. H3 and SL(2,C)-character variety?
-7. Slices of the character variety and pictures?
-8. Hopf differential? Energy?
-
-
-9. Add functionality to the window (lots): all choices (FN parameters of domain/target, depth), iteration / start over
-
-rendre affichage plus efficace:
-1. trouver un moyen de rendre le redraw plus rapide?
-2. réécrire le dessin des arcs
+le zoom marche moyen avec le wheel
 
 afficher l'erreur dans la statusbar, permettre à l'algo de s'arrêter quand l'erreur est petite
 what is a good choice of error? maybe L2 norm of tension field
 afficher plein de merde dans la statusbar
 
-mettre des throw Qstring partout où y a des erreurs possibles (track down les cout)
-remplacer les friend class par des friend functions
-
-parfois isTriangleHighlighted est true à tort ?
-
 construire le mesh et la fonction dans un thread
 
-hunt memory leaks
-
-improve triangulater:
-1. make different choices of Steiner points?
-2. even assuming the current choice, make different choices for cuts? For instance, idea: make the longest cut as small as possible
-
-faire un truc plus propre avec les enum (see basic drawing example of Qt)
-
-try dirichlet domain?
 
 in "show only translates of fundamental domain" (around all vertices), show the translates to depth 2?
 
-le zoom avec wheel marche pas super bien
 
+************************* FUTURE PLANS ***************************
+
+0. Don't break keys off in locks.
+1. Are quadratic weights dead?
+2. Think about equivariance: Explain the picture of the (almost) harmonic map from a rho to its Dehn twist.
+3. Improve choice of steiner points and cuts
+4. Improve choice of fundamental domain (try dirichlet?)
+5. Think about automating in a totally different way: Fix a weighted graph that triangulates the surface ahead of time (relations on weights?), and use the algorithm to embed it "harmonically" on the surface.
+6. H3 and SL(2,C)-character variety?
+7. Slices of the character variety and pictures?
+8. Hopf differential? Energy?
 
 
 Optimisation :

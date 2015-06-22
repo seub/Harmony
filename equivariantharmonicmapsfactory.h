@@ -20,50 +20,51 @@ class EquivariantHarmonicMapsFactory : public QThread
 
 public:
     EquivariantHarmonicMapsFactory();
-    void setGenus(int genus);
-    void setMeshDepth(int meshDepth);
+    void setGenus(uint genus);
+    void setMeshDepth(uint meshDepth);
+    void setNiceRhoDomain();
+    void setNiceRhoTarget();
     void setRhoDomain(const std::vector<double> & FNlengths, const std::vector<double> FNtwists);
     void setRhoTarget(const std::vector<double> & FNlengths, const std::vector<double> FNtwists);
 
     void resetRhoDomain();
     void resetRhoTarget();
 
-    void setNiceRhoDomain();
-    void setNiceRhoTarget();
     void resetInit();
-    void initializeMesh();
-    void initializeFunction();
-    void initializeRhoDomain();
-    void initializeRhoTarget();
 
-    IsomH2Representation getRhoDomain() const;
-    IsomH2Representation getRhoTarget() const;
+    GroupRepresentation<H2Isometry> getRhoDomain() const;
+    GroupRepresentation<H2Isometry> getRhoTarget() const;
 
     void reset();
-    void iterate(int n=1);
+    void iterate(uint n=1);
 
 public slots:
     void run();
     void stopRunning();
 
 signals:
-    void meshCreated(int nbMeshPoints);
+    void meshCreated(uint nbMeshPoints);
 
 private:
     void resetBooleans();
     bool isReady() const;
+
+    void initializeMesh();
+    void initializeFunction();
+    void initializeRhoDomain();
+    void initializeRhoTarget();
     void refreshFunction();
 
-    int genus, meshDepth;
+    uint genus, meshDepth;
     DiscreteGroup Gamma;
     bool isGenusSet, isMeshDepthSet, isRhoDomainSet, isRhoTargetSet, isMeshInitialized, isInitialized;
     bool stop;
     std::vector<double> FNLengthsDomain, FNTwistsDomain, FNLengthsTarget, FNTwistsTarget;
-    IsomH2Representation rhoDomain, rhoTarget;
+    GroupRepresentation<H2Isometry> rhoDomain, rhoTarget;
     H2Mesh mesh;
     H2MeshFunction functionInit, function;
     H2MeshFunctionIterator iterator;
-    int nbIterations;
+    uint nbIterations;
 };
 
 #endif // EQUIVARIANTHARMONICMAPSFACTORY_H

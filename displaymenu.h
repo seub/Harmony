@@ -17,15 +17,16 @@ class DisplayMenu : public QGroupBox
     friend class ActionHandler;
 
 public:
+    enum ShowTranslatesChoice {SHOW_TRANSLATES_DOMAIN, SHOW_TRANSLATES_VERTEX, SHOW_TRANSLATES_VERTICES};
+
+    DisplayMenu() = delete;
+    DisplayMenu(const DisplayMenu &) = delete;
+    DisplayMenu& operator=(DisplayMenu) = delete;
+
     int maxLeftColWidth() const;
     int maxRightColWidth() const;
     int maxWidth() const;
     int maxHeight() const;
-
-
-signals:
-
-public slots:
 
 private:
     DisplayMenu(Window *window, ActionHandler *handler);

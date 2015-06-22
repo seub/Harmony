@@ -15,8 +15,12 @@ class H2CanvasDelegate : public CanvasDelegate
     friend class Canvas;
     friend class FenchelNielsenUser;
 
+public:
+    virtual DelegateType getDelegateType() const override {return DelegateType::H2DELEGATE;}
+    virtual ~H2CanvasDelegate() {}
+
 protected:
-    explicit H2CanvasDelegate(int sizeX, int sizeY, ActionHandler* handler = 0);
+    H2CanvasDelegate(uint sizeX, uint sizeY, ActionHandler* handler = 0);
 
     H2Point pixelToH2coordinate(int x, int y) const;
     void drawComplexPointInDiskModel(const Complex &z, const QColor &color = "black", int width = 1, bool back = true);
@@ -33,15 +37,15 @@ protected:
     void refreshTranslates(bool aroundVertex, bool aroundVertices);
 
     virtual void decideHighlighting(const H2Point &) {}
-    void getMeshIndexHighlighted(bool &highlighted, int &meshIndexHighted) const;
-    void getMeshTriangleIndicesHighlighted(bool &highlighted, int &index1, int &index2, int &index3) const;
-    virtual void decideHighlightingMeshPoints(bool, bool&, int) {}
-    virtual void decideHighlightingTriangle(bool, bool&, int, int, int) {}
+    void getMeshIndexHighlighted(bool &highlighted, uint &meshIndexHighted) const;
+    void getMeshTriangleIndicesHighlighted(bool &highlighted, uint &index1, uint &index2, uint &index3) const;
+    virtual void decideHighlightingMeshPoints(bool, bool&, uint) {}
+    virtual void decideHighlightingTriangle(bool, bool&, uint, uint, uint) {}
     void resetHighlighted();
     void setShowTranslates(bool showTranslatesAroundVertex, bool showTranslatesAroundAllVertices);
     void getShowTranslates(bool &aroundVertexOut, bool &aroundVerticesOut);
 
-    void redrawBuffer(bool back = true, bool top = true, const H2Isometry &mobius = H2Isometry::identity());
+    void redrawBuffer(bool back = true, bool top = true);
     void redrawMeshOrFunction();
     void redrawBufferBack();
     void redrawBufferTop();
@@ -49,14 +53,14 @@ protected:
     virtual void subRedrawBufferTop() {}
     virtual void subResetView();
 
-    virtual void mousePress(QMouseEvent * mouseEvent);
-    virtual void mouseMove(QMouseEvent * mouseEvent);
-    virtual void mouseRelease(QMouseEvent *);
-    virtual void keyPress(QKeyEvent * keyEvent);
+    void mousePress (QMouseEvent * mouseEvent) override final;
+    void mouseMove(QMouseEvent * mouseEvent) override final;
+    void mouseRelease(QMouseEvent *) override final;
+    void keyPress(QKeyEvent * keyEvent) override final;
     virtual void subMouseMove(QMouseEvent *) {}
     virtual void subKeyPress(QKeyEvent *) {}
-    virtual void enter();
-    virtual void leave();
+    void enter() override final;
+    void leave() override final;
 
 
     bool mobiusing;
@@ -65,7 +69,7 @@ protected:
     H2Isometry mobius;
     H2Isometry savedMobius;
     bool isTriangleHighlighted;
-    int triangleMeshIndex1, triangleMeshIndex2, triangleMeshIndex3, meshIndexHighlighted;
+    uint triangleMeshIndex1, triangleMeshIndex2, triangleMeshIndex3, meshIndexHighlighted;
 
     bool arePointsHighlightedRed;
     bool arePointsHighlightedGreen;
@@ -81,18 +85,19 @@ class H2CanvasDelegateDomain : public H2CanvasDelegate
     friend class ActionHandler;
 
 public:
+    DelegateType getDelegateType() const override final {return DelegateType::H2DELEGATEDOMAIN;}
 
 private:
-    explicit H2CanvasDelegateDomain(int sizeX, int sizeY, ActionHandler *handler = 0);
+    H2CanvasDelegateDomain(uint sizeX, uint sizeY, ActionHandler *handler = 0);
 
     void refreshMesh();
 
-    void decideHighlighting(const H2Point &pointUnderMouse);
-    void decideHighlightingMeshPoints(bool highlighted, bool &update, int meshIndexHighlighted = -1);
-    void decideHighlightingTriangle(bool highlighted, bool& update, int triangleMeshIndex1 = -1, int triangleMeshIndex2 = -1, int triangleMeshIndex3 = -1);
-    void subRedrawBufferBack();
-    void subRedrawBufferTop();
-    void subMouseMove(QMouseEvent * mouseEvent);
+    void decideHighlighting(const H2Point &pointUnderMouse) override final;
+    void decideHighlightingMeshPoints(bool highlighted, bool &update, uint meshIndexHighlighted) override final;
+    void decideHighlightingTriangle(bool highlighted, bool& update, uint triangleMeshIndex1, uint triangleMeshIndex2, uint triangleMeshIndex3) override final;
+    void subRedrawBufferBack() override final;
+    void subRedrawBufferTop() override final;
+    void subMouseMove(QMouseEvent * mouseEvent) override final;
 };
 
 class H2CanvasDelegateTarget : public H2CanvasDelegate
@@ -101,19 +106,20 @@ class H2CanvasDelegateTarget : public H2CanvasDelegate
     friend class ActionHandler;
 
 public:
+     DelegateType getDelegateType() const override final {return DelegateType::H2DELEGATETARGET;}
 
 private:
-    explicit H2CanvasDelegateTarget(int sizeX, int sizeY, ActionHandler *handler = 0);
+    H2CanvasDelegateTarget(int sizeX, int sizeY, ActionHandler *handler = 0);
 
     void refreshFunction();
 
-    void decideHighlighting(const H2Point &pointUnderMouse);
-    void decideHighlightingMeshPoints(bool highlighted, bool &update, int meshIndexHighlighted = -1);
-    void decideHighlightingTriangle(bool highlighted, bool &update, int triangleMeshIndex1 = -1, int triangleMeshIndex2 = -1, int triangleMeshIndex3 = -1);
-    void subRedrawBufferBack();
-    void subRedrawBufferTop();
-    void subMouseMove(QMouseEvent *mouseEvent);
-    void subKeyPress(QKeyEvent *keyEvent);
+    void decideHighlighting(const H2Point &pointUnderMouse) override final;
+    void decideHighlightingMeshPoints(bool highlighted, bool &update, uint meshIndexHighlighted) override final;
+    void decideHighlightingTriangle(bool highlighted, bool &update, uint triangleMeshIndex1, uint triangleMeshIndex2, uint triangleMeshIndex3) override final;
+    void subRedrawBufferBack() override final;
+    void subRedrawBufferTop() override final;
+    void subMouseMove(QMouseEvent *mouseEvent) override final;
+    void subKeyPress(QKeyEvent *keyEvent) override final;
 };
 
 

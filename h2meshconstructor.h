@@ -7,10 +7,16 @@
 
 class H2MeshConstructor
 {
+    friend H2Mesh::H2Mesh(const GroupRepresentation<H2Isometry> &, uint);
+
 public:
-    H2MeshConstructor(H2Mesh *mesh);
+    H2MeshConstructor() = delete;
+    H2MeshConstructor(const H2MeshConstructor &) = delete;
+    H2MeshConstructor & operator=(H2MeshConstructor) = delete;
 
 private:
+    explicit H2MeshConstructor(H2Mesh *mesh);
+
     void createPoints();
     void createNeighbors();
     void createSubdivisions();
@@ -23,7 +29,7 @@ private:
     void createInteriorNeighbors();
     void createCutNeighbors();
     void createSideNeighbors();
-    void createRemainingNeighbors();
+    void createRemainingNonExteriorNeighbors();
     void createExteriorNeighbors();
     void createExteriorVertexNeighbors();
     void createMeshExteriorIndices();
@@ -40,15 +46,17 @@ private:
     bool checkPartnerPoints() const;
     bool checkCurrentIndex() const;
 
-    std::vector<int> meshPointsIndicesAlongSide(int side) const;
-    std::vector<int> meshPointsIndicesAlongFullSide(int side) const;
+    std::vector<uint> meshPointsIndicesAlongSide(uint side) const;
+    std::vector<uint> meshPointsIndicesAlongFullSide(uint side) const;
+
+    static bool compareTriples(const std::tuple<H2Point, H2Point, uint> & t1, const std::tuple<H2Point, H2Point, uint> & t2);
 
 
     H2Mesh *mesh;
 
-    int depth;
-    std::vector<H2TriangleSubdivision> *subdivisions;
-    std::vector<std::vector<int>> *meshIndicesInSubdivisions;
+    uint depth;
+    std::vector< TriangularSubdivision<H2Point> > *subdivisions;
+    std::vector<std::vector<uint>> *meshIndicesInSubdivisions;
     std::vector<H2MeshPoint*> *points;
     std::vector<H2MeshPoint> *regularPoints;
     std::vector<H2MeshCutPoint> *cutPoints;
@@ -58,11 +66,11 @@ private:
 
 
     H2PolygonTriangulater triangulater;
-    int nbVertices, nbSteinerPoints, nbSubdivisions, nbSubdivisionLines, nbSubdivisionPoints;
-    int nextIndex;
+    uint nbVertices, nbSteinerPoints, nbSubdivisions, nbSubdivisionLines, nbSubdivisionPoints;
+    uint nextIndex;
     std::vector< std::vector<bool> > boundaryPointInSubdivisions;
-    std::vector<int> vertexMeshIndex, steinerPointsMeshIndex;
-    std::vector< std::vector< std::vector<int> > > neighborsInSubdivisions;
+    std::vector<uint> vertexMeshIndex, steinerPointsMeshIndex;
+    std::vector< std::vector< std::vector<uint> > > neighborsInSubdivisions;
     std::vector<Word> sidePairings;
 };
 

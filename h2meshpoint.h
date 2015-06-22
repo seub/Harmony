@@ -12,6 +12,9 @@ class H2MeshPoint
     friend class H2MeshFunction;
     friend class H2MeshFunctionIterator;
 
+public:
+    H2MeshPoint() = delete;
+
 protected:
     virtual bool isCutPoint() const {return false;}
     virtual bool isBoundaryPoint() const {return false;}
@@ -19,13 +22,13 @@ protected:
     virtual bool isSteinerPoint() const {return false;}
     bool isInteriorPoint() const {return !(isBoundaryPoint() || isVertexPoint() || isSteinerPoint());}
 
-    H2MeshPoint(int subdivisionIndex, int indexInSubdivision, int index) : subdivisionIndex(subdivisionIndex), indexInSubdivision(indexInSubdivision), index(index) {}
+    H2MeshPoint(uint subdivisionIndex, uint indexInSubdivision, uint index) : subdivisionIndex(subdivisionIndex), indexInSubdivision(indexInSubdivision), index(index) {}
 
-    int subdivisionIndex, indexInSubdivision;
-    std::vector<int> neighborsIndices;
+    uint subdivisionIndex, indexInSubdivision;
+    std::vector<uint> neighborsIndices;
     std::vector<double> neighborsWeights;
     double weight;
-    int index;
+    uint index;
 };
 
 
@@ -35,12 +38,12 @@ class H2MeshCutPoint : public H2MeshPoint
     friend class H2MeshConstructor;
 
 private:
-    H2MeshCutPoint(int subdivisionIndexLeft, int indexInSubdivisionLeft, int subdivisionIndexRight, int indexInSubdivisionRight, int index) :
+    H2MeshCutPoint(uint subdivisionIndexLeft, uint indexInSubdivisionLeft, uint subdivisionIndexRight, uint indexInSubdivisionRight, uint index) :
         H2MeshPoint(subdivisionIndexLeft, indexInSubdivisionLeft, index),
         subdivisionIndexRight(subdivisionIndexRight), indexInSubdivisionRight(indexInSubdivisionRight) {}
-    bool isCutPoint() const {return true;}
+    bool isCutPoint() const override final {return true;}
 
-    int subdivisionIndexRight, indexInSubdivisionRight;
+    uint subdivisionIndexRight, indexInSubdivisionRight;
 };
 
 
@@ -53,12 +56,12 @@ class H2MeshBoundaryPoint : public H2MeshPoint
     friend class H2MeshFunction;
 
 private:
-    H2MeshBoundaryPoint(int subdivisionIndex, int indexInSubdivision, int side, int index) :
+    H2MeshBoundaryPoint(uint subdivisionIndex, uint indexInSubdivision, uint side, uint index) :
         H2MeshPoint(subdivisionIndex, indexInSubdivision, index), side(side) {}
-    bool isBoundaryPoint() const {return true;}
+    bool isBoundaryPoint() const override final {return true;}
 
-    int side;
-    int partnerPointIndex;
+    uint side;
+    uint partnerPointIndex;
     std::vector<Word> neighborsPairings;
 };
 
@@ -71,15 +74,15 @@ class H2MeshVertexPoint : public H2MeshPoint
     friend class H2MeshFunction;
 
 private:
-    H2MeshVertexPoint(int subdivisionIndex, int indexInSubdivision, int vertexIndex,
-                      std::vector<int> subdivisionIndices, std::vector<int> indicesInSubdivisions, int index) :
+    H2MeshVertexPoint(uint subdivisionIndex, uint indexInSubdivision, uint vertexIndex,
+                      std::vector<uint> subdivisionIndices, std::vector<uint> indicesInSubdivisions, uint index) :
         H2MeshPoint(subdivisionIndex, indexInSubdivision, index), vertexIndex(vertexIndex),
         subdivisionIndices(subdivisionIndices), indicesInSubdivisions(indicesInSubdivisions) {}
-    bool isVertexPoint() const {return true;}
+    bool isVertexPoint() const override final {return true;}
 
-    int vertexIndex;
+    uint vertexIndex;
     std::vector<Word> neighborsPairings;
-    std::vector<int> subdivisionIndices, indicesInSubdivisions;
+    std::vector<uint> subdivisionIndices, indicesInSubdivisions;
 };
 
 class H2MeshSteinerPoint : public H2MeshPoint
@@ -90,16 +93,16 @@ class H2MeshSteinerPoint : public H2MeshPoint
     friend class H2MeshFunction;
 
 private:
-    H2MeshSteinerPoint(int subdivisionIndex, int indexInSubdivision, int side,
-                      std::vector<int> subdivisionIndices, std::vector<int> indicesInSubdivisions, int index) :
+    H2MeshSteinerPoint(uint subdivisionIndex, uint indexInSubdivision, uint side,
+                      std::vector<uint> subdivisionIndices, std::vector<uint> indicesInSubdivisions, uint index) :
         H2MeshPoint(subdivisionIndex, indexInSubdivision, index), side(side),
         subdivisionIndices(subdivisionIndices), indicesInSubdivisions(indicesInSubdivisions) {}
-    bool isSteinerPoint() const {return true;}
+    bool isSteinerPoint() const override final {return true;}
 
-    int side;
-    int partnerPointIndex;
+    uint side;
+    uint partnerPointIndex;
     std::vector<Word> neighborsPairings;
-    std::vector<int> subdivisionIndices, indicesInSubdivisions;
+    std::vector<uint> subdivisionIndices, indicesInSubdivisions;
 };
 
 
