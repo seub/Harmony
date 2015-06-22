@@ -29,6 +29,7 @@ public:
 
     static bool closestPoints(const H2Geodesic & L1, const H2Geodesic &  L2, H2Point & p1, H2Point & p2);
     static bool closestPoint(const H2Geodesic & L1, const H2Geodesic &  L2, H2Point & p1);
+    static double distanceGeodesics(const H2Geodesic & L1, const H2Geodesic & L2);
 
 private:
     Complex z1, z2;
@@ -64,6 +65,8 @@ public:
     bool getCircleAndAnglesInDiskModel(Circle & outC, double & outAngle1, double & outAngle2) const;
     void getEndpointsInDiskModel(Complex &output1, Complex &output2) const;
     void getEndpoints(H2Point &output1, H2Point &output2) const;
+
+    static bool shareEndpoint(const H2GeodesicArc &L1, const H2GeodesicArc &L2);
 
 private:
     H2Point p1, p2;

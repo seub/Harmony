@@ -55,7 +55,7 @@ public:
     std::vector<int> nbCutsFromVertex() const;
     void verticesIndices(std::vector< std::vector<int> > &triangleIndices, std::vector< std::vector<int> > &indicesInTriangles) const;
 
-private:
+//private:
     H2PolygonTriangulater(const H2PolygonTriangulater &);
     H2Polygon & operator=(H2PolygonTriangulater);
 
@@ -80,6 +80,7 @@ private:
     double minTriangleSide() const;
 
     void createSteinerPoints();
+    void createSteinerPointsDetailed();
 
     bool sameSide(int fullIndex1, int fullIndex2) const;
 
