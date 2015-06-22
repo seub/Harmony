@@ -7,9 +7,9 @@ int main(int argc, char *argv[])
 /*
     TopologicalSurface S(2,0);
     DiscreteGroup Gamma(S);
-    IsomH2Representation rho(&Gamma);
+    GroupRepresentation<H2Isometry> rho(Gamma);
     rho.setNiceRepresentation();
-    H2Polygon P = rho.generatePolygon(50);
+    H2Polygon P = rho.generateFundamentalDomain(50);
 
 
     H2PolygonTriangulater T(&P);

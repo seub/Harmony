@@ -551,7 +551,7 @@ void H2PolygonTriangulater::createSteinerPoints()
     fullPolygon = steinerPolygon.getFullPolygon();
 }
 
-void H2PolygonTriangulater::createSteinerPointsDetailed()
+void H2PolygonTriangulater:: createSteinerPointsDetailed()
 {
     std::vector<uint> nbSteinerPoints;
     std::vector<H2GeodesicArc> sides = polygon->getSides();

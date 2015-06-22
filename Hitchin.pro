@@ -15,7 +15,7 @@ QT += core \
 TARGET = Hitchin
 CONFIG += console
 CONFIG -= app_bundle
-CONFIG += c++14
+CONFIG += c++11
 CONFIG += thread
 
 # LIBS += -L/usr/local/lib -lGLU
