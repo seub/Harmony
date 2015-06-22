@@ -11,12 +11,11 @@
 #include "circle.h"
 #include "tools.h"
 
-CanvasDelegate::CanvasDelegate(int sizeX, int sizeY, ActionHandler *handler) : handler(handler)
+CanvasDelegate::CanvasDelegate(uint sizeX, uint sizeY, ActionHandler *handler) : handler(handler)
 {
-    //std::cout << "Entering CanvasDelegate::CanvasDelegate" << std::endl;
-
     penBack = new QPen;
     penTop = new QPen;
+    resetPenBack = true;
 
     imageBack = new QImage(sizeX, sizeY, QImage::Format_RGB32);
     imageTop = new QImage(sizeX, sizeY, QImage::Format_ARGB32);
@@ -39,8 +38,6 @@ CanvasDelegate::CanvasDelegate(int sizeX, int sizeY, ActionHandler *handler) : h
 
     detectionRadius = 20;
     resetView(sizeX, sizeY);
-
-    //std::cout << "Leaving CanvasDelegate::CanvasDelegate" << std::endl;
 }
 
 CanvasDelegate::~CanvasDelegate()
@@ -64,7 +61,7 @@ const QImage *CanvasDelegate::getImageTop() const
     return imageTop;
 }
 
-void CanvasDelegate::rescale(int sizeX, int sizeY)
+void CanvasDelegate::rescale(uint sizeX, uint sizeY)
 {
     delete painterBack;
     *imageBack = QImage(sizeX, sizeY, QImage::Format_RGB32);
@@ -94,7 +91,7 @@ void CanvasDelegate::rescale(int sizeX, int sizeY)
     enableRedrawBuffer();
 }
 
-void CanvasDelegate::resetView(int sizeX, int sizeY)
+void CanvasDelegate::resetView(uint sizeX, uint sizeY)
 {
     xMin = -1.1;
     yMax = 1.1;
@@ -104,6 +101,14 @@ void CanvasDelegate::resetView(int sizeX, int sizeY)
 
     scaleX = sizeX/2.2;
     scaleY = sizeY/2.2;
+
+    subResetView();
+    enableRedrawBuffer();
+}
+
+void CanvasDelegate::resetView()
+{
+    resetView(sizeX, sizeY);
 }
 
 void CanvasDelegate::ComplexToPixelCoordinates(int &xOut, int &yOut, Complex z) const
@@ -144,15 +149,16 @@ void CanvasDelegate::zoom(double coeff, int centerX, int centerY)
 
 void CanvasDelegate::mouseShift(int x, int y)
 {
-    //std::cout << "Entering CanvasDelegate::shift" << std::endl;
     xMin = xMinSave + (mouseX - x)/scaleX;
     yMax = yMaxSave - (mouseY - y)/scaleY;
+    enableRedrawBuffer();
 }
 
 void CanvasDelegate::shift(int x, int y)
 {
     xMin += x/scaleX;
     yMax += y/scaleY;
+    enableRedrawBuffer();
 }
 
 void CanvasDelegate::enableRedrawBuffer(bool back, bool top)
@@ -168,9 +174,12 @@ void CanvasDelegate::drawPoint(const Complex &z, const QColor &color, int width,
 
     if (back)
     {
-        penBack->setWidth(width);
-        penBack->setColor(color);
-        painterBack->setPen(*penBack);
+        if (resetPenBack)
+        {
+            penBack->setWidth(width);
+            penBack->setColor(color);
+            painterBack->setPen(*penBack);
+        }
         painterBack->drawPoint(x,y);
     }
     else
@@ -190,9 +199,12 @@ void CanvasDelegate::drawSegment(const Complex &endpoint1, const Complex &endpoi
 
     if (back)
     {
-        penBack->setWidth(width);
-        penBack->setColor(color);
-        painterBack->setPen(*penBack);
+        if (resetPenBack)
+        {
+            penBack->setWidth(width);
+            penBack->setColor(color);
+            painterBack->setPen(*penBack);
+        }
         painterBack->drawLine(x1, y1, x2, y2);
     }
     else
@@ -228,41 +240,56 @@ void CanvasDelegate::drawCircle(const Complex &center, double radius, const QCol
     }
 }
 
-void CanvasDelegate::drawCircle(const Circle &C, const QColor &color, int width, bool back)
+bool CanvasDelegate::dealWithExceptionalArc(const Complex &center, double radius,
+                                            const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width, bool back)
 {
-    Complex center;
-    double radius;
-    C.getCenterAndRadius(center, radius);
-    drawCircle(center, radius, color, width, back);
-}
+    Complex newEndpoint1, newEndpoint2;
+    bool noBestApproximation, arcOutsideCanvas, failed;
 
-bool CanvasDelegate::dealWithAlmostStraightArc(const Complex &center, double radius,
-                                               const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width, bool back)
-{
-    double angleMin = M_PI/(180*16);
-    double scale = scaleX > scaleY ? scaleX : scaleY;
-    int pixelError = 8.0;
-    Complex z1, z2;
-    bool intersects = intersectionsOfFullCircleWithCanvasBoundary(center, radius, endpoint1, endpoint2, z1, z2);
-    if(radius*scale*angleMin > pixelError)
+    bestLineSegmentApproximationOfSmallerArc(center, radius, endpoint1, endpoint2, newEndpoint1, newEndpoint2, noBestApproximation, arcOutsideCanvas, failed);
+
+    if (failed)
     {
-        drawSegment(z1, z2, color, width, back);
+        // *** For testing ***
+        drawCircle(center, radius, "green", 1, back);
+        return true;
+        // *** After testing replace above by next line ***
+        // return false;
+    }
+    else if (noBestApproximation)
+    {
+        return false;
+    }
+    else if (arcOutsideCanvas)
+    {
         return true;
     }
-    else if ((!intersects) && (!isInside(endpoint1)) && (!isInside(endpoint2)))
-    {
-        // Arc is outside of canvas
-        return true;
-    }
-    else if (isAlmostStraightArc(center, radius, endpoint1, endpoint2))
+    else if (isAlmostSmallStraightArc(center, radius, endpoint1, endpoint2))
     {
         drawSegment(endpoint1, endpoint2, color, width, back);
         return true;
     }
-    else return false;
+    else if (isAlmostInfiniteRadius(radius))
+    {
+        drawSegment(newEndpoint1, newEndpoint2, color, width, back);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
 }
 
-bool CanvasDelegate::isAlmostStraightArc(const Complex &center, double radius, const Complex &endpoint1, const Complex &endpoint2) const
+bool CanvasDelegate::isAlmostInfiniteRadius(double radius) const
+{
+    double angleMin = M_PI/(180*16);
+    double scale = scaleX > scaleY ? scaleX : scaleY;
+    int pixelError = 8.0;
+    return radius*scale*angleMin > pixelError;
+}
+
+bool CanvasDelegate::isAlmostSmallStraightArc(const Complex &center, double radius, const Complex &endpoint1, const Complex &endpoint2) const
 {
     Complex endpoint2nor = (endpoint2 - center)*conj(endpoint1 - center)/(radius*radius);
     double X2 = real(endpoint2nor), Y2 = imag(endpoint2nor);
@@ -273,7 +300,8 @@ bool CanvasDelegate::isAlmostStraightArc(const Complex &center, double radius, c
     Complex arcMidpoint(arcMidpointX, arcMidpointY);
     Complex lineMidpoint = 0.5*(1.0 + endpoint2nor);
 
-    int pixelDeltaSquared = Tools::intRound(norm(arcMidpoint - lineMidpoint)*radius*radius*scaleX*scaleY);
+    double scale = scaleX > scaleY ? scaleX : scaleY;
+    int pixelDeltaSquared = Tools::intRound(norm(arcMidpoint - lineMidpoint)*radius*radius*scale*scale);
     int pixelTolSquared = 1;
 
     return pixelDeltaSquared <= pixelTolSquared;
@@ -281,19 +309,171 @@ bool CanvasDelegate::isAlmostStraightArc(const Complex &center, double radius, c
 
 bool CanvasDelegate::isInside(const Complex &point) const
 {
-    double xMax = xMin + sizeX/scaleX;
-    double yMin = yMax - sizeY/scaleY;
     double x = real(point), y = imag(point);
 
-    return (x>xMin) && (x<xMax) && (y>yMin) && (y<yMax);
+    return (x >= xMin) && (x <= xMax()) && (y >= yMin()) && (y <= yMax);
 }
 
-bool CanvasDelegate::intersectionsOfFullCircleWithCanvasBoundary(const Complex &center, double radius,
-                                                                 const Complex &endpoint1, const Complex &endpoint2, Complex &zOut1, Complex &zOut2) const
+double CanvasDelegate::xMax() const
 {
-    //std::cout << "Entering CanvasDelegate::intersectsCanvasBoundary" << std::endl;
+    return xMin + sizeX/scaleX;
+}
 
-    std::vector<Complex> intersectionsTemp, intersections;
+double CanvasDelegate::yMin() const
+{
+    return yMax - sizeY/scaleY;
+}
+
+bool CanvasDelegate::liesOnSmallerArc(const Complex &point, const Complex &center, const Complex &endpoint1, const Complex &endpoint2)
+{
+    Complex u1 = endpoint1 - center, u2 = endpoint2 - center, u = point - center;
+
+    Complex v = u*conj(u1), v2 = u2*conj(u1);
+
+    return (imag(v2) > 0) ? ((imag(v) >= 0) && (real(v) >= real(v2))) : ((imag(v) <= 0) && (real(v) >= real(v2)));
+}
+
+void CanvasDelegate::bestLineSegmentApproximationOfSmallerArc(const Complex &center, double radius, const Complex &endpoint1, const Complex &endpoint2,
+                                                              Complex &newEndpoint1, Complex &newEndpoint2, bool &noBestApproximation, bool &arcOutsideCanvas, bool &failed)
+{
+    ++nbBestLineCalls;
+    noBestApproximation = false;
+    arcOutsideCanvas = false;
+    failed = false;
+
+    newEndpoint1 = endpoint1;
+    newEndpoint2 = endpoint2;
+
+    bool isInside1 = isInside(endpoint1);
+    bool isInside2 = isInside(endpoint2);
+
+    if (isInside1 && isInside2)
+    {
+        return;
+    }
+
+    std::vector<Complex> intersections;
+    Complex intersection1, intersection2;
+    circleIntersectsCanvasBoundary(center, radius, intersections);
+    uint nbIntersections = intersections.size();
+
+    if (nbIntersections == 0)
+    {
+        if ((!isInside1) && (!isInside2))
+        {
+            arcOutsideCanvas = true;
+            return;
+        }
+        else
+        {
+            qDebug() << "Warning in CanvasDelegate::bestLineSegmentApproximationOfArc: "
+                     << "exactly one of the two endpoints is in the canvas, but the circle does not intersect the canvas boundary?!";
+            ++nbBestLineFails;
+            failed = true;
+            return;
+        }
+    }
+    else if (nbIntersections == 2)
+    {
+        intersection1 = intersections[0];
+        intersection2 = intersections[1];
+        if (isInside1 && (!isInside2))
+        {
+            if (liesOnSmallerArc(intersection1, center, endpoint1, endpoint2))
+            {
+                newEndpoint2 = intersection1;
+                return;
+            }
+            else if (liesOnSmallerArc(intersection2, center, endpoint1, endpoint2))
+            {
+                newEndpoint2 = intersection2;
+                return;
+            }
+            else
+            {
+                qDebug() << "Warning in CanvasDelegate::bestLineSegmentApproximationOfArc: "
+                         << "exactly one of the two endpoints is in the canvas, circle intersects boundary twice, "
+                         << "but neither intersections lie on arc?!";
+                ++nbBestLineFails;
+                failed = true;
+                return;
+            }
+        }
+        else if (isInside2 && (!isInside1))
+        {
+            if (liesOnSmallerArc(intersection1, center, endpoint2, endpoint1))
+            {
+                newEndpoint1 = intersection1;
+                return;
+            }
+            else if (liesOnSmallerArc(intersection2, center, endpoint2, endpoint1))
+            {
+                newEndpoint1 = intersection2;
+                return;
+            }
+            else
+            {
+                qDebug() << "Warning in CanvasDelegate::bestLineSegmentApproximationOfArc: "
+                         << "exactly one of the two endpoints is in the canvas, circle intersects boundary twice, "
+                         << "but neither intersections lie on arc?!";
+                ++nbBestLineFails;
+                failed = true;
+                return;
+            }
+        }
+        else
+        {
+            if (liesOnSmallerArc(intersection1, center, endpoint1, endpoint2) && liesOnSmallerArc(intersection2, center, endpoint1, endpoint2))
+            {
+
+                if (liesOnSmallerArc(intersection1, center, endpoint1, intersection2))
+                {
+                    newEndpoint1 = intersection1;
+                    newEndpoint2 = intersection2;
+                    return;
+                }
+                else if (liesOnSmallerArc(intersection2, center, endpoint1, intersection1))
+                {
+                    newEndpoint1 = intersection2;
+                    newEndpoint2 = intersection1;
+                    return;
+                }
+                else
+                {
+                    qDebug() << "Warning in CanvasDelegate::bestLineSegmentApproximationOfArc: "
+                             << "unexpected situation that I can't be bothered describing";
+                    ++nbBestLineFails;
+                    failed = true;
+                    return;
+                }
+            }
+            else
+            {
+                arcOutsideCanvas = true;
+                return;
+            }
+        }
+    }
+    else if ((nbIntersections % 2) == 1)
+    {
+        qDebug() << "Warning in CanvasDelegate::bestLineSegmentApproximationOfArc: "
+                 << "Circle and Canvas boundary have an odd number of intersections?!";
+        failed = true;
+        ++nbBestLineFails;
+        return;
+    }
+    else
+    {
+        noBestApproximation = true;
+        return;
+    }
+}
+
+
+bool CanvasDelegate::circleIntersectsCanvasBoundary(const Complex &center, double radius, std::vector<Complex> &intersectionsOut) const
+{
+    intersectionsOut.clear();
+
     double xMax = xMin + sizeX/scaleX;
     double yMin = yMax - sizeY/scaleY;
 
@@ -304,211 +484,113 @@ bool CanvasDelegate::intersectionsOfFullCircleWithCanvasBoundary(const Complex &
 
     x = xMin;
     D = radius*radius - (x-c1)*(x-c1);
-    if (D > 0)
+    if (D >= 0)
     {
         D = sqrt(D);
         y = c2 + D;
-        if (y > yMin && y < yMax)
+        if (y >= yMin && y <= yMax)
         {
-            intersectionsTemp.push_back(Complex(x,y));
+            intersectionsOut.push_back(Complex(x,y));
         }
-        else
+        y = c2 - D;
+        if (y >= yMin && y <= yMax)
         {
-            y = c2 - D;
-            if (y > yMin && y < yMax)
-            {
-                intersectionsTemp.push_back(Complex(x,y));
-            }
+            intersectionsOut.push_back(Complex(x,y));
         }
     }
 
     x = xMax;
     D = radius*radius - (x-c1)*(x-c1);
-    if (D > 0)
+    if (D >= 0)
     {
         D = sqrt(D);
         y = c2 + D;
-        if (y > yMin && y < yMax)
+        if (y >= yMin && y <= yMax)
         {
-            intersectionsTemp.push_back(Complex(x,y));
+            intersectionsOut.push_back(Complex(x,y));
         }
-        else
+        y = c2 - D;
+        if (y >= yMin && y <= yMax)
         {
-            y = c2 - D;
-            if (y > yMin && y < yMax)
-            {
-                intersectionsTemp.push_back(Complex(x,y));
-            }
+            intersectionsOut.push_back(Complex(x,y));
         }
     }
 
     y = yMin;
     D = radius*radius - (y-c2)*(y-c2);
-    if (D > 0)
+    if (D >= 0)
     {
         D = sqrt(D);
         x = c1 + D;
-        if (x > xMin && x < xMax)
+        if (x >= xMin && x <= xMax)
         {
-            intersectionsTemp.push_back(Complex(x,y));
+            intersectionsOut.push_back(Complex(x,y));
         }
-        else
+        x = c1 - D;
+        if (x >= xMin && x <= xMax)
         {
-            x = c1 - D;
-            if (x > xMin && x < xMax)
-            {
-                intersectionsTemp.push_back(Complex(x,y));
-            }
+            intersectionsOut.push_back(Complex(x,y));
         }
     }
 
     y = yMax;
     D = radius*radius - (y-c2)*(y-c2);
-    if (D > 0)
+    if (D >= 0)
     {
         D = sqrt(D);
         x = c1 + D;
-        if (x > xMin && x < xMax)
+        if (x >= xMin && x <= xMax)
         {
-            intersectionsTemp.push_back(Complex(x,y));
+            intersectionsOut.push_back(Complex(x,y));
         }
-        else
+        x = c1 - D;
+        if (x >= xMin && x <= xMax)
         {
-            x = c1 - D;
-            if (x > xMin && x < xMax)
-            {
-                intersectionsTemp.push_back(Complex(x,y));
-            }
+            intersectionsOut.push_back(Complex(x,y));
         }
     }
 
-    Complex u = endpoint1 - center, v = endpoint2 - center, w, w2;
-
-    for (const auto & interTemp : intersectionsTemp)
-    {
-        w = interTemp - center;
-        if (imag(w*conj(u))*imag(w*conj(v)) < 0)
-        {
-            intersections.push_back(interTemp);
-        }
-    }
-
-
-    switch (intersections.size())
-    {
-    case 0:
-        zOut1 = endpoint1;
-        zOut2 = endpoint2;
-        return false;
-        break;
-
-    case 1:
-        if (real(endpoint1) > xMin && real(endpoint1) < xMax && imag(endpoint1) > yMin && imag(endpoint1) < yMax)
-        {
-            zOut1 = endpoint1;
-            zOut2 = endpoint1 + 2.0 * (intersections[0] - endpoint1);
-        }
-        else if (real(endpoint2) > xMin && real(endpoint2) < xMax && imag(endpoint2) > yMin && imag(endpoint2) < yMax)
-        {
-            zOut1 = endpoint2 + 2.0 * (intersections[0] - endpoint2);
-            zOut2 = endpoint2;
-        }
-        else
-        {
-            std::cout << "Warning in CanvasDelegate::intersectsCanvasBoundary: interior endpoint not found" << std::endl;
-        }
-        return true;
-        break;
-
-    case 2:
-        w = intersections[0]-center;
-        w2 = intersections[1]-center;
-        if (imag(w2*conj(w))*imag(v*conj(u)) > 0)
-        {
-            zOut1 = intersections[1] + 2.0*(intersections[0]-intersections[1]);
-            zOut2 = intersections[0] + 2.0*(intersections[1]-intersections[0]);
-        }
-        else
-        {
-            zOut1 = intersections[0] + 2.0*(intersections[1]-intersections[0]);
-            zOut2 = intersections[1] + 2.0*(intersections[0]-intersections[1]);
-        }
-        return true;
-        break;
-
-    default:
-        std::cout << "Warning in CanvasDelegate::intersectsCanvasBoundary: found >2 intersections of arc with canvas boundary" << std::endl;
-        return true;
-        break;
-    }
-
-    //std::cout << "Leaving CanvasDelegate::intersectsCanvasBoundary" << std::endl;
+    return (intersectionsOut.size() != 0);
 }
 
-void CanvasDelegate::drawArcCounterClockwise(const Complex &center, double radius, double angle1, double angle2,
-                                             const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width, bool back)
+
+void CanvasDelegate::drawSmallerArc(const Complex &center, double radius, const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width, bool back)
 {
-    if (dealWithAlmostStraightArc(center, radius, endpoint1, endpoint2, color, width, back))
+    if (dealWithExceptionalArc(center, radius, endpoint1, endpoint2, color, width, back))
     {
         ++nbAlmostStraightArcs;
     }
     else
     {
         int x1, y1, x2, y2;
+        double angle1 = arg(endpoint1 - center), angle2 = arg(endpoint2 - center);
+        if (imag((endpoint2-center)*conj(endpoint1-center)) < 0)
+        {
+            std::swap(angle1, angle2);
+        }
         Complex firstCorner = center + radius*Complex(-1.0, 1.0);
         Complex secondCorner = center + radius*Complex(1.0, -1.0);
         ComplexToPixelCoordinates(x1, y1, firstCorner);
         ComplexToPixelCoordinates(x2, y2, secondCorner);
-        int QtAngle1 = Tools::intRound(Tools::mod2Pi(angle1)*16*360/(2*M_PI));
+        int QtAngle = Tools::intRound(Tools::mod2Pi(angle1)*16*360/(2*M_PI));
         int QtSpan = Tools::intRound(Tools::mod2Pi(angle2 - angle1)*16*360/(2*M_PI));
 
         if (back)
         {
-            penBack->setColor(color);
-            penBack->setWidth(width);
-            painterBack->setPen(*penBack);
-            painterBack->drawArc(x1, y1, x2 - x1, y2 - y1, QtAngle1, QtSpan);
+            if (resetPenBack)
+            {
+                penBack->setColor(color);
+                penBack->setWidth(width);
+                painterBack->setPen(*penBack);
+            }
+            painterBack->drawArc(x1, y1, x2 - x1, y2 - y1, QtAngle, QtSpan);
         }
         else
         {
             penTop->setColor(color);
             penTop->setWidth(width);
             painterTop->setPen(*penTop);
-            painterTop->drawArc(x1, y1, x2 - x1, y2 - y1, QtAngle1, QtSpan);
+            painterTop->drawArc(x1, y1, x2 - x1, y2 - y1, QtAngle, QtSpan);
         }
     }
-}
-
-void CanvasDelegate::drawSmallerArc(const Complex &center, double radius, double angle1, double angle2,
-                                    const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width, bool back)
-{
-    double d = angle2 - angle1;
-    d = Tools::mod2Pi(d);
-    if (d>M_PI)
-    {
-        drawArcCounterClockwise(center, radius, angle2, angle1, endpoint1, endpoint2, color, width, back);
-    }
-    else
-    {
-        drawArcCounterClockwise(center, radius, angle1, angle2, endpoint1, endpoint2, color, width, back);
-    }
-}
-
-void CanvasDelegate::drawSmallerArc(const Circle &C, double angle1, double angle2,
-                                    const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width, bool back)
-{
-    Complex center;
-    double radius;
-    C.getCenterAndRadius(center, radius);
-    drawSmallerArc(center, radius, angle1, angle2, endpoint1, endpoint2, color, width, back);
-}
-
-void CanvasDelegate::drawArcCounterClockwise(const Circle &C, double angle1, double angle2,
-                                             const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width, bool back)
-{
-    //std::cout << "Entering CanvasDelegate::drawArc" << std::endl;
-    Complex center;
-    double radius;
-    C.getCenterAndRadius(center, radius);
-    drawArcCounterClockwise(center, radius, angle1, angle2, endpoint1, endpoint2, color, width, back);
 }

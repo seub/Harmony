@@ -13,7 +13,7 @@ class CP1Point
 
 public:
     CP1Point();
-    CP1Point(const Complex &z);
+    explicit CP1Point(const Complex &z);
     CP1Point(const Complex &z1, const Complex &z2);
 
     Complex getComplexCoordinate() const;

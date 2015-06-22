@@ -7,23 +7,22 @@
 class Circle
 {
 public:
-    Circle();
-    Circle(Complex center, double radius);
+    Circle() {}
+    Circle(Complex center, double radius) : center(center), radius(radius) {}
 
     Complex getCenter() const;
     double getRadius() const;
-    void getCenterAndRadius(Complex &center, double &radius) const;
+    void getCenterAndRadius(Complex &centerOut, double &radiusOut) const;
 
     bool contains(const Complex &z) const;
     Complex pointAtAngle(double angle) const;
 
+    static bool intersectCircles(Circle &C1, Circle &C2, Complex &out1, Complex &out2);
+    static bool intersectCircleAndLine(Circle& C, PlanarLine& L, Complex &out1, Complex &out2);
 
 private:
     Complex center;
     double radius;
 };
-
-bool intersectCircles(Circle & C1, Circle & C2, Complex & out1, Complex & out2);
-bool intersectCircleAndLine(Circle & C, PlanarLine & L, Complex & out1, Complex & out2);
 
 #endif // CIRCLE_H

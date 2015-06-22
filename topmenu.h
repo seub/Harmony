@@ -13,6 +13,9 @@ class TopMenu : public QMenuBar
 
 public:
     explicit TopMenu(Window *window);
+    TopMenu() = delete;
+    TopMenu(const TopMenu &) = delete;
+    TopMenu & operator=(TopMenu) = delete;
 
 signals:
 

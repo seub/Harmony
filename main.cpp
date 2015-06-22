@@ -4,6 +4,7 @@
 
 int main(int argc, char *argv[])
 {
+<<<<<<< HEAD
     std::cout << std::endl;
 
     TopologicalSurface S(2,0);
@@ -26,4 +27,7 @@ int main(int argc, char *argv[])
 
     MainApplication mainApplication(argc, argv);
     return mainApplication.exec();
+=======
+    return MainApplication(argc, argv).exec();
+>>>>>>> 1b7e4fbdb4159858088c847450fdf6fa71408048
 }

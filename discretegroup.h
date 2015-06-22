@@ -13,17 +13,17 @@ class DiscreteGroup
 public:
     DiscreteGroup();
     DiscreteGroup(const std::vector<generatorName> &generators, const std::vector<Word> &relations);
-    DiscreteGroup(const TopologicalSurface &S);
+    explicit DiscreteGroup(const TopologicalSurface &S);
 
     std::vector<generatorName> getGenerators() const;
     std::vector<Word> getRelations() const;
     std::vector<Word> getCusps() const;
-    int numberOfCusps() const;
+    uint numberOfCusps() const;
 
-    std::vector<Word> getWordsOfLengthLessThan(int n) const;
-    std::vector<Word> getWordsOfLengthEqualTo(int n) const;
-    std::vector<Word> getWordsOfNonRepeatingLettersLengthLessThan(int n) const;
-    std::vector<Word> getWordsOfNonRepeatingLettersLengthEqualTo(int n) const;
+    std::vector<Word> getWordsOfLengthLessThan(uint n) const;
+    std::vector<Word> getWordsOfLengthEqualTo(uint n) const;
+    std::vector<Word> getWordsOfNonRepeatingLettersLengthLessThan(uint n) const;
+    std::vector<Word> getWordsOfNonRepeatingLettersLengthEqualTo(uint n) const;
 
     std::vector<Word> getPairingsClosedSurfaceFromVertex() const;
     std::vector<Word> getPairingsClosedSurfaceToVertex() const;
@@ -40,20 +40,20 @@ public:
     static DiscreteGroup amalgamateOverInverse(const DiscreteGroup & Gamma1, const generatorName &a1,
                                                const DiscreteGroup & Gamma2, const generatorName &a1inverse);
 
-    static DiscreteGroup doHNNextensionOverInverse(const DiscreteGroup & Gamma, const generatorName &a, const generatorName &ainverse,
+    static DiscreteGroup HNNextensionOverInverse(const DiscreteGroup & Gamma, const generatorName &a, const generatorName &ainverse,
                                                    const generatorName & newGeneratorName);
 
 private:
-    std::vector<generatorName> generators;
-    std::vector<Word> relations;
-    std::vector<Word> cusps;
-    bool closedSurfaceGroup;
-
     void reset();
     void rotateWord(Word &w, int shift);
     static bool checkCompatibilityForAmalgamation(const DiscreteGroup &Gamma1, const DiscreteGroup &Gamma2);
     static bool checkCompatibilityforHNNextension(const DiscreteGroup &Gamma);
-    bool findGeneratorIndex(int & outputIndex, const generatorName &a) const;
+    bool findGeneratorIndex(uint &outputIndex, const generatorName &a) const;
+
+    std::vector<generatorName> generators;
+    std::vector<Word> relations;
+    std::vector<Word> cusps;
+    bool closedSurfaceGroup;
 };
 
 

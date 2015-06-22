@@ -12,7 +12,12 @@ class H2MeshFunctionIterator
     friend class EquivariantHarmonicMapsFactory;
 
 public:
-    H2MeshFunctionIterator(const H2MeshFunction * const f);
+    explicit H2MeshFunctionIterator(const H2MeshFunction * const f);
+    H2MeshFunctionIterator() = delete;
+    H2MeshFunctionIterator(const H2MeshFunction&) = delete;
+    H2MeshFunctionIterator & operator=(H2MeshFunctionIterator) = delete;
+
+
     void iterate(int n=1);
     void getOutput(H2MeshFunction &output);
 

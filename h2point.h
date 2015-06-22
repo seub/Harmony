@@ -35,16 +35,9 @@ public:
     void computeQuadraticWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
 
     bool compareAngles(const H2Point &p1, const H2Point &p2);
-
 private:
     Complex z;
 };
-
-typedef std::tuple<H2Point, H2Point, int> triple;
-//typedef std::tuple<H2Point, H2Point, int, std::vector<Word>> quadruple;
-
-bool compareTriples(const triple & t1, const triple & t2);
-//bool compareQuadruples(const quadruple & q1, const quadruple & q2);
 
 
 #endif // H2POINT_H

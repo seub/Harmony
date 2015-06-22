@@ -12,9 +12,14 @@ class Window; class ActionHandler;
 class OutputMenu : public QGroupBox
 {
     Q_OBJECT
-public:
+
     friend class Window;
     friend class ActionHandler;
+
+public:
+    OutputMenu() = delete;
+    OutputMenu(const OutputMenu &) = delete;
+    OutputMenu & operator=(OutputMenu) = delete;
 
     int maxLeftColWidth() const;
     int maxRightColWidth() const;

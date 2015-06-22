@@ -1,6 +1,6 @@
 #include "h2meshfunctioniterator.h"
 #include "h2meshfunction.h"
-#include "h2trianglesubdivision.h"
+#include "triangularsubdivision.h"
 
 H2MeshFunctionIterator::H2MeshFunctionIterator(const H2MeshFunction * const f) : fInit(f)
 {
@@ -21,7 +21,7 @@ void H2MeshFunctionIterator::iterate(int n)
     std::vector<H2Point> neighborsImages;
     std::vector<double> weights;
 
-    IsomH2Representation rhoImage = fInit->rhoImage;
+    GroupRepresentation<H2Isometry> rhoImage = fInit->rhoImage;
     std::vector<H2Isometry> isometriesImage;
     while (n>0)
     {
@@ -33,7 +33,7 @@ void H2MeshFunctionIterator::iterate(int n)
 
             if (meshPoint->isBoundaryPoint())
             {
-                isometriesImage = rhoImage.evaluateRepresentation( ((H2MeshBoundaryPoint*)meshPoint) ->neighborsPairings);
+                isometriesImage = rhoImage.evaluateRepresentation( (static_cast<H2MeshBoundaryPoint*>(meshPoint)) ->neighborsPairings);
                 j=0;
                 for(auto k : meshPoint->neighborsIndices)
                 {
@@ -43,7 +43,7 @@ void H2MeshFunctionIterator::iterate(int n)
             }
             else if (meshPoint->isVertexPoint())
             {
-                isometriesImage = rhoImage.evaluateRepresentation( ((H2MeshVertexPoint*)meshPoint) ->neighborsPairings);
+                isometriesImage = rhoImage.evaluateRepresentation( (static_cast<H2MeshVertexPoint*>(meshPoint)) ->neighborsPairings);
                 j=0;
                 for(auto k : meshPoint->neighborsIndices)
                 {
@@ -53,7 +53,7 @@ void H2MeshFunctionIterator::iterate(int n)
             }
             else if (meshPoint->isSteinerPoint())
             {
-                isometriesImage = rhoImage.evaluateRepresentation( ((H2MeshSteinerPoint*)meshPoint) ->neighborsPairings);
+                isometriesImage = rhoImage.evaluateRepresentation( (static_cast<H2MeshSteinerPoint*>(meshPoint)) ->neighborsPairings);
                 j=0;
                 for(auto k : meshPoint->neighborsIndices)
                 {
@@ -75,7 +75,7 @@ void H2MeshFunctionIterator::iterate(int n)
             newValues[i] = H2Point::centroid(neighborsImages, weights);
             ++i;
         }
-        //std::cout << "The error in the " << N-n+1 <<"th iterate is = " << supError() << std::endl;
+        //qDebug() << "The error in the " << N-n+1 <<"th iterate is = " << supError();
         oldValues = newValues;
         --n;
     }
@@ -93,7 +93,6 @@ double H2MeshFunctionIterator::supError() const
     for (std::vector<H2Point>::size_type j=0; j<oldValues.size(); ++j)
     {
         error = H2Point::distance(oldValues[j],newValues[j]);
-        //std::cout << "error = " << error << std::endl;
         errors.push_back(error);
     }
     return *std::max_element(errors.begin(),errors.end());

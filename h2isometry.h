@@ -14,7 +14,7 @@ class H2Isometry
     friend H2Polygon operator *(const H2Isometry &f, const H2Polygon &P);
     friend H2Geodesic operator *(const H2Isometry & f, const H2Geodesic & L);
     friend H2GeodesicArc operator *(const H2Isometry & f, const H2GeodesicArc & L);
-    friend bool operator ==(const H2Isometry & f1, const H2Isometry & f2);
+    friend bool almostEqual(const H2Isometry & f1, const H2Isometry & f2);
     friend std::ostream & operator<<(std::ostream & out, const H2Isometry &f);
     friend class FenchelNielsenConstructor;
     friend class PantsTree;
@@ -22,9 +22,10 @@ class H2Isometry
 
 public:
     H2Isometry();
-    H2Isometry(int i);
+    H2Isometry(uint i);
     H2Isometry(const SL2RMatrix &A);
 
+    static bool almostEqual(const H2Isometry & f1, const H2Isometry & f2);
     void getDiskCoordinates(Complex &u, Complex &a) const;
 
     SL2CMatrix getSU11Matrix() const;
@@ -54,11 +55,8 @@ public:
     static H2Isometry findConjugatorForGluing(const H2Isometry & f1, const H2Isometry & f1left,
                                      const H2Isometry & f2, const H2Isometry &f2left, double twistNormalized);
 
-    static H2Isometry identity();
 
-    void setByMappingPointTo0(const H2Point & p);
-
-    // We don't use these (for now?)...
+    void setByMappingPointToOrigin(const H2Point & p);
     void setTranslationAxisAndLength(const H2Geodesic & axis, double length);
     void setByMappingPointInDiskModelNormalized(const Complex & zIn, const Complex & zOut);
     void setByMappingGeodesic(const H2Geodesic & L1, const H2Geodesic & L2);

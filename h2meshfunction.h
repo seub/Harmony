@@ -8,43 +8,45 @@ class H2MeshFunction
 {
     friend class H2MeshFunctionIterator;
     friend class EquivariantHarmonicMapsFactory;
-    friend void swap(H2MeshFunction &first, H2MeshFunction &second); // swap function
+    friend void swap(H2MeshFunction &first, H2MeshFunction &second);
 
 public:
-    explicit H2MeshFunction(const H2Mesh *mesh, const IsomH2Representation &rhoImage);
+    explicit H2MeshFunction(const H2Mesh *mesh, const GroupRepresentation<H2Isometry> &rhoImage);
 
     const std::vector<H2Point> & getValues() const;
     std::vector<H2Triangle> getTrianglesUp() const;
 
-    H2Point getH2Point(int index) const;
-    std::vector<H2Point> getH2Neighbors(int index) const;
-    std::vector<H2Point> getKickedH2Neighbors(int index) const;
-    std::vector<H2Point> getPartnerPoints(int index) const;
+    H2Point getH2Point(uint index) const;
+    std::vector<H2Point> getH2Neighbors(uint index) const;
+    std::vector<H2Point> getKickedH2Neighbors(uint index) const;
+    std::vector<H2Point> getPartnerPoints(uint index) const;
     H2Polygon getFundamentalDomain() const;
-    H2Triangle getH2Triangle(int index1, int index2, int index3) const;
-    bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle, int &meshIndex1, int &meshIndex2, int &meshIndex3) const;
-    bool isInteriorPoint(int meshIndex) const;
+    H2Triangle getH2Triangle(uint index1, uint index2, uint index3) const;
+    bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle, uint &meshIndex1, uint &meshIndex2, uint &meshIndex3) const;
+    bool isInteriorPoint(uint meshIndex) const;
     std::vector<H2GeodesicArc> getExteriorSides() const;
     std::vector<H2Point> getPoints() const;
+<<<<<<< HEAD
 
     IsomH2Representation getTargetRepresentation() const;
 
+=======
+    GroupRepresentation<H2Isometry> getTargetRepresentation() const;
+>>>>>>> 1b7e4fbdb4159858088c847450fdf6fa71408048
 
     void initializePL(const H2Point &basePoint);
-    void iterate(int n=1);
+    void iterate(uint n=1);
     void initializePLsmart();
 
 private:
-    H2MeshFunction(); // Dummy constructor
-    H2MeshFunction(const H2MeshFunction &other); // Copy constructor
-    H2MeshFunction & operator=(H2MeshFunction other); // Copy-assignment operator
-    explicit H2MeshFunction(const H2Mesh *mesh, const IsomH2Representation &rhoImage, const std::vector<H2Point> &values);
+    H2MeshFunction();
+    explicit H2MeshFunction(const H2Mesh *mesh, const GroupRepresentation<H2Isometry> &rhoImage, const std::vector<H2Point> &values);
     void refreshSubdivisions();
 
     const H2Mesh *mesh;
-    IsomH2Representation rhoImage;
+    GroupRepresentation<H2Isometry> rhoImage;
     std::vector<H2Point> values;
-    std::vector<H2TriangleSubdivision> functionSubdivisions;
+    std::vector< TriangularSubdivision<H2Point> > functionSubdivisions;
 };
 
 #endif // H2MESHFUNCTION_H

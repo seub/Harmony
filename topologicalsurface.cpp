@@ -6,23 +6,30 @@ TopologicalSurface::TopologicalSurface()
 {
 }
 
-TopologicalSurface::TopologicalSurface(int genus, int numberOfPunctures) : genus(genus), numberOfPunctures(numberOfPunctures)
+TopologicalSurface::TopologicalSurface(uint genus, uint numberOfPunctures) : genus(genus), numberOfPunctures(numberOfPunctures)
 {
 }
 
-int TopologicalSurface::getGenus() const
+uint TopologicalSurface::getGenus() const
 {
     return genus;
 }
 
-int TopologicalSurface::getNumberOfPunctures() const
+uint TopologicalSurface::getNumberOfPunctures() const
 {
     return numberOfPunctures;
+}
+
+bool TopologicalSurface::isClosedHyperbolicSurface() const
+{
+    return ((genus > 1) && (numberOfPunctures==0));
 }
 
 
 std::vector<DiscreteGroup> TopologicalSurface::getPantsDecomposition() const
 {
+    assert(isClosedHyperbolicSurface());
+
     std::vector<DiscreteGroup> pantsVector;
     DiscreteGroup P;
     std::string s1,s2,w1,w2,w3;
@@ -30,7 +37,7 @@ std::vector<DiscreteGroup> TopologicalSurface::getPantsDecomposition() const
     P.setPairOfPants("W1up","U1up","W1down");
     pantsVector.push_back(P);
 
-    for(int j=0;j<genus-2;j++)
+    for(uint j=0; j+2<genus; ++j)
     {
         s1 = Tools::convertToString(j+1);
         s2 = Tools::convertToString(j+2);

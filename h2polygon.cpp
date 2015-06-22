@@ -18,35 +18,31 @@ H2Polygon::H2Polygon(std::vector<H2Point> vertices) : vertices(vertices)
 void H2Polygon::addVertex(const H2Point &p)
 {
     vertices.push_back(p);
-    return;
 }
 
 void H2Polygon::removeLastVertex()
 {
     vertices.pop_back();
-    return;
 }
 
 void H2Polygon::clearVertices()
 {
     vertices.clear();
-    return;
 }
 
 void H2Polygon::setVertices(const std::vector<H2Point> &newVertices)
 {
     vertices = newVertices;
-    return;
 }
 
-int H2Polygon::nbVertices() const
+uint H2Polygon::nbVertices() const
 {
     return vertices.size();
 }
 
-H2Point H2Polygon::getVertex(int index) const
+H2Point H2Polygon::getVertex(uint index) const
 {
-    return vertices[index];
+    return vertices.at(index);
 }
 
 std::vector<H2Point> H2Polygon::getVertices() const
@@ -56,7 +52,7 @@ std::vector<H2Point> H2Polygon::getVertices() const
 
 std::vector<Complex> H2Polygon::getVerticesInDiskModel() const
 {
-    int j, N = vertices.size();
+    uint j, N = vertices.size();
     std::vector<Complex> res(N);
 
     for(j=0; j<N; ++j)
@@ -68,7 +64,7 @@ std::vector<Complex> H2Polygon::getVerticesInDiskModel() const
 
 std::vector<Complex> H2Polygon::getVerticesInKleinModel() const
 {
-    unsigned int i, N = vertices.size();
+    uint i, N = vertices.size();
     std::vector<Complex> res(N);
 
     for (i=0; i<N; i++)
@@ -110,7 +106,6 @@ void H2Polygon::getExtremalCoordinatesInDiskModel(double &xMin, double &xMax, do
             yMax = y;
         }
     }
-    return;
 }
 
 
@@ -125,9 +120,9 @@ bool H2Polygon::isPositivelyOriented() const
     Complex w1, w2;
     double x1, x2, y1, y2;
 
-    int nbIntersections = 0;
-    int i, N = verticesInKleinModel.size();
-    for (i=0; i+1<N; ++i)
+    uint nbIntersections = 0;
+    uint i, N = verticesInKleinModel.size();
+    for (i=0; i+1!=N; ++i)
     {
         w1 = verticesInKleinModel[i];
         w2 = verticesInKleinModel[i+1];
@@ -160,9 +155,9 @@ bool H2Polygon::isPositivelyOriented() const
     return (nbIntersections % 2 == 1) ^ (real(z1) > real(z2));
 }
 
-H2GeodesicArc H2Polygon::getSide(int index) const
+H2GeodesicArc H2Polygon::getSide(uint index) const
 {
-    int N = vertices.size();
+    uint N = vertices.size();
     if(index + 1 < N)
     {
         return H2GeodesicArc(vertices[index],vertices[index + 1]);
@@ -179,7 +174,7 @@ H2GeodesicArc H2Polygon::getSide(int index) const
 
 std::vector<H2GeodesicArc> H2Polygon::getSides() const
 {
-    int i, N = nbVertices();
+    uint i, N = nbVertices();
 
     H2Point current, next = vertices[0];
     std::vector<H2GeodesicArc> res(N);
@@ -203,7 +198,7 @@ std::vector<H2Geodesic> H2Polygon::getCompletedSides() const
     std::vector<H2GeodesicArc> sides = getSides();
     std::vector<H2Geodesic> res(sides.size());
 
-    int i=0;
+    uint i=0;
     for(const auto &s : sides)
     {
         res[i] = s.getGeodesic();
@@ -225,7 +220,7 @@ double H2Polygon::norm0() const
 double H2Polygon::norm1() const
 {
     double res = norm(vertices.front().getDiskCoordinate() - vertices.back().getDiskCoordinate());
-    for (unsigned int i=0; i+1<vertices.size(); ++i)
+    for (uint i=0; i+1!=vertices.size(); ++i)
     {
         res += norm(vertices[i+1].getDiskCoordinate() - vertices[i].getDiskCoordinate());
     }
@@ -258,7 +253,7 @@ double H2Polygon::norm3() const
     double diff = norm(next - current) - average;
     double res = diff*diff;
     
-    for (unsigned int i=0; i+1<vertices.size(); ++i)
+    for (uint i=0; i+1!=vertices.size(); ++i)
     {
         current = next;
         next = vertices[i+1].getDiskCoordinate();
@@ -289,8 +284,8 @@ void H2Polygon::optimalMobius(H2Isometry &output) const
     
     std::vector<H2Geodesic> geodesics = getCompletedSides();
     
-    unsigned int k;
-    for (k=0; k<geodesics.size(); k++)
+    uint k;
+    for (k=0; k!=geodesics.size(); ++k)
     {
         if (geodesics[k].getCircleInDiskModel(Ck))
         {
@@ -326,7 +321,6 @@ void H2Polygon::optimalMobius(H2Isometry &output) const
     
     if (delta < 0)
     {
-        //std::cout << "ERROR in Graphe<Circle>::optimal_mobius(): negative discriminant!" << std::endl;
         output.setIdentity();
     }
     else
@@ -353,19 +347,19 @@ bool H2Polygon::contains(const H2Point &point) const
 
 bool H2Polygon::containsInKleinModel(const Complex &z) const
 {
-    unsigned int nbIntersections = 0;
+    uint nbIntersections = 0;
     double xLeft, yLeft, xRight, yRight;
     
     std::vector<Complex> verticesInKleinModel = getVerticesInKleinModel();
-    unsigned int n = verticesInKleinModel.size();
+    uint n = verticesInKleinModel.size();
     
     if (norm(z)>1.0)
     {
         return false;
     }
     
-    unsigned int i;
-    for (i=0; i<n; ++i)
+    uint i;
+    for (i=0; i!=n; ++i)
     {
         xLeft = real(verticesInKleinModel[i] - z);
         yLeft = imag(verticesInKleinModel[i]- z);
@@ -404,7 +398,7 @@ std::vector<double> H2Polygon::getAngles() const
     std::vector<double> res;
 
     res.push_back(H2Point::angle(vertices.back(), vertices.front(), vertices[1]));
-    for (unsigned int i=1; i+1<vertices.size(); i++)
+    for (uint i=1; i+1!=vertices.size(); i++)
     {
         res.push_back(H2Point::angle(vertices[i-1], vertices[i], vertices[i+1]));
     }
@@ -429,21 +423,21 @@ std::vector<double> H2Polygon::getPositiveInteriorAngles() const
 bool H2Polygon::isConvex() const
 {
     std::vector<Complex> verticesInKleinModel = getVerticesInKleinModel();
-    int i, N = verticesInKleinModel.size();
+    uint i, N = verticesInKleinModel.size();
 
     Complex previous = verticesInKleinModel.back() - verticesInKleinModel.front(), next = verticesInKleinModel[1] - verticesInKleinModel.front();
-    int sign = Tools::sgn(imag(next*conj(previous)));
+    int sign = Tools::sign(imag(next*conj(previous)));
 
     for (i=1; i+1<N; i++)
     {
         previous = -next;
         next = verticesInKleinModel[i+1] - verticesInKleinModel[i];
-        if (Tools::sgn(imag(next*conj(previous))) != sign) return false;
+        if (Tools::sign(imag(next*conj(previous))) != sign) return false;
     }
 
     previous = -next;
     next = verticesInKleinModel.front() - verticesInKleinModel.back();
-    if (Tools::sgn(imag(next*conj(previous))) != sign) return false;
+    if (Tools::sign(imag(next*conj(previous))) != sign) return false;
 
     return true;
 }
@@ -475,11 +469,11 @@ void H2Polygon::insertMidpoints()
     vertices = newVertices;
 }
 
-H2SteinerPolygon::H2SteinerPolygon(std::vector<H2Point> vertices, std::vector<int> nbSteinerPoints) : H2Polygon(vertices), nbSteinerPoints(nbSteinerPoints)
+H2SteinerPolygon::H2SteinerPolygon(std::vector<H2Point> vertices, std::vector<uint> nbSteinerPoints) : H2Polygon(vertices), nbSteinerPoints(nbSteinerPoints)
 {
 }
 
-std::vector<H2Point> H2SteinerPolygon::getPointsOnSide(int side) const
+std::vector<H2Point> H2SteinerPolygon::getPointsOnSide(uint side) const
 {
     H2GeodesicArc a = getSide(side);
     return a.getEvenSubdivision(nbSteinerPoints[side]);
@@ -489,7 +483,7 @@ std::vector<H2Point> H2SteinerPolygon::getPointsOnSide(int side) const
 H2Polygon H2SteinerPolygon::getFullPolygon() const
 {
     std::vector<H2Point> verticesOut, sidePoints;
-    for(int j=0; j<nbVertices(); ++j)
+    for(uint j=0; j<nbVertices(); ++j)
     {
         sidePoints = getPointsOnSide(j);
         verticesOut.insert(verticesOut.end(),sidePoints.begin(),sidePoints.end());
@@ -500,9 +494,9 @@ H2Polygon H2SteinerPolygon::getFullPolygon() const
     return output;
 }
 
-int H2SteinerPolygon::getTotalNbSteinerPoints() const
+uint H2SteinerPolygon::getTotalNbSteinerPoints() const
 {
-    int sum=0;
+    uint sum=0;
     for(const auto & num : nbSteinerPoints)
     {
         sum += num;
@@ -510,30 +504,30 @@ int H2SteinerPolygon::getTotalNbSteinerPoints() const
     return sum;
 }
 
-int H2SteinerPolygon::getNbSteinerPointsOnSide(int side) const
+uint H2SteinerPolygon::getNbSteinerPointsOnSide(uint side) const
 {
     return nbSteinerPoints[side];
 }
 
-int H2SteinerPolygon::getIndexOfFullVertex(int vertexIndex) const
+uint H2SteinerPolygon::getIndexOfFullVertex(uint vertexIndex) const
 {
-    int sum = 0;
-    for(int j=0; j<vertexIndex; ++j)
+    uint sum = 0;
+    for(uint j=0; j!=vertexIndex; ++j)
     {
         sum += nbSteinerPoints[j] + 1;
     }
     return sum;
 }
 
-std::vector<int> H2SteinerPolygon::getVectorNbSteinerPoints() const
+std::vector<uint> H2SteinerPolygon::getVectorNbSteinerPoints() const
 {
     return nbSteinerPoints;
 }
 
-int H2SteinerPolygon::getActualSide(int vertexInFullPolygon) const
+uint H2SteinerPolygon::getActualSide(uint vertexInFullPolygon) const
 {
-    int side = 0;
-    int actualVertexIndexInFullPolygon = 0;
+    uint side = 0;
+    uint actualVertexIndexInFullPolygon = 0;
     while (actualVertexIndexInFullPolygon <= vertexInFullPolygon)
     {
         actualVertexIndexInFullPolygon += nbSteinerPoints[side] + 1;
@@ -542,10 +536,10 @@ int H2SteinerPolygon::getActualSide(int vertexInFullPolygon) const
     return side-1;
 }
 
-bool H2SteinerPolygon::lieOnSameActualSide(int vertexInFullPolygon1, int vertexInFullPolygon2) const
+bool H2SteinerPolygon::lieOnSameActualSide(uint vertexInFullPolygon1, uint vertexInFullPolygon2) const
 {
-    int side1 = 0;
-    int actualVertexIndexInFullPolygon = 0;
+    uint side1 = 0;
+    uint actualVertexIndexInFullPolygon = 0;
     while (actualVertexIndexInFullPolygon <= vertexInFullPolygon1)
     {
         actualVertexIndexInFullPolygon += nbSteinerPoints[side1] + 1;
@@ -553,9 +547,9 @@ bool H2SteinerPolygon::lieOnSameActualSide(int vertexInFullPolygon1, int vertexI
     }
     --side1;
 
-    int vertex1 = actualVertexIndexInFullPolygon - (nbSteinerPoints[side1] + 1);
+    uint vertex1 = actualVertexIndexInFullPolygon - (nbSteinerPoints[side1] + 1);
 
-    int side2 = 0;
+    uint side2 = 0;
     actualVertexIndexInFullPolygon = 0;
     while (actualVertexIndexInFullPolygon <= vertexInFullPolygon2)
     {
@@ -563,7 +557,7 @@ bool H2SteinerPolygon::lieOnSameActualSide(int vertexInFullPolygon1, int vertexI
         ++side2;
     }
     --side2;
-    int vertex2 = actualVertexIndexInFullPolygon - (nbSteinerPoints[side2] + 1);
+    uint vertex2 = actualVertexIndexInFullPolygon - (nbSteinerPoints[side2] + 1);
 
     if (vertexInFullPolygon1 == vertex1)
     {
@@ -578,5 +572,3 @@ bool H2SteinerPolygon::lieOnSameActualSide(int vertexInFullPolygon1, int vertexI
         return side1 == side2;
     }
 }
-
-

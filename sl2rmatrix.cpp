@@ -5,19 +5,19 @@ SL2RMatrix::SL2RMatrix()
     setIdentity();
 }
 
-SL2RMatrix::SL2RMatrix(int i)
-{
-    assert(i==1);
-    setIdentity();
-}
-
-
 SL2RMatrix::SL2RMatrix(double a, double b, double c, double d) : a(a), b(b), c(c), d(d)
 {
-    if (std::abs(det() - 1.0)>ERROR)
+    double error = 0.000000001;
+    if (std::abs(det() - 1.0) > error)
     {
-        std::cout << "WARNING in SL2RMatrix::SL2RMatrix: determinant is not 1 (it is " << det() << ")" << std::endl;
+        qDebug() << "WARNING in SL2RMatrix::SL2RMatrix: determinant is not 1 (it is " << det() << ")";
     }
+}
+
+SL2RMatrix::SL2RMatrix(uint i)
+{
+    assert(i=1);
+    setIdentity();
 }
 
 void SL2RMatrix::getCoefficients(double &a, double &b, double &c, double &d) const
@@ -66,9 +66,11 @@ SL2RMatrix operator *(const SL2RMatrix &A1, const SL2RMatrix &A2)
                 A1.c*A2.b + A1.d*A2.d);
 }
 
-bool operator ==(const SL2RMatrix & A1, const SL2RMatrix & A2)
+bool SL2RMatrix::almostEqual(const SL2RMatrix & A1, const SL2RMatrix & A2)
 {
-    return A1.a==A2.a && A1.b==A2.b && A1.c==A2.c && A1.d==A2.d;
+    double tol = 0.000000001;
+    double error = std::abs(A1.a - A2.a) + std::abs(A1.b - A2.b) + std::abs(A1.c - A2.c) + std::abs(A1.d - A2.d);
+    return error < tol;
 }
 
 std::ostream & operator<<(std::ostream & out, const SL2RMatrix & A)

@@ -21,6 +21,9 @@ class H2Buffer
     friend class FenchelNielsenUser;
 
 public:
+    H2Buffer(const H2Buffer &) = delete;
+    H2Buffer & operator=(const H2Buffer &) = delete;
+
     bool getIsMeshEmpty() const;
     bool getIsRhoEmpty() const;
     bool getIsFunctionEmpty() const;
@@ -32,9 +35,9 @@ private:
     void setIsFunctionEmpty(bool isFunctionEmpty);
     void setIsRhoEmpty(bool isRhoEmpty);
 
-    void setRhoPointer(IsomH2Representation *rho, const QColor &color);
-    void setFunctionPointer(H2MeshFunction *function, const QColor &color);
-    void setMeshPointer(H2Mesh *mesh, const QColor &color);
+    void setRhoPointer(const GroupRepresentation<H2Isometry> *rho, const QColor &color);
+    void setFunctionPointer(const H2MeshFunction *function, const QColor &color);
+    void setMeshPointer(const H2Mesh *mesh, const QColor &color);
 
     void refreshRho();
     void refreshFunction();
@@ -45,17 +48,17 @@ private:
     void refreshMeshOrFunctionArcsTranslatesAroundVertices();
     void refreshMeshOrFunctionTranslates(bool aroundVertex, bool aroundVertices);
 
-    IsomH2Representation *rho;
+    const GroupRepresentation<H2Isometry> *rho;
     bool isRhoEmpty;
     std::vector<H2Geodesic> rhoAxes;
     QColor rhoColor;
 
     std::vector<H2Isometry> translationsAroundVertex, translationsAroundVertices;
 
-    H2Mesh *mesh;
+    const H2Mesh *mesh;
     bool isMeshEmpty;
 
-    H2MeshFunction *function;
+    const H2MeshFunction *function;
     bool isFunctionEmpty;
 
     std::vector<H2GeodesicArc> meshOrFunctionArcs;

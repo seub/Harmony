@@ -15,7 +15,6 @@ void H2Triangle::getPoints(H2Point &a, H2Point &b, H2Point &c) const
     a = this->a;
     b = this->b;
     c = this->c;
-    return;
 }
 
 std::vector<H2Point> H2Triangle::getPoints() const
@@ -33,7 +32,6 @@ void H2Triangle::getSideLengths(double &A, double &B, double &C) const
     A = H2Point::distance(b,c);
     B = H2Point::distance(a,c);
     C = H2Point::distance(a,b);
-    return;
 }
 
 bool H2Triangle::contains(const H2Point &point) const
@@ -70,12 +68,9 @@ void H2Triangle::getAngles(double &angleA, double &angleB, double &angleC) const
     u = (z2 - z3) / (1.0 - conj(z3)*z2);
     v = (z1 - z3) / (1.0 - conj(z3)*z1);
     angleC = Tools::mod2Pi(arg(v*conj(u)));
-
-
-    return;
 }
 
-bool H2Triangle::isVertexCloseInDiskModel(const H2Point &point, double detectionRadiusSquared, int &vertexIndex) const
+bool H2Triangle::isVertexCloseInDiskModel(const H2Point &point, double detectionRadiusSquared, uint &vertexIndex) const
 {
     bool res = false;
 
@@ -129,7 +124,7 @@ bool H2Triangle::isVertexCloseInDiskModel(const H2Point &point, double detection
     return res;
 }
 
-H2Point H2Triangle::getVertex(int index) const
+H2Point H2Triangle::getVertex(uint index) const
 {
     switch (index)
     {

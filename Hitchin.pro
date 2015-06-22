@@ -4,13 +4,18 @@
 #
 #-------------------------------------------------
 
+# unix:QMAKE_CXXFLAGS_RELEASE -= -O
+# unix:QMAKE_CXXFLAGS_RELEASE -= -O1
+# unix:QMAKE_CXXFLAGS_RELEASE -= -O2
+# unix:QMAKE_CXXFLAGS_RELEASE *= -O3
+
 QT += core \
     widgets \
     opengl
 TARGET = Hitchin
 CONFIG += console
 CONFIG -= app_bundle
-CONFIG += c++11
+CONFIG += c++14
 CONFIG += thread
 
 # LIBS += -L/usr/local/lib -lGLU
@@ -41,7 +46,6 @@ SOURCES += main.cpp \
     h2buffer.cpp \
     h2mesh.cpp \
     h2triangle.cpp \
-    h2trianglesubdivision.cpp \
     h2polygontriangulater.cpp \
     h2meshconstructor.cpp \
     h2meshpoint.cpp \
@@ -59,7 +63,9 @@ SOURCES += main.cpp \
     topfactory.cpp \
     displaymenu.cpp \
     fenchelnielsenuser.cpp \
-    canvascontainer.cpp
+    canvascontainer.cpp \
+    liftedgraph.cpp \
+    triangularsubdivision.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -86,7 +92,6 @@ HEADERS += \
     h2buffer.h \
     h2mesh.h \
     h2triangle.h \
-    h2trianglesubdivision.h \
     h2polygontriangulater.h \
     h2meshconstructor.h \
     h2meshpoint.h \
@@ -104,7 +109,9 @@ HEADERS += \
     topfactory.h \
     displaymenu.h \
     fenchelnielsenuser.h \
-    canvascontainer.h
+    canvascontainer.h \
+    liftedgraph.h \
+    triangularsubdivision.h
 
 OTHER_FILES += \
     TODO.txt

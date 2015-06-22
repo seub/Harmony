@@ -1,13 +1,13 @@
 #include "h2mesh.h"
 
 #include "h2isometry.h"
-#include "h2trianglesubdivision.h"
+#include "triangularsubdivision.h"
 #include "h2meshconstructor.h"
 
 
-H2Mesh::H2Mesh(const IsomH2Representation &rho, int depth) : rho(rho), depth(depth)
+H2Mesh::H2Mesh(const GroupRepresentation<H2Isometry> &rho, uint depth) : rho(rho), depth(depth)
 {
-    fundamentalDomain = rho.generatePolygon(30);
+    fundamentalDomain = rho.generateFundamentalDomain();
     H2MeshConstructor(this);
 }
 
@@ -91,34 +91,23 @@ H2Mesh & H2Mesh::operator=(H2Mesh other)
 }
 
 
-const std::vector<H2TriangleSubdivision> & H2Mesh::getSubdivisions() const
+const std::vector< TriangularSubdivision<H2Point> > & H2Mesh::getSubdivisions() const
 {
     return subdivisions;
 }
 
-bool H2Mesh::triangleContaining(const H2Point &point, H2Triangle &outputTriangle) const
+bool H2Mesh::triangleContaining(const H2Point &point, H2Triangle &outputTriangle, uint &meshIndex1, uint &meshIndex2, uint &meshIndex3) const
 {
+    H2Point A, B, C;
+    uint indexInSubdivision1, indexInSubdivision2, indexInSubdivision3, i = 0;
     for(const auto &S : subdivisions)
     {
-        if (S.triangleContaining(point, outputTriangle))
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool H2Mesh::triangleContaining(const H2Point &point, H2Triangle &outputTriangle,
-                                int &meshIndex1, int &meshIndex2, int &meshIndex3) const
-{
-    int indexInSubdivision1, indexInSubdivision2, indexInSubdivision3, i=0;
-    for(const auto &S : subdivisions)
-    {
-        if (S.triangleContaining(point, outputTriangle, indexInSubdivision1, indexInSubdivision2, indexInSubdivision3))
+        if (S.triangleContaining(point, A, B, C, indexInSubdivision1, indexInSubdivision2, indexInSubdivision3))
         {
             meshIndex1 = meshIndicesInSubdivisions[i][indexInSubdivision1];
             meshIndex2 = meshIndicesInSubdivisions[i][indexInSubdivision2];
             meshIndex3 = meshIndicesInSubdivisions[i][indexInSubdivision3];
+            outputTriangle = H2Triangle(A, B, C);
             return true;
         }
         ++i;
@@ -126,21 +115,21 @@ bool H2Mesh::triangleContaining(const H2Point &point, H2Triangle &outputTriangle
     return false;
 }
 
-H2Point H2Mesh::getH2Point(int index) const
+H2Point H2Mesh::getH2Point(uint index) const
 {
-    return subdivisions[meshPoints[index]->subdivisionIndex].points->at(meshPoints[index]->indexInSubdivision);
+    return subdivisions[meshPoints.at(index)->subdivisionIndex].points->at(meshPoints.at(index)->indexInSubdivision);
 }
 
-H2Triangle H2Mesh::getH2Triangle(int index1, int index2, int index3) const
+H2Triangle H2Mesh::getH2Triangle(uint index1, uint index2, uint index3) const
 {
     return H2Triangle(getH2Point(index1), getH2Point(index2), getH2Point(index3));
 }
 
 
 
-std::vector<H2Point> H2Mesh::getH2Neighbors(int index) const
+std::vector<H2Point> H2Mesh::getH2Neighbors(uint index) const
 {
-    std::vector<int> neighborIndices = meshPoints.at(index)->neighborsIndices;
+    std::vector<uint> neighborIndices = meshPoints.at(index)->neighborsIndices;
     std::vector<H2Point> res;
     for (auto k : neighborIndices)
     {
@@ -149,16 +138,16 @@ std::vector<H2Point> H2Mesh::getH2Neighbors(int index) const
     return res;
 }
 
-std::vector<H2Point> H2Mesh::getPartnerPoints(int index) const
+std::vector<H2Point> H2Mesh::getPartnerPoints(uint index) const
 {
     H2MeshPoint *point = meshPoints.at(index);
     if (point->isBoundaryPoint())
     {
-        return {getH2Point(index), getH2Point(((H2MeshBoundaryPoint *) point)->partnerPointIndex)};
+        return {getH2Point(index), getH2Point((static_cast<H2MeshBoundaryPoint*> (point))->partnerPointIndex)};
     }
     else if (point->isSteinerPoint())
     {
-        return {getH2Point(index), getH2Point(((H2MeshSteinerPoint *) point)->partnerPointIndex)};
+        return {getH2Point(index), getH2Point((static_cast<H2MeshSteinerPoint*> (point))->partnerPointIndex)};
     }
     else if (point->isVertexPoint())
     {
@@ -189,9 +178,9 @@ std::vector<H2GeodesicArc> H2Mesh::getSides() const
 std::vector<H2Triangle> H2Mesh::getTrianglesUp() const
 {
     std::vector<H2Triangle> output;
-    int aIndex, bIndex, cIndex;
-    int L = H2TriangleSubdivision::nbOfLines(depth);
-    int i, j, m = 0;
+    uint aIndex, bIndex, cIndex;
+    uint L = TriangularSubdivision<H2Point>::nbLines(depth);
+    uint i, j, m = 0;
     output.reserve((subdivisions.size()*(L-1)*L)/2);
 
 
@@ -214,32 +203,32 @@ std::vector<H2Triangle> H2Mesh::getTrianglesUp() const
     return output;
 }
 
-std::vector<H2Point> H2Mesh::getKickedH2Neighbors(int index) const
+std::vector<H2Point> H2Mesh::getKickedH2Neighbors(uint index) const
 {
     H2MeshPoint* point = meshPoints.at(index);
-    std::vector<int> neighborIndices = point->neighborsIndices;
+    std::vector<uint> neighborIndices = point->neighborsIndices;
     std::vector<H2Point> res = getH2Neighbors(index);
 
     if (point->isBoundaryPoint())
     {
-        std::vector<H2Isometry> isometries = rho.evaluateRepresentation(((H2MeshBoundaryPoint*) point)->neighborsPairings);
-        for (unsigned int i=0; i<neighborIndices.size(); ++i)
+        std::vector<H2Isometry> isometries = rho.evaluateRepresentation((static_cast<H2MeshBoundaryPoint*> (point))->neighborsPairings);
+        for (uint i=0; i!=neighborIndices.size(); ++i)
         {
             res[i] = isometries[i]*res[i];
         }
     }
     else if (point->isVertexPoint())
     {
-        std::vector<H2Isometry> isometries = rho.evaluateRepresentation(((H2MeshVertexPoint*) point)->neighborsPairings);
-        for (unsigned int i=0; i<neighborIndices.size(); ++i)
+        std::vector<H2Isometry> isometries = rho.evaluateRepresentation((static_cast<H2MeshVertexPoint*> (point))->neighborsPairings);
+        for (uint i=0; i!=neighborIndices.size(); ++i)
         {
             res[i] = isometries[i]*res[i];
         }
     }
     else if (point->isSteinerPoint())
     {
-        std::vector<H2Isometry> isometries = rho.evaluateRepresentation(((H2MeshSteinerPoint*) point)->neighborsPairings);
-        for (unsigned int i=0; i<neighborIndices.size(); ++i)
+        std::vector<H2Isometry> isometries = rho.evaluateRepresentation((static_cast<H2MeshSteinerPoint*> (point))->neighborsPairings);
+        for (uint i=0; i!=neighborIndices.size(); ++i)
         {
             res[i] = isometries[i]*res[i];
         }
@@ -248,17 +237,17 @@ std::vector<H2Point> H2Mesh::getKickedH2Neighbors(int index) const
     return res;
 }
 
-IsomH2Representation H2Mesh::getRepresentation() const
+GroupRepresentation<H2Isometry> H2Mesh::getRepresentation() const
 {
     return rho;
 }
 
-int H2Mesh::nbPoints() const
+uint H2Mesh::nbPoints() const
 {
-    return (int) meshPoints.size();
+    return meshPoints.size();
 }
 
-bool H2Mesh::isInteriorPoint(int index) const
+bool H2Mesh::isInteriorPoint(uint index) const
 {
     return meshPoints.at(index)->isInteriorPoint();
 }

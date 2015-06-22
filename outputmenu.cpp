@@ -42,7 +42,7 @@ void OutputMenu::createButtons()
 
     nbIterationsLabel = new QLabel("N = ");
     nbIterationsSpinBox = new QSpinBox();
-    nbIterationsSpinBox->setRange(0, 1000);
+    nbIterationsSpinBox->setRange(0, 5000);
     nbIterationsSpinBox->setValue(20);
     nbIterationsSpinBox->setToolTip("Choose N for number of iterations");
 

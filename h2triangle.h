@@ -4,8 +4,7 @@
 #include "types.h"
 #include "h2point.h"
 
-class H2Polygon;
-class H2GeodesicArc;
+class H2Polygon; class H2GeodesicArc; class H2Isometry;
 
 class H2Triangle
 {
@@ -22,13 +21,13 @@ public:
     std::vector<H2GeodesicArc> getSides() const;
 
 
-    H2Point getVertex(int index) const;
+    H2Point getVertex(uint index) const;
     void getSideLengths(double & A, double & B, double & C) const;
     void getAngles(double & angA, double & angleB, double & angleC) const;
 
     bool contains(const H2Point & point) const;
     void getAsPolygon(H2Polygon & outputPolygon) const;
-    bool isVertexCloseInDiskModel(const H2Point &point, double detectionRadiusSquared, int &vertexIndex) const;
+    bool isVertexCloseInDiskModel(const H2Point &point, double detectionRadiusSquared, uint &vertexIndex) const;
 
 
 private:

@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QSpacerItem>
 #include <QGridLayout>
+#include <QStatusBar>
 
 #include "equivariantharmonicmapsfactory.h"
 #include "topfactory.h"
@@ -18,6 +19,11 @@
 #include "fenchelnielsenuser.h"
 
 ActionHandler::ActionHandler()
+{
+    resetBooleans();
+}
+
+void ActionHandler::resetBooleans()
 {
     isShowingLive = false;
     isRhoDomainSet = false;
@@ -40,6 +46,7 @@ void ActionHandler::setWindow(Window *window)
     outputMenu = window->outputMenu;
     leftCanvas = window->leftCanvas;
     rightCanvas = window->rightCanvas;
+    statusBar = window->statusBar;
 }
 
 void ActionHandler::setContainer(MathsContainer *container)
@@ -51,14 +58,17 @@ void ActionHandler::setContainer(MathsContainer *container)
 
 void ActionHandler::resetDelegatePointers()
 {
-    leftDelegate = (H2CanvasDelegate*) leftCanvas->delegate;
-    rightDelegate = (H2CanvasDelegate*) rightCanvas->delegate;
+    leftDelegate = static_cast<H2CanvasDelegate*> (leftCanvas->delegate);
+    rightDelegate = static_cast<H2CanvasDelegate*> (rightCanvas->delegate);
 
     leftDelegate->buffer.setRhoPointer(&topFactory->subfactory.rhoDomain, "blue");
     leftDelegate->buffer.setMeshPointer(&topFactory->subfactory.mesh, "red");
 
     rightDelegate->buffer.setRhoPointer(&topFactory->subfactory.rhoTarget, "blue");
     rightDelegate->buffer.setFunctionPointer(&topFactory->subfactory.function, "red");
+
+    leftCanvas->updateRefresh(true, true);
+    rightCanvas->updateRefresh(true, true);
 }
 
 void ActionHandler::setFactory()
@@ -67,6 +77,7 @@ void ActionHandler::setFactory()
     topFactory->setHandler(this);
     topFactory->setGenus(inputMenu->getGenus());
     topFactory->setMeshDepth(inputMenu->getMeshDepth());
+    connect(&(topFactory->subfactory), SIGNAL(meshCreated(uint)), this, SLOT(meshCreated(uint)));
     resetDelegatePointers();
 }
 
@@ -78,16 +89,20 @@ void ActionHandler::setReadyToCompute()
     }
 }
 
-void ActionHandler::processMessage(actionHandlerMessage message, int parameter)
+void ActionHandler::meshCreated(uint nbMeshPoints)
+{
+    statusBar->showMessage(QString("Mesh created with %1 meshpoints").arg(QString::number(nbMeshPoints)), 7000);
+}
+
+void ActionHandler::processMessage(ActionHandlerMessage message, int)
 {
     bool isVertexHighlighted, isTriangleHighlighted;
-    int meshIndexHighlighted, index1, index2, index3;
+    uint meshIndexHighlighted, index1, index2, index3;
     bool update;
 
     switch(message)
     {
-    case HIGHLIGHTED_LEFT:
-        leftDelegate->enableRedrawBuffer(false, true);
+    case ActionHandlerMessage::HIGHLIGHTED_LEFT:
         leftCanvas->update();
         if (isReadyToCompute())
         {
@@ -95,13 +110,11 @@ void ActionHandler::processMessage(actionHandlerMessage message, int parameter)
             leftDelegate->getMeshIndexHighlighted(isVertexHighlighted, meshIndexHighlighted);
             rightDelegate->decideHighlightingTriangle(isTriangleHighlighted, update, index1, index2, index3);
             rightDelegate->decideHighlightingMeshPoints(isVertexHighlighted, update, meshIndexHighlighted);
-            rightDelegate->enableRedrawBuffer(false, true);
             rightCanvas->update();
         }
         break;
 
-    case HIGHLIGHTED_RIGHT:
-        rightDelegate->enableRedrawBuffer(false, true);
+    case ActionHandlerMessage::HIGHLIGHTED_RIGHT:
         rightCanvas->update();
         if (isReadyToCompute())
         {
@@ -109,19 +122,21 @@ void ActionHandler::processMessage(actionHandlerMessage message, int parameter)
             rightDelegate->getMeshIndexHighlighted(isVertexHighlighted, meshIndexHighlighted);
             leftDelegate->decideHighlightingTriangle(isTriangleHighlighted, update, index1, index2, index3);
             leftDelegate->decideHighlightingMeshPoints(isVertexHighlighted, update, meshIndexHighlighted);
-            leftDelegate->enableRedrawBuffer(false, true);
             leftCanvas->update();
         }
         break;
 
-    case END_CANVAS_REPAINT:
-        if (isShowingLive && parameter == H2DELEGATETARGET)
+    case ActionHandlerMessage::END_TARGET_CANVAS_REPAINT:
+        if (isShowingLive)
         {
             topFactory->subfactory.refreshFunction();
             updateFunction(false);
-            rightDelegate->enableRedrawBuffer(true, false);
             rightCanvas->update();
         }
+        break;
+
+    case ActionHandlerMessage::FINISHED_COMPUTING:
+        finishedComputing();
         break;
 
     default:
@@ -145,7 +160,6 @@ void ActionHandler::computeButtonClicked()
     {
         rightDelegate->getShowTranslates(showTranslatesAroundVertexRight, showTranslatesAroundVerticesRight);
         rightDelegate->setShowTranslates(false, false);
-        rightDelegate->enableRedrawBuffer();
         rightCanvas->update();
     }
 }
@@ -154,14 +168,28 @@ void ActionHandler::outputResetButtonClicked()
 {
     topFactory->resetInitSubfactory();
     outputMenu->resetMenu();
+    leftCanvas->resetView();
+    rightCanvas->resetView();
     updateFunction(true);
 }
 
 void ActionHandler::iterateButtonClicked()
 {
-    iterateDiscreteFlow(outputMenu->getNbIterations());
+    uint N = outputMenu->getNbIterations();
+    topFactory->iterateSubfactory(N);
+    statusBar->showMessage(QString("%1 iterations computed in %2s")
+                           .arg(QString::number(N))
+                           .arg(QString::number(topFactory->getTimeElapsed())), 7000);
     updateFunction(true);
     outputMenu->enableReset();
+}
+
+void ActionHandler::resetViewButtonClicked()
+{
+    leftCanvas->resetView();
+    rightCanvas->resetView();
+    leftCanvas->update();
+    rightCanvas->update();
 }
 
 void ActionHandler::showTranslatesClicked(int choice)
@@ -172,21 +200,21 @@ void ActionHandler::showTranslatesClicked(int choice)
 
     switch(choice)
     {
-    case SHOW_TRANSLATES_DOMAIN:
+    case DisplayMenu::SHOW_TRANSLATES_DOMAIN:
         aroundVertexNewLeft = false;
         aroundVerticesNewLeft = false;
         aroundVertexNewRight = false;
         aroundVerticesNewRight = false;
         break;
 
-    case SHOW_TRANSLATES_VERTEX:
+    case DisplayMenu::SHOW_TRANSLATES_VERTEX:
         aroundVertexNewLeft = true;
         aroundVerticesNewLeft = false;
         aroundVertexNewRight = true;
         aroundVerticesNewRight = false;
         break;
 
-    case SHOW_TRANSLATES_VERTICES:
+    case DisplayMenu::SHOW_TRANSLATES_VERTICES:
         aroundVertexNewLeft = false;
         aroundVerticesNewLeft = true;
         aroundVertexNewRight = false;
@@ -206,6 +234,25 @@ void ActionHandler::showTranslatesClicked(int choice)
         {
             updateMesh(true);
         }
+
+        uint nbMeshpoints = leftDelegate->buffer.mesh->nbPoints(), nbMeshPointsTranslates, nbTranslations;
+        if (aroundVertexNewLeft)
+        {
+            nbTranslations = leftDelegate->buffer.translationsAroundVertex.size();
+            nbMeshPointsTranslates = nbTranslations*nbMeshpoints;
+            statusBar->showMessage(QString("Showing %1 mesh points and %2 translates").arg(QString::number(nbMeshpoints)).arg(QString::number(nbMeshPointsTranslates)), 7000);
+        }
+        else
+        {
+            nbTranslations = leftDelegate->buffer.translationsAroundVertices.size();
+            nbMeshPointsTranslates = nbTranslations*nbMeshpoints;
+            if (aroundVerticesNewLeft)
+            {
+                statusBar->showMessage(QString("Showing %1 mesh points and %2 translates").arg(QString::number(nbMeshpoints)).arg(QString::number(nbMeshPointsTranslates)), 7000);
+            }
+            else statusBar->showMessage(QString("Showing %1 mesh points and %2 fundamental domain translates").
+                                        arg(QString::number(nbMeshpoints)).arg(QString::number(nbTranslations)), 7000);
+        }
     }
 
     if ((aroundVertexNewRight != aroundVertexOldRight) || (aroundVerticesNewRight != aroundVerticesOldRight))
@@ -222,24 +269,22 @@ void ActionHandler::showTranslatesClicked(int choice)
 
 void ActionHandler::setRhoDomainClicked(int choice)
 {
-    //std::cout << "Entering ActionHandler::setRhoDomainClicked" << std::endl;
-
     switch(choice)
     {
-    case SET_RHO_CHOOSE:
+    case InputMenu::SET_RHO_CHOOSE:
         isRhoDomainSet = false;
         topFactory->subfactory.resetRhoDomain();
         break;
 
-    case SET_RHO_NICE:
+    case InputMenu::SET_RHO_NICE:
         setRhoNiceDomain();
         break;
 
-    case SET_RHO_RANDOM:
+    case InputMenu::SET_RHO_RANDOM:
         setRhoRandomDomain();
         break;
 
-    case SET_RHO_FN:
+    case InputMenu::SET_RHO_FN:
         setRhoFNDomain();
         break;
 
@@ -252,27 +297,26 @@ void ActionHandler::setRhoDomainClicked(int choice)
 
 void ActionHandler::setRhoImageClicked(int choice)
 {
-    //std::cout << "Entering ActionHandler::setRhoImageClicked" << std::endl;
 
     switch(choice)
     {
-    case SET_RHO_CHOOSE:
+    case InputMenu::SET_RHO_CHOOSE:
         isRhoImageSet = false;
         topFactory->subfactory.resetRhoTarget();
         dealRhosReady();
         break;
 
-    case SET_RHO_NICE:
+    case InputMenu::SET_RHO_NICE:
         setRhoNiceTarget();
         dealRhosReady();
         break;
 
-    case SET_RHO_RANDOM:
+    case InputMenu::SET_RHO_RANDOM:
         setRhoRandomTarget();
         dealRhosReady();
         break;
 
-    case SET_RHO_FN:
+    case InputMenu::SET_RHO_FN:
         setRhoFNTarget();
         break;
 
@@ -292,7 +336,7 @@ void ActionHandler::setRhoNiceDomain()
     {
         errorMessageForSetRhoNice();
         isRhoDomainSet = false;
-        inputMenu->setRhoDomainComboBox->setCurrentIndex(SET_RHO_CHOOSE);
+        inputMenu->setRhoDomainComboBox->setCurrentIndex(InputMenu::SET_RHO_CHOOSE);
         topFactory->subfactory.resetRhoTarget();
     }
 }
@@ -308,7 +352,7 @@ void ActionHandler::setRhoNiceTarget()
     {
         errorMessageForSetRhoNice();
         isRhoImageSet = false;
-        inputMenu->setRhoImageComboBox->setCurrentIndex(SET_RHO_CHOOSE);
+        inputMenu->setRhoImageComboBox->setCurrentIndex(InputMenu::SET_RHO_CHOOSE);
         topFactory->subfactory.resetRhoTarget();
     }
 }
@@ -316,7 +360,7 @@ void ActionHandler::setRhoNiceTarget()
 void ActionHandler::errorMessageForSetRhoNice()
 {
     QMessageBox messageBox;
-    QString message = QString("%1Nice%2 representation can only be set for genus 2").arg(QChar(8220)).arg(QChar(8221));
+    QString message = QString("%1Nice%2 representation is only available for genus 2").arg(QChar(8220)).arg(QChar(8221));
 
 
     QSpacerItem* horizontalSpacer = new QSpacerItem(500, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
@@ -324,9 +368,10 @@ void ActionHandler::errorMessageForSetRhoNice()
     messageBox.setIcon(QMessageBox::Warning);
     messageBox.setInformativeText(message);
 
-    QGridLayout* layout = (QGridLayout*)messageBox.layout();
+    QGridLayout* layout = dynamic_cast<QGridLayout*>(messageBox.layout());
     layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
 
+    messageBox.setAttribute(Qt::WA_DeleteOnClose);
     messageBox.exec();
 
 }
@@ -335,7 +380,7 @@ void ActionHandler::errorMessageForSetRhoNice()
 void ActionHandler::setRhoRandomDomain()
 {
     std::vector<double> lengths, twists;
-    int genus = inputMenu->getGenus();
+    uint genus = inputMenu->getGenus();
     ActionHandler::randomFNcoordinates(genus, lengths, twists);
     isRhoDomainSet = true;
     topFactory->subfactory.setRhoDomain(lengths, twists);
@@ -344,7 +389,7 @@ void ActionHandler::setRhoRandomDomain()
 void ActionHandler::setRhoRandomTarget()
 {
     std::vector<double> lengths, twists;
-    int genus = inputMenu->getGenus();
+    uint genus = inputMenu->getGenus();
     ActionHandler::randomFNcoordinates(genus, lengths, twists);
     isRhoImageSet = true;
     topFactory->subfactory.setRhoTarget(lengths, twists);
@@ -397,14 +442,14 @@ void ActionHandler::discardReceiveFNcoordinates()
     if (expectingFNdomain)
     {
         isRhoDomainSet = false;
-        inputMenu->setRhoDomainComboBox->setCurrentIndex(SET_RHO_CHOOSE);
+        inputMenu->setRhoDomainComboBox->setCurrentIndex(InputMenu::SET_RHO_CHOOSE);
         topFactory->subfactory.resetRhoDomain();
         expectingFNdomain = false;
     }
     if (expectingFNtarget)
     {
         isRhoImageSet = false;
-        inputMenu->setRhoImageComboBox->setCurrentIndex(SET_RHO_CHOOSE);
+        inputMenu->setRhoImageComboBox->setCurrentIndex(InputMenu::SET_RHO_CHOOSE);
         topFactory->subfactory.resetRhoTarget();
         expectingFNtarget = false;
     }
@@ -466,10 +511,9 @@ void ActionHandler::dealRhosReady()
 
     leftDelegate->resetHighlighted();
     rightDelegate->resetHighlighted();
-    leftDelegate->enableRedrawBuffer();
-    rightDelegate->enableRedrawBuffer();
-    leftCanvas->update();
-    rightCanvas->update();
+
+    leftCanvas->updateRefresh(true, true);
+    rightCanvas->updateRefresh(true, true);
 }
 
 void ActionHandler::setDisplayMenuReady(bool left)
@@ -511,11 +555,6 @@ void ActionHandler::meshDepthClicked(int choice)
     dealRhosReady();
 }
 
-void ActionHandler::iterateDiscreteFlow(int N)
-{
-    topFactory->iterateSubfactory(N);
-}
-
 void ActionHandler::stopButtonClicked()
 {
     topFactory->stopHeatFlow();
@@ -528,7 +567,7 @@ void ActionHandler::updateMesh(bool updateTranslates)
         throw(QString("Error in ActionHandler::updateMesh: not supposed to happen"));
     }
 
-    ((H2CanvasDelegateDomain *) leftDelegate)->refreshMesh();
+    (static_cast<H2CanvasDelegateDomain *> (leftDelegate))->refreshMesh();
     if (updateTranslates)
     {
         leftDelegate->refreshTranslates();
@@ -537,27 +576,23 @@ void ActionHandler::updateMesh(bool updateTranslates)
     {
         leftDelegate->refreshTranslates(false, false);
     }
-    leftDelegate->enableRedrawBuffer(true, false);
-    leftCanvas->update();
+    leftCanvas->updateRefresh(true, true);
+    rightCanvas->updateRefresh(true, true);
 }
 
-void ActionHandler::randomFNcoordinates(int genus, std::vector<double> &lengthsOut, std::vector<double> &twistsOut)
+void ActionHandler::randomFNcoordinates(uint genus, std::vector<double> &lengthsOut, std::vector<double> &twistsOut)
 {
     lengthsOut.clear();
     twistsOut.clear();
-    int N = 3*genus - 3;
+    uint N = 3*genus - 3;
     lengthsOut.reserve(N);
     twistsOut.reserve(N);
 
-    for (int i=0; i!=N; ++i)
+    for (uint i=0; i!=N; ++i)
     {
         lengthsOut.push_back(Tools::randDouble(1.0, 4.0));
         twistsOut.push_back(Tools::randDouble(-0.5, 0.5));
     }
-
-    std::cout << "Chosen lengths and twists in selector: " << std::endl;
-    std::cout << "lengths = " << lengthsOut << std::endl;
-    std::cout << "twists = " << twistsOut << std::endl;
 }
 
 void ActionHandler::updateFunction(bool updateTranslates)
@@ -567,7 +602,7 @@ void ActionHandler::updateFunction(bool updateTranslates)
         throw(QString("Error in ActionHandler::updateFunction: not supposed to happen"));
     }
 
-    ((H2CanvasDelegateTarget *) rightDelegate)->refreshFunction();
+    static_cast<H2CanvasDelegateTarget *>(rightDelegate)->refreshFunction();
     if (updateTranslates)
     {
         rightDelegate->refreshTranslates();
@@ -576,8 +611,8 @@ void ActionHandler::updateFunction(bool updateTranslates)
     {
         rightDelegate->refreshTranslates(false, false);
     }
-    rightDelegate->enableRedrawBuffer(true, false);
-    rightCanvas->update();
+    leftCanvas->updateRefresh(true, true);
+    rightCanvas->updateRefresh(true, true);
 }
 
 void ActionHandler::finishedComputing()
@@ -589,6 +624,10 @@ void ActionHandler::finishedComputing()
     displayMenu->setEnabled(true);
     outputMenu->switchStopToComputeButton();
     outputMenu->enableAll();
+
+    statusBar->showMessage(QString("%1 iterations computed in %2s")
+                           .arg(QString::number(topFactory->getNbIterations()))
+                           .arg(QString::number(topFactory->getTimeElapsed())), 7000);
 
     rightDelegate->setShowTranslates(showTranslatesAroundVertexRight, showTranslatesAroundVerticesRight);
     updateFunction(true);

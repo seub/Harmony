@@ -12,6 +12,7 @@
 #include <time.h>
 #include <cstdlib>
 #include <ctime>
+#include <memory>
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
@@ -48,17 +49,17 @@ template <typename T> T exponentiation(T base, int power)
     }
     else
     {
-        std::cerr << "ERROR in Tools::exponentiation: no negative exponents!" << std::endl;
+        throw(QString("ERROR in Tools::exponentiation: no negative exponents!"));
     }
     return res;
 }
 
 std::string convertToString(int i);
 
-template <typename T> std::vector<int> findInList(const T &x, const std::vector<T> &V)
+template <typename T> std::vector<uint> findInList(const T &x, const std::vector<T> &V)
 {
-    std::vector<int> outputIndices;
-    for (unsigned int i=0; i<V.size(); i++)
+    std::vector<uint> outputIndices;
+    for (uint i=0; i<V.size(); i++)
     {
         if (V[i] == x)
         {
@@ -82,10 +83,10 @@ template <typename T> bool isInList(const T &x, const std::vector<T> &V)
 
 template <typename T> bool containsDuplicates(const std::vector<T> & V)
 {
-    int i,j, N=V.size();
-    for (i=0; i<N-1; i++)
+    uint i,j, N=V.size();
+    for (i=0; i!=N-1; ++i)
     {
-        for (j=i+1; j<N; j++)
+        for (j=i+1; j!=N; ++j)
         {
             if (V[i] == V[j])
             {
@@ -98,10 +99,10 @@ template <typename T> bool containsDuplicates(const std::vector<T> & V)
 
 template <typename T> bool haveCommonElements(const std::vector<T> & V1, const std::vector<T> & V2)
 {
-    unsigned int i, j, N1 = V1.size(), N2 = V2.size();
-    for (i=0; i<N1; i++)
+    uint i, j, N1 = V1.size(), N2 = V2.size();
+    for (i=0; i!=N1; i++)
     {
-        for (j=0; j<N2; j++)
+        for (j=0; j!=N2; j++)
         {
             if (V1[i] == V2[j])
             {
@@ -112,7 +113,7 @@ template <typename T> bool haveCommonElements(const std::vector<T> & V1, const s
     return false;
 }
 
-template <typename T> int sgn(T val)
+template <typename T> int sign(T val)
 {
     return (T(0) < val) - (val < T(0));
 }
@@ -124,7 +125,7 @@ std::ostream & operator<<(std::ostream &out, const Complex &z);
 template<typename T> std::ostream & operator<<(std::ostream &out, const std::vector<T> &V)
 {
     out << "[";
-    for (unsigned int i = 0; i+1 < V.size(); ++i)
+    for (uint i = 0; i+1 != V.size(); ++i)
     {
         out << V[i] << ", ";
     }

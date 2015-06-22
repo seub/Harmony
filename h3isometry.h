@@ -12,14 +12,14 @@ class H3Isometry
     friend H3Isometry operator *(const H3Isometry &f1, const H3Isometry &f2);
     friend CP1Point operator *(const H3Isometry & f, const CP1Point & p);
     friend H3Point operator *(const H3Isometry & f, const H3Point & p);
-    friend bool operator ==(const H3Isometry & f1, const H3Isometry & f2);
     friend std::ostream & operator<<(std::ostream & out, const H3Isometry & A);
 
 public:
     H3Isometry();
-    H3Isometry(int i);
     H3Isometry(const SL2CMatrix &M);
+    H3Isometry(uint i);
 
+    static bool almostEqual(const H3Isometry & f1, const H3Isometry & f2);
 
     void setByMappingThreeCP1PointsToZeroOneInfinity(const CP1Point & p1,const CP1Point & p2,const CP1Point & p3);
     void setByImagesOfThreeCP1Points(const CP1Point & p1,const CP1Point & p2,const CP1Point & p3,

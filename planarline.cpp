@@ -19,7 +19,6 @@ void PlanarLine::getPointAndDirection(Complex & point, Complex & direction) cons
 {
     point = this->point;
     direction = this->direction;
-    return;
 }
 
 void PlanarLine::setPointAndDirection(Complex & point, Complex & direction)
@@ -30,7 +29,6 @@ void PlanarLine::setPointAndDirection(Complex & point, Complex & direction)
     }
     this->point = point;
     this->direction = direction;
-    return;
 }
 
 void PlanarLine::setPerpendicularBisector(const Complex &z1, const Complex &z2)
@@ -41,7 +39,6 @@ void PlanarLine::setPerpendicularBisector(const Complex &z1, const Complex &z2)
     }
     point = (z1 + z2) / 2.0;
     direction = I*(z1 - z2) / 2.0;
-    return;
 }
 
 bool PlanarLine::contains(const Complex & z) const

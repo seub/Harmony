@@ -37,19 +37,19 @@ void H2Buffer::setIsRhoEmpty(bool isRhoEmpty)
     this->isRhoEmpty = isRhoEmpty;
 }
 
-void H2Buffer::setMeshPointer(H2Mesh *mesh, const QColor &color)
+void H2Buffer::setMeshPointer(const H2Mesh *mesh, const QColor &color)
 {
     this->mesh = mesh;
     meshOrFunctionColor = color;
 }
 
-void H2Buffer::setFunctionPointer(H2MeshFunction *function, const QColor &color)
+void H2Buffer::setFunctionPointer(const H2MeshFunction *function, const QColor &color)
 {
     this->function = function;
     meshOrFunctionColor = color;
 }
 
-void H2Buffer::setRhoPointer(IsomH2Representation *rho, const QColor &color)
+void H2Buffer::setRhoPointer(const GroupRepresentation<H2Isometry> *rho, const QColor &color)
 {
     this->rho = rho;
     rhoColor = color;
@@ -188,7 +188,7 @@ void H2Buffer::refreshRho()
         }
         else
         {
-            std::cout << "WARNING in H2Buffer::refreshRho(): some generators are not hyperbolic" << std::endl;
+            qDebug() << "WARNING in H2Buffer::refreshRho(): some generators are not hyperbolic";
         }
     }
 

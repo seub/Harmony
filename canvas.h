@@ -4,12 +4,9 @@
 #include <QWidget>
 
 #include "tools.h"
+#include "canvasdelegate.h"
 
-class CanvasDelegate;
-class Window;
-class ActionHandler;
-class FenchelNielsenUser;
-class CanvasContainer;
+class CanvasDelegate; class ActionHandler; class FenchelNielsenUser; class CanvasContainer; class Window;
 
 class Canvas : public QWidget
 {
@@ -17,41 +14,39 @@ class Canvas : public QWidget
 
     friend class Window;
     friend class FenchelNielsenUser;
+    friend class ActionHandler;
 
 public:
-    explicit Canvas(CanvasDelegateType delegateType, Window *window = 0, ActionHandler* handler = 0);
-    explicit Canvas(FenchelNielsenUser *FNuser);
+    Canvas(DelegateType delegateType, Window *window = nullptr, ActionHandler* handler = nullptr);
+    explicit Canvas(FenchelNielsenUser *user);
+    Canvas() = delete;
+    Canvas(const Canvas &) = delete;
+    Canvas & operator=(Canvas) = delete;
     ~Canvas();
 
-    void changeDelegate(CanvasDelegateType delegateType, ActionHandler *handler = 0);
-    CanvasDelegateType getDelegateType() const;
-
-signals:
-
+    DelegateType getDelegateType() const;
+    void resetView();
 
 private:
-public:
-    CanvasDelegate *delegate;
+    void changeDelegate(DelegateType delegateType, ActionHandler *handler = nullptr);
 
-    void paintEvent(QPaintEvent *event);
-//public slots:
-    void resizeEvent(QResizeEvent *resizeEvent);
-    void mousePressEvent(QMouseEvent *mouseEvent);
-    void mouseMoveEvent(QMouseEvent *mouseEvent);
-    void wheelEvent(QWheelEvent *wheelEvent);
-    void keyPressEvent(QKeyEvent *keyEvent);
-    void enterEvent(QEvent *);
-    void leaveEvent(QEvent *);
-
-private:
-    Canvas(); // Dummy constructor
-    Canvas(const Canvas &other); // Copy constructor
-    Canvas & operator=(Canvas other); // Copy-assignment operator
+    void updateRefresh(bool back, bool top);
+    void paintEvent(QPaintEvent *event) override;
+    void resizeEvent(QResizeEvent *resizeEvent) override;
+    void moveEvent(QMoveEvent *) override;
+    void mousePressEvent(QMouseEvent *mouseEvent) override;
+    void mouseMoveEvent(QMouseEvent *mouseEvent) override;
+    void mouseReleaseEvent(QMouseEvent *mouseEvent) override;
+    void wheelEvent(QWheelEvent *wheelEvent) override;
+    void keyPressEvent(QKeyEvent *keyEvent) override;
+    void enterEvent(QEvent *) override;
+    void leaveEvent(QEvent *) override;
 
     void initialize();
     void rescale();
 
     CanvasContainer* container;
+    CanvasDelegate* delegate;
 };
 
 #endif // CANVAS_H

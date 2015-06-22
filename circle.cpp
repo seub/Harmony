@@ -1,19 +1,10 @@
 #include "circle.h"
 
-Circle::Circle()
-{
-}
 
-Circle::Circle(Complex center, double radius): center(center), radius(radius)
+void Circle::getCenterAndRadius(Complex &centerOut, double &radiusOut) const
 {
-}
-
-
-void Circle::getCenterAndRadius(Complex &center, double &radius) const
-{
-    center = this->center;
-    radius = this->radius;
-    return;
+    centerOut = this->center;
+    radiusOut = this->radius;
 }
 
 Complex Circle::getCenter() const
@@ -36,7 +27,7 @@ bool Circle::contains(const Complex & z) const
     return (norm(center - z) == radius*radius);
 }
 
-bool intersectCircles(Circle &C1, Circle &C2, Complex &out1, Complex &out2)
+bool Circle::intersectCircles(Circle &C1, Circle &C2, Complex &out1, Complex &out2)
 {
     Complex c1, c2;
     double r1, r2;
@@ -52,7 +43,7 @@ bool intersectCircles(Circle &C1, Circle &C2, Complex &out1, Complex &out2)
     return true;
 }
 
-bool intersectCircleAndLine(Circle &C, PlanarLine &L, Complex &out1, Complex &out2)
+bool Circle::intersectCircleAndLine(Circle &C, PlanarLine &L, Complex &out1, Complex &out2)
 {
     Complex center, point, direction;
     double radius, c1,c2,d1,d2,p1,p2;
