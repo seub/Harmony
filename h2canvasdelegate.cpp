@@ -649,13 +649,13 @@ void H2CanvasDelegateTarget::subKeyPress(QKeyEvent *keyEvent)
     switch(keyEvent->key())
     {
     case Qt::Key_Space :
-
+/*
         buffer.function->iterate(20);
 
         buffer.refreshFunction();
 
         refreshTranslates();
-
+*/
         break;
     }
 }

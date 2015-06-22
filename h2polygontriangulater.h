@@ -59,11 +59,7 @@ public:
     std::vector<uint> nbCutsFromVertex() const;
     void verticesIndices(std::vector< std::vector<uint> > &triangleIndices, std::vector< std::vector<uint> > &indicesInTriangles) const;
 
-<<<<<<< HEAD
-//private:
-=======
-private:    
->>>>>>> 1b7e4fbdb4159858088c847450fdf6fa71408048
+private:
     H2PolygonTriangulater(const H2PolygonTriangulater &);
 
     void triangulate();

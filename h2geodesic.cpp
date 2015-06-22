@@ -257,7 +257,6 @@ bool H2Geodesic::commonPerpendicular(const H2Geodesic &L1, const H2Geodesic &L2,
     return true;
 }
 
-<<<<<<< HEAD
 double H2Geodesic::distanceGeodesics(const H2Geodesic &L1, const H2Geodesic &L2)
 {
     H2Point p1,p2;
@@ -268,10 +267,7 @@ double H2Geodesic::distanceGeodesics(const H2Geodesic &L1, const H2Geodesic &L2)
     return H2Point::distance(p1,p2);
 }
 
-bool commonEndpointInDiskModel(const H2Geodesic &L1, const H2Geodesic &L2, Complex &z)
-=======
 bool H2Geodesic::commonEndpointInDiskModel(const H2Geodesic &L1, const H2Geodesic &L2, Complex &z)
->>>>>>> 1b7e4fbdb4159858088c847450fdf6fa71408048
 {
     Complex z1,z2,w1,w2;
     L1.getEndpointsInDiskModel(z1,z2);
@@ -353,26 +349,6 @@ bool H2GeodesicArc::isLineSegmentInDiskModel() const
     return imag(z2*conj(z1))==0;
 }
 
-<<<<<<< HEAD
-bool H2GeodesicArc::getCircleAndAnglesInDiskModel(Circle &outC, double &outAngle1, double &outAngle2) const
-{
-    Complex z1 = p1.getDiskCoordinate();
-    Complex z2 = p2.getDiskCoordinate();
-    if (imag(z2*conj(z1)) != 0.0)
-    {
-        outC = getCircleInDiskModel();
-        outAngle1 = arg(z1 - outC.getCenter());
-        outAngle2 = arg(z2 - outC.getCenter());
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-=======
->>>>>>> 1b7e4fbdb4159858088c847450fdf6fa71408048
 void H2GeodesicArc::getEndpointsInDiskModel(Complex &output1, Complex &output2) const
 {
     output1 = p1.getDiskCoordinate();

@@ -312,11 +312,7 @@ H2Isometry H2Isometry::findConjugatorForGluing(const H2Isometry & f1, const H2Is
     double error = 0.00000001;
     if (std::abs(f1.traceSquared()-f2.traceSquared()) > error)
     {
-<<<<<<< HEAD
-        throw(QString("ERROR in H2Isometry::findConjugatorForGluing: not the same translation lengths!"));
-=======
         throw(QString("ERROR in H2Isometry::findConjugatorForGluing: different translation lengths!"));
->>>>>>> 1b7e4fbdb4159858088c847450fdf6fa71408048
     }
 
     H2Isometry c1, c2, c;

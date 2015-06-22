@@ -26,13 +26,8 @@ public:
     bool isInteriorPoint(uint meshIndex) const;
     std::vector<H2GeodesicArc> getExteriorSides() const;
     std::vector<H2Point> getPoints() const;
-<<<<<<< HEAD
 
-    IsomH2Representation getTargetRepresentation() const;
-
-=======
     GroupRepresentation<H2Isometry> getTargetRepresentation() const;
->>>>>>> 1b7e4fbdb4159858088c847450fdf6fa71408048
 
     void initializePL(const H2Point &basePoint);
     void iterate(uint n=1);

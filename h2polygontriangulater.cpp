@@ -551,10 +551,9 @@ void H2PolygonTriangulater::createSteinerPoints()
     fullPolygon = steinerPolygon.getFullPolygon();
 }
 
-<<<<<<< HEAD
 void H2PolygonTriangulater::createSteinerPointsDetailed()
 {
-    std::vector<int> nbSteinerPoints;
+    std::vector<uint> nbSteinerPoints;
     std::vector<H2GeodesicArc> sides = polygon->getSides();
     std::vector<double> sideDistances, sideLengths;
     for (const auto & side : sides)
@@ -578,10 +577,7 @@ void H2PolygonTriangulater::createSteinerPointsDetailed()
     fullPolygon = steinerPolygon.getFullPolygon();
 }
 
-bool H2PolygonTriangulater::sameSide(int fullIndex1, int fullIndex2) const
-=======
 bool H2PolygonTriangulater::sameSide(uint fullIndex1, uint fullIndex2) const
->>>>>>> 1b7e4fbdb4159858088c847450fdf6fa71408048
 {
     return steinerPolygon.lieOnSameActualSide(fullIndex1, fullIndex2);
 }
