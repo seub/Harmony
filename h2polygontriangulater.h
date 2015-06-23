@@ -28,12 +28,13 @@ class TriangulationTriangle
 public:
     bool operator <(const TriangulationTriangle &other) const;
     void getVertices(uint &i1, uint &i2, uint &i3) const;
+    static bool shareSide(const TriangulationTriangle &T1, const TriangulationTriangle &T2,
+                          uint &sharedIndex1, uint &sharedIndex2, uint &unsharedIndex1, uint &unsharedIndex2);
 
 private:
     TriangulationTriangle() {}
     TriangulationTriangle(uint vertexIndex1, uint vertexIndex2, uint vertexIndex3) :
         vertexIndex1(vertexIndex1), vertexIndex2(vertexIndex2), vertexIndex3(vertexIndex3) {}
-
 
 
     uint vertexIndex1, vertexIndex2, vertexIndex3;
@@ -85,6 +86,8 @@ private:
     void createSteinerPointsDetailed();
 
     bool sameSide(uint fullIndex1, uint fullIndex2) const;
+    bool isSideTriangle(uint triangleIndex) const;
+    bool attemptFlip();
 
     const H2Polygon * const polygon;
     bool orientation;

@@ -207,6 +207,23 @@ std::vector<H2Geodesic> H2Polygon::getCompletedSides() const
     return res;
 }
 
+/*bool H2Polygon::shareSide(const H2Polygon &P1, const H2Polygon &P2)
+{
+    bool output = 0;
+    uint i=0,j;
+    std::vector<H2GeodesicArc> sides1 = P1.getSides();
+    std::vector<H2GeodesicArc> sides2 = P2.getSides();
+    while (!output && i < sides1.size())
+    {
+        for (const auto & side : sides2)
+        {
+            output = output || (side == sides1[i]);
+        }
+        ++i;
+    }
+    return output;
+}*/
+
 double H2Polygon::norm0() const
 {
     double res = 0;

@@ -48,3 +48,177 @@ std::string Tools::convertToString(int i)
     s = out.str();
     return s;
 }
+
+bool Tools::twoTriosShareTwoCommonElements(const uint &i1, const uint &i2, const uint &i3,
+                                           const uint &j1, const uint &j2, const uint &j3,
+                                           uint &sharedInt1, uint &sharedInt2,
+                                           uint &unsharedInt1, uint &unsharedInt2)
+{
+    if (i1==j1 && i2==j2 && i3==j3)
+    {
+        return false;
+    }
+    else if (i1==j1)
+    {
+        if (i2==j2)
+        {
+            sharedInt1 = i1;
+            sharedInt2 = i2;
+            unsharedInt1 = i3;
+            unsharedInt2 = j3;
+            return true;
+        }
+        else if (i2==j3)
+        {
+            sharedInt1 = i1;
+            sharedInt2 = i2;
+            unsharedInt1 = i3;
+            unsharedInt2 = j2;
+            return true;
+        }
+        else if (i3==j2)
+        {
+            sharedInt1 = i1;
+            sharedInt2 = i3;
+            unsharedInt1 = i2;
+            unsharedInt2 = j3;
+            return true;
+        }
+        else if (i3==j3)
+        {
+            sharedInt1 = i1;
+            sharedInt2 = i3;
+            unsharedInt1 = i2;
+            unsharedInt2 = j2;
+            return true;
+        }
+    }
+    else if (i1==j2)
+    {
+        if (i2==j1)
+        {
+            sharedInt1 = i1;
+            sharedInt2 = i2;
+            unsharedInt1 = i3;
+            unsharedInt2 = j3;
+            return true;
+        }
+        else if (i2==j3)
+        {
+            sharedInt1 = i1;
+            sharedInt2 = i2;
+            unsharedInt1 = i3;
+            unsharedInt2 = j1;
+            return true;
+        }
+        else if (i3==j1)
+        {
+            sharedInt1 = i1;
+            sharedInt2 = i3;
+            unsharedInt1 = i2;
+            unsharedInt2 = j3;
+            return true;
+        }
+        else if (i3==j3)
+        {
+            sharedInt1 = i1;
+            sharedInt2 = i3;
+            unsharedInt1 = i2;
+            unsharedInt2 = j1;
+            return true;
+        }
+    }
+    else if (i1==j3)
+    {
+        if (i2==j1)
+        {
+            sharedInt1 = i1;
+            sharedInt2 = i2;
+            unsharedInt1 = i3;
+            unsharedInt2 = j2;
+            return true;
+        }
+        else if (i2==j2)
+        {
+            sharedInt1 = i1;
+            sharedInt2 = i2;
+            unsharedInt1 = i3;
+            unsharedInt2 = j1;
+            return true;
+        }
+        else if (i3==j1)
+        {
+            sharedInt1 = i1;
+            sharedInt2 = i3;
+            unsharedInt1 = i2;
+            unsharedInt2 = j2;
+            return true;
+        }
+        else if (i3==j2)
+        {
+            sharedInt1 = i1;
+            sharedInt2 = i3;
+            unsharedInt1 = i2;
+            unsharedInt2 = j1;
+            return true;
+        }
+    }
+    else if (i2==j1)
+    {
+        if (i3==j2)
+        {
+            sharedInt1 = i2;
+            sharedInt2 = i3;
+            unsharedInt1 = i1;
+            unsharedInt2 = j3;
+            return true;
+        }
+        else if (i3==j3)
+        {
+            sharedInt1 = i2;
+            sharedInt2 = i3;
+            unsharedInt1 = i1;
+            unsharedInt2 = j2;
+            return true;
+        }
+    }
+    else if (i2==j2)
+    {
+        if (i3==j1)
+        {
+            sharedInt1 = i2;
+            sharedInt2 = i3;
+            unsharedInt1 = i1;
+            unsharedInt2 = j3;
+            return true;
+        }
+        else if (i3==j3)
+        {
+            sharedInt1 = i2;
+            sharedInt2 = i3;
+            unsharedInt1 = i1;
+            unsharedInt2 = j1;
+            return true;
+        }
+    }
+    else if (i2==j3)
+    {
+        if (i3==j1)
+        {
+            sharedInt1 = i2;
+            sharedInt2 = i3;
+            unsharedInt1 = i1;
+            unsharedInt2 = j2;
+            return true;
+        }
+        else if (i3==j2)
+        {
+            sharedInt1 = i2;
+            sharedInt2 = i3;
+            unsharedInt1 = i1;
+            unsharedInt2 = j1;
+            return true;
+        }
+    }
+    return false;
+}

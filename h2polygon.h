@@ -48,6 +48,8 @@ public:
     std::vector<H2GeodesicArc> getSides() const;
     std::vector<H2Geodesic> getCompletedSides() const;
 
+    //static bool shareSide(const H2Polygon &P1, const H2Polygon &P2);
+
     void optimalMobius(H2Isometry &output) const;
     std::vector<double> getAngles() const;
     std::vector<double> getPositiveInteriorAngles() const;

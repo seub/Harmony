@@ -248,6 +248,26 @@ void TriangulationTriangle::getVertices(uint &i1, uint &i2, uint &i3) const
     i3 = vertexIndex3;
 }
 
+bool TriangulationTriangle::shareSide(const TriangulationTriangle &T1, const TriangulationTriangle &T2,
+                                      uint &sharedIndex1, uint &sharedIndex2, uint &unsharedIndex1, uint &unsharedIndex2)
+{
+    uint i1,i2,i3,j1,j2,j3;
+    T1.getVertices(i1,i2,i3);
+    T2.getVertices(j1,j2,j3);
+    if (Tools::twoTriosShareTwoCommonElements(i1,i2,i3,j1,j2,j3,sharedIndex1,sharedIndex2,unsharedIndex1,unsharedIndex2))
+    {
+        return true;
+    }
+    else return false;
+}
+
+bool H2PolygonTriangulater::isSideTriangle(uint triangleIndex) const
+{
+    uint i,j,k,N=fullPolygon.nbVertices();
+    triangles.at(triangleIndex).getVertices(i,j,k);
+    return (j==i+1)||(k==j+1)||(i==0 && k==N-1);
+}
+
 std::vector<uint> H2PolygonTriangulater::nbCutsFromVertex() const
 {
     std::vector<uint> res(fullPolygon.nbVertices());
@@ -580,4 +600,36 @@ void H2PolygonTriangulater:: createSteinerPointsDetailed()
 bool H2PolygonTriangulater::sameSide(uint fullIndex1, uint fullIndex2) const
 {
     return steinerPolygon.lieOnSameActualSide(fullIndex1, fullIndex2);
+}
+
+bool H2PolygonTriangulater::attemptFlip()
+{
+    // assert polygon is triangulated
+    uint sharedIndex1,sharedIndex2,unsharedIndex1,unsharedIndex2;
+    TriangulationTriangle flipTriangle1, flipTriangle2;
+    H2Point sharedPoint1, sharedPoint2, unsharedPoint1, unsharedPoint2;
+    uint i=0,j;
+    for (const auto & triangle1 : triangles)
+    {
+        j=0;
+        for (const auto & triangle2 : triangles)
+        {
+            if (TriangulationTriangle::shareSide(triangle1,triangle2,sharedIndex1,sharedIndex2,unsharedIndex1,unsharedIndex2))
+            {
+                sharedPoint1 = fullPolygon.getVertex(sharedIndex1);
+                sharedPoint2 = fullPolygon.getVertex(sharedIndex2);
+                unsharedPoint1 = fullPolygon.getVertex(unsharedIndex1);
+                unsharedPoint2 = fullPolygon.getVertex(unsharedIndex2);
+                if (H2Point::distance(sharedPoint1,sharedPoint2) > H2Point::distance(unsharedPoint1,unsharedPoint2))
+                {
+                    triangles[i] = TriangulationTriangle(unsharedIndex1,unsharedIndex2,sharedIndex1);
+                    triangles[j] = TriangulationTriangle(unsharedIndex1,unsharedIndex2,sharedIndex2);
+                    return true;
+                }
+            }
+            ++j;
+        }
+        ++i;
+    }
+    return false;
 }
