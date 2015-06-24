@@ -3,13 +3,17 @@
 
 #include "tools.h"
 
-class H2Point; class H2Triangle;
+class H2Point; class H2Triangle; class H2Isometry;
+template <typename Point, typename Map> class LiftedGraphFunctionTriangulated;
+
 
 template <typename Point> class TriangularSubdivision
 {
     friend class H2Mesh;
     friend class H2MeshConstructor;
     template <typename S> friend void swap(TriangularSubdivision<S> &first, TriangularSubdivision<S> &second);
+    //template <typename Point, typename Map> friend class LiftedGraphFunctionTriangulated;
+    friend class LiftedGraphFunctionTriangulated<H2Point, H2Isometry>;
 
 public:
     TriangularSubdivision();
@@ -38,7 +42,6 @@ public:
 
     std::vector<std::vector<uint> > neighborsIndices() const;
     std::vector<bool> areBoundaryPoints() const;
-
 
 private:
     void constructIndices(uint aIndex, uint bIndex, uint cIndex, uint depth, uint totalDepth,

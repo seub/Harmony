@@ -18,6 +18,7 @@ class DisplayMenu : public QGroupBox
 
 public:
     enum ShowTranslatesChoice {SHOW_TRANSLATES_DOMAIN, SHOW_TRANSLATES_VERTEX, SHOW_TRANSLATES_VERTICES};
+    enum ColoringChoice {COLORING_NONE, COLORING_PLAIN};
 
     DisplayMenu() = delete;
     DisplayMenu(const DisplayMenu &) = delete;
@@ -42,6 +43,8 @@ private:
     QPushButton *resetViewButton;
     QLabel *showTranslatesLabel;
     QComboBox *showTranslatesComboBox;
+    QLabel *coloringLabel;
+    QComboBox *coloringComboBox;
     int vertSpace;
     int buttonHeight;
 

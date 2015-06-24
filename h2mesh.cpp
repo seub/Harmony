@@ -90,12 +90,6 @@ H2Mesh & H2Mesh::operator=(H2Mesh other)
     return *this;
 }
 
-
-const std::vector< TriangularSubdivision<H2Point> > & H2Mesh::getSubdivisions() const
-{
-    return subdivisions;
-}
-
 bool H2Mesh::triangleContaining(const H2Point &point, H2Triangle &outputTriangle, uint &meshIndex1, uint &meshIndex2, uint &meshIndex3) const
 {
     H2Point A, B, C;
@@ -245,6 +239,11 @@ GroupRepresentation<H2Isometry> H2Mesh::getRepresentation() const
 uint H2Mesh::nbPoints() const
 {
     return meshPoints.size();
+}
+
+uint H2Mesh::getDepth() const
+{
+    return depth;
 }
 
 bool H2Mesh::isInteriorPoint(uint index) const

@@ -63,19 +63,20 @@ class H2SteinerPolygon : H2Polygon
 
 public:
     H2SteinerPolygon() {}
-    H2SteinerPolygon(std::vector<H2Point> vertices, std::vector<uint> nbSteinerPoints);
+    H2SteinerPolygon(std::vector<H2Point> vertices, std::vector<uint> steinerWeights);
 
     std::vector<H2Point> getPointsOnSide(uint side) const;
     H2Polygon getFullPolygon() const;
     std::vector<uint> getVectorNbSteinerPoints() const;
     uint getTotalNbSteinerPoints() const;
+    uint getTotalNbPoints() const;
     uint getNbSteinerPointsOnSide(uint side) const;
     uint getIndexOfFullVertex(uint vertexIndex) const;
     uint getActualSide(uint vertexInFullPolygon) const;
     bool lieOnSameActualSide(uint vertexInFullPolygon1, uint vertexInFullPolygon2) const;
 
 private:
-    std::vector<uint> nbSteinerPoints;
+    std::vector<uint> steinerWeights;
 
 };
 

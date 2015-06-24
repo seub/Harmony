@@ -1,6 +1,8 @@
 #ifndef TOPOLOGICALSURFACE_H
 #define TOPOLOGICALSURFACE_H
-#include "types.h"
+
+
+#include "tools.h"
 
 class DiscreteGroup;
 

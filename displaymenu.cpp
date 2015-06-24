@@ -34,10 +34,20 @@ void DisplayMenu::createButtons()
     showTranslatesComboBox->setToolTip("Show mesh translates under the domain representation...");
     connect(showTranslatesComboBox, SIGNAL(activated(int)), handler, SLOT(showTranslatesClicked(int)));
 
+    coloringLabel = new QLabel("Choose coloring: ");
+
+    coloringComboBox = new QComboBox;
+    coloringComboBox->addItem("None", COLORING_NONE);
+    coloringComboBox->addItem("Plain", COLORING_PLAIN);
+    coloringComboBox->setToolTip("Choose coloring...");
+    connect(coloringComboBox, SIGNAL(activated(int)), handler, SLOT(coloringClicked(int)));
+
     buttonHeight = showTranslatesComboBox->sizeHint().height();
-    showTranslatesComboBox->setFixedHeight(buttonHeight);
-    showTranslatesLabel->setFixedHeight(buttonHeight);
     resetViewButton->setFixedHeight(buttonHeight);
+    showTranslatesLabel->setFixedHeight(buttonHeight);
+    showTranslatesComboBox->setFixedHeight(buttonHeight);
+    coloringLabel->setFixedHeight(buttonHeight);
+    coloringComboBox->setFixedHeight(buttonHeight);
 }
 
 void DisplayMenu::createLayout()
@@ -51,6 +61,10 @@ void DisplayMenu::createLayout()
     layout->setRowMinimumHeight(3, buttonHeight);
     layout->setRowMinimumHeight(4, 1*vertSpace);
     layout->setRowMinimumHeight(5, buttonHeight);
+    layout->setRowMinimumHeight(6, 2*vertSpace);
+    layout->setRowMinimumHeight(7, buttonHeight);
+    layout->setRowMinimumHeight(8, 1*vertSpace);
+    layout->setRowMinimumHeight(9, buttonHeight);
 
     layout->setColumnMinimumWidth(0, maxLeftColWidth());
 
@@ -67,6 +81,14 @@ void DisplayMenu::createLayout()
     layout->addWidget(showTranslatesComboBox, 5, 0, 1, 2);
     showTranslatesComboBox->setVisible(true);
     showTranslatesComboBox->setEnabled(true);
+
+    layout->addWidget(coloringLabel, 7, 0, 1, 2);
+    coloringLabel->setVisible(true);
+    coloringLabel->setEnabled(true);
+
+    layout->addWidget(coloringComboBox, 9, 0, 1, 2);
+    coloringComboBox->setVisible(true);
+    coloringComboBox->setEnabled(true);
 }
 
 void DisplayMenu::setReady(bool left)
@@ -91,6 +113,8 @@ int DisplayMenu::maxWidth() const
     int maxi = maxLeftColWidth() + maxRightColWidth() + layout->horizontalSpacing();
     maxi = std::max(maxi, showTranslatesComboBox->sizeHint().width());
     maxi = std::max(maxi, showTranslatesLabel->sizeHint().width());
+    maxi = std::max(maxi, coloringComboBox->sizeHint().width());
+    maxi = std::max(maxi, coloringLabel->sizeHint().width());
     return QStyle::CE_MenuHMargin + maxi + layout->margin();
 }
 
@@ -98,7 +122,7 @@ int DisplayMenu::maxWidth() const
 int DisplayMenu::maxHeight() const
 {
     int absurdMargin = 1;
-    return QStyle::CE_HeaderLabel + absurdMargin + 3*buttonHeight + 5*vertSpace;
+    return QStyle::CE_HeaderLabel + absurdMargin + 5*buttonHeight + 8*vertSpace;
 }
 
 void DisplayMenu::resizeEvent(QResizeEvent *)

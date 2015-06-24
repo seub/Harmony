@@ -8,8 +8,9 @@
 #include "h2point.h"
 #include "h2geodesic.h"
 #include "grouprepresentation.h"
-#include "h2mesh.h"
-#include "h2meshfunction.h"
+#include "liftedgraph.h"
+
+class H2Mesh; class H2MeshFunction;
 
 
 class H2Buffer

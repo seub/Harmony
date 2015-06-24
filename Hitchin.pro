@@ -65,7 +65,10 @@ SOURCES += main.cpp \
     fenchelnielsenuser.cpp \
     canvascontainer.cpp \
     liftedgraph.cpp \
-    triangularsubdivision.cpp
+    triangularsubdivision.cpp \
+    discreteheatflowiterator.cpp \
+    discreteheatflowfactory.cpp \
+    h2discreteflowfactorythread.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -111,7 +114,10 @@ HEADERS += \
     fenchelnielsenuser.h \
     canvascontainer.h \
     liftedgraph.h \
-    triangularsubdivision.h
+    triangularsubdivision.h \
+    discreteheatflowiterator.h \
+    discreteheatflowfactory.h \
+    h2discreteflowfactorythread.h
 
 OTHER_FILES += \
     TODO.txt

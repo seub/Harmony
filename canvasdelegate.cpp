@@ -302,7 +302,7 @@ bool CanvasDelegate::isAlmostSmallStraightArc(const Complex &center, double radi
 
     double scale = scaleX > scaleY ? scaleX : scaleY;
     int pixelDeltaSquared = Tools::intRound(norm(arcMidpoint - lineMidpoint)*radius*radius*scale*scale);
-    int pixelTolSquared = 1;
+    int pixelTolSquared = 0;
 
     return pixelDeltaSquared <= pixelTolSquared;
 }

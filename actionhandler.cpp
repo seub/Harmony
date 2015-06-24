@@ -222,7 +222,7 @@ void ActionHandler::showTranslatesClicked(int choice)
         break;
 
     default:
-        throw(QString("Error in ActionHandler::showTranslatesChoice: not supposed to land here"));
+        throw(QString("Error in ActionHandler::showTranslatesClicked: not supposed to land here"));
     }
 
     if ((aroundVertexNewLeft != aroundVertexOldLeft) || (aroundVerticesNewLeft != aroundVerticesOldLeft))
@@ -264,6 +264,22 @@ void ActionHandler::showTranslatesClicked(int choice)
         {
             updateFunction(true);
         }
+    }
+}
+
+void ActionHandler::coloringClicked(int choice)
+{
+    switch (choice)
+    {
+    case DisplayMenu::COLORING_NONE:
+        break;
+
+    case DisplayMenu::COLORING_PLAIN:
+        break;
+
+    default:
+        throw(QString("Error in ActionHandler::coloringClicked: not supposed to land here"));
+        break;
     }
 }
 

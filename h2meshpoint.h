@@ -5,12 +5,15 @@
 #include "h2isometry.h"
 #include "word.h"
 
+template <typename Point, typename Map> class LiftedGraphFunctionTriangulated;
+
 class H2MeshPoint
 {
     friend class H2Mesh;
     friend class H2MeshConstructor;
     friend class H2MeshFunction;
     friend class H2MeshFunctionIterator;
+    friend class LiftedGraphFunctionTriangulated<H2Point, H2Isometry>;
 
 public:
     H2MeshPoint() = delete;
@@ -36,6 +39,7 @@ class H2MeshCutPoint : public H2MeshPoint
 {
     friend class H2Mesh;
     friend class H2MeshConstructor;
+    friend class LiftedGraphFunctionTriangulated<H2Point, H2Isometry>;
 
 private:
     H2MeshCutPoint(uint subdivisionIndexLeft, uint indexInSubdivisionLeft, uint subdivisionIndexRight, uint indexInSubdivisionRight, uint index) :
@@ -54,6 +58,7 @@ class H2MeshBoundaryPoint : public H2MeshPoint
     friend class H2MeshConstructor;
     friend class H2MeshFunctionIterator;
     friend class H2MeshFunction;
+    friend class LiftedGraphFunctionTriangulated<H2Point, H2Isometry>;
 
 private:
     H2MeshBoundaryPoint(uint subdivisionIndex, uint indexInSubdivision, uint side, uint index) :
@@ -72,6 +77,7 @@ class H2MeshVertexPoint : public H2MeshPoint
     friend class H2MeshConstructor;
     friend class H2MeshFunctionIterator;
     friend class H2MeshFunction;
+    friend class LiftedGraphFunctionTriangulated<H2Point, H2Isometry>;
 
 private:
     H2MeshVertexPoint(uint subdivisionIndex, uint indexInSubdivision, uint vertexIndex,
@@ -91,6 +97,7 @@ class H2MeshSteinerPoint : public H2MeshPoint
     friend class H2MeshConstructor;
     friend class H2MeshFunctionIterator;
     friend class H2MeshFunction;
+    friend class LiftedGraphFunctionTriangulated<H2Point, H2Isometry>;
 
 private:
     H2MeshSteinerPoint(uint subdivisionIndex, uint indexInSubdivision, uint side,

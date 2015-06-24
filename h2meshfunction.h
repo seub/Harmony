@@ -9,6 +9,7 @@ class H2MeshFunction
     friend class H2MeshFunctionIterator;
     friend class EquivariantHarmonicMapsFactory;
     friend void swap(H2MeshFunction &first, H2MeshFunction &second);
+    friend class H2Buffer;
 
 public:
     explicit H2MeshFunction(const H2Mesh *mesh, const GroupRepresentation<H2Isometry> &rhoImage);
@@ -25,6 +26,7 @@ public:
     bool triangleContaining(const H2Point &point, H2Triangle &outputTriangle, uint &meshIndex1, uint &meshIndex2, uint &meshIndex3) const;
     bool isInteriorPoint(uint meshIndex) const;
     std::vector<H2GeodesicArc> getExteriorSides() const;
+    std::vector<H2Point> getBoundary() const;
     std::vector<H2Point> getPoints() const;
 
     GroupRepresentation<H2Isometry> getTargetRepresentation() const;
