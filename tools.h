@@ -30,10 +30,7 @@ namespace Tools
 int intRound(double x);
 double mod2Pi(double t);
 double randDouble(double min, double max);
-bool twoTriosShareTwoCommonElements(const uint &i1, const uint &i2, const uint &i3,
-                                    const uint &j1, const uint &j2, const uint &j3,
-                                    uint &sharedInt1, uint &sharedInt2,
-                                    uint &unsharedInt1, uint &unsharedInt2);
+
 
 template <typename T> T exponentiation(T base, int power)
 {    

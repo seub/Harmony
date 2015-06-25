@@ -28,8 +28,6 @@ class TriangulationTriangle
 public:
     bool operator <(const TriangulationTriangle &other) const;
     void getVertices(uint &i1, uint &i2, uint &i3) const;
-    static bool shareSide(const TriangulationTriangle &T1, const TriangulationTriangle &T2,
-                          uint &sharedIndex1, uint &sharedIndex2, uint &unsharedIndex1, uint &unsharedIndex2);
 
 private:
     TriangulationTriangle() {}
@@ -60,10 +58,13 @@ public:
     std::vector<uint> nbCutsFromVertex() const;
     void verticesIndices(std::vector< std::vector<uint> > &triangleIndices, std::vector< std::vector<uint> > &indicesInTriangles) const;
 
+
+
+
 private:
     H2PolygonTriangulater(const H2PolygonTriangulater &);
-
     void triangulate();
+
     std::vector<double> subpolygonAngles(const std::vector<uint> &indices) const;
     void findCutInSubpolygon1(const std::vector<uint> &indices, uint &outputIndex1, uint &outputIndex2) const;
     void findCutInSubpolygon2(const std::vector<uint> &indices, uint &outputIndex1, uint &outputIndex2) const;
@@ -86,6 +87,8 @@ private:
     void createSteinerPointsDetailed();
 
     bool sameSide(uint fullIndex1, uint fullIndex2) const;
+
+    void getCutsFromTriangle(uint triangleIndex, uint &cutIndex1, uint &cutIndex2, uint &cutIndex3) const;
     bool isSideTriangle(uint triangleIndex) const;
     bool attemptFlip();
 

@@ -131,6 +131,7 @@ void FenchelNielsenUser::refresh()
 
     factory.setRhoDomain(lengths, twists);
 
+
     delegate->setIsRhoEmpty(false);
     delegate->setIsMeshEmpty(false);
 

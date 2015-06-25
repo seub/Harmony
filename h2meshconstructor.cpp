@@ -24,13 +24,15 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     createSubdivisions();
     createPoints();
     createNeighbors();
-
+    std::cout << "Alice" << std::endl;
     reorganizeNeighbors();
+
     createPiecewiseAffineWeights();
 
     createMeshExteriorIndices();
 
     runTests();
+
 }
 
 void H2MeshConstructor::createPoints()
@@ -453,6 +455,7 @@ void H2MeshConstructor::reorganizeNeighbors()
     std::vector<std::tuple< H2Point, H2Point, uint> > triples;
     uint index,i;
     std::vector<uint> indicesOld, indicesNew;
+
     for (auto & cutpoint : *cutPoints)
     {
         i=0;
@@ -472,6 +475,7 @@ void H2MeshConstructor::reorganizeNeighbors()
         triples.clear();
         indicesNew.clear();
     }
+
 
     std::vector<Word> neighborsPairingsOld, neighborsPairingsNew;
     for (auto & boundarypoint : *boundaryPoints)
@@ -522,6 +526,7 @@ void H2MeshConstructor::reorganizeNeighbors()
         indicesNew.clear();
         neighborsPairingsNew.clear();
     }
+
 
     for (auto & steinerpoint : *steinerPoints)
     {
