@@ -1,12 +1,13 @@
 #include "h2polygontriangulater.h"
-
 #include "h2polygon.h"
 #include "h2geodesic.h"
 
 H2PolygonTriangulater::H2PolygonTriangulater(const H2Polygon * const polygon) : polygon(polygon)
 {
     orientation = polygon->isPositivelyOriented();
-    triangulate();
+
+    triangulateSimple();
+
     /*qDebug() << "min angle = " << minTriangleAngle();
     std::vector<double> polygonAngles = polygon->getPositiveInteriorAngles();
     double minPolygonAngle = *std::min_element(polygonAngles.begin(), polygonAngles.end());
@@ -36,209 +37,6 @@ double H2PolygonTriangulater::minAngleOfCutInSubpolygon(const std::vector<uint> 
 }
 
 
-std::vector<double> H2PolygonTriangulater::subpolygonAngles(const std::vector<uint> &indices) const
-{
-    std::vector<double> res;
-    uint N = indices.size();
-    res.resize(N);
-
-    double angle = H2Point::angle(fullPolygon.getVertex(indices.back()),
-                                  fullPolygon.getVertex(indices.front()), fullPolygon.getVertex(indices[1]));
-    angle = orientation ? 2.0*M_PI - angle : angle;
-    res[0] = angle;
-
-    for (uint i=1; i != N-1; ++i)
-    {
-        angle = H2Point::angle(fullPolygon.getVertex(indices[i - 1]),
-                fullPolygon.getVertex(indices[i]), fullPolygon.getVertex(indices[i+1]));
-        angle = orientation ? 2.0*M_PI - angle : angle;
-        res[i] = angle;
-    }
-
-    angle = H2Point::angle(fullPolygon.getVertex(indices[N - 2]),
-            fullPolygon.getVertex(indices.back()), fullPolygon.getVertex(indices.front()));
-    angle = orientation ? 2.0*M_PI - angle : angle;
-    res[N-1] = angle;
-
-    return res;
-}
-
-
-void H2PolygonTriangulater::findCutInSubpolygon1(const std::vector<uint> &indices, uint &outputIndex1, uint &outputIndex2) const
-{
-    std::vector<double> angles = subpolygonAngles(indices);
-
-    double max = angles.front();
-    outputIndex1 = 0;
-    uint i, N = indices.size();
-    for (i=1; i<N; i++)
-    {
-        if (angles[i] > max)
-        {
-            max = angles[i];
-            outputIndex1 = i;
-        }
-    }
-
-    max = 0;
-    if (outputIndex1 != N-1 && outputIndex1 != 0 && outputIndex1 != 1)
-    {
-        max = angles.front();
-        outputIndex2 = 0;
-    }
-    for(i=1; i<N-1; i++)
-    {
-        if (outputIndex1 != i-1 && outputIndex1 != i && outputIndex1 != i+1)
-        {
-            if (angles[i] > max)
-            {
-                max = angles[i];
-                outputIndex2 = i;
-            }
-        }
-    }
-    if (outputIndex1 != N-2 && outputIndex1 != N-1 && outputIndex1 != 0)
-    {
-        if (angles.back() > max)
-        {
-            outputIndex2 = N-1;
-        }
-    }
-
-    if (outputIndex1 > outputIndex2)
-    {
-        std::swap(outputIndex1, outputIndex2);
-    }
-}
-
-void H2PolygonTriangulater::findCutInSubpolygon2(const std::vector<uint> &indices, uint &outputIndex1, uint &outputIndex2) const
-{
-    uint i,j;
-    double max = 0, angle;
-    for(j=2;j<indices.size()-1;++j)
-    {
-        if (!sameSide(indices[0], indices[j]))
-        {
-            angle = minAngleOfCutInSubpolygon(indices,0,j);
-            if(angle>max)
-            {
-                max = angle;
-                outputIndex1 = 0;
-                outputIndex2 = j;
-            }
-        }
-    }
-    for(i = 1;i+2<indices.size();++i)
-    {
-        for(j=i+2;j<indices.size();++j)
-        {
-            if (!sameSide(indices[i], indices[j]))
-            {
-                angle = minAngleOfCutInSubpolygon(indices,i,j);
-                if(angle>max)
-                {
-                    max = angle;
-                    outputIndex1 = i;
-                    outputIndex2 = j;
-                }
-            }
-        }
-    }
-}
-
-void H2PolygonTriangulater::findCutInSubpolygon3(const std::vector<uint> &indices, uint &outputIndex1, uint &outputIndex2) const
-{
-    std::vector<double> angles = subpolygonAngles(indices);
-
-    double min = angles.front();
-    uint minAngleVertex = 0;
-    uint i, N = indices.size();
-    for (i=1; i!=N; ++i)
-    {
-        if (angles[i] < min)
-        {
-            min = angles[i];
-            minAngleVertex = i;
-        }
-    }
-
-    if(minAngleVertex == 0)
-    {
-        outputIndex1=1;
-        outputIndex2 = N -1;
-    }
-    else if(minAngleVertex == N-1)
-    {
-        outputIndex1=0;
-        outputIndex2 = N -2;
-    }
-    else
-    {
-        outputIndex1 = minAngleVertex -1;
-        outputIndex2 = minAngleVertex +1;
-    }
-}
-
-void H2PolygonTriangulater::splitIndicesList(const std::vector<uint> &indices, uint cut1, uint cut2,
-                                             std::vector<uint> &outputList1, std::vector<uint> &outputList2) const
-{
-    uint N = indices.size();
-    outputList1.clear();
-    outputList2.clear();
-    outputList1.reserve(N);
-    outputList2.reserve(N);
-
-    uint i = 0;
-    do
-    {
-        outputList1.push_back(indices[i]);
-        if (i==cut1)
-        {
-            i=cut2;
-        }
-        else
-        {
-            i++;
-        }
-    } while (i != N);
-
-
-
-    for (i=cut1; i<=cut2; i++)
-    {
-        outputList2.push_back(indices[i]);
-    }
-}
-
-void H2PolygonTriangulater::triangulateSubpolygon(const std::vector<uint> &indices)
-{
-    if (indices.size() == 3)
-    {
-        if (*std::min_element(indices.begin(),indices.end())==indices[0])
-        {
-            triangles.push_back(TriangulationTriangle(indices[0], indices[1], indices[2]));
-        } else if (*std::min_element(indices.begin(),indices.end())==indices[1])
-        {
-            triangles.push_back(TriangulationTriangle(indices[1], indices[2], indices[0]));
-        } else if (*std::min_element(indices.begin(),indices.end())==indices[2])
-        {
-            triangles.push_back(TriangulationTriangle(indices[2], indices[0], indices[1]));
-        }
-
-    }
-    else
-    {
-        uint cut1, cut2;
-
-        findCutInSubpolygon2(indices, cut1, cut2);
-        std::vector<uint> list1, list2;
-        splitIndicesList(indices, cut1, cut2, list1, list2);
-
-        triangulateSubpolygon(list1);
-        triangulateSubpolygon(list2);
-    }
-}
-
 bool TriangulationTriangle::operator <(const TriangulationTriangle &other) const
 {
     return ( (vertexIndex1 < other.vertexIndex1)
@@ -258,6 +56,13 @@ void TriangulationTriangle::getVertices(uint &i1, uint &i2, uint &i3) const
     i3 = vertexIndex3;
 }
 
+void TriangulationTriangle::getCutNeighbors(uint &c1, uint &c2, uint &c3) const
+{
+    c1 = cutNeighborIndex1;
+    c2 = cutNeighborIndex2;
+    c3 = cutNeighborIndex3;
+}
+
 bool H2PolygonTriangulater::isSideTriangle(uint triangleIndex) const
 {
     uint i,j,k,N=fullPolygon.nbVertices();
@@ -267,28 +72,7 @@ bool H2PolygonTriangulater::isSideTriangle(uint triangleIndex) const
 
 void H2PolygonTriangulater::getCutsFromTriangle(uint triangleIndex, uint &cutIndex1, uint &cutIndex2, uint &cutIndex3) const
 {
-    cutIndex1 = -1;
-    cutIndex2 = -1;
-    cutIndex3 = -1;
-    TriangulationTriangle triangle = triangles[triangleIndex];
-    uint i1,i2,i3,l=0;
-    triangle.getVertices(i1,i2,i3);
-    for (const auto & cut : cuts)
-    {
-        if (cut.vertexIndex1 == i1 && cut.rightTriangleIndex == triangleIndex)
-        {
-            cutIndex1 = l;
-        }
-        if (cut.vertexIndex1 == i1 && cut.leftTriangleIndex == triangleIndex)
-        {
-            cutIndex2 = l;
-        }
-        if (cut.vertexIndex1 == i2 && cut.rightTriangleIndex == triangleIndex)
-        {
-            cutIndex3 = l;
-        }
-        ++l;
-    }
+    triangles[triangleIndex].getCutNeighbors(cutIndex1, cutIndex2, cutIndex3);
 }
 
 std::vector<uint> H2PolygonTriangulater::nbCutsFromVertex() const
@@ -424,27 +208,52 @@ void H2PolygonTriangulater::completeCutsAndSides()
     }
 }
 
-void H2PolygonTriangulater::triangulate()
+
+void H2PolygonTriangulater::triangulateSimple()
 {
+    clock_t start,end;
+    start = clock();
+
     createSteinerPoints();
-    //createSteinerPointsDetailed();
 
-    std::vector<uint> indices;
     uint i, N = fullPolygon.nbVertices();
-    indices.resize(N);
-    for (i=0; i<N; i++)
+
+    sideTrianglesIndices.reserve(N);
+    sideTrianglesBoundarySideIndices.reserve(N);
+    cuts.reserve(N-3);
+    triangles.reserve(N-2);
+
+    TriangulationCut cut;
+
+    sideTrianglesIndices.push_back(0);
+    sideTrianglesBoundarySideIndices.push_back(0);
+    sideTrianglesIndices.push_back(0);
+    sideTrianglesBoundarySideIndices.push_back(1);
+    for (i=2; i<N-1; ++i)
     {
-        indices[i] = i;
+        cut = TriangulationCut(0,i,i-2,i-1);
+        cuts.push_back(cut);
+        triangles.push_back(TriangulationTriangle(0,i-1,i,i-3,i-2,-1));
+        sideTrianglesIndices.push_back(i-1);
+        sideTrianglesBoundarySideIndices.push_back(1);
     }
+    triangles.push_back(TriangulationTriangle(0,N-2,N-1,N-4,-1,-1));
+    sideTrianglesIndices.push_back(N-3);
+    sideTrianglesBoundarySideIndices.push_back(2);
 
-    triangulateSubpolygon(indices);
-    sortTriangles();
-    completeCutsAndSides();
+    end = clock();
+    std::cout << (end - start)*1.0/CLOCKS_PER_SEC << " seconds spent before flipping in H2PolygonTriangulater::triangulateSimple" << std::endl;
 
-    // Improving the triangulation by searching for flips:
     while (attemptFlip()) {}
+
+    end = clock();
+    std::cout << (end - start)*1.0/CLOCKS_PER_SEC << " seconds spent after flipping in H2PolygonTriangulater::triangulateSimple" << std::endl;
+
     sortTriangles();
     completeCutsAndSides();
+
+    end = clock();
+    std::cout << (end - start)*1.0/CLOCKS_PER_SEC << " seconds spent after rearranging in H2PolygonTriangulater::triangulateSimple" << std::endl;
 }
 
 std::vector<H2Triangle> H2PolygonTriangulater::getTriangles() const
@@ -481,7 +290,7 @@ std::vector<H2GeodesicArc> H2PolygonTriangulater::getH2Cuts() const
 }
 
 void H2PolygonTriangulater::adjacentSidesIndices(uint cutIndex, uint &outputIndexLeft1, uint &outputIndexLeft2,
-                                                 uint &outputIndexRight1, uint &outputIndexRight2) const
+                                                     uint &outputIndexRight1, uint &outputIndexRight2) const
 {
     bool failLeft = true;
 
@@ -527,7 +336,7 @@ void H2PolygonTriangulater::adjacentSidesIndices(uint cutIndex, uint &outputInde
 }
 
 void H2PolygonTriangulater::verticesIndices(std::vector< std::vector<uint> > &triangleIndices,
-                                            std::vector< std::vector<uint> > &indicesInTriangles) const
+                                                std::vector< std::vector<uint> > &indicesInTriangles) const
 {
     uint i, nbTriangles = triangles.size();
     uint N = fullPolygon.nbVertices();
@@ -550,36 +359,6 @@ void H2PolygonTriangulater::verticesIndices(std::vector< std::vector<uint> > &tr
     }
 }
 
-double H2PolygonTriangulater::minTriangleAngle() const
-{
-    std::vector<double> triangleAngles;
-    double angle, minAngle = 10.0;
-    for (const auto &T : triangles)
-    {
-        triangleAngles = subpolygonAngles({T.vertexIndex1, T.vertexIndex2, T.vertexIndex3});
-        angle = *std::min_element(triangleAngles.begin(), triangleAngles.end());
-        if (angle < minAngle)
-        {
-            minAngle = angle;
-        }
-    }
-    return minAngle;
-}
-
-double H2PolygonTriangulater::minTriangleSide() const
-{
-    std::vector<H2GeodesicArc> segments = fullPolygon.getSides();
-    std::vector<H2GeodesicArc> H2cuts = getH2Cuts();
-    segments.insert(segments.end(), H2cuts.begin(), H2cuts.end());
-
-    std::vector<double> segmentLengths;
-    for (const auto & segment : segments)
-    {
-        segmentLengths.push_back(segment.length());
-    }
-
-    return *std::min_element(segmentLengths.begin(), segmentLengths.end());
-}
 
 void H2PolygonTriangulater::createSteinerPoints()
 {
@@ -634,6 +413,12 @@ bool H2PolygonTriangulater::sameSide(uint fullIndex1, uint fullIndex2) const
 bool H2PolygonTriangulater::attemptFlip()
 {
     // assert polygon is triangulated
+
+    // For each cut, build a quadrilateral out of its pair of neighboring triangles. Check if the opposite
+    // cut does a better job of maximizing minimum angle. If it does, replace the cut with its opposite, replace
+    // the triangles with the rotated copies (keeping left/right from point of view of the cut), and adjust the
+    // neighboring sides so they know who their new triangle neighbors are.
+
     TriangulationTriangle T1,T2;
     TriangulationCut newCut;
     uint sharedIndex1, sharedIndex2, unsharedIndex1, unsharedIndex2, leftTriangleIndex, rightTriangleIndex, l=0;
@@ -642,7 +427,9 @@ bool H2PolygonTriangulater::attemptFlip()
     double minAngle1,minAngle2;
     quadrilateralIndices.reserve(4);
     uint l1,l2,l3,k1,k2,k3;
-    bool rightTriangleCheats=0;
+
+    bool rightTriangleCheats=0; // True iff the first vertex of the rightTriangle is less than the first vertex of the cut.
+
 
     while (!output && l<cuts.size())
     {
@@ -738,12 +525,16 @@ bool H2PolygonTriangulater::attemptFlip()
             }
             if (!rightTriangleCheats)
             {
-                triangles[leftTriangleIndex] = TriangulationTriangle(unsharedIndex1,sharedIndex2,unsharedIndex2);
-                triangles[rightTriangleIndex] = TriangulationTriangle(sharedIndex1,unsharedIndex1,unsharedIndex2);
+                triangles[leftTriangleIndex] = TriangulationTriangle(unsharedIndex1,sharedIndex2,unsharedIndex2,
+                                                                         l3, l, k3);
+                triangles[rightTriangleIndex] = TriangulationTriangle(sharedIndex1,unsharedIndex1,unsharedIndex2,
+                                                                          l1, k2, l);
             } else
             {
-                triangles[leftTriangleIndex] = TriangulationTriangle(unsharedIndex2,unsharedIndex1,sharedIndex2);
-                triangles[rightTriangleIndex] = TriangulationTriangle(unsharedIndex2,sharedIndex1,unsharedIndex1);
+                triangles[leftTriangleIndex] = TriangulationTriangle(unsharedIndex2,unsharedIndex1,sharedIndex2,
+                                                                         l, k2, l3);
+                triangles[rightTriangleIndex] = TriangulationTriangle(unsharedIndex2,sharedIndex1,unsharedIndex1,
+                                                                          k1, l, l1);
             }
             if (!rightTriangleCheats)
             {
@@ -758,6 +549,7 @@ bool H2PolygonTriangulater::attemptFlip()
     }
     return false;
 }
+
 
 
 

@@ -68,7 +68,8 @@ SOURCES += main.cpp \
     triangularsubdivision.cpp \
     discreteheatflowiterator.cpp \
     discreteheatflowfactory.cpp \
-    h2discreteflowfactorythread.cpp
+    h2discreteflowfactorythread.cpp \
+    h2polygontriangulaterCopy.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -117,7 +118,8 @@ HEADERS += \
     triangularsubdivision.h \
     discreteheatflowiterator.h \
     discreteheatflowfactory.h \
-    h2discreteflowfactorythread.h
+    h2discreteflowfactorythread.h \
+    h2polygontriangulaterCopy.h
 
 OTHER_FILES += \
     TODO.txt

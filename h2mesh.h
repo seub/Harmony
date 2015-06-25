@@ -6,6 +6,7 @@
 #include "grouprepresentation.h"
 #include "h2meshpoint.h"
 #include "h2polygontriangulater.h"
+#include "h2polygontriangulaterCopy.h"
 #include "triangularsubdivision.h"
 
 class H2Isometry;

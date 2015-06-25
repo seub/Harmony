@@ -1,5 +1,6 @@
-#ifndef H2POLYGONTRIANGULATER_H
-#define H2POLYGONTRIANGULATER_H
+#ifndef H2POLYGONTRIANGULATERCOPY_H
+#define H2POLYGONTRIANGULATERCOPY_H
+
 
 #include "tools.h"
 #include "h2polygon.h"
@@ -29,13 +30,20 @@ public:
     bool operator <(const TriangulationTriangle &other) const;
     void getVertices(uint &i1, uint &i2, uint &i3) const;
 
+    void setCutNeighbors(uint cutNeighborIndex1, uint cutNeighborIndex2, uint cutNeighborIndex3);
+    void getCutNeighbors(uint &c1, uint &c2, uint &c3) const;
+
 private:
     TriangulationTriangle() {}
-    TriangulationTriangle(uint vertexIndex1, uint vertexIndex2, uint vertexIndex3) :
-        vertexIndex1(vertexIndex1), vertexIndex2(vertexIndex2), vertexIndex3(vertexIndex3) {}
+    TriangulationTriangle(uint vertexIndex1, uint vertexIndex2, uint vertexIndex3,
+                              uint cutNeighborIndex1, uint cutNeighborIndex2, uint cutNeighborIndex3) :
+        vertexIndex1(vertexIndex1), vertexIndex2(vertexIndex2), vertexIndex3(vertexIndex3),
+        cutNeighborIndex1(cutNeighborIndex1), cutNeighborIndex2(cutNeighborIndex2), cutNeighborIndex3(cutNeighborIndex3) {}
 
 
     uint vertexIndex1, vertexIndex2, vertexIndex3;
+    uint cutNeighborIndex1, cutNeighborIndex2, cutNeighborIndex3;
+
 };
 
 
@@ -63,25 +71,15 @@ public:
 
 private:
     H2PolygonTriangulater(const H2PolygonTriangulater &);
-    void triangulate();
 
-    std::vector<double> subpolygonAngles(const std::vector<uint> &indices) const;
-    void findCutInSubpolygon1(const std::vector<uint> &indices, uint &outputIndex1, uint &outputIndex2) const;
-    void findCutInSubpolygon2(const std::vector<uint> &indices, uint &outputIndex1, uint &outputIndex2) const;
-    void findCutInSubpolygon3(const std::vector<uint> &indices, uint &outputIndex1, uint &outputIndex2) const;
+    void triangulateSimple();
 
-    void triangulateSubpolygon(const std::vector<uint> &indices);
-    void splitIndicesList(const std::vector<uint> & indices, uint cut1, uint cut2,
-                          std::vector<uint> &outputList1, std::vector<uint> &outputList2) const;
     void sortTriangles();
     void completeCutsAndSides();
 
     void adjacentSidesIndices(uint cutIndex, uint &outputIndexLeft1, uint &outputIndexLeft2, uint &outputIndexRight1, uint &outputIndexRight2) const;
 
     double minAngleOfCutInSubpolygon(const std::vector<uint> & indices, uint cut1, uint cut2) const;
-
-    double minTriangleAngle() const;
-    double minTriangleSide() const;
 
     void createSteinerPoints();
     void createSteinerPointsDetailed();
@@ -102,5 +100,7 @@ private:
     H2Polygon fullPolygon;
 
 };
+
+
 
 #endif // H2POLYGONTRIANGULATER_H
