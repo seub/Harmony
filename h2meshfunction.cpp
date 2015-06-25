@@ -99,6 +99,18 @@ std::vector<H2GeodesicArc> H2MeshFunction::getExteriorSides() const
     return H2Polygon(vertices).getSides();
 }
 
+std::vector<H2Point> H2MeshFunction::getBoundary() const
+{
+    std::vector<H2Point> vertices;
+    std::vector<uint> indices = mesh->exteriorSidesIndices;
+    vertices.reserve(indices.size());
+    for (auto index : indices)
+    {
+        vertices.push_back(values.at(index));
+    }
+    return vertices;
+}
+
 std::vector<H2Triangle> H2MeshFunction::getTrianglesUp() const
 {
     std::vector<H2Triangle> output;

@@ -2,7 +2,6 @@
 #define TYPES_H
 
 #include <complex>
-#include <vector>
 
 typedef std::complex<double> Complex;
 typedef unsigned int uint;

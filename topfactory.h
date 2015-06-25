@@ -34,6 +34,7 @@ public:
     uint getNbIterations() const;
 
 signals:
+    void domainFunctionCreated(uint nbMeshPoints);
 
 private slots:
     void finishedComputing();

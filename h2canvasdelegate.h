@@ -8,6 +8,8 @@
 #include "h2polygon.h"
 #include "grouprepresentation.h"
 #include "h2buffer.h"
+#include "h2mesh.h"
+#include "h2meshfunction.h"
 
 class H2CanvasDelegate : public CanvasDelegate
 {

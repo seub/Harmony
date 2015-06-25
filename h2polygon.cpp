@@ -486,14 +486,14 @@ void H2Polygon::insertMidpoints()
     vertices = newVertices;
 }
 
-H2SteinerPolygon::H2SteinerPolygon(std::vector<H2Point> vertices, std::vector<uint> nbSteinerPoints) : H2Polygon(vertices), nbSteinerPoints(nbSteinerPoints)
+H2SteinerPolygon::H2SteinerPolygon(std::vector<H2Point> vertices, std::vector<uint> nbSteinerPoints) : H2Polygon(vertices), steinerWeights(nbSteinerPoints)
 {
 }
 
 std::vector<H2Point> H2SteinerPolygon::getPointsOnSide(uint side) const
 {
     H2GeodesicArc a = getSide(side);
-    return a.getEvenSubdivision(nbSteinerPoints[side]);
+    return a.getEvenSubdivision(steinerWeights[side]);
 }
 
 
@@ -514,16 +514,23 @@ H2Polygon H2SteinerPolygon::getFullPolygon() const
 uint H2SteinerPolygon::getTotalNbSteinerPoints() const
 {
     uint sum=0;
-    for(const auto & num : nbSteinerPoints)
+    for(const auto & num : steinerWeights)
     {
         sum += num;
     }
     return sum;
 }
 
+uint H2SteinerPolygon::getTotalNbPoints() const
+{
+    return getTotalNbSteinerPoints() + nbVertices();
+}
+
+
+
 uint H2SteinerPolygon::getNbSteinerPointsOnSide(uint side) const
 {
-    return nbSteinerPoints[side];
+    return steinerWeights[side];
 }
 
 uint H2SteinerPolygon::getIndexOfFullVertex(uint vertexIndex) const
@@ -531,14 +538,14 @@ uint H2SteinerPolygon::getIndexOfFullVertex(uint vertexIndex) const
     uint sum = 0;
     for(uint j=0; j!=vertexIndex; ++j)
     {
-        sum += nbSteinerPoints[j] + 1;
+        sum += steinerWeights[j] + 1;
     }
     return sum;
 }
 
 std::vector<uint> H2SteinerPolygon::getVectorNbSteinerPoints() const
 {
-    return nbSteinerPoints;
+    return steinerWeights;
 }
 
 uint H2SteinerPolygon::getActualSide(uint vertexInFullPolygon) const
@@ -547,7 +554,7 @@ uint H2SteinerPolygon::getActualSide(uint vertexInFullPolygon) const
     uint actualVertexIndexInFullPolygon = 0;
     while (actualVertexIndexInFullPolygon <= vertexInFullPolygon)
     {
-        actualVertexIndexInFullPolygon += nbSteinerPoints[side] + 1;
+        actualVertexIndexInFullPolygon += steinerWeights[side] + 1;
         ++side;
     }
     return side-1;
@@ -559,22 +566,22 @@ bool H2SteinerPolygon::lieOnSameActualSide(uint vertexInFullPolygon1, uint verte
     uint actualVertexIndexInFullPolygon = 0;
     while (actualVertexIndexInFullPolygon <= vertexInFullPolygon1)
     {
-        actualVertexIndexInFullPolygon += nbSteinerPoints[side1] + 1;
+        actualVertexIndexInFullPolygon += steinerWeights[side1] + 1;
         ++side1;
     }
     --side1;
 
-    uint vertex1 = actualVertexIndexInFullPolygon - (nbSteinerPoints[side1] + 1);
+    uint vertex1 = actualVertexIndexInFullPolygon - (steinerWeights[side1] + 1);
 
     uint side2 = 0;
     actualVertexIndexInFullPolygon = 0;
     while (actualVertexIndexInFullPolygon <= vertexInFullPolygon2)
     {
-        actualVertexIndexInFullPolygon += nbSteinerPoints[side2] + 1;
+        actualVertexIndexInFullPolygon += steinerWeights[side2] + 1;
         ++side2;
     }
     --side2;
-    uint vertex2 = actualVertexIndexInFullPolygon - (nbSteinerPoints[side2] + 1);
+    uint vertex2 = actualVertexIndexInFullPolygon - (steinerWeights[side2] + 1);
 
     if (vertexInFullPolygon1 == vertex1)
     {

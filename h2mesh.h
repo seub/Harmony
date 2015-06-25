@@ -9,6 +9,7 @@
 #include "triangularsubdivision.h"
 
 class H2Isometry;
+template <typename Point, typename Map> class LiftedGraphFunctionTriangulated;
 
 class H2Mesh
 {
@@ -16,6 +17,7 @@ class H2Mesh
     friend class H2MeshFunction;
     friend class H2MeshFunctionIterator;
     friend void swap(H2Mesh &first, H2Mesh & second);
+    friend class LiftedGraphFunctionTriangulated<H2Point, H2Isometry>;
 
 public:
     H2Mesh(const GroupRepresentation<H2Isometry> &rho, uint depth);
@@ -27,7 +29,6 @@ public:
 
     H2Point getH2Point(uint index) const;
     H2Triangle getH2Triangle(uint index1, uint index2, uint index3) const;
-    const std::vector<TriangularSubdivision<H2Point> > &getSubdivisions() const;
     std::vector<H2Point> getH2Neighbors(uint index) const;
     std::vector<H2Point> getKickedH2Neighbors(uint index) const;
     std::vector<H2Point> getPartnerPoints(uint index) const;
@@ -36,6 +37,7 @@ public:
     std::vector<H2Triangle> getTrianglesUp() const;
     GroupRepresentation<H2Isometry> getRepresentation() const;
     uint nbPoints() const;
+    uint getDepth() const;
     bool isInteriorPoint(uint index) const;
 
 private:

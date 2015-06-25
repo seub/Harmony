@@ -1,5 +1,9 @@
 #include "h2buffer.h"
 
+#include "h2mesh.h"
+#include "h2meshfunction.h"
+#include "liftedgraph.h"
+
 H2Buffer::H2Buffer()
 {
     isMeshEmpty = true;
@@ -84,6 +88,7 @@ void H2Buffer::refreshFunction()
 
 
     meshOrFunctionSides = function->getExteriorSides();
+
 
     std::vector<H2Triangle> triangles = function->getTrianglesUp();
     meshOrFunctionArcs.clear();

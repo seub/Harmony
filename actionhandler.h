@@ -37,6 +37,7 @@ private slots:
 
     void resetViewButtonClicked();
     void showTranslatesClicked(int choice);
+    void coloringClicked(int choice);
 
     void finishedComputing();
     void meshCreated(uint nbMeshPoints);
