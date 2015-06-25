@@ -24,7 +24,7 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     createSubdivisions();
     createPoints();
     createNeighbors();
-    std::cout << "Alice" << std::endl;
+
     reorganizeNeighbors();
 
     createPiecewiseAffineWeights();
@@ -545,6 +545,8 @@ void H2MeshConstructor::reorganizeNeighbors()
             indicesNew.push_back(indicesOld[std::get<2>(triple)]);
             neighborsPairingsNew.push_back(neighborsPairingsOld[std::get<2>(triple)]);
         }
+
+
         steinerpoint.neighborsIndices = indicesNew;
         steinerpoint.neighborsPairings = neighborsPairingsNew;
         triples.clear();

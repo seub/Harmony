@@ -304,6 +304,7 @@ std::vector<uint> H2PolygonTriangulater::nbCutsFromVertex() const
 
 void H2PolygonTriangulater::completeCutsAndSides()
 {
+    cuts.clear();
     uint N = fullPolygon.nbVertices();
     sideTrianglesIndices.resize(N);
     sideTrianglesBoundarySideIndices.resize(N);
@@ -439,15 +440,11 @@ void H2PolygonTriangulater::triangulate()
     triangulateSubpolygon(indices);
     sortTriangles();
     completeCutsAndSides();
-/*
-    i=0;
-    std::cout << "starting attemptFlip" << std::endl;
-    while (attemptFlip())
-    {
-        std::cout << "running attemptFlip" << std::endl;
-        ++i;
-    } std::cout << "stopped attemptFlip" << std::endl;
-    */
+
+    // Improving the triangulation by searching for flips:
+    while (attemptFlip()) {}
+    sortTriangles();
+    completeCutsAndSides();
 }
 
 std::vector<H2Triangle> H2PolygonTriangulater::getTriangles() const
@@ -683,9 +680,6 @@ bool H2PolygonTriangulater::attemptFlip()
 
         if (minAngle1 < minAngle2)
         {
-            //std::cout << "Flipping cut[" << l << "], between triangles " << cuts[l].leftTriangleIndex << " and " << cuts[l].rightTriangleIndex << std::endl;
-            //std::cout << "Vertices = [" << sharedIndex1 << "," << sharedIndex2 << "," << unsharedIndex1 << "," << unsharedIndex2 << "]" << std::endl;
-
             getCutsFromTriangle(leftTriangleIndex,l1,l2,l3);
             getCutsFromTriangle(rightTriangleIndex,k1,k2,k3);
 
@@ -758,8 +752,6 @@ bool H2PolygonTriangulater::attemptFlip()
             {
                 cuts[l] = TriangulationCut(unsharedIndex2,unsharedIndex1,rightTriangleIndex,leftTriangleIndex);
             }
-
-            std::cout << "Flipped cut[" << l <<"], between triangles " << leftTriangleIndex << " and " << rightTriangleIndex << std::endl;
             return true;
         }
         ++l;
