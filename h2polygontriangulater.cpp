@@ -441,10 +441,12 @@ void H2PolygonTriangulater::triangulate()
     sortTriangles();
     completeCutsAndSides();
 
+
     // Improving the triangulation by searching for flips:
     while (attemptFlip()) {}
     sortTriangles();
     completeCutsAndSides();
+
 }
 
 std::vector<H2Triangle> H2PolygonTriangulater::getTriangles() const
@@ -678,7 +680,7 @@ bool H2PolygonTriangulater::attemptFlip()
         minAngle1 = minAngleOfCutInSubpolygon(quadrilateralIndices,0,2);
         minAngle2 = minAngleOfCutInSubpolygon(quadrilateralIndices,1,3);
 
-        if (minAngle1 < minAngle2)
+        if (minAngle1 < minAngle2 && !sameSide(unsharedIndex1,unsharedIndex2))
         {
             getCutsFromTriangle(leftTriangleIndex,l1,l2,l3);
             getCutsFromTriangle(rightTriangleIndex,k1,k2,k3);

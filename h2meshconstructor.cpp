@@ -704,7 +704,10 @@ bool H2MeshConstructor::checkNumberOfNeighbors() const
                 std::stringstream errorMessage;
                 errorMessage << "ERROR in H2MeshConstructor::checkNumberOfNeighbors: failed ("
                              << "point has " << m->neighborsIndices.size() << " neighbors)" << std::endl
-                             << m->neighborsIndices << std::endl;
+                             << m->neighborsIndices << std::endl
+                             << "m is a boundary point? " << m->isBoundaryPoint() << std::endl
+                             << "m is a cut point? " << m->isCutPoint() << std::endl
+                             << "m has " << ((H2MeshBoundaryPoint*)m)->neighborsPairings.size() << " neighbors pairings" << std::endl;
                 throw(QString::fromStdString(errorMessage.str()));
                 ++failed;
             }
