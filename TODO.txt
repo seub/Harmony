@@ -3,8 +3,6 @@
 
 change the code of the mesh constructor so I don't have to rearrange the order after for building the graph (yuck)
 
-
-do coloring à l ajonah
 rewrite generatepolygon
 rewrite triangulater with flips
 

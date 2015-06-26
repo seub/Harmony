@@ -13,7 +13,7 @@
 H2CanvasDelegateLiftedGraph::H2CanvasDelegateLiftedGraph(uint sizeX, uint sizeY, bool leftCanvas, bool rightCanvas, ActionHandler *handler) :
     H2CanvasDelegate(sizeX, sizeY, leftCanvas, rightCanvas, handler)
 {
-    graphColor = "red";
+    graphColor = "green";
 
     initializeColors(graphColor);
 
@@ -410,6 +410,7 @@ void H2CanvasDelegateLiftedGraph::decideHighlightingGraphPoints(bool highlighted
                 arePointsHighlightedGreen = true;
                 pointsHighlightedGreen = graph->getNeighborsValuesKicked(graphIndexHighlighted);
                 pointsHighlightedRed = graph-> getPartnersValues(graphIndexHighlighted);
+                pointsHighlightedRed.push_back(graph->getValue(graphIndexHighlighted));
             }
             else
             {
@@ -648,7 +649,7 @@ void H2CanvasDelegateLiftedGraph::updateFilledGraph(bool refreshSidesTranslates,
 
         for (uint i=0; i<graphTriangles.size(); ++i)
         {
-            graphTrianglesWeights.push_back(graphTrianglesReferenceAreas[i]/graphTriangles[i].area());
+            graphTrianglesWeights.push_back(graphTriangles[i].area()/graphTrianglesReferenceAreas[i]);
         }
     }
 

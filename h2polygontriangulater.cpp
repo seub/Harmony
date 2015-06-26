@@ -446,7 +446,6 @@ void H2PolygonTriangulater::triangulate()
     while (attemptFlip()) {}
     sortTriangles();
     completeCutsAndSides();
-
 }
 
 std::vector<H2Triangle> H2PolygonTriangulater::getTriangles() const
