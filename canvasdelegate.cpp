@@ -10,8 +10,10 @@
 #include "canvas.h"
 #include "circle.h"
 #include "tools.h"
+#include "actionhandler.h"
 
-CanvasDelegate::CanvasDelegate(uint sizeX, uint sizeY, ActionHandler *handler) : handler(handler)
+CanvasDelegate::CanvasDelegate(uint sizeX, uint sizeY, bool leftCanvas, bool rightCanvas, ActionHandler *handler) :
+    leftCanvas(leftCanvas), rightCanvas(rightCanvas), handler(handler)
 {
     penBack = new QPen;
     penTop = new QPen;
@@ -35,6 +37,7 @@ CanvasDelegate::CanvasDelegate(uint sizeX, uint sizeY, ActionHandler *handler) :
 
     enableRedrawBufferBack = false;
     enableRedrawBufferTop = false;
+    sendEndRepaint = false;
 
     detectionRadius = 20;
     resetView(sizeX, sizeY);
@@ -102,13 +105,45 @@ void CanvasDelegate::resetView(uint sizeX, uint sizeY)
     scaleX = sizeX/2.2;
     scaleY = sizeY/2.2;
 
-    subResetView();
     enableRedrawBuffer();
 }
 
 void CanvasDelegate::resetView()
 {
     resetView(sizeX, sizeY);
+}
+
+void CanvasDelegate::redraw(bool back, bool top)
+{
+    nbArcs = 0;
+    nbStraightArcs = 0;
+    nbAlmostStraightArcs = 0;
+    nbBestLineFails = 0;
+    nbBestLineCalls = 0;
+
+
+    if (back)
+    {
+        redrawBack();
+    }
+    if (top)
+    {
+        redrawTop();
+    }
+
+    enableRedrawBuffer(false, false);
+    if (nbBestLineFails != 0) qDebug() << "Number of bestLine fails: " << nbBestLineFails << " out of " << nbBestLineCalls;
+}
+
+void CanvasDelegate::redrawBack()
+{
+    imageBack->fill("white");
+}
+
+void CanvasDelegate::redrawTop()
+{
+    imageTop->fill("white");
+    imageTop->fill(qRgba(0, 0, 0, 0));
 }
 
 void CanvasDelegate::ComplexToPixelCoordinates(int &xOut, int &yOut, Complex z) const
@@ -125,6 +160,44 @@ Complex CanvasDelegate::PixelToComplexCoordinates(int x, int y) const
     return Complex(a,b);
 }
 
+void CanvasDelegate::keyPress(QKeyEvent *keyEvent)
+{
+    switch(keyEvent->key())
+    {
+
+    case Qt::Key_Left :
+        xMinSave = xMin;
+        yMaxSave = yMax;
+        shift(-20, 0);
+        break;
+
+    case Qt::Key_Right :
+        xMinSave = xMin;
+        yMaxSave = yMax;
+        shift(20, 0);
+        break;
+
+    case Qt::Key_Up :
+        xMinSave = xMin;
+        yMaxSave = yMax;
+        shift(0, 20);
+        break;
+
+    case Qt::Key_Down :
+        xMinSave = xMin;
+        yMaxSave = yMax;
+        shift(0, -20);
+        break;
+
+    case Qt::Key_Plus :
+        zoom(2);
+        break;
+
+    case Qt::Key_Minus :
+        zoom(0.5);
+        break;
+    }
+}
 
 void CanvasDelegate::zoom(double coeff)
 {
@@ -237,6 +310,27 @@ void CanvasDelegate::drawCircle(const Complex &center, double radius, const QCol
         penTop->setWidth(width);
         painterTop->setPen(*penTop);
         painterTop->drawEllipse(x1, y1, x2 - x1, y2 - y1);
+    }
+}
+
+void CanvasDelegate::drawFilledTriangle(const Complex &zA, const Complex &zB, const Complex &zC, bool back)
+{
+    int xA, yA, xB, yB, xC, yC;
+    ComplexToPixelCoordinates(xA, yA, zA);
+    ComplexToPixelCoordinates(xB, yB, zB);
+    ComplexToPixelCoordinates(xC, yC, zC);
+
+    if (back)
+    {
+        QVector<QPoint> triangle;
+        triangle.append(QPoint(xA, yA));
+        triangle.append(QPoint(xB, yB));
+        triangle.append(QPoint(xC, yC));
+        painterBack->drawPolygon(QPolygon(triangle));
+    }
+    else
+    {
+        throw(QString("Error in CanvasDelegate::drawFilledTriangle: I'm not supposed to draw a filled figure on the top image"));
     }
 }
 
@@ -556,6 +650,8 @@ bool CanvasDelegate::circleIntersectsCanvasBoundary(const Complex &center, doubl
 
 void CanvasDelegate::drawSmallerArc(const Complex &center, double radius, const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width, bool back)
 {
+    ++nbArcs;
+
     if (dealWithExceptionalArc(center, radius, endpoint1, endpoint2, color, width, back))
     {
         ++nbAlmostStraightArcs;

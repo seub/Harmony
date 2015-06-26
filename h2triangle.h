@@ -19,6 +19,7 @@ public:
     void getPoints(H2Point &a, H2Point &b, H2Point &c) const;
     std::vector<H2Point> getPoints() const;
     std::vector<H2GeodesicArc> getSides() const;
+    double area() const;
 
 
     H2Point getVertex(uint index) const;

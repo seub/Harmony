@@ -313,8 +313,8 @@ void H2Polygon::optimalMobius(H2Isometry &output) const
     }
     
     
-    Complex Tu = T/abs(T);
-    double u = -abs(T);
+    Complex Tu = T/std::abs(T);
+    double u = -std::abs(T);
     
     double B = 0.5*A/u;
     double delta = B*B - 1;

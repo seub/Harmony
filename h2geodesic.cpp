@@ -36,7 +36,7 @@ bool H2Geodesic::getCircleAndEndpointsInDiskModel(Complex &centerOut, double &ra
     if (isCircleInDiskModel())
     {
         centerOut = 2.0*(z1*z2)/(z1 + z2);
-        radiusOut = abs(z1 - z2)/abs(z1 + z2);
+        radiusOut = std::abs(z1 - z2)/std::abs(z1 + z2);
         return true;
     }
     else
@@ -72,7 +72,7 @@ bool H2Geodesic::getCircleInDiskModel(Circle &output) const
     if (isCircleInDiskModel())
     {
         Complex center = 2.0*(z1*z2)/(z1 + z2);
-        double radius = abs(z1 - z2)/abs(z1 + z2);
+        double radius = std::abs(z1 - z2)/std::abs(z1 + z2);
         output = Circle(center, radius);
         return true;
     }
@@ -118,7 +118,7 @@ bool H2Geodesic::intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic
             Circle C2;
             l2.getCircleInDiskModel(C2);
             Circle::intersectCircles(C1,C2,p1,p2);
-            if (abs(p1) > abs(p2))
+            if (std::abs(p1) > std::abs(p2))
             {
                 p.setDiskCoordinate(p2);
             }
@@ -134,7 +134,7 @@ bool H2Geodesic::intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic
             l2.getLineInDiskModel(L2);
             if  (Circle::intersectCircleAndLine(C1,L2,p1,p2))
             {
-                if (abs(p1) > abs(p2))
+                if (std::abs(p1) > std::abs(p2))
                 {
                     p.setDiskCoordinate(p2);
                 }
@@ -160,7 +160,7 @@ bool H2Geodesic::intersectionH2Geodesics(const H2Geodesic & l1, const H2Geodesic
             l2.getCircleInDiskModel(C2);
             if  (Circle::intersectCircleAndLine(C2,L1,p1,p2))
             {
-                if (abs(p1) > abs(p2))
+                if (std::abs(p1) > std::abs(p2))
                 {
                     p.setDiskCoordinate(p2);
                 }
@@ -190,7 +190,7 @@ Complex H2Geodesic::closestPointToOriginInDiskModel() const
     {
         return 0.0;
     }
-    return ((z1*z2)/(z1 + z2))*(2.0 - abs(z1 - z2));
+    return ((z1*z2)/(z1 + z2))*(2.0 - std::abs(z1 - z2));
 }
 
 bool H2Geodesic::closestPoints(const H2Geodesic &L1, const H2Geodesic &L2, H2Point &p1, H2Point &p2)

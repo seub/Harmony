@@ -6,7 +6,7 @@
 #include "tools.h"
 #include "canvasdelegate.h"
 
-class CanvasDelegate; class ActionHandler; class FenchelNielsenUser; class CanvasContainer; class Window;
+class ActionHandler; class FenchelNielsenUser; class CanvasContainer; class Window;
 
 class Canvas : public QWidget
 {
@@ -17,8 +17,8 @@ class Canvas : public QWidget
     friend class ActionHandler;
 
 public:
-    Canvas(DelegateType delegateType, Window *window = nullptr, ActionHandler* handler = nullptr);
-    explicit Canvas(FenchelNielsenUser *user);
+    Canvas(DelegateType delegateType, Window* window = nullptr, bool leftCanvas = false, bool rightCanvas = false, ActionHandler *handler = nullptr);
+    explicit Canvas(FenchelNielsenUser *fenchelNielsenUser);
     Canvas() = delete;
     Canvas(const Canvas &) = delete;
     Canvas & operator=(Canvas) = delete;
@@ -28,7 +28,7 @@ public:
     void resetView();
 
 private:
-    void changeDelegate(DelegateType delegateType, ActionHandler *handler = nullptr);
+    void changeDelegate(DelegateType delegateType, bool leftCanvas, bool rightCanvas, ActionHandler *handler = nullptr);
 
     void updateRefresh(bool back, bool top);
     void paintEvent(QPaintEvent *event) override;
@@ -45,8 +45,8 @@ private:
     void initialize();
     void rescale();
 
-    CanvasContainer* container;
-    CanvasDelegate* delegate;
+    CanvasContainer *const container;
+    CanvasDelegate *delegate;
 };
 
 #endif // CANVAS_H

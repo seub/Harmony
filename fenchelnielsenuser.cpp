@@ -12,7 +12,8 @@
 #include "canvas.h"
 #include "actionhandler.h"
 #include "canvasdelegate.h"
-#include "h2canvasdelegate.h"
+#include "h2canvasdelegateliftedgraph.h"
+#include "fenchelnielsenconstructor.h"
 
 FenchelNielsenUser::FenchelNielsenUser(ActionHandler *handler, uint genus) : handler(handler)
 {
@@ -20,7 +21,7 @@ FenchelNielsenUser::FenchelNielsenUser(ActionHandler *handler, uint genus) : han
     saveFNcoordinates = false;
 
     createWindow();
-    createFactory();
+    createDelegatePointers();
     setAttribute(Qt::WA_DeleteOnClose);
 }
 
@@ -65,13 +66,11 @@ void FenchelNielsenUser::createWindow()
     move(QApplication::desktop()->screen()->rect().center() - rect().center());
 }
 
-void FenchelNielsenUser::createFactory()
+void FenchelNielsenUser::createDelegatePointers()
 {
-    factory.setGenus((nbLengths+3)/3);
-    factory.setMeshDepth(0);
-    delegate = static_cast<H2CanvasDelegate*>(canvas->delegate);
-    delegate->buffer.setRhoPointer(&(factory.rhoDomain), "blue");
-    delegate->buffer.setMeshPointer(&(factory.mesh), "red");
+    delegate = static_cast<H2CanvasDelegateLiftedGraph*>(canvas->delegate);
+    delegate->setRhoPointer(&(this->rho));
+    delegate->setGraphPointer(&(this->graph));
     delegate->setShowTranslates(false, false);
 }
 
@@ -128,15 +127,16 @@ void FenchelNielsenUser::refresh()
     std::vector<double> lengths, twists;
     selector->getFNcoordinates(lengths, twists);
 
-
-    factory.setRhoDomain(lengths, twists);
+    FenchelNielsenConstructor FNC(lengths, twists);
+    rho = FNC.getRepresentation();
+    LiftedGraphFunctionTriangulated<H2Point, H2Isometry> tempGraph(rho, 0);
+    graph.cloneCopyAssign(&tempGraph);
 
     delegate->setIsRhoEmpty(false);
-    delegate->setIsMeshEmpty(false);
+    delegate->setIsGraphEmpty(false);
 
-    delegate->buffer.refreshRho();
-    delegate->buffer.refreshMesh();
-    delegate->refreshTranslates();
+    delegate->refreshRho();
+    delegate->updateGraph(true, false);
     canvas->update();
 }
 

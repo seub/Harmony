@@ -1,27 +1,10 @@
 #include "mainapplication.h"
+#include "h2triangle.h"
+#include "tools.h"
+#include "h2point.h"
+#include "h2triangle.h"
 
 int main(int argc, char *argv[])
 {
-    std::cout << std::endl;
-
-/*
-    TopologicalSurface S(2,0);
-    DiscreteGroup Gamma(S);
-    GroupRepresentation<H2Isometry> rho(Gamma);
-    rho.setNiceRepresentation();
-    H2Polygon P = rho.generateFundamentalDomain(50);
-
-
-    H2PolygonTriangulater T(&P);
-    T.createSteinerPointsDetailed();
-
-    H2Polygon Q = T.fullPolygon;
-    H2SteinerPolygon StP = T.steinerPolygon;
-
-    std::cout << "P has " << P.getSides().size() << " sides" << std::endl;
-    std::cout << "Q has " << Q.getSides().size() << " sides" << std::endl;
-    std::cout << "StP's Steiner vertices = " << StP.getVectorNbSteinerPoints() << std::endl;
-*/
-
     return MainApplication(argc, argv).exec();
 }

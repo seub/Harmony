@@ -27,6 +27,26 @@ std::vector<H2GeodesicArc> H2Triangle::getSides() const
     return {H2GeodesicArc(a, b), H2GeodesicArc(b, c), H2GeodesicArc(c, a)};
 }
 
+double H2Triangle::area() const
+{    
+    Complex zA = a.getDiskCoordinate(), zB = b.getDiskCoordinate(), zC = c.getDiskCoordinate();
+    Complex ZA, ZB, ZC;
+
+    ZB = (zB - zA)/(1.0 - conj(zA)*zB);
+    ZC = (zC - zA)/(1.0 - conj(zA)*zC);
+    double angleA = std::abs(std::arg(ZC*conj(ZB)));
+
+    ZC = (zC - zB)/(1.0 - conj(zB)*zC);
+    ZA = (zA - zB)/(1.0 - conj(zB)*zA);
+    double angleB = std::abs(std::arg(ZA*conj(ZC)));
+
+    ZA = (zA - zC)/(1.0 - conj(zC)*zA);
+    ZB = (zB - zC)/(1.0 - conj(zC)*zB);
+    double angleC = std::abs(std::arg(ZB*conj(ZA)));
+
+    return M_PI - (angleA + angleB + angleC);
+}
+
 void H2Triangle::getSideLengths(double &A, double &B, double &C) const
 {
     A = H2Point::distance(b,c);

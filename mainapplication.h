@@ -6,6 +6,8 @@
 #include "tools.h"
 #include "mathscontainer.h"
 #include "actionhandler.h"
+#include "topfactory.h"
+#include "window.h"
 
 class Window;
 
@@ -21,12 +23,11 @@ public:
     virtual bool notify(QObject *receiver, QEvent *sender);
 
 private:
-    void createWindow();
-
     Window *window;
     bool errorCaught;
-    MathsContainer container;
+    MathsContainer mathsContainer;
     ActionHandler handler;
+    std::unique_ptr<TopFactory> factory;
 };
 
 #endif // MAINAPPLICATION_H

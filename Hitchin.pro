@@ -43,20 +43,16 @@ SOURCES += main.cpp \
     tools.cpp \
 #    h3canvasdelegate.cpp\
     fenchelnielsenconstructor.cpp \
-    h2buffer.cpp \
     h2mesh.cpp \
     h2triangle.cpp \
     h2polygontriangulater.cpp \
     h2meshconstructor.cpp \
     h2meshpoint.cpp \
     word.cpp \
-    h2meshfunction.cpp \
-    h2meshfunctioniterator.cpp \
     window.cpp \
     topmenu.cpp \
     inputmenu.cpp \
     outputmenu.cpp \
-    equivariantharmonicmapsfactory.cpp \
     mainapplication.cpp \
     mathscontainer.cpp \
     actionhandler.cpp \
@@ -68,7 +64,8 @@ SOURCES += main.cpp \
     triangularsubdivision.cpp \
     discreteheatflowiterator.cpp \
     discreteheatflowfactory.cpp \
-    h2discreteflowfactorythread.cpp
+    h2discreteflowfactorythread.cpp \
+    h2canvasdelegateliftedgraph.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -92,20 +89,16 @@ HEADERS += \
     types.h \
 #    h3canvasdelegate.h\
     fenchelnielsenconstructor.h \
-    h2buffer.h \
     h2mesh.h \
     h2triangle.h \
     h2polygontriangulater.h \
     h2meshconstructor.h \
     h2meshpoint.h \
     word.h \
-    h2meshfunction.h \
-    h2meshfunctioniterator.h \
     window.h \
     topmenu.h \
     inputmenu.h \
     outputmenu.h \
-    equivariantharmonicmapsfactory.h \
     mainapplication.h \
     mathscontainer.h \
     actionhandler.h \
@@ -117,7 +110,8 @@ HEADERS += \
     triangularsubdivision.h \
     discreteheatflowiterator.h \
     discreteheatflowfactory.h \
-    h2discreteflowfactorythread.h
+    h2discreteflowfactorythread.h \
+    h2canvasdelegateliftedgraph.h
 
 OTHER_FILES += \
     TODO.txt

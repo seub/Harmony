@@ -25,7 +25,6 @@ public:
     int maxRightColWidth() const;
     int maxWidth() const;
     int maxHeight() const;
-    int getNbIterations() const;
 
 private:
     OutputMenu(Window *window, ActionHandler *handler);
@@ -45,10 +44,9 @@ private:
     ActionHandler *handler;
 
     QGridLayout *layout;
-    QPushButton *resetButton, *computeButton, *iterateButton;
-    QLabel *showLiveLabel, *nbIterationsLabel;
+    QPushButton *resetButton, *computeButton;
+    QLabel *showLiveLabel;
     QCheckBox *showLiveCheckbox;
-    QSpinBox *nbIterationsSpinBox;
 
     int vertSpace;
     int buttonHeight;

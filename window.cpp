@@ -24,10 +24,10 @@ Window::Window(ActionHandler *handler)
 
 void Window::createWindow(ActionHandler *handler)
 {
-    leftCanvas = new Canvas(DelegateType::H2DELEGATEDOMAIN, this, handler);
+    leftCanvas = new Canvas(DelegateType::H2DELEGATE_GRAPH, this, true, false, handler);
     leftCanvas->setEnabled(false);
 
-    rightCanvas = new Canvas(DelegateType::H2DELEGATETARGET, this, handler);
+    rightCanvas = new Canvas(DelegateType::H2DELEGATE_GRAPH, this, false, true, handler);
     rightCanvas->setEnabled(false);
 
     inputMenu = new InputMenu(this, handler);

@@ -4,14 +4,12 @@
 
 
 template <typename Point, typename Map>
-DiscreteHeatFlowIterator<Point, Map>::DiscreteHeatFlowIterator(const std::shared_ptr<LiftedGraphFunction<Point, Map> > &initialFunction) :
+DiscreteHeatFlowIterator<Point, Map>::DiscreteHeatFlowIterator(const LiftedGraphFunction<Point, Map> *initialFunction) :
     nbBoundaryPoints(initialFunction->nbBoundaryPoints), nbPoints(initialFunction->nbPoints),
     neighborsIndices(initialFunction->neighborsIndices), neighborsWeights(initialFunction->neighborsWeights),
-    boundaryPointsNeighborsPairingsValues(initialFunction->boundaryPointsNeighborsPairingsValues)
+    boundaryPointsNeighborsPairingsValues(initialFunction->boundaryPointsNeighborsPairingsValues), initialValues(initialFunction->getValues()),
+    outputFunction(initialFunction->cloneCopyConstruct())
 {
-    initialValues = initialFunction->values;
-    outputFunction = initialFunction->cloneCopyConstruct();
-
     reset();
 }
 
@@ -20,6 +18,7 @@ void DiscreteHeatFlowIterator<Point, Map>::reset()
 {
 
     newValues = initialValues;
+    errors.resize(nbPoints);
 
     newNeighborsValuesKicked.resize(nbPoints);
     uint i=0, j;
@@ -44,10 +43,10 @@ void DiscreteHeatFlowIterator<Point, Map>::reset()
 }
 
 template <typename Point, typename Map>
-void DiscreteHeatFlowIterator<Point, Map>::getOutputFunction(const std::shared_ptr<LiftedGraphFunction<Point, Map> > &outputFunction)
+void DiscreteHeatFlowIterator<Point, Map>::getOutputFunction(LiftedGraphFunction<Point, Map> *outputFunction)
 {
     refreshOutput();
-    outputFunction->cloneCopyAssign(this->outputFunction);
+    outputFunction->cloneCopyAssign(this->outputFunction.get());
 }
 
 template <typename Point, typename Map>
@@ -112,7 +111,17 @@ void DiscreteHeatFlowIterator<Point, Map>::iterate(uint nbIterations)
     }
 }
 
+template <typename Point, typename Map>
+double DiscreteHeatFlowIterator<Point, Map>::updateSupDelta()
+{
+    for (uint i=0; i!=nbPoints; ++i)
+    {
+        errors[i] = Point::distance(oldValues[i], newValues[i]);
+    }
 
+    supDelta = *std::max_element(errors.begin(), errors.end());
+    return supDelta;
+}
 
 
 

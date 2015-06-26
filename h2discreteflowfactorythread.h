@@ -6,15 +6,24 @@
 #include "tools.h"
 #include "discreteheatflowfactory.h"
 
+class ActionHandler;
+
 class H2DiscreteFlowFactoryThread : public QThread
 {
     Q_OBJECT
 
+    friend class TopFactory;
+    friend class ActionHandler;
+
 public:
-    H2DiscreteFlowFactoryThread(const std::shared_ptr<LiftedGraphFunctionTriangulated<H2Point, H2Isometry> > &domainFunction,
-                                const std::shared_ptr<LiftedGraphFunctionTriangulated<H2Point, H2Isometry> > &imageFunction);
+    H2DiscreteFlowFactoryThread(GroupRepresentation<H2Isometry> *rhoDomain, GroupRepresentation<H2Isometry> *rhoImage,
+                                LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *domainFunction,
+                                LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *imageFunction);
 
     uint getNbIterations() const;
+    void updateSupError();
+    double getSupError() const;
+    double getTolerance() const;
 
 public slots:
     void run();
