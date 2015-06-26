@@ -259,55 +259,63 @@ template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain
     return bestPolygon;
 }
 
-template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomainOptimization(double epsilon) const
+template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomainOptimization(double epsilon, double stepSize) const
 {
 
-    H2Point basePt, basePtEpsilonX, basePtEpsilonY;
-    Complex previous;
-    std::vector<H2Point> basePtImages, basePtImagesEpsilonX, basePtImagesEpsilonY;
+    H2Point basePt, basePtEpsilonX, basePtEpsilonY, basePtEpsilonXMinus, basePtEpsilonYMinus;
+    std::vector<H2Point> basePtImages, basePtImagesEpsilonX, basePtImagesEpsilonY, basePtImagesEpsilonXMinus, basePtImagesEpsilonYMinus;
     std::vector<H2Isometry> fromVertexPairings;
     fromVertexPairings = evaluateRepresentation(Gamma.getPairingsClosedSurfaceFromVertex());
+    Complex previous;
 
-    basePt.setDiskCoordinate(Complex(0.0,0.0));
-    basePtEpsilonX.setDiskCoordinate(basePt.getDiskCoordinate()+Complex(epsilon,0.0));
-    basePtEpsilonY.setDiskCoordinate(basePt.getDiskCoordinate()+Complex(0.0,epsilon));
+    basePt.setDiskCoordinate(Complex(0.1,0.0));
+    previous = basePt.getDiskCoordinate();
+    basePtEpsilonX.setDiskCoordinate(previous + Complex(epsilon,0.0));
+    basePtEpsilonY.setDiskCoordinate(previous + Complex(0.0,epsilon));
+    basePtEpsilonXMinus.setDiskCoordinate(previous - Complex(epsilon,0.0));
+    basePtEpsilonYMinus.setDiskCoordinate(previous - Complex(0.0,epsilon));
 
     for(const auto & f : fromVertexPairings)
     {
-        basePtImages.push_back(f*basePt);
         basePtImagesEpsilonX.push_back(f*basePtEpsilonX);
         basePtImagesEpsilonY.push_back(f*basePtEpsilonY);
+        basePtImagesEpsilonXMinus.push_back(f*basePtEpsilonXMinus);
+        basePtImagesEpsilonYMinus.push_back(f*basePtEpsilonYMinus);
     }
 
     double dfx,dfy, previousNorm;
-    dfx = (H2Point::diameter(basePtImagesEpsilonX) - H2Point::diameter(basePtImages))/epsilon;
-    dfy = (H2Point::diameter(basePtImagesEpsilonY) - H2Point::diameter(basePtImages))/epsilon;
+    dfx = (H2Point::diameter(basePtImagesEpsilonX) - H2Point::diameter(basePtImagesEpsilonXMinus))/(2*epsilon);
+    dfy = (H2Point::diameter(basePtImagesEpsilonY) - H2Point::diameter(basePtImagesEpsilonYMinus))/(2*epsilon);
     previousNorm = dfx*dfx + dfy*dfy;
-    previous = basePt.getDiskCoordinate();
+
 
     uint j=0;
-    while (previousNorm > .0001)
-    {
-        if (norm(previous-Complex(.01*dfx,.01*dfy))>1)
-        {
-            std::cout << "basePt is outside the disk" << std::endl;
-        }
-        basePt.setDiskCoordinate(previous-Complex(.1*dfx,.1*dfy));
-        basePtEpsilonX.setDiskCoordinate(basePt.getDiskCoordinate()+Complex(epsilon,0.0));
-        basePtEpsilonY.setDiskCoordinate(basePt.getDiskCoordinate()+Complex(0.0,epsilon));
 
-        basePtImages.clear();
+    while (previousNorm > .00000001)
+    {
+        std::cout << basePt << std::endl;
+
+        basePt.setDiskCoordinate(previous - stepSize*Complex(dfx,dfy));
+        basePtEpsilonX.setDiskCoordinate(basePt.getDiskCoordinate() + Complex(epsilon,0.0));
+        basePtEpsilonY.setDiskCoordinate(basePt.getDiskCoordinate() + Complex(0.0,epsilon));
+        basePtEpsilonXMinus.setDiskCoordinate(basePt.getDiskCoordinate() - Complex(epsilon,0.0));
+        basePtEpsilonYMinus.setDiskCoordinate(basePt.getDiskCoordinate() - Complex(0.0,epsilon));
+
         basePtImagesEpsilonX.clear();
         basePtImagesEpsilonY.clear();
+        basePtImagesEpsilonXMinus.clear();
+        basePtImagesEpsilonYMinus.clear();
+
         for(const auto & f : fromVertexPairings)
         {
-            basePtImages.push_back(f*basePt);
             basePtImagesEpsilonX.push_back(f*basePtEpsilonX);
             basePtImagesEpsilonY.push_back(f*basePtEpsilonY);
+            basePtImagesEpsilonXMinus.push_back(f*basePtEpsilonXMinus);
+            basePtImagesEpsilonYMinus.push_back(f*basePtEpsilonYMinus);
         }
 
-        dfx = (H2Point::diameter(basePtImagesEpsilonX) - H2Point::diameter(basePtImages))/epsilon;
-        dfy = (H2Point::diameter(basePtImagesEpsilonY) - H2Point::diameter(basePtImages))/epsilon;
+        dfx = (H2Point::diameter(basePtImagesEpsilonX) - H2Point::diameter(basePtImagesEpsilonXMinus))/(2*epsilon);
+        dfy = (H2Point::diameter(basePtImagesEpsilonY) - H2Point::diameter(basePtImagesEpsilonYMinus))/(2*epsilon);
 
         if(previousNorm < dfx*dfx + dfy*dfy)
         {
@@ -315,12 +323,24 @@ template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain
         }
         previousNorm = dfx*dfx + dfy*dfy;
         previous = basePt.getDiskCoordinate();
+        if (norm(previous)>1)
+        {
+            std::cout << "basePt is outside the disk" << std::endl;
+        }
         ++j;
     }
+
     std::cout << "Process took " << j << " steps" << std::endl;
     std::cout << "dfx = " << dfx << std::endl;
     std::cout << "dfy = " << dfy << std::endl;
-    std::cout << "previousNorm = " << previousNorm << std::endl;
+
+    for(const auto & f : fromVertexPairings)
+    {
+        basePtImages.push_back(f*basePt);
+    }
+    std::cout << "basePt is a " << basePt << std::endl;
+    std::cout << "Final diameter = " << H2Point::diameter(basePtImages) << std::endl;
+
     return H2Polygon(basePtImages);
 }
 
@@ -408,8 +428,8 @@ template <> std::vector<H2Isometry> GroupRepresentation<H2Isometry>::getSidePair
 }
 
 template <> void GroupRepresentation<H2Isometry>::setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
-                                                                              double length1, double length2, double length3,
-                                                                              generatorName normalized)
+                                                                                         double length1, double length2, double length3,
+                                                                                         generatorName normalized)
 {
     if (length1 < 0 || length2 < 0 || length3 < 0)
     {
@@ -467,9 +487,9 @@ template <> void GroupRepresentation<H2Isometry>::setNormalizedPairOfPantsRepres
 
 
 template <> void GroupRepresentation<H2Isometry>::setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
-                                                                              double C1, double C2, double C3,
-                                                                              double S1, double S2, double S3,
-                                                                              generatorName normalized)
+                                                                                         double C1, double C2, double C3,
+                                                                                         double S1, double S2, double S3,
+                                                                                         generatorName normalized)
 {
     if (S1<0 || S2 < 0 || S3 < 0)
     {
@@ -589,7 +609,7 @@ template <> void GroupRepresentation<H2Isometry>::setNiceRepresentation()
 
 
 template <> bool GroupRepresentation<H2Isometry>::checkCompatibilityOfFNcoordinates(const std::vector<double> & lengths,
-                                                                         const std::vector<double> & twists)
+                                                                                    const std::vector<double> & twists)
 {
     uint N = lengths.size();
     if (twists.size() != N)
@@ -610,8 +630,8 @@ template <> bool GroupRepresentation<H2Isometry>::checkCompatibilityOfFNcoordina
 }
 
 template <> GroupRepresentation<H2Isometry> GroupRepresentation<H2Isometry>::amalgamateOverInverse(const GroupRepresentation<H2Isometry> & rho1, const generatorName &a1,
-                                                                             const GroupRepresentation<H2Isometry> & rho2,
-                                                                             const generatorName &a1inverse)
+                                                                                                   const GroupRepresentation<H2Isometry> & rho2,
+                                                                                                   const generatorName &a1inverse)
 {
     std::vector<H2Isometry> generatorImages1 = rho1.getGeneratorImages();
     std::vector<H2Isometry> generatorImages2 = rho2.getGeneratorImages();
@@ -623,10 +643,10 @@ template <> GroupRepresentation<H2Isometry> GroupRepresentation<H2Isometry>::ama
 
 
 template <> GroupRepresentation<H2Isometry> GroupRepresentation<H2Isometry>::HNNextensionOverInverse(const GroupRepresentation<H2Isometry> &rho,
-                                                                                 const generatorName &a,
-                                                                                 const generatorName &ainverse,
-                                                                                 const generatorName &newGeneratorName,
-                                                                                 const H2Isometry & conjugator)
+                                                                                                     const generatorName &a,
+                                                                                                     const generatorName &ainverse,
+                                                                                                     const generatorName &newGeneratorName,
+                                                                                                     const H2Isometry & conjugator)
 {
     std::vector<H2Isometry> outputGeneratorImages = rho.getGeneratorImages();
     outputGeneratorImages.push_back(conjugator);

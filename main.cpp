@@ -5,7 +5,7 @@ int main(int argc, char *argv[])
 {
     std::cout << std::endl;
 
-    /*
+
     TopologicalSurface S(2,0);
     DiscreteGroup Gamma(S);
     GroupRepresentation<H2Isometry> rho(Gamma);
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 
     std::cout << "Optimized basepoint = " << P1.getVertex(0) << std::endl;
     std::cout << "Stupid basepoint = " << P2.getVertex(0) << std::endl;
-    */
 
-    return MainApplication(argc, argv).exec();
+
+    //return MainApplication(argc, argv).exec();
 }
