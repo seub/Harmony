@@ -35,7 +35,6 @@ private:
         vertexIndex1(vertexIndex1), vertexIndex2(vertexIndex2), vertexIndex3(vertexIndex3) {}
 
 
-
     uint vertexIndex1, vertexIndex2, vertexIndex3;
 };
 
@@ -59,10 +58,13 @@ public:
     std::vector<uint> nbCutsFromVertex() const;
     void verticesIndices(std::vector< std::vector<uint> > &triangleIndices, std::vector< std::vector<uint> > &indicesInTriangles) const;
 
+
+
+
 private:
     H2PolygonTriangulater(const H2PolygonTriangulater &);
-
     void triangulate();
+
     std::vector<double> subpolygonAngles(const std::vector<uint> &indices) const;
     void findCutInSubpolygon1(const std::vector<uint> &indices, uint &outputIndex1, uint &outputIndex2) const;
     void findCutInSubpolygon2(const std::vector<uint> &indices, uint &outputIndex1, uint &outputIndex2) const;
@@ -85,6 +87,10 @@ private:
     void createSteinerPointsDetailed();
 
     bool sameSide(uint fullIndex1, uint fullIndex2) const;
+
+    void getCutsFromTriangle(uint triangleIndex, uint &cutIndex1, uint &cutIndex2, uint &cutIndex3) const;
+    bool isSideTriangle(uint triangleIndex) const;
+    bool attemptFlip();
 
     const H2Polygon * const polygon;
     bool orientation;

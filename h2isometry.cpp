@@ -229,6 +229,17 @@ H2Point operator *(const H2Isometry & f, const H2Point & p)
     return pOut;
 }
 
+std::vector<H2Point> operator *(const std::vector<H2Isometry> &vectorFs, const H2Point & p)
+{
+    std::vector<H2Point> output;
+    output.reserve(vectorFs.size());
+    for (const auto & f : vectorFs)
+    {
+        output.push_back(f*p);
+    }
+    return output;
+}
+
 H2Polygon operator*(const H2Isometry &f, const H2Polygon &P)
 {
     H2Polygon out;

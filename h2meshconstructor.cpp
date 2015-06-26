@@ -26,11 +26,13 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
     createNeighbors();
 
     reorganizeNeighbors();
+
     createPiecewiseAffineWeights();
 
     createMeshExteriorIndices();
 
     runTests();
+
 }
 
 void H2MeshConstructor::createPoints()
@@ -453,6 +455,7 @@ void H2MeshConstructor::reorganizeNeighbors()
     std::vector<std::tuple< H2Point, H2Point, uint> > triples;
     uint index,i;
     std::vector<uint> indicesOld, indicesNew;
+
     for (auto & cutpoint : *cutPoints)
     {
         i=0;
@@ -472,6 +475,7 @@ void H2MeshConstructor::reorganizeNeighbors()
         triples.clear();
         indicesNew.clear();
     }
+
 
     std::vector<Word> neighborsPairingsOld, neighborsPairingsNew;
     for (auto & boundarypoint : *boundaryPoints)
@@ -523,6 +527,7 @@ void H2MeshConstructor::reorganizeNeighbors()
         neighborsPairingsNew.clear();
     }
 
+
     for (auto & steinerpoint : *steinerPoints)
     {
         i=0;
@@ -540,6 +545,8 @@ void H2MeshConstructor::reorganizeNeighbors()
             indicesNew.push_back(indicesOld[std::get<2>(triple)]);
             neighborsPairingsNew.push_back(neighborsPairingsOld[std::get<2>(triple)]);
         }
+
+
         steinerpoint.neighborsIndices = indicesNew;
         steinerpoint.neighborsPairings = neighborsPairingsNew;
         triples.clear();
@@ -697,7 +704,9 @@ bool H2MeshConstructor::checkNumberOfNeighbors() const
                 std::stringstream errorMessage;
                 errorMessage << "ERROR in H2MeshConstructor::checkNumberOfNeighbors: failed ("
                              << "point has " << m->neighborsIndices.size() << " neighbors)" << std::endl
-                             << m->neighborsIndices << std::endl;
+                             << m->neighborsIndices << std::endl
+                             << "m is a boundary point? " << m->isBoundaryPoint() << std::endl
+                             << "m is a cut point? " << m->isCutPoint() << std::endl;
                 throw(QString::fromStdString(errorMessage.str()));
                 ++failed;
             }

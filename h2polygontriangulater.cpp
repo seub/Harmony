@@ -214,7 +214,17 @@ void H2PolygonTriangulater::triangulateSubpolygon(const std::vector<uint> &indic
 {
     if (indices.size() == 3)
     {
-        triangles.push_back(TriangulationTriangle(indices[0], indices[1], indices[2]));
+        if (*std::min_element(indices.begin(),indices.end())==indices[0])
+        {
+            triangles.push_back(TriangulationTriangle(indices[0], indices[1], indices[2]));
+        } else if (*std::min_element(indices.begin(),indices.end())==indices[1])
+        {
+            triangles.push_back(TriangulationTriangle(indices[1], indices[2], indices[0]));
+        } else if (*std::min_element(indices.begin(),indices.end())==indices[2])
+        {
+            triangles.push_back(TriangulationTriangle(indices[2], indices[0], indices[1]));
+        }
+
     }
     else
     {
@@ -248,6 +258,39 @@ void TriangulationTriangle::getVertices(uint &i1, uint &i2, uint &i3) const
     i3 = vertexIndex3;
 }
 
+bool H2PolygonTriangulater::isSideTriangle(uint triangleIndex) const
+{
+    uint i,j,k,N=fullPolygon.nbVertices();
+    triangles.at(triangleIndex).getVertices(i,j,k);
+    return (j==i+1)||(k==j+1)||(i==0 && k==N-1);
+}
+
+void H2PolygonTriangulater::getCutsFromTriangle(uint triangleIndex, uint &cutIndex1, uint &cutIndex2, uint &cutIndex3) const
+{
+    cutIndex1 = -1;
+    cutIndex2 = -1;
+    cutIndex3 = -1;
+    TriangulationTriangle triangle = triangles[triangleIndex];
+    uint i1,i2,i3,l=0;
+    triangle.getVertices(i1,i2,i3);
+    for (const auto & cut : cuts)
+    {
+        if (cut.vertexIndex1 == i1 && cut.rightTriangleIndex == triangleIndex)
+        {
+            cutIndex1 = l;
+        }
+        if (cut.vertexIndex1 == i1 && cut.leftTriangleIndex == triangleIndex)
+        {
+            cutIndex2 = l;
+        }
+        if (cut.vertexIndex1 == i2 && cut.rightTriangleIndex == triangleIndex)
+        {
+            cutIndex3 = l;
+        }
+        ++l;
+    }
+}
+
 std::vector<uint> H2PolygonTriangulater::nbCutsFromVertex() const
 {
     std::vector<uint> res(fullPolygon.nbVertices());
@@ -261,6 +304,7 @@ std::vector<uint> H2PolygonTriangulater::nbCutsFromVertex() const
 
 void H2PolygonTriangulater::completeCutsAndSides()
 {
+    cuts.clear();
     uint N = fullPolygon.nbVertices();
     sideTrianglesIndices.resize(N);
     sideTrianglesBoundarySideIndices.resize(N);
@@ -396,6 +440,13 @@ void H2PolygonTriangulater::triangulate()
     triangulateSubpolygon(indices);
     sortTriangles();
     completeCutsAndSides();
+
+
+    // Improving the triangulation by searching for flips:
+    while (attemptFlip()) {}
+    sortTriangles();
+    completeCutsAndSides();
+
 }
 
 std::vector<H2Triangle> H2PolygonTriangulater::getTriangles() const
@@ -581,3 +632,136 @@ bool H2PolygonTriangulater::sameSide(uint fullIndex1, uint fullIndex2) const
 {
     return steinerPolygon.lieOnSameActualSide(fullIndex1, fullIndex2);
 }
+
+bool H2PolygonTriangulater::attemptFlip()
+{
+    // assert polygon is triangulated
+    TriangulationTriangle T1,T2;
+    TriangulationCut newCut;
+    uint sharedIndex1, sharedIndex2, unsharedIndex1, unsharedIndex2, leftTriangleIndex, rightTriangleIndex, l=0;
+    bool output=0;
+    std::vector<uint> quadrilateralIndices;
+    double minAngle1,minAngle2;
+    quadrilateralIndices.reserve(4);
+    uint l1,l2,l3,k1,k2,k3;
+    bool rightTriangleCheats=0;
+
+    while (!output && l<cuts.size())
+    {
+        quadrilateralIndices.clear();
+        sharedIndex1 = cuts[l].vertexIndex1;
+        sharedIndex2 = cuts[l].vertexIndex2;
+        leftTriangleIndex = cuts[l].leftTriangleIndex;
+        rightTriangleIndex = cuts[l].rightTriangleIndex;
+        T1 = triangles[leftTriangleIndex];
+        T2 = triangles[rightTriangleIndex];
+        T1.getVertices(sharedIndex1,unsharedIndex1,sharedIndex2);
+        T2.getVertices(l1,l2,l3);
+        if (l1==cuts[l].vertexIndex1)
+        {
+            rightTriangleCheats = 0;
+            T2.getVertices(sharedIndex1,sharedIndex2,unsharedIndex2);
+        }
+        else if (l2==cuts[l].vertexIndex1)
+        {
+            rightTriangleCheats = 1;
+            T2.getVertices(unsharedIndex2,sharedIndex1,sharedIndex2);
+        }
+        else if (l1!=cuts[l].vertexIndex1 && l2!=cuts[l].vertexIndex1)
+        {
+            std::cout << "ERROR in attemptFlip: A triangle abutting a cut doesn't have vertices compatible with the desired cut" << std::endl;
+        }
+
+        quadrilateralIndices.push_back(sharedIndex1);
+        quadrilateralIndices.push_back(unsharedIndex1);
+        quadrilateralIndices.push_back(sharedIndex2);
+        quadrilateralIndices.push_back(unsharedIndex2);
+
+        minAngle1 = minAngleOfCutInSubpolygon(quadrilateralIndices,0,2);
+        minAngle2 = minAngleOfCutInSubpolygon(quadrilateralIndices,1,3);
+
+        if (minAngle1 < minAngle2 && !sameSide(unsharedIndex1,unsharedIndex2))
+        {
+            getCutsFromTriangle(leftTriangleIndex,l1,l2,l3);
+            getCutsFromTriangle(rightTriangleIndex,k1,k2,k3);
+
+            if (l1 < cuts.size())
+            {
+                cuts[l1].rightTriangleIndex = rightTriangleIndex;
+            } else
+            {
+                sideTrianglesIndices[sharedIndex1] = rightTriangleIndex;
+                sideTrianglesBoundarySideIndices[sharedIndex1] = 0;
+            }
+            if (l3 < cuts.size())
+            {
+                cuts[l3].rightTriangleIndex = leftTriangleIndex;
+            } else
+            {
+                sideTrianglesIndices[unsharedIndex1] = leftTriangleIndex;
+                sideTrianglesBoundarySideIndices[unsharedIndex1] = 0;
+            }
+            if (!rightTriangleCheats)
+            {
+                if (k2 < cuts.size())
+                {
+                    cuts[k2].leftTriangleIndex = rightTriangleIndex;
+                } else
+                {
+                    sideTrianglesIndices[unsharedIndex2] = rightTriangleIndex;
+                    sideTrianglesBoundarySideIndices[unsharedIndex2] = 2;
+                }
+                if (k3 < cuts.size())
+                {
+                    cuts[k3].rightTriangleIndex = leftTriangleIndex;
+                } else
+                {
+                    sideTrianglesIndices[sharedIndex2] = leftTriangleIndex;
+                    sideTrianglesBoundarySideIndices[unsharedIndex2] = 1;
+                }
+            } else
+            {
+                if (k1 < cuts.size())
+                {
+                    cuts[k1].rightTriangleIndex = rightTriangleIndex;
+                } else
+                {
+                    sideTrianglesIndices[unsharedIndex2] = rightTriangleIndex;
+                    sideTrianglesBoundarySideIndices[unsharedIndex2] = 0;
+                }
+                if (k2 < cuts.size())
+                {
+                    cuts[k2].leftTriangleIndex = leftTriangleIndex;
+                } else
+                {
+                    sideTrianglesIndices[sharedIndex2] = leftTriangleIndex;
+                    sideTrianglesBoundarySideIndices[unsharedIndex2] = 2;
+                }
+            }
+            if (!rightTriangleCheats)
+            {
+                triangles[leftTriangleIndex] = TriangulationTriangle(unsharedIndex1,sharedIndex2,unsharedIndex2);
+                triangles[rightTriangleIndex] = TriangulationTriangle(sharedIndex1,unsharedIndex1,unsharedIndex2);
+            } else
+            {
+                triangles[leftTriangleIndex] = TriangulationTriangle(unsharedIndex2,unsharedIndex1,sharedIndex2);
+                triangles[rightTriangleIndex] = TriangulationTriangle(unsharedIndex2,sharedIndex1,unsharedIndex1);
+            }
+            if (!rightTriangleCheats)
+            {
+                cuts[l] = TriangulationCut(unsharedIndex1,unsharedIndex2,leftTriangleIndex,rightTriangleIndex);
+            } else
+            {
+                cuts[l] = TriangulationCut(unsharedIndex2,unsharedIndex1,rightTriangleIndex,leftTriangleIndex);
+            }
+            return true;
+        }
+        ++l;
+    }
+    return false;
+}
+
+
+
+
+

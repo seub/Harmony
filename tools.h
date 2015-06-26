@@ -28,6 +28,7 @@ int intRound(double x);
 double mod2Pi(double t);
 double randDouble(double min, double max);
 
+
 template <typename T> T exponentiation(T base, int power)
 {    
     T res = 1;
@@ -151,6 +152,7 @@ template<typename T, typename F> std::vector<T> operator*(const F & f, std::vect
     return V;
 }
 
+/*
 template<typename T, typename F> std::vector<T> operator*(std::vector<T> V, const F & f)
 {
     for (auto &v : V)
@@ -158,6 +160,7 @@ template<typename T, typename F> std::vector<T> operator*(std::vector<T> V, cons
         v = v*f;
     }
     return V;
-}
+}*/
+
 
 #endif // TOOLS_H

@@ -132,6 +132,7 @@ void FenchelNielsenUser::refresh()
     LiftedGraphFunctionTriangulated<H2Point, H2Isometry> tempGraph(rho, 0);
     graph.cloneCopyAssign(&tempGraph);
 
+
     delegate->setIsRhoEmpty(false);
     delegate->setIsGraphEmpty(false);
 

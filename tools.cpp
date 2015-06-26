@@ -48,3 +48,4 @@ std::string Tools::convertToString(int i)
     s = out.str();
     return s;
 }
+
