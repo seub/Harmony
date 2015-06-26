@@ -33,5 +33,5 @@ int main(int argc, char *argv[])
     std::cout << "Stupid basepoint = " << P2.getVertex(0) << std::endl;
 
 
-    //return MainApplication(argc, argv).exec();
+//    return MainApplication(argc, argv).exec();
 }
