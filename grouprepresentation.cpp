@@ -204,8 +204,8 @@ template <> void GroupRepresentation<H2Isometry>::generateFundamentalDomain(cons
 
 template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain(uint tilingSize) const
 {
-    clock_t start, end;
-    start = clock();
+    //clock_t start, end;
+    //start = clock();
 
     double step = 1.0/tilingSize;
 
@@ -254,8 +254,8 @@ template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain
         generateFundamentalDomain(p, bestPolygon);
     }
 
-    end = clock();
-    qDebug() << (end - start)*1.0/CLOCKS_PER_SEC << " time spent in (stupid) GroupRepresentation<H2Isometry>::generateFundamentalDomain(uint tilingSize)";
+    //end = clock();
+    //qDebug() << (end - start)*1.0/CLOCKS_PER_SEC << " time spent in (stupid) GroupRepresentation<H2Isometry>::generateFundamentalDomain(uint tilingSize)";
     return bestPolygon;
 }
 

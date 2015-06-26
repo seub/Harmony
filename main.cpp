@@ -1,8 +1,13 @@
 #include "mainapplication.h"
-#include "fenchelnielsenconstructor.h"
+#include "h2triangle.h"
+#include "tools.h"
+#include "h2point.h"
+#include "h2triangle.h"
+
 
 int main(int argc, char *argv[])
 {
+/*
     std::cout << std::endl;
 
 
@@ -31,7 +36,7 @@ int main(int argc, char *argv[])
 
     std::cout << "Optimized basepoint = " << P1.getVertex(0) << std::endl;
     std::cout << "Stupid basepoint = " << P2.getVertex(0) << std::endl;
+*/
 
-
-//    return MainApplication(argc, argv).exec();
+    return MainApplication(argc, argv).exec();
 }

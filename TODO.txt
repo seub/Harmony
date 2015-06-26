@@ -1,50 +1,40 @@
 ******************************** PILE ********************************
 
 
-Remplacer les target par des image partout (en respectant la casse!)
-get rid of submethods like "subredraw" (just use virtual methods and call parent's method)
-get rid of asserts in liftedgraph.cpp after testing
+change the code of the mesh constructor so I don't have to rearrange the order after for building the graph (yuck)
 
-afficher le mesh index dans la status bar
 
 do coloring à l ajonah
 rewrite generatepolygon
 rewrite triangulater with flips
+
+add rotations to mobiusing
+add shift (only keys ?)
+add zoom keys
+
+utiliser des arrays au lieu de vectors débiles±
+
+construire le mesh et la fonction dans un thread?
+
+faire le super update
+pour trouver le bon lambda, observer expérimentalement comment varient les deltas.
+
+ajouter le point highlighted quand il est sur lr bord
+
+faire un dégradé de couleur dès le départ
+
+
+
 ******************************** IMPROVE CODE ********************************
 
 assert vs throw
 track down code duplication
 move semantics http://stackoverflow.com/questions/3106110/what-are-move-semantics
-boost library
 hunt memory leaks, test with valgrind
-use smart pointers
-use functions, lambda ? http://www.codeproject.com/Articles/570638/Ten-Cplusplus-Features-Every-Cplusplus-Developer
-
 foutre des auto partout
 
 
 ******************************** BUGS: ********************************
-
-Sometimes buffer back is cleared white?
-parfois isTriangleHighlighted est true à tort ?
-In MainApplication::notify: errorMessage =  "Error in ActionHandler::isReadyToCompute: test failed"
-
-******************************** NEXT FEATURES ********************************
-
-add rotations to mobiusing
-add shift (only keys ?)
-add zoom keys
-le zoom marche pas avec le complex to pixel...
-le zoom marche moyen avec le wheel
-
-afficher l'erreur dans la statusbar, permettre à l'algo de s'arrêter quand l'erreur est petite
-what is a good choice of error? maybe L2 norm of tension field
-afficher plein de merde dans la statusbar
-
-construire le mesh et la fonction dans un thread
-
-
-in "show only translates of fundamental domain" (around all vertices), show the translates to depth 2?
 
 
 ************************* FUTURE PLANS ***************************
@@ -62,31 +52,13 @@ in "show only translates of fundamental domain" (around all vertices), show the 
 
 ************************* OPTIMIZATION ***************************
 
-basic test:
-TEST1
-rho domain = nice
-rho image = default FN
-genus = 2
-mesh depth = 4
-create steiner points = old (createSteinerPoints(), not detailed)
-compilation : release, no optimization flags
-N = 2000
-
-TEST2
-same, with
-rho domain = default FN
-rho image = nice
-mesh depth = 5
-N= 1000
-
-
-Results:
-Before changing to Lifted Graph, on Brice's laptop:
-TEST1 ~3.55
-TEST2 ~6.46
-
-For the record: before changing to Lifted Graph,
+For the record, after going to lift graph, speed (release build) was multiplied by approximately 2.
 
 Optimisation :
 -faire un truc semblable à super_compute_radii for CP. en tout cas envsiager de revenir à une méthode de flot où on choisit le pas.
--expérimentalement: 2/3 du temps est passé dans convexoid, 1/3 dans evaulate rep. Déjà la partie dans evaluate rep peut être éliminée totalement en le faisant une fois pour toutes.
+- utiliser le profiler
+
+
+
+J'ai réussi à faire les calculs, Nicolas avait raison : le centroïde minimise la somme pondérée des cosinus hyperboliques des distances
+(pas de facteur 2, pas de carré, exactement ch(distance)))

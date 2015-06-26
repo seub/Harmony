@@ -3,7 +3,7 @@
 #include "h2mesh.h"
 
 
-void LiftedGraph::cloneCopyAssignImpl(const std::shared_ptr<const LiftedGraph> &other)
+void LiftedGraph::cloneCopyAssignImpl(const LiftedGraph *other)
 {
     Gamma = other->Gamma;
     nbBoundaryPoints = other->nbBoundaryPoints;
@@ -14,7 +14,7 @@ void LiftedGraph::cloneCopyAssignImpl(const std::shared_ptr<const LiftedGraph> &
     boundaryPointsPartnersIndices = other->boundaryPointsPartnersIndices;
 }
 
-void LiftedGraph::cloneCopyAssign(const std::shared_ptr<const LiftedGraph> &other)
+void LiftedGraph::cloneCopyAssign(const LiftedGraph *other)
 {
     cloneCopyAssignImpl(other);
 }
@@ -31,18 +31,18 @@ LiftedGraph::LiftedGraph(const LiftedGraph &other)
     boundaryPointsPartnersIndices = other.boundaryPointsPartnersIndices;
 }
 
-LiftedGraph::LiftedGraph(const LiftedGraph &other, const copyConstructorKey &) : LiftedGraph(other)
+/*LiftedGraph::LiftedGraph(const LiftedGraph &other, const copyConstructorKey &) : LiftedGraph(other)
 {
+}*/
+
+LiftedGraph* LiftedGraph::cloneCopyConstructImpl() const
+{
+    return new LiftedGraph(*this);
 }
 
-std::shared_ptr<LiftedGraph> LiftedGraph::cloneCopyConstructImpl() const
+std::unique_ptr<LiftedGraph> LiftedGraph::cloneCopyConstruct() const
 {
-    return std::make_shared<LiftedGraph>(*this, copyConstructorKey());
-}
-
-std::shared_ptr<LiftedGraph> LiftedGraph::cloneCopyConstruct() const
-{
-    return cloneCopyConstructImpl();
+    return std::unique_ptr<LiftedGraph>(cloneCopyConstructImpl());
 }
 
 
@@ -72,17 +72,17 @@ void LiftedGraph::resetNeighborsWeights(std::vector<std::vector<double> > &newNe
 
 
 template <typename Point, typename Map>
-void LiftedGraphFunction<Point, Map>::cloneCopyAssignImpl(const std::shared_ptr<const LiftedGraph> &other)
+void LiftedGraphFunction<Point, Map>::cloneCopyAssignImpl(const LiftedGraph *other)
 {
     LiftedGraph::cloneCopyAssignImpl(other);
-    std::shared_ptr< const LiftedGraphFunction<Point, Map> > otherCast = std::static_pointer_cast<const LiftedGraphFunction<Point, Map>, const LiftedGraph>(other);
+    const LiftedGraphFunction<Point, Map> *otherCast = static_cast<const LiftedGraphFunction<Point, Map>*>(other);
     rho = otherCast->rho;
     boundaryPointsNeighborsPairingsValues = otherCast->boundaryPointsNeighborsPairingsValues;
     values = otherCast->values;
 }
 
 template <typename Point, typename Map>
-void LiftedGraphFunction<Point, Map>::cloneCopyAssign(const std::shared_ptr< const LiftedGraphFunction<Point, Map> > &other)
+void LiftedGraphFunction<Point, Map>::cloneCopyAssign(const LiftedGraphFunction<Point, Map> *other)
 {
     cloneCopyAssignImpl(other);
 }
@@ -98,22 +98,22 @@ LiftedGraphFunction<Point, Map>::LiftedGraphFunction(const LiftedGraphFunction<P
 }
 
 
-template <typename Point, typename Map>
+/*template <typename Point, typename Map>
 LiftedGraphFunction<Point, Map>::LiftedGraphFunction(const LiftedGraphFunction<Point, Map> &other, const LiftedGraph::copyConstructorKey &) : LiftedGraphFunction(other)
 {
 
+}*/
+
+template <typename Point, typename Map>
+std::unique_ptr< LiftedGraphFunction<Point, Map> > LiftedGraphFunction<Point, Map>::cloneCopyConstruct() const
+{
+    return std::unique_ptr<LiftedGraphFunction<Point, Map> >(static_cast<LiftedGraphFunction<Point, Map>*>(cloneCopyConstructImpl()));
 }
 
 template <typename Point, typename Map>
-std::shared_ptr< LiftedGraphFunction<Point, Map> > LiftedGraphFunction<Point, Map>::cloneCopyConstruct() const
+LiftedGraph* LiftedGraphFunction<Point, Map>::cloneCopyConstructImpl() const
 {
-    return std::static_pointer_cast<LiftedGraphFunction<Point, Map>, LiftedGraph>(cloneCopyConstructImpl());
-}
-
-template <typename Point, typename Map>
-std::shared_ptr<LiftedGraph> LiftedGraphFunction<Point, Map>::cloneCopyConstructImpl() const
-{
-    return std::make_shared<LiftedGraphFunction>(*this, copyConstructorKey());
+    return new LiftedGraphFunction(*this);
 }
 
 
@@ -221,10 +221,11 @@ void LiftedGraphFunction<Point, Map>::resetValues(const std::vector<Point> &newV
 
 
 template <typename Point, typename Map>
-void LiftedGraphFunctionTriangulated<Point, Map>::cloneCopyAssignImpl(const std::shared_ptr<const LiftedGraph> &other)
+void LiftedGraphFunctionTriangulated<Point, Map>::cloneCopyAssignImpl(const LiftedGraph *other)
 {
     LiftedGraphFunction<Point, Map>::cloneCopyAssignImpl(other);
-    std::shared_ptr< const LiftedGraphFunctionTriangulated<Point, Map> > otherCast = std::static_pointer_cast<const LiftedGraphFunctionTriangulated<Point, Map>, const LiftedGraph>(other);
+
+    const LiftedGraphFunctionTriangulated<Point, Map> *otherCast = static_cast<const LiftedGraphFunctionTriangulated<Point, Map>*>(other);
     depth = otherCast->depth;
     subdivisions = otherCast->subdivisions;
     subdivisionsPointsIndicesInValues = otherCast->subdivisionsPointsIndicesInValues;
@@ -232,7 +233,7 @@ void LiftedGraphFunctionTriangulated<Point, Map>::cloneCopyAssignImpl(const std:
 }
 
 template <typename Point, typename Map>
-void LiftedGraphFunctionTriangulated<Point, Map>::cloneCopyAssign(const std::shared_ptr<const LiftedGraphFunctionTriangulated<Point, Map>> &other)
+void LiftedGraphFunctionTriangulated<Point, Map>::cloneCopyAssign(const LiftedGraphFunctionTriangulated<Point, Map> *other)
 {
     cloneCopyAssignImpl(other);
 }
@@ -248,23 +249,23 @@ LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(con
     triangles = other.triangles;
 }
 
-template <typename Point, typename Map>
+/*template <typename Point, typename Map>
 LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(const LiftedGraphFunctionTriangulated<Point, Map> &other,
                                                                              const LiftedGraph::copyConstructorKey &) : LiftedGraphFunctionTriangulated(other)
 {
 
+}*/
+
+template <typename Point, typename Map>
+std::unique_ptr<LiftedGraphFunctionTriangulated<Point, Map> > LiftedGraphFunctionTriangulated<Point, Map>::cloneCopyConstruct() const
+{
+    return std::unique_ptr< LiftedGraphFunctionTriangulated<Point, Map> >(static_cast<LiftedGraphFunctionTriangulated<Point, Map>*>(cloneCopyConstructImpl()));
 }
 
 template <typename Point, typename Map>
-std::shared_ptr< LiftedGraphFunctionTriangulated<Point, Map> > LiftedGraphFunctionTriangulated<Point, Map>::cloneCopyConstruct() const
+LiftedGraph* LiftedGraphFunctionTriangulated<Point, Map>::cloneCopyConstructImpl() const
 {
-    return std::static_pointer_cast<LiftedGraphFunctionTriangulated<Point, Map>, LiftedGraph>(cloneCopyConstructImpl());
-}
-
-template <typename Point, typename Map>
-std::shared_ptr<LiftedGraph> LiftedGraphFunctionTriangulated<Point, Map>::cloneCopyConstructImpl() const
-{
-    return std::make_shared<LiftedGraphFunctionTriangulated>(*this, LiftedGraph::copyConstructorKey());
+    return new LiftedGraphFunctionTriangulated<Point, Map>(*this);
 }
 
 
@@ -308,12 +309,46 @@ std::vector<uint> LiftedGraphFunctionTriangulated<Point, Map>::getSteinerWeights
     for (auto fullVertexIndex : fullVerticesIndices)
     {
         nextVertexIndex = fullVertexIndex;
-        weightsOut.push_back(nextVertexIndex - currentVertexIndex - 1);
+        weightsOut.push_back((nextVertexIndex-currentVertexIndex)/Tools::exponentiation(2, this->depth) - 1);
         currentVertexIndex = nextVertexIndex;
     }
-    weightsOut.push_back(this->nbBoundaryPoints - currentVertexIndex - 1);
+    weightsOut.push_back((this->nbBoundaryPoints-currentVertexIndex)/Tools::exponentiation(2, this->depth) - 1);
 
     return weightsOut;
+}
+
+template <typename Point, typename Map>
+std::vector<Point> LiftedGraphFunctionTriangulated<Point, Map>::getFirstVertexOrbit() const
+{
+    std::vector<uint> orbitIndices = this->boundaryPointsPartnersIndices.front();
+    orbitIndices.push_back(0);
+    std::sort(orbitIndices.begin(), orbitIndices.end());
+
+    std::vector<Point> out;
+    out.reserve(orbitIndices.size());
+    for (auto index : orbitIndices)
+    {
+        out.push_back(this->values[index]);
+    }
+    return out;
+}
+
+template <typename Point, typename Map>
+double LiftedGraphFunctionTriangulated<Point, Map>::getMinEdgeLengthForRegularTriangulation() const
+{
+    std::vector<double> bigTrianglesSidelengths;
+    bigTrianglesSidelengths.reserve(3*subdivisions.size());
+
+    Point A, B, C;
+    for (const auto &subdivision : subdivisions)
+    {
+        subdivision.getBigTriangle(A, B, C);
+        bigTrianglesSidelengths.push_back(Point::distance(A, B));
+        bigTrianglesSidelengths.push_back(Point::distance(B, C));
+        bigTrianglesSidelengths.push_back(Point::distance(C, A));
+    }
+
+    return (*std::min_element(bigTrianglesSidelengths.begin(), bigTrianglesSidelengths.end()))/(Tools::exponentiation(2, depth));
 }
 
 
@@ -372,7 +407,7 @@ std::vector< std::vector<Point> > LiftedGraphFunctionTriangulated<Point, Map>::g
     for (const auto & indices : subdivisionsPointsIndicesInValues)
     {
         m = 0;
-        for (i=0; i<L - 1; i++)
+        for (i=0; i<L-1; i++)
         {
             m += i;
             for (j=0; j<=i; j++)
@@ -382,6 +417,51 @@ std::vector< std::vector<Point> > LiftedGraphFunctionTriangulated<Point, Map>::g
                 cIndex = indices.at(m + j + i + 2);
                 out.push_back({this->values[aIndex], this->values[bIndex], this->values[cIndex]});
             }
+        }
+    }
+
+    return out;
+}
+
+template <typename Point, typename Map>
+std::vector< std::vector<Point> > LiftedGraphFunctionTriangulated<Point, Map>::getAllTriangles() const
+{
+    std::vector< std::vector<Point> > out;
+    uint aIndex, bIndex, cIndex;
+    uint L = TriangularSubdivision<Point>::nbLines(depth);
+    uint i, j, m = 0;
+    out.reserve((subdivisions.size()*(L-1)*L)/2);
+
+
+    for (const auto & indices : subdivisionsPointsIndicesInValues)
+    {
+        m = 0;
+
+        aIndex = indices.at(0);
+        bIndex = indices.at(1);
+        cIndex = indices.at(2);
+        out.push_back({this->values[aIndex], this->values[bIndex], this->values[cIndex]});
+
+        for (i=1; i!=L-1; ++i)
+        {
+            m += i;
+            for (j=0; j!=i; ++j)
+            {
+                aIndex = indices.at(m + j);
+                bIndex = indices.at(m + j + i + 1);
+                cIndex = indices.at(m + j + i + 2);
+                out.push_back({this->values[aIndex], this->values[bIndex], this->values[cIndex]});
+
+                aIndex = indices.at(m + j);
+                cIndex = indices.at(m + j + i + 2);
+                bIndex = indices.at(m + j + 1);
+                out.push_back({this->values[aIndex], this->values[bIndex], this->values[cIndex]});
+            }
+
+            aIndex = indices.at(m + j);
+            bIndex = indices.at(m + j + i + 1);
+            cIndex = indices.at(m + j + i + 2);
+            out.push_back({this->values[aIndex], this->values[bIndex], this->values[cIndex]});
         }
     }
 
@@ -402,6 +482,22 @@ std::vector<H2Triangle> LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::ge
     }
     return out;
 }
+
+template <>
+std::vector<H2Triangle> LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::getAllH2Triangles() const
+{
+    std::vector< std::vector<H2Point> > triplesOfPoints = getAllTriangles();
+
+    std::vector<H2Triangle> out;
+    out.reserve(triplesOfPoints.size());
+
+    for (const auto &tripleOfPoints : triplesOfPoints)
+    {
+        out.push_back(H2Triangle(tripleOfPoints[0], tripleOfPoints[1], tripleOfPoints[2]));
+    }
+    return out;
+}
+
 
 
 template <>
@@ -434,17 +530,6 @@ bool LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::triangleContaining(co
 template <>
 void LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::rearrangeOrderForConstructFromH2Mesh(std::vector<uint> newIndices)
 {
-    clock_t t0 = clock();
-
-    assert(newIndices.size() == nbPoints);
-    assert(!Tools::containsDuplicates(newIndices));
-    for (auto u : newIndices)
-    {
-        assert(u < nbPoints);
-    }
-
-    clock_t t1 = clock();
-
     std::vector< std::vector<uint> > newNeighborsIndices(nbPoints), newBoundaryPointsPartnersIndices(nbBoundaryPoints), newSubdivisionsPointsIndicesInValues(subdivisions.size());
     std::vector< std::vector<Word> > newBoundaryPointsNeighborsPairings(nbBoundaryPoints);
     std::vector< std::vector<double> > newNeighborsWeights(nbPoints);
@@ -481,16 +566,12 @@ void LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::rearrangeOrderForCons
     this->boundaryPointsPartnersIndices = newBoundaryPointsPartnersIndices;
     this->boundaryPointsNeighborsPairings = newBoundaryPointsNeighborsPairings;
     this->subdivisionsPointsIndicesInValues = newSubdivisionsPointsIndicesInValues;
-
-    clock_t t2 = clock();
-
-    std::cout << "time to do rearrange: " << (t2-t0)*1.0/CLOCKS_PER_SEC << "s, including " << (t2-t1)*1.0/CLOCKS_PER_SEC << "s for verifications on the permutation" << std::endl;
 }
 
 template <>
 void LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::constructFromH2Mesh(const H2Mesh &mesh)
 {
-    clock_t t0 = clock();
+    //clock_t t0 = clock();
 
     uint nbInteriorPoints = mesh.regularPoints.size() + mesh.cutPoints.size();
     uint nbBoundaryPoints = mesh.boundaryPoints.size() + mesh.vertexPoints.size() + mesh.steinerPoints.size();
@@ -576,6 +657,7 @@ void LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::constructFromH2Mesh(c
     this->subdivisionsPointsIndicesInValues = mesh.meshIndicesInSubdivisions;
 
 
+    //clock_t a = clock();
     std::vector<uint> newIndices(nbPoints);
     std::vector<uint> boundaryPointsIndices = mesh.exteriorSidesIndices;
     assert(mesh.exteriorSidesIndices.size() == nbBoundaryPoints);
@@ -589,7 +671,7 @@ void LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::constructFromH2Mesh(c
         newIndices[i]= i + nbBoundaryPoints;
     }
     rearrangeOrderForConstructFromH2Mesh(newIndices);
-
+    //clock_t b = clock();
 
 
     this->boundaryPointsNeighborsPairingsValues.resize(nbBoundaryPoints);
@@ -597,17 +679,18 @@ void LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::constructFromH2Mesh(c
     this->refreshBoundaryPointsNeighborsPairingsValues();
     refreshValuesFromSubdivisions();
 
-    clock_t t1 = clock();
-    std::cout << "time to generate LiftedGraphFunctionTriangulated from H2Mesh: " << (t1 - t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+    //clock_t t1 = clock();
+    //std::cout << "Time to generate graph from mesh: " << 0.001*int(1000*(t1 - t0)*1.0/CLOCKS_PER_SEC)
+    //          << "s (including "<< 0.001*int(1000*(b - a)*1.0/CLOCKS_PER_SEC) << "s to permute points), out of ";
 }
 
 template <>
 LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::LiftedGraphFunctionTriangulated(const GroupRepresentation<H2Isometry> &rhoDomain, uint depth)
 {
-    clock_t t0 = clock();
+    //clock_t t0 = clock();
     constructFromH2Mesh(H2Mesh(rhoDomain, depth));
-    clock_t t1 = clock();
-    std::cout << "time to generate LiftedGraphFunctionTriangulated including mesh: " << (t1 - t0)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+    //clock_t t1 = clock();
+    //std::cout << 0.001*int(1000*(t1 - t0)*1.0/CLOCKS_PER_SEC) << "s total time including construction of mesh" << std::endl;
 }
 
 template <typename Point, typename Map>
@@ -622,6 +705,7 @@ LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(con
     this->boundaryPointsNeighborsPairings = domainFunction.boundaryPointsNeighborsPairings;
     this->boundaryPointsPartnersIndices = domainFunction.boundaryPointsPartnersIndices;
     this->rho = rhoImage;
+    this->boundaryPointsNeighborsPairingsValues.resize(this->nbBoundaryPoints);
     this->refreshBoundaryPointsNeighborsPairingsValues();
     this->depth = domainFunction.depth;
     this->triangles = domainFunction.triangles;
@@ -635,8 +719,8 @@ LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(con
 
     std::vector<Point> vertexImages = rhoImage.generateFundamentalDomain().getVertices();
     H2SteinerPolygon SteinerPolygonImage(vertexImages, getSteinerWeights());
-
     std::vector<Point> polygonVerticesValues = SteinerPolygonImage.getFullPolygon().getVertices();
+    this->values.resize(this->nbPoints);
     initializePiecewiseLinear(polygonVerticesValues);
 }
 
@@ -644,7 +728,7 @@ LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(con
 
 template <typename Point, typename Map>
 LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(const GroupRepresentation<H2Isometry> &rhoDomain,
-                                                                                      const GroupRepresentation<Map> &rhoImage, uint depth) :
+                                                                             const GroupRepresentation<Map> &rhoImage, uint depth) :
     LiftedGraphFunctionTriangulated(LiftedGraphFunctionTriangulated(rhoDomain, depth), rhoImage)
 {
 }

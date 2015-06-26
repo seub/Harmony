@@ -441,12 +441,12 @@ void H2PolygonTriangulater::triangulate()
     sortTriangles();
     completeCutsAndSides();
 
-
+/*
     // Improving the triangulation by searching for flips:
     while (attemptFlip()) {}
     sortTriangles();
     completeCutsAndSides();
-
+*/
 }
 
 std::vector<H2Triangle> H2PolygonTriangulater::getTriangles() const

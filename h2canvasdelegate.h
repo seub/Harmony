@@ -3,13 +3,6 @@
 
 #include "tools.h"
 #include "canvasdelegate.h"
-#include "h2point.h"
-#include "h2geodesic.h"
-#include "h2polygon.h"
-#include "grouprepresentation.h"
-#include "h2buffer.h"
-#include "h2mesh.h"
-#include "h2meshfunction.h"
 
 class H2CanvasDelegate : public CanvasDelegate
 {
@@ -22,107 +15,33 @@ public:
     virtual ~H2CanvasDelegate() {}
 
 protected:
-    H2CanvasDelegate(uint sizeX, uint sizeY, ActionHandler* handler = 0);
+    H2CanvasDelegate(uint sizeX, uint sizeY, bool leftCanvas = false, bool rightCanvas = false, ActionHandler *handler = nullptr);
 
     H2Point pixelToH2coordinate(int x, int y) const;
-    void drawComplexPointInDiskModel(const Complex &z, const QColor &color = "black", int width = 1, bool back = true);
+
     void drawH2Point(const H2Point &p, const QColor &color = "black", int width = 4, bool back = true);
     void drawH2Geodesic(const H2Geodesic &L, const QColor &color = "black", int width = 1, bool back = true);
-    void drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color = "black", int width = 2, bool back = true);
-    void drawH2Triangle(const H2Triangle &triangle, const QColor &color, int width, bool back = true);
+    void drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color = "black", int width = 1, bool back = true);
+    void drawStraightH2GeodesicArc(const H2GeodesicArc &L, const QColor &color = "black", int width = 1, bool back = true);
+    void drawH2Triangle(const H2Triangle &triangle, const QColor &color = "black", int width = 1, bool back = true);
+    void drawStraightFilledH2Triangle(const H2Triangle &triangle, bool back = true);
 
 
-    void setIsMeshEmpty(bool isMeshEmpty);
-    void setIsRhoEmpty(bool isRhoEmpty);
-    void setIsFunctionEmpty(bool isFunctionEmpty);
+    virtual void redrawTop() override;
+    virtual void resetView() override;
+    virtual void enter() override;
+    virtual void leave() override;
+    virtual void redrawBack() override;
 
-    void refreshTranslates();
-    void refreshTranslates(bool aroundVertex, bool aroundVertices);
-
-    virtual void decideHighlighting(const H2Point &) {}
-    void getMeshIndexHighlighted(bool &highlighted, uint &meshIndexHighted) const;
-    void getMeshTriangleIndicesHighlighted(bool &highlighted, uint &index1, uint &index2, uint &index3) const;
-    virtual void decideHighlightingMeshPoints(bool, bool&, uint) {}
-    virtual void decideHighlightingTriangle(bool, bool&, uint, uint, uint) {}
-    void resetHighlighted();
-    void setShowTranslates(bool showTranslatesAroundVertex, bool showTranslatesAroundAllVertices);
-    void getShowTranslates(bool &aroundVertexOut, bool &aroundVerticesOut);
-
-    void redrawBuffer(bool back = true, bool top = true);
-    void redrawMeshOrFunction();
-    void redrawBufferBack();
-    void redrawBufferTop();
-    virtual void subRedrawBufferBack() {}
-    virtual void subRedrawBufferTop() {}
-    virtual void subResetView();
-
-    void mousePress (QMouseEvent * mouseEvent) override final;
-    void mouseMove(QMouseEvent * mouseEvent) override final;
-    void mouseRelease(QMouseEvent *) override final;
-    void keyPress(QKeyEvent * keyEvent) override final;
-    virtual void subMouseMove(QMouseEvent *) {}
-    virtual void subKeyPress(QKeyEvent *) {}
-    void enter() override final;
-    void leave() override final;
-
-
-    bool mobiusing;
-
-    H2Buffer buffer;
     H2Isometry mobius;
+
+    virtual void mousePress (QMouseEvent * mouseEvent) override;
+    virtual void mouseMove(QMouseEvent * mouseEvent) override;
+    virtual void mouseRelease(QMouseEvent *) override;
+
+private:
+    bool mobiusing;
     H2Isometry savedMobius;
-    bool isTriangleHighlighted;
-    uint triangleMeshIndex1, triangleMeshIndex2, triangleMeshIndex3, meshIndexHighlighted;
-
-    bool arePointsHighlightedRed;
-    bool arePointsHighlightedGreen;
-    bool arePointsHighlightedBlue;
-    bool showTranslatesAroundVertex, showTranslatesAroundAllVertices;
-};
-
-
-
-class H2CanvasDelegateDomain : public H2CanvasDelegate
-{
-    friend class Canvas;
-    friend class ActionHandler;
-
-public:
-    DelegateType getDelegateType() const override final {return DelegateType::H2DELEGATEDOMAIN;}
-
-private:
-    H2CanvasDelegateDomain(uint sizeX, uint sizeY, ActionHandler *handler = 0);
-
-    void refreshMesh();
-
-    void decideHighlighting(const H2Point &pointUnderMouse) override final;
-    void decideHighlightingMeshPoints(bool highlighted, bool &update, uint meshIndexHighlighted) override final;
-    void decideHighlightingTriangle(bool highlighted, bool& update, uint triangleMeshIndex1, uint triangleMeshIndex2, uint triangleMeshIndex3) override final;
-    void subRedrawBufferBack() override final;
-    void subRedrawBufferTop() override final;
-    void subMouseMove(QMouseEvent * mouseEvent) override final;
-};
-
-class H2CanvasDelegateTarget : public H2CanvasDelegate
-{
-    friend class Canvas;
-    friend class ActionHandler;
-
-public:
-     DelegateType getDelegateType() const override final {return DelegateType::H2DELEGATETARGET;}
-
-private:
-    H2CanvasDelegateTarget(int sizeX, int sizeY, ActionHandler *handler = 0);
-
-    void refreshFunction();
-
-    void decideHighlighting(const H2Point &pointUnderMouse) override final;
-    void decideHighlightingMeshPoints(bool highlighted, bool &update, uint meshIndexHighlighted) override final;
-    void decideHighlightingTriangle(bool highlighted, bool &update, uint triangleMeshIndex1, uint triangleMeshIndex2, uint triangleMeshIndex3) override final;
-    void subRedrawBufferBack() override final;
-    void subRedrawBufferTop() override final;
-    void subMouseMove(QMouseEvent *mouseEvent) override final;
-    void subKeyPress(QKeyEvent *keyEvent) override final;
 };
 
 

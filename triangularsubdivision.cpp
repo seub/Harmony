@@ -301,7 +301,7 @@ template <> bool TriangularSubdivision<H2Point>::triangleContaining(const H2Poin
             }
             else
             {
-                qDebug() << "Warning in H2TriangleSubdivision::getTriangleContaining: I could not find a smallest triangle";
+                //qDebug() << "Warning in H2TriangleSubdivision::getTriangleContaining: I could not find a smallest triangle";
                 return false;
             }
         }

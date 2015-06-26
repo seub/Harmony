@@ -6,15 +6,20 @@
 #include "tools.h"
 #include "grouprepresentation.h"
 #include "discreteheatflowiterator.h"
+#include "liftedgraph.h"
 
-template <typename Point, typename Map> class LiftedGraphFunctionTriangulated;
+template <typename Point, typename Map> class LiftedGraphFunctionTriangulated; class H2DiscreteFlowFactoryThread;
 
 template <typename Point, typename Map> class DiscreteHeatFlowFactory
 {
+    friend class ActionHandler;
+    friend class H2DiscreteFlowFactoryThread;
 
 public:
-    DiscreteHeatFlowFactory(const std::shared_ptr<LiftedGraphFunctionTriangulated<H2Point, H2Isometry> > &domainFunction,
-                            const std::shared_ptr<LiftedGraphFunctionTriangulated<Point, Map> > &imageFunction);
+    DiscreteHeatFlowFactory(GroupRepresentation<H2Isometry> *rhoDomain,
+                            GroupRepresentation<H2Isometry> *rhoImage,
+                            LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *domainFunction,
+                            LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *imageFunction);
     void setGenus(uint genus);
     void setMeshDepth(uint meshDepth);
     void setNiceRhoDomain();
@@ -28,10 +33,9 @@ public:
     void resetInitial();
     bool isDomainFunctionInitialized(uint &nbMeshPointsOut);
 
-    GroupRepresentation<H2Isometry> getRhoDomain() const;
-    GroupRepresentation<H2Isometry> getRhoImage() const;
-
-    void iterate(uint nbIterations=1);
+    double getSupError() const {return supError;}
+    void updateSupError();
+    double getTolerance() const;
 
     void run();
     void stopRunning();
@@ -45,6 +49,7 @@ private:
     void initializeRhoImage();
     void refreshImageFunction();
 
+
     uint genus, meshDepth;
 
     bool isGenusSet, isMeshDepthSet, isRhoDomainSet, isRhoImageSet;
@@ -52,13 +57,16 @@ private:
 
     std::vector<double> FNLengthsDomain, FNTwistsDomain, FNLengthsImage, FNTwistsImage;
 
-    GroupRepresentation<H2Isometry> rhoDomain;
-    GroupRepresentation<Map> rhoImage;
-
-    const std::shared_ptr< LiftedGraphFunctionTriangulated<H2Point, H2Isometry> > domainFunction;
-    const std::shared_ptr< LiftedGraphFunctionTriangulated<Point, Map> > initialImageFunction, imageFunction;
-    std::shared_ptr<DiscreteHeatFlowIterator<Point, Map> > iterator;
+    GroupRepresentation<H2Isometry> *rhoDomain;
+    GroupRepresentation<Map> *rhoImage;
+    LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *domainFunction;
+    std::unique_ptr<LiftedGraphFunctionTriangulated<Point, Map> > initialImageFunction;
+    LiftedGraphFunctionTriangulated<Point, Map> *imageFunction;
+    std::unique_ptr<DiscreteHeatFlowIterator<Point, Map> > iterator;
     uint nbIterations;
+    double minDomainEdgeLength, supError, tolerance;
+
+    H2DiscreteFlowFactoryThread *thread;
 };
 
 #endif // DISCRETEHEATFLOWFACTORY_H

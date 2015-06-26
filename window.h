@@ -4,7 +4,6 @@
 #include <QWidget>
 
 #include "tools.h"
-#include "equivariantharmonicmapsfactory.h"
 #include "canvascontainer.h"
 
 class QGridLayout; class QStatusBar; class QLabel;
@@ -21,7 +20,7 @@ class Window : public QWidget, public CanvasContainer
     friend class Canvas;
 
 public:
-    Window(ActionHandler* handler = nullptr);
+    Window(ActionHandler *handler = nullptr);
     Window() = delete;
     Window(const Window &) = delete;
     Window & operator =(Window) = delete;
@@ -40,13 +39,13 @@ private:
 
     Canvas *leftCanvas;
     Canvas *rightCanvas;
-    QGridLayout* layout;
-    InputMenu* inputMenu;
+    QGridLayout *layout;
+    InputMenu *inputMenu;
     DisplayMenu *displayMenu;
-    OutputMenu* outputMenu;
-    QStatusBar* statusBar;
-    QLabel* statusBarLabel;
-    TopMenu* topMenu;
+    OutputMenu *outputMenu;
+    QStatusBar *statusBar;
+    QLabel *statusBarLabel;
+    TopMenu *topMenu;
 };
 
 #endif // WINDOW_H

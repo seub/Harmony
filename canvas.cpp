@@ -4,30 +4,36 @@
 #include <QImage>
 #include <QWheelEvent>
 #include <QDebug>
-#include <QApplication>
 
 #include "h2canvasdelegate.h"
-#include "window.h"
+#include "h2canvasdelegateliftedgraph.h"
 #include "actionhandler.h"
+#include "window.h"
 #include "fenchelnielsenuser.h"
-#include "canvascontainer.h"
 
-Canvas::Canvas(DelegateType delegateType, Window *window, ActionHandler *handler) :
+
+
+Canvas::Canvas(DelegateType delegateType, Window *window, bool leftCanvas, bool rightCanvas, ActionHandler *handler) :
     container(window)
 {
     setParent(window);
     initialize();
 
     delegate = nullptr;
-    changeDelegate(delegateType, handler);
+    changeDelegate(delegateType, leftCanvas, rightCanvas, handler);
 }
 
-Canvas::Canvas(FenchelNielsenUser *user) : container(user)
+Canvas::Canvas(FenchelNielsenUser *fenchelNielsenUser) : container(fenchelNielsenUser)
 {
-    setParent(user);
+    setParent(fenchelNielsenUser);
     initialize();
 
-    delegate = new H2CanvasDelegate(width(), height());
+    delegate = new H2CanvasDelegateLiftedGraph(width(), height());
+}
+
+Canvas::~Canvas()
+{
+    delete delegate;
 }
 
 DelegateType Canvas::getDelegateType() const
@@ -45,33 +51,22 @@ void Canvas::initialize()
     setEnabled(true);
 }
 
-
-Canvas::~Canvas()
+void Canvas::changeDelegate(DelegateType delegateType, bool leftCanvas, bool rightCanvas, ActionHandler *handler)
 {
-    delete delegate;
-}
-
-void Canvas::changeDelegate(DelegateType delegateType, ActionHandler *handler)
-{
-
     delete delegate;
 
     switch(delegateType)
     {
     case DelegateType::GENERIC:
-        delegate = new CanvasDelegate(width(), height(), handler);
+        delegate = new CanvasDelegate(width(), height(), leftCanvas, rightCanvas, handler);
         break;
 
     case DelegateType::H2DELEGATE:
-        delegate = new H2CanvasDelegate(width(), height(), handler);
+        delegate = new H2CanvasDelegate(width(), height(), leftCanvas, rightCanvas, handler);
         break;
 
-    case DelegateType::H2DELEGATEDOMAIN:
-        delegate = new H2CanvasDelegateDomain(width(), height(), handler);
-        break;
-
-    case DelegateType::H2DELEGATETARGET:
-        delegate = new H2CanvasDelegateTarget(width(), height(), handler);
+    case DelegateType::H2DELEGATE_GRAPH:
+        delegate = new H2CanvasDelegateLiftedGraph(width(), height(), leftCanvas, rightCanvas, handler);
         break;
 
     case DelegateType::H3DELEGATE:
@@ -94,8 +89,7 @@ void Canvas::paintEvent(QPaintEvent *event)
 {
     //clock_t t0 = clock();
 
-
-    delegate->redrawBuffer(delegate->enableRedrawBufferBack, delegate->enableRedrawBufferTop);
+    delegate->redraw(delegate->enableRedrawBufferBack, delegate->enableRedrawBufferTop);
     delegate->enableRedrawBuffer(false, false);
 
     QPainter canvasPainter(this);
@@ -103,9 +97,9 @@ void Canvas::paintEvent(QPaintEvent *event)
     canvasPainter.drawImage(0, 0, *(delegate->getImageBack()));
     canvasPainter.drawImage(0, 0, *(delegate->getImageTop()));
 
-    if (getDelegateType() == DelegateType::H2DELEGATETARGET)
+    if (delegate->getSendEndRepaint())
     {
-        delegate->handler->processMessage(ActionHandlerMessage::END_TARGET_CANVAS_REPAINT);
+        delegate->handler->processMessage(ActionHandlerMessage::END_CANVAS_REPAINT);
     }
 
     //qDebug() << "Time spent painting canvas: " << (clock() -t0)*1.0/CLOCKS_PER_SEC;

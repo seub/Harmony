@@ -5,11 +5,11 @@
 #include <QGroupBox>
 
 #include "canvascontainer.h"
-#include "equivariantharmonicmapsfactory.h"
+#include "liftedgraph.h"
 
 class ActionHandler; class QLabel; class QDoubleSpinBox; class QPushButton; class QGridLayout; class Canvas;
 
-class FNselector; class FNmenu; class H2CanvasDelegate;
+class FNselector; class FNmenu; class H2CanvasDelegateLiftedGraph;
 
 class FenchelNielsenUser : public QWidget, public CanvasContainer
 {
@@ -35,7 +35,7 @@ public slots:
 
 private:
     void createWindow();
-    void createFactory();
+    void createDelegatePointers();
     void canvasResized();
     int menuWidth() const;
     void optimalSize(uint &outputWidth, uint &outputHeight) const;
@@ -48,13 +48,14 @@ private:
     QLabel* infoLabel;
     FNmenu* menu;
     Canvas *canvas;
-    H2CanvasDelegate *delegate;
+    H2CanvasDelegateLiftedGraph *delegate;
     int vertSpace;
 
     bool saveFNcoordinates;
-
-    EquivariantHarmonicMapsFactory factory;
     uint nbLengths;
+
+    GroupRepresentation<H2Isometry> rho;
+    LiftedGraphFunctionTriangulated<H2Point, H2Isometry> graph;
 };
 
 class FNselector : public QGroupBox

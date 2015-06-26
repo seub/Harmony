@@ -17,7 +17,7 @@ class InputMenu : public QGroupBox
     friend class ActionHandler;
 
 public:
-    enum SetRhoChoice {SET_RHO_CHOOSE, SET_RHO_NICE, SET_RHO_RANDOM, SET_RHO_FN};
+    enum SetRhoChoice {SET_RHO_CHOOSE, SET_RHO_RANDOM, SET_RHO_NICE, SET_RHO_FN};
 
     InputMenu() = delete;
     InputMenu(const InputMenu &) = delete;

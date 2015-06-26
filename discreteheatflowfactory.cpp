@@ -1,21 +1,22 @@
 #include "discreteheatflowfactory.h"
 
-
 #include "fenchelnielsenconstructor.h"
-#include "liftedgraph.h"
-
+#include "h2discreteflowfactorythread.h"
 
 template<typename Point, typename Map>
-DiscreteHeatFlowFactory<Point, Map>::DiscreteHeatFlowFactory(const std::shared_ptr< LiftedGraphFunctionTriangulated<H2Point, H2Isometry> > &domainFunction,
-                                                             const std::shared_ptr< LiftedGraphFunctionTriangulated<Point, Map> > &imageFunction) :
-    domainFunction(domainFunction), initialImageFunction(nullptr), imageFunction(imageFunction),
+DiscreteHeatFlowFactory<Point, Map>::DiscreteHeatFlowFactory(GroupRepresentation<H2Isometry> *rhoDomain,
+                                                             GroupRepresentation<H2Isometry> *rhoImage,
+                                                             LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *domainFunction,
+                                                             LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *imageFunction) :
+    rhoDomain(rhoDomain), rhoImage(rhoImage), domainFunction(domainFunction), initialImageFunction(nullptr), imageFunction(imageFunction),
     iterator(nullptr)
 {
     isGenusSet = false;
     isRhoDomainSet = false;
     isRhoImageSet = false;
     isMeshDepthSet = false;
-    stop = false;
+
+    tolerance = 0.0000000001;
 }
 
 template<typename Point, typename Map>
@@ -38,7 +39,7 @@ void DiscreteHeatFlowFactory<Point, Map>::setNiceRhoDomain()
     {
         throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::setNiceRhoDomain(): genus needs to be 2 for 'nice' representation"));
     }
-    rhoDomain.setNiceRepresentation();
+    rhoDomain->setNiceRepresentation();
     isRhoDomainSet = true;
     initializeRhoDomain();
 }
@@ -83,7 +84,7 @@ void DiscreteHeatFlowFactory<Point, Map>::setNiceRhoImage()
     {
         throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::setNiceRhoImage(): genus needs to be 2"));
     }
-    rhoImage.setNiceRepresentation();
+    rhoImage->setNiceRepresentation();
 
     isRhoImageSet = true;
     initializeRhoImage();
@@ -117,7 +118,7 @@ void DiscreteHeatFlowFactory<Point, Map>::setRhoDomain(const std::vector<double>
     FNTwistsDomain = FNTwists;
 
     FenchelNielsenConstructor FN(FNLengths, FNTwists);
-    rhoDomain = FN.getRepresentation();
+    *rhoDomain = FN.getRepresentation();
     isRhoDomainSet = true;
 
     initializeRhoDomain();
@@ -137,7 +138,7 @@ void DiscreteHeatFlowFactory<Point, Map>::setRhoImage(const std::vector<double> 
     FNLengthsImage = FNLengths;
     FNTwistsImage = FNTwists;
     FenchelNielsenConstructor FN(FNLengths, FNTwists);
-    rhoImage = FN.getRepresentation();
+    *rhoImage = FN.getRepresentation();
 
     isRhoImageSet = true;
     initializeRhoImage();
@@ -156,18 +157,6 @@ void DiscreteHeatFlowFactory<Point, Map>::resetRhoImage()
 }
 
 template<typename Point, typename Map>
-GroupRepresentation<H2Isometry> DiscreteHeatFlowFactory<Point, Map>::getRhoDomain() const
-{
-    return rhoDomain;
-}
-
-template<typename Point, typename Map>
-GroupRepresentation<H2Isometry> DiscreteHeatFlowFactory<Point, Map>::getRhoImage() const
-{
-    return rhoImage;
-}
-
-template<typename Point, typename Map>
 void DiscreteHeatFlowFactory<Point, Map>::initializeDomainFunction()
 {
     if (!(isGenusSet && isRhoDomainSet && isMeshDepthSet))
@@ -175,7 +164,11 @@ void DiscreteHeatFlowFactory<Point, Map>::initializeDomainFunction()
         throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::initializeDomainFunction(): not ready to initialize domain function"));
     }
 
-    domainFunction->cloneCopyAssign(std::make_shared< LiftedGraphFunctionTriangulated<H2Point, H2Isometry> >(rhoDomain, meshDepth));
+    // I guess I should define a "clone move" in Lifted Graph for here
+    LiftedGraphFunctionTriangulated<Point, Map> tempDomainFunction(*rhoDomain, meshDepth);
+    domainFunction->cloneCopyAssign(&tempDomainFunction);
+
+    minDomainEdgeLength = domainFunction->getMinEdgeLengthForRegularTriangulation();
 
     if (isRhoImageSet)
     {
@@ -191,9 +184,8 @@ void DiscreteHeatFlowFactory<Point, Map>::initializeImageFunction()
         throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::initializeImageFunction: Factory not ready to image function"));
     }
 
-    initialImageFunction->cloneCopyAssign(std::make_shared< LiftedGraphFunctionTriangulated<Point, Map> >(*domainFunction, rhoImage));
-    imageFunction->cloneCopyAssign(initialImageFunction);
-    iterator = std::make_shared< DiscreteHeatFlowIterator<Point, Map> >(initialImageFunction);
+    initialImageFunction.reset(new LiftedGraphFunctionTriangulated<Point, Map>(*domainFunction, *rhoImage));
+    resetInitial();
 }
 
 template<typename Point, typename Map>
@@ -209,8 +201,8 @@ void DiscreteHeatFlowFactory<Point, Map>::resetInitial()
     {
         throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::resetInit: Factory not ready to reset initial"));
     }
-    imageFunction->cloneCopyAssign(initialImageFunction);
-    iterator = std::make_shared< DiscreteHeatFlowIterator<Point, Map> >(initialImageFunction);
+    imageFunction->cloneCopyAssign(initialImageFunction.get());
+    iterator.reset(new DiscreteHeatFlowIterator<Point, Map>(initialImageFunction.get()));
 }
 
 template<typename Point, typename Map>
@@ -234,25 +226,37 @@ bool DiscreteHeatFlowFactory<Point, Map>::isDomainFunctionInitialized(uint &nbMe
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::iterate(uint nbIterations)
+void DiscreteHeatFlowFactory<Point, Map>::updateSupError()
 {
-    if (!isReady())
-    {
-        throw(QString("Error in void DiscreteHeatFlowFactory<Point, Map>::iterate(): not ready"));
-    }
-    iterator->iterate(nbIterations);
-    refreshImageFunction();
+    supError = 2.0*iterator->updateSupDelta()/(minDomainEdgeLength*minDomainEdgeLength);
+}
+
+template<typename Point, typename Map>
+double DiscreteHeatFlowFactory<Point, Map>::getTolerance() const
+{
+    return tolerance;
 }
 
 template<typename Point, typename Map>
 void DiscreteHeatFlowFactory<Point, Map>::run()
 {
+    stop = false;
     nbIterations = 0;
     while(!stop)
     {
         iterator->iterate();
         ++nbIterations;
+
+        if ((nbIterations % 8)==0)
+        {
+            updateSupError();
+            if (supError < tolerance)
+            {
+                break;
+            }
+        }
     }
+    updateSupError();
     refreshImageFunction();
 }
 

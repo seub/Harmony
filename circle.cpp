@@ -37,7 +37,7 @@ bool Circle::intersectCircles(Circle &C1, Circle &C2, Complex &out1, Complex &ou
     {
         return false;
     }
-    double theta = acos((r2*r2 + norm(c1 - c2) - r1*r1) / (2.0*r2*abs(c1 -c2)));
+    double theta = acos((r2*r2 + norm(c1 - c2) - r1*r1) / (2.0*r2*std::abs(c1 -c2)));
     out1 = C2.pointAtAngle(arg(c1 - c2) + theta);
     out2 = C2.pointAtAngle(arg(c1 - c2) - theta);
     return true;

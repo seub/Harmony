@@ -82,8 +82,8 @@ H2Point H2Point::proportionalPoint(const H2Point &p1, const H2Point &p2, const d
 {
     // assert that 0 < s < 1
     Complex w1 = (p2.z - p1.z)/(1.0 - conj(p1.z)*p2.z);
-    double d = log ((1+abs(w1))/(1-abs(w1)));
-    Complex w2 = w1*(exp(s*d) - 1.0)/(abs(w1)*(exp(s*d) + 1.0));
+    double d = log ((1+std::abs(w1))/(1-std::abs(w1)));
+    Complex w2 = w1*(exp(s*d) - 1.0)/(std::abs(w1)*(exp(s*d) + 1.0));
 
     H2Point res;
     res.setDiskCoordinate((w2 + p1.z)/(1.0 + conj(p1.z)*w2));
@@ -101,7 +101,7 @@ double H2Point::tanHalfAngle(const H2Point &previous, const H2Point &point, cons
 {
     Complex u = (previous.z - point.z) / (1.0 - conj(point.z)*previous.z);
     Complex v = (next.z - point.z) / (1.0 - conj(point.z)*next.z);
-    Complex zed = v*conj(u) / abs(v*conj(u));
+    Complex zed = v*conj(u) / std::abs(v*conj(u));
     double x = real(zed), y = imag(zed);
     return (1-x)/y;
 }
@@ -227,7 +227,7 @@ void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std
     for(const auto & point : translatedNeighbors)
     {
         z = point.getDiskCoordinate();
-        d = abs(z);
+        d = std::abs(z);
         r = log((1.0+d)/(1.0-d));
         epsilon = ((epsilon < r) && epsilon > 0) ? epsilon : r;
         neighborsInTangentSpaceX.push_back(r*real(z)/d);

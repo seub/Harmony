@@ -5,10 +5,10 @@
 
 #include "tools.h"
 
-class MathsContainer; class H2CanvasDelegate; class EquivariantHarmonicMapsFactory; class Window; class Canvas;
+class MathsContainer; class H2CanvasDelegateLiftedGraph; class EquivariantHarmonicMapsFactory; class Window; class Canvas;
 class InputMenu; class DisplayMenu; class OutputMenu; class Canvas; class TopFactory; class QStatusBar;
 
-enum class ActionHandlerMessage {HIGHLIGHTED_LEFT, HIGHLIGHTED_RIGHT, END_TARGET_CANVAS_REPAINT, FINISHED_COMPUTING};
+enum class ActionHandlerMessage {HIGHLIGHTED_LEFT, HIGHLIGHTED_RIGHT, END_CANVAS_REPAINT, FINISHED_COMPUTING, TRIANGLES_REFERENCE_AREAS};
 
 class ActionHandler : public QObject
 {
@@ -20,7 +20,7 @@ public:
     ActionHandler(const ActionHandler &) = delete;
     ActionHandler & operator=(const ActionHandler &) = delete;
 
-    void processMessage(ActionHandlerMessage message, int parameter = 0);
+    void processMessage(ActionHandlerMessage message);
     void receiveFNcoordinates(const std::vector<double> &lengths, const std::vector<double> &twists);
     void discardReceiveFNcoordinates();
 
@@ -33,37 +33,40 @@ private slots:
     void outputResetButtonClicked();
     void computeButtonClicked();
     void stopButtonClicked();
-    void iterateButtonClicked();
 
     void resetViewButtonClicked();
     void showTranslatesClicked(int choice);
     void coloringClicked(int choice);
 
     void finishedComputing();
+
+public slots:
     void meshCreated(uint nbMeshPoints);
+    void showStatusBarMessage(const QString &message, int timeout = 0);
 
 private:
     ActionHandler();
     void resetBooleans();
 
     void setWindow(Window *window);
-    void setContainer(MathsContainer *container);
-    void setFactory();
+    void setContainer(MathsContainer *mathsContainer);
+    void setFactory(TopFactory *topFactory);
     void inputReset();
     void resetDelegatePointers();
 
     void setRhoNiceDomain();
-    void setRhoNiceTarget();
+    void setRhoNiceImage();
     void errorMessageForSetRhoNice();
     void setRhoRandomDomain();
-    void setRhoRandomTarget();
+    void setRhoRandomImage();
     void setRhoFNDomain();
-    void setRhoFNTarget();
+    void setRhoFNImage();
+
+    void goComputeMode();
+    void goBackNormalMode();
 
     void resetStatusBarMessage();
-
-    void updateFunction(bool updateTranslates);
-    void updateMesh(bool updateTranslates);
+    void updateCanvasGraph(bool left, bool right, bool updateFullTranslates);
     static void randomFNcoordinates(uint genus, std::vector<double> &lengthsOut, std::vector<double> &twistsOut);
     void setReadyToCompute();
     void setDisplayMenuReady(bool left);
@@ -73,20 +76,19 @@ private:
 
     Window *window;
     Canvas *leftCanvas, *rightCanvas;
-    H2CanvasDelegate *leftDelegate, *rightDelegate;
-    InputMenu* inputMenu;
-    OutputMenu* outputMenu;
-    DisplayMenu* displayMenu;
+    H2CanvasDelegateLiftedGraph *leftDelegate, *rightDelegate;
+    InputMenu *inputMenu;
+    OutputMenu *outputMenu;
+    DisplayMenu *displayMenu;
     QStatusBar *statusBar;
 
-    MathsContainer *container;
+    MathsContainer *mathsContainer;
     TopFactory *topFactory;
 
     bool isShowingLive;
-    bool showTranslatesAroundVertexLeft, showTranslatesAroundVerticesLeft;
-    bool showTranslatesAroundVertexRight, showTranslatesAroundVerticesRight;
+    bool showTranslatesAroundVertex, showTranslatesAroundVertices;
     bool isRhoDomainSet, isRhoImageSet;
-    bool expectingFNdomain, expectingFNtarget;
+    bool expectingFNdomain, expectingFNimage;
 };
 
 #endif // ACTIONHANDLER_H

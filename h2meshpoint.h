@@ -17,6 +17,7 @@ class H2MeshPoint
 
 public:
     H2MeshPoint() = delete;
+    virtual ~H2MeshPoint() {}
 
 protected:
     virtual bool isCutPoint() const {return false;}
