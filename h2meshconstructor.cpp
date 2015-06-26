@@ -706,8 +706,7 @@ bool H2MeshConstructor::checkNumberOfNeighbors() const
                              << "point has " << m->neighborsIndices.size() << " neighbors)" << std::endl
                              << m->neighborsIndices << std::endl
                              << "m is a boundary point? " << m->isBoundaryPoint() << std::endl
-                             << "m is a cut point? " << m->isCutPoint() << std::endl
-                             << "m has " << ((H2MeshBoundaryPoint*)m)->neighborsPairings.size() << " neighbors pairings" << std::endl;
+                             << "m is a cut point? " << m->isCutPoint() << std::endl;
                 throw(QString::fromStdString(errorMessage.str()));
                 ++failed;
             }

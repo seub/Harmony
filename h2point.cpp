@@ -370,6 +370,20 @@ H2Point H2Point::centroid(const std::vector<H2Point> &points, const std::vector<
     return out;
 }
 
+double H2Point::diameter(const std::vector<H2Point> &points)
+{
+    std::vector<double> distances;
+    distances.reserve(points.size()*points.size());
+    for (const auto & point1 : points)
+    {
+        for (const auto & point2 : points)
+        {
+            distances.push_back(distance(point1,point2));
+        }
+    }
+    return *std::max_element(distances.begin(),distances.end());
+}
+
 bool H2Point::compareAngles(const H2Point &p1, const H2Point &p2)
 {
     Complex z1 = p1.z - z;

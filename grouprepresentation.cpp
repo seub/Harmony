@@ -259,6 +259,71 @@ template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain
     return bestPolygon;
 }
 
+template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomainOptimization(double epsilon) const
+{
+
+    H2Point basePt, basePtEpsilonX, basePtEpsilonY;
+    Complex previous;
+    std::vector<H2Point> basePtImages, basePtImagesEpsilonX, basePtImagesEpsilonY;
+    std::vector<H2Isometry> fromVertexPairings;
+    fromVertexPairings = evaluateRepresentation(Gamma.getPairingsClosedSurfaceFromVertex());
+
+    basePt.setDiskCoordinate(Complex(0.0,0.0));
+    basePtEpsilonX.setDiskCoordinate(basePt.getDiskCoordinate()+Complex(epsilon,0.0));
+    basePtEpsilonY.setDiskCoordinate(basePt.getDiskCoordinate()+Complex(0.0,epsilon));
+
+    for(const auto & f : fromVertexPairings)
+    {
+        basePtImages.push_back(f*basePt);
+        basePtImagesEpsilonX.push_back(f*basePtEpsilonX);
+        basePtImagesEpsilonY.push_back(f*basePtEpsilonY);
+    }
+
+    double dfx,dfy, previousNorm;
+    dfx = (H2Point::diameter(basePtImagesEpsilonX) - H2Point::diameter(basePtImages))/epsilon;
+    dfy = (H2Point::diameter(basePtImagesEpsilonY) - H2Point::diameter(basePtImages))/epsilon;
+    previousNorm = dfx*dfx + dfy*dfy;
+    previous = basePt.getDiskCoordinate();
+
+    uint j=0;
+    while (previousNorm > .0001)
+    {
+        if (norm(previous-Complex(.01*dfx,.01*dfy))>1)
+        {
+            std::cout << "basePt is outside the disk" << std::endl;
+        }
+        basePt.setDiskCoordinate(previous-Complex(.1*dfx,.1*dfy));
+        basePtEpsilonX.setDiskCoordinate(basePt.getDiskCoordinate()+Complex(epsilon,0.0));
+        basePtEpsilonY.setDiskCoordinate(basePt.getDiskCoordinate()+Complex(0.0,epsilon));
+
+        basePtImages.clear();
+        basePtImagesEpsilonX.clear();
+        basePtImagesEpsilonY.clear();
+        for(const auto & f : fromVertexPairings)
+        {
+            basePtImages.push_back(f*basePt);
+            basePtImagesEpsilonX.push_back(f*basePtEpsilonX);
+            basePtImagesEpsilonY.push_back(f*basePtEpsilonY);
+        }
+
+        dfx = (H2Point::diameter(basePtImagesEpsilonX) - H2Point::diameter(basePtImages))/epsilon;
+        dfy = (H2Point::diameter(basePtImagesEpsilonY) - H2Point::diameter(basePtImages))/epsilon;
+
+        if(previousNorm < dfx*dfx + dfy*dfy)
+        {
+            std::cout << j << ": Suggestion of lack of convexity in generateFundamentalDomainOptimization ?" << std::endl;
+        }
+        previousNorm = dfx*dfx + dfy*dfy;
+        previous = basePt.getDiskCoordinate();
+        ++j;
+    }
+    std::cout << "Process took " << j << " steps" << std::endl;
+    std::cout << "dfx = " << dfx << std::endl;
+    std::cout << "dfy = " << dfy << std::endl;
+    std::cout << "previousNorm = " << previousNorm << std::endl;
+    return H2Polygon(basePtImages);
+}
+
 template <> DiscreteGroup GroupRepresentation<H2Isometry>::getDiscreteGroup() const
 {
     return Gamma;

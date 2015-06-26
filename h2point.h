@@ -29,6 +29,7 @@ public:
     static double angle(const H2Point &previous, const H2Point &point, const H2Point &next);
     static double tanHalfAngle(const H2Point &previous, const H2Point &point, const H2Point &next);
     static H2Point centroid(const std::vector<H2Point> & points, const std::vector<double> & weights);
+    static double diameter(const std::vector<H2Point> & points);
 
     void computeAffineWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
     void computeNaiveWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
@@ -38,6 +39,8 @@ public:
 private:
     Complex z;
 };
+
+
 
 
 #endif // H2POINT_H

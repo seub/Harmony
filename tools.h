@@ -155,6 +155,7 @@ template<typename T, typename F> std::vector<T> operator*(const F & f, std::vect
     return V;
 }
 
+/*
 template<typename T, typename F> std::vector<T> operator*(std::vector<T> V, const F & f)
 {
     for (auto &v : V)
@@ -162,7 +163,7 @@ template<typename T, typename F> std::vector<T> operator*(std::vector<T> V, cons
         v = v*f;
     }
     return V;
-}
+}*/
 
 
 #endif // TOOLS_H
