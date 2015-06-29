@@ -268,12 +268,12 @@ template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain
     fromVertexPairings = evaluateRepresentation(Gamma.getPairingsClosedSurfaceFromVertex());
     Complex previous;
 
-    basePt.setDiskCoordinate(Complex(0.1,0.0));
+    basePt.setDiskCoordinate(Complex(0.0,0.0));
     previous = basePt.getDiskCoordinate();
-    basePtEpsilonX.setDiskCoordinate(previous + Complex(epsilon,0.0));
-    basePtEpsilonY.setDiskCoordinate(previous + Complex(0.0,epsilon));
-    basePtEpsilonXMinus.setDiskCoordinate(previous - Complex(epsilon,0.0));
-    basePtEpsilonYMinus.setDiskCoordinate(previous - Complex(0.0,epsilon));
+    basePtEpsilonX = basePt.pushPointHorizonalEpsilon(epsilon);
+    basePtEpsilonY = basePt.pushPointVerticalEpsilon(epsilon);
+    basePtEpsilonXMinus = basePt.pushPointHorizontalMinusEpsilon(epsilon);
+    basePtEpsilonYMinus = basePt.pushPointVerticalMinusEpsilon(epsilon);
 
     for(const auto & f : fromVertexPairings)
     {
@@ -293,13 +293,11 @@ template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain
 
     while (previousNorm > .00000001)
     {
-        std::cout << basePt << std::endl;
-
         basePt.setDiskCoordinate(previous - stepSize*Complex(dfx,dfy));
-        basePtEpsilonX.setDiskCoordinate(basePt.getDiskCoordinate() + Complex(epsilon,0.0));
-        basePtEpsilonY.setDiskCoordinate(basePt.getDiskCoordinate() + Complex(0.0,epsilon));
-        basePtEpsilonXMinus.setDiskCoordinate(basePt.getDiskCoordinate() - Complex(epsilon,0.0));
-        basePtEpsilonYMinus.setDiskCoordinate(basePt.getDiskCoordinate() - Complex(0.0,epsilon));
+        basePtEpsilonX = basePt.pushPointHorizonalEpsilon(epsilon);
+        basePtEpsilonY = basePt.pushPointVerticalEpsilon(epsilon);
+        basePtEpsilonXMinus = basePt.pushPointHorizontalMinusEpsilon(epsilon);
+        basePtEpsilonYMinus = basePt.pushPointVerticalMinusEpsilon(epsilon);
 
         basePtImagesEpsilonX.clear();
         basePtImagesEpsilonY.clear();
@@ -338,7 +336,7 @@ template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain
     {
         basePtImages.push_back(f*basePt);
     }
-    std::cout << "basePt is a " << basePt << std::endl;
+    std::cout << "basePt is an " << basePt << std::endl;
     std::cout << "Final diameter = " << H2Point::diameter(basePtImages) << std::endl;
 
     return H2Polygon(basePtImages);

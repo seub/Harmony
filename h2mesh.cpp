@@ -7,7 +7,7 @@
 
 H2Mesh::H2Mesh(const GroupRepresentation<H2Isometry> &rho, uint depth) : rho(rho), depth(depth)
 {
-    fundamentalDomain = rho.generateFundamentalDomain();
+    fundamentalDomain = rho.generateFundamentalDomainOptimization();
     H2MeshConstructor(this);
 }
 
