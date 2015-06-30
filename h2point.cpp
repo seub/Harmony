@@ -57,6 +57,42 @@ void H2Point::setKleinCoordinate(Complex z)
     this->z = z / (1.0 + sqrt(1.0 - norm(z)));
 }
 
+H2Point H2Point::pushPointHorizonalEpsilon(double epsilon) const
+{
+    H2Point output;
+    H2Isometry A;
+    A.setDiskCoordinates(1,-getDiskCoordinate());
+    output.setDiskCoordinate(Complex(epsilon,0.0));
+    return A*output;
+}
+
+H2Point H2Point::pushPointHorizontalMinusEpsilon(double epsilon) const
+{
+    H2Point output;
+    H2Isometry A;
+    A.setDiskCoordinates(1,-getDiskCoordinate());
+    output.setDiskCoordinate(Complex(-epsilon,0.0));
+    return A*output;
+}
+
+H2Point H2Point::pushPointVerticalEpsilon(double epsilon) const
+{
+    H2Point output;
+    H2Isometry A;
+    A.setDiskCoordinates(1,-getDiskCoordinate());
+    output.setDiskCoordinate(Complex(0.0,epsilon));
+    return A*output;
+}
+
+H2Point H2Point::pushPointVerticalMinusEpsilon(double epsilon) const
+{
+    H2Point output;
+    H2Isometry A;
+    A.setDiskCoordinates(1,-getDiskCoordinate());
+    output.setDiskCoordinate(Complex(0.0,-epsilon));
+    return A*output;
+}
+
 double H2Point::distance(const H2Point & p1, const H2Point & p2)
 {
     double s;

@@ -23,6 +23,11 @@ public:
     void setHyperboloidProjection(Complex z);
     void setKleinCoordinate(Complex z);
 
+    H2Point pushPointVerticalEpsilon(double epsilon) const;
+    H2Point pushPointVerticalMinusEpsilon(double epsilon) const;
+    H2Point pushPointHorizonalEpsilon(double epsilon) const;
+    H2Point pushPointHorizontalMinusEpsilon(double epsilon) const;
+
     static double distance(const H2Point & p1, const H2Point & p2);
     static H2Point midpoint(const H2Point & p1, const H2Point & p2);
     static H2Point proportionalPoint(const H2Point & p1, const H2Point & p2, const double & s);

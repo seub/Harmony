@@ -13,6 +13,7 @@ H2PolygonTriangulater::H2PolygonTriangulater(const H2Polygon * const polygon) : 
     qDebug() << "min angle in polygon = " << minPolygonAngle;*/
 }
 
+
 double H2PolygonTriangulater::minAngleOfCutInSubpolygon(const std::vector<uint> & indices, uint cut1, uint cut2) const
 {
     std::vector<double> angles(4);
@@ -426,8 +427,8 @@ void H2PolygonTriangulater::completeCutsAndSides()
 
 void H2PolygonTriangulater::triangulate()
 {
-    //createSteinerPoints();
-    createSteinerPointsDetailed();
+    createSteinerPoints();
+    //createSteinerPointsDetailed();
 
     std::vector<uint> indices;
     uint i, N = fullPolygon.nbVertices();
@@ -632,6 +633,29 @@ bool H2PolygonTriangulater::sameSide(uint fullIndex1, uint fullIndex2) const
     return steinerPolygon.lieOnSameActualSide(fullIndex1, fullIndex2);
 }
 
+bool H2PolygonTriangulater::testQuadrilateralForFlipAngles(const std::vector<uint> &quadrilateralIndices) const
+{
+    //assert quadrilateralIndices.size()==4
+    double minAngle1, minAngle2;
+    minAngle1 = minAngleOfCutInSubpolygon(quadrilateralIndices,0,2);
+    minAngle2 = minAngleOfCutInSubpolygon(quadrilateralIndices,1,3);
+    return minAngle1 < minAngle2;
+}
+
+bool H2PolygonTriangulater::testQuadrilateralForFlipLengths(const std::vector<uint> &quadrilateralIndices) const
+{
+    //assert quadrilateralIndices.size()==4
+    double diagonalLength1, diagonalLength2;
+    H2Point p0, p1, p2, p3;
+    p0 = fullPolygon.getVertex(quadrilateralIndices[0]);
+    p1 = fullPolygon.getVertex(quadrilateralIndices[1]);
+    p2 = fullPolygon.getVertex(quadrilateralIndices[2]);
+    p3 = fullPolygon.getVertex(quadrilateralIndices[3]);
+    diagonalLength1 = H2Point::distance(p0,p2);
+    diagonalLength2 = H2Point::distance(p1,p3);
+    return diagonalLength2 < diagonalLength1;
+}
+
 bool H2PolygonTriangulater::attemptFlip()
 {
     // assert polygon is triangulated
@@ -640,13 +664,13 @@ bool H2PolygonTriangulater::attemptFlip()
     uint sharedIndex1, sharedIndex2, unsharedIndex1, unsharedIndex2, leftTriangleIndex, rightTriangleIndex, l=0;
     bool output=0;
     std::vector<uint> quadrilateralIndices;
-    double minAngle1,minAngle2;
     quadrilateralIndices.reserve(4);
     uint l1,l2,l3,k1,k2,k3;
     bool rightTriangleCheats=0;
 
     while (!output && l<cuts.size())
     {
+
         quadrilateralIndices.clear();
         sharedIndex1 = cuts[l].vertexIndex1;
         sharedIndex2 = cuts[l].vertexIndex2;
@@ -656,6 +680,7 @@ bool H2PolygonTriangulater::attemptFlip()
         T2 = triangles[rightTriangleIndex];
         T1.getVertices(sharedIndex1,unsharedIndex1,sharedIndex2);
         T2.getVertices(l1,l2,l3);
+
         if (l1==cuts[l].vertexIndex1)
         {
             rightTriangleCheats = 0;
@@ -676,10 +701,7 @@ bool H2PolygonTriangulater::attemptFlip()
         quadrilateralIndices.push_back(sharedIndex2);
         quadrilateralIndices.push_back(unsharedIndex2);
 
-        minAngle1 = minAngleOfCutInSubpolygon(quadrilateralIndices,0,2);
-        minAngle2 = minAngleOfCutInSubpolygon(quadrilateralIndices,1,3);
-
-        if (minAngle1 < minAngle2 && !sameSide(unsharedIndex1,unsharedIndex2))
+        if (testQuadrilateralForFlipAngles(quadrilateralIndices) && !sameSide(unsharedIndex1,unsharedIndex2))
         {
             getCutsFromTriangle(leftTriangleIndex,l1,l2,l3);
             getCutsFromTriangle(rightTriangleIndex,k1,k2,k3);

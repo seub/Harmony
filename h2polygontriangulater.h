@@ -90,7 +90,11 @@ private:
 
     void getCutsFromTriangle(uint triangleIndex, uint &cutIndex1, uint &cutIndex2, uint &cutIndex3) const;
     bool isSideTriangle(uint triangleIndex) const;
+
     bool attemptFlip();
+    bool testQuadrilateralForFlipAngles(const std::vector<uint> & quadrilateralIndices) const;
+    bool testQuadrilateralForFlipLengths(const std::vector<uint> & quadrilateralIndices) const;
+
 
     const H2Polygon * const polygon;
     bool orientation;
