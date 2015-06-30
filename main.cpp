@@ -1,5 +1,5 @@
 #include "mainapplication.h"
-#include "h2triangle.h"
+#include "h2polygontriangulater.h"
 #include "tools.h"
 #include "h2point.h"
 #include "fenchelnielsenconstructor.h"
@@ -15,12 +15,12 @@ int main(int argc, char *argv[])
     DiscreteGroup Gamma(S);
     GroupRepresentation<H2Isometry> rho(Gamma);
     std::vector<double> lengths, twists;
-    lengths.push_back(0.1);
-    lengths.push_back(4.0);
-    lengths.push_back(5.0);
+    lengths.push_back(2.0);
+    lengths.push_back(2.0);
+    lengths.push_back(2.0);
     twists.push_back(0.0);
-    twists.push_back(-5.0);
-    twists.push_back(3.0);
+    twists.push_back(0.0);
+    twists.push_back(0.0);
     FenchelNielsenConstructor F(lengths,twists);
     rho = F.getRepresentation();
 
@@ -35,20 +35,7 @@ int main(int argc, char *argv[])
     end = clock();
     std::cout << (end - start)*1.0/CLOCKS_PER_SEC << " seconds for generateFundmentalDomain" << std::endl;
 
-    std::cout << "Stupid basepoint = " << P2.getVertex(0) << std::endl;
-
-
-
-    std::vector<H2Isometry> vertexPairings = rho.evaluateRepresentation(Gamma.getPairingsClosedSurfaceFromVertex());
-    H2Point basePt;
-    basePt.setDiskCoordinate(Complex(0.0666667,-0.3));
-    std::vector<H2Point> images;
-    images.reserve(8);
-    for (const auto & A : vertexPairings)
-    {
-        images.push_back(A*basePt);
-    }
-    std::cout << "The diameter of an " << basePt << " = " << H2Point::diameter(images) << std::endl;
+    H2PolygonTriangulater T(&P1);
 */
 
 

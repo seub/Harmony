@@ -1,6 +1,7 @@
 #include "h2geodesic.h"
 #include "planarline.h"
 #include "circle.h"
+#include "h2isometry.h"
 
 H2Geodesic::H2Geodesic()
 {    
@@ -202,12 +203,12 @@ bool H2Geodesic::closestPoints(const H2Geodesic &L1, const H2Geodesic &L2, H2Poi
         return false;
     } else if (!H2Geodesic::commonPerpendicular(L1,L2,Lperp))
     {
-
         intersectionH2Geodesics(L1,L2,q);
         p2 = q;
         p1 = q;
         return true;
     }
+
     intersectionH2Geodesics(L1,Lperp,p1);
     intersectionH2Geodesics(L2,Lperp,p2);
     return true;
@@ -260,7 +261,7 @@ bool H2Geodesic::commonPerpendicular(const H2Geodesic &L1, const H2Geodesic &L2,
 double H2Geodesic::distanceGeodesics(const H2Geodesic &L1, const H2Geodesic &L2)
 {
     H2Point p1,p2;
-    if (!closestPoint(L1,L2,p2) || !closestPoint(L2,L1,p1))
+    if (!closestPoints(L1,L2,p1,p2))
     {
         return 0.0;
     }
@@ -325,12 +326,27 @@ void H2GeodesicArc::setPoints(const H2Point &p1, const H2Point &p2)
 
 H2Geodesic H2GeodesicArc::getGeodesic() const
 {
+    H2Geodesic L;
+    Complex endPt1,endPt2,z1,z2;
+    endPt1 = p1.getDiskCoordinate();
+    endPt2 = p2.getDiskCoordinate();
+    if (isLineSegmentInDiskModel())
+    {
+        if (std::abs(endPt1)>.00000001)
+        {
+            z1 = (1/std::abs(endPt1))*endPt1;
+            L.setEndpointsInDiskModel(z1,-z1);
+            return L;
+        }
+        z1 = (1/std::abs(endPt2))*endPt2;
+        L.setEndpointsInDiskModel(z1,-z1);
+        return L;
+    }
     Complex c = getCircleCenterInDiskModel();
     double r = getCircleRadiusInDiskModel();
-    Complex z1 = Complex(1.0, -r)/conj(c);
-    Complex z2 = Complex(1.0, r)/conj(c);
+    z1 = Complex(1.0, -r)/conj(c);
+    z2 = Complex(1.0, r)/conj(c);
 
-    H2Geodesic L;
     if (norm(z1 - p1.getDiskCoordinate()) < norm(z2 - p1.getDiskCoordinate()))
     {
         L.setEndpointsInDiskModel(z1, z2);
@@ -363,7 +379,7 @@ double H2GeodesicArc::length() const
 void H2GeodesicArc::getEndpoints(H2Point &output1, H2Point &output2) const
 {
     output1 = p1;
-    output2 = p2; 
+    output2 = p2;
 }
 
 Circle H2GeodesicArc::getCircleInDiskModel() const
@@ -519,6 +535,40 @@ bool H2GeodesicArc::shareEndpoint(const H2GeodesicArc &L1, const H2GeodesicArc &
     return (p1==p2)||(p1==q2)||(q1==p2)||(q1==q2);
 }
 
+bool H2GeodesicArc::pointOnGeodesicIsInsideArc(const H2Point &p) const
+{
+    // assert that p is on this->getGeodesic()
+    H2Isometry A;
+    Complex imageP2, imageP;
+    A.setDiskCoordinates(Complex(1.0,0.0),p1.getDiskCoordinate());
+    imageP2 = (A*p2).getDiskCoordinate();
+    imageP = (A*p).getDiskCoordinate();
+    return 0.0 <= real(imageP/imageP2) <= 1.0;
+}
+
+double H2GeodesicArc::distanceGeodesicArcs(const H2GeodesicArc &L1, const H2GeodesicArc &L2)
+{
+    H2Point p1,p2;
+    H2Isometry A;
+    Complex z1,z2,u;
+    if (!H2Geodesic::closestPoints(L1.getGeodesic(),L2.getGeodesic(),p1,p2))
+    {
+        throw(QString("Error in H2GeodesicArc::distanceGeodesicArcs: Two geodesic arcs have a common point at infinity"));
+    }
+    if (L1.pointOnGeodesicIsInsideArc(p1) && L2.pointOnGeodesicIsInsideArc(p2))
+    {
+        return H2Point::distance(p1,p2);
+    }
+    H2Point L1endpoint1,L1endpoint2,L2endpoint1,L2endpoint2;
+    L1.getEndpoints(L1endpoint1,L1endpoint2);
+    L2.getEndpoints(L2endpoint1,L2endpoint2);
+    std::vector<double> fourDistances;
+    fourDistances.push_back(H2Point::distance(L1endpoint1,L2endpoint1));
+    fourDistances.push_back(H2Point::distance(L1endpoint1,L2endpoint2));
+    fourDistances.push_back(H2Point::distance(L1endpoint2,L2endpoint1));
+    fourDistances.push_back(H2Point::distance(L1endpoint2,L2endpoint2));
+    return *std::min_element(fourDistances.begin(),fourDistances.end());
+}
 
 
 

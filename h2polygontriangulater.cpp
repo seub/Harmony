@@ -613,7 +613,7 @@ void H2PolygonTriangulater:: createSteinerPointsDetailed()
         {
             if (!H2GeodesicArc::shareEndpoint(side,otherSide))
             {
-                sideDistances.push_back(H2Geodesic::distanceGeodesics(side.getGeodesic(),otherSide.getGeodesic()));
+                sideDistances.push_back(H2GeodesicArc::distanceGeodesicArcs(side,otherSide));
             }
         }
         sideLengths.push_back(side.length());
@@ -693,7 +693,7 @@ bool H2PolygonTriangulater::attemptFlip()
         }
         else if (l1!=cuts[l].vertexIndex1 && l2!=cuts[l].vertexIndex1)
         {
-            std::cout << "ERROR in attemptFlip: A triangle abutting a cut doesn't have vertices compatible with the desired cut" << std::endl;
+            throw(QString("ERROR in H2PolygonTriangulater::attemptFlip: A triangle abutting a cut doesn't have vertices compatible with the desired cut"));
         }
 
         quadrilateralIndices.push_back(sharedIndex1);

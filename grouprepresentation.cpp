@@ -288,9 +288,6 @@ template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain
     dfy = (H2Point::diameter(basePtImagesEpsilonY) - H2Point::diameter(basePtImagesEpsilonYMinus))/(2*epsilon);
     previousNorm = dfx*dfx + dfy*dfy;
 
-
-    uint j=0;
-
     while (previousNorm > .00000001)
     {
         basePt.setDiskCoordinate(previous - stepSize*Complex(dfx,dfy));
@@ -317,27 +314,28 @@ template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain
 
         if(previousNorm < dfx*dfx + dfy*dfy)
         {
-            std::cout << j << ": Suggestion of lack of convexity in generateFundamentalDomainOptimization ?" << std::endl;
+            throw(QString("Error in generateFundamentalDomainOptimization: Suggestion of lack of convexity"));
         }
         previousNorm = dfx*dfx + dfy*dfy;
         previous = basePt.getDiskCoordinate();
         if (norm(previous)>1)
         {
-            std::cout << "basePt is outside the disk" << std::endl;
+            throw(QString("Error in generateFundamentalDomainOptimization: basePt is outside the unit disk"));
         }
-        ++j;
     }
-
-    std::cout << "Process took " << j << " steps" << std::endl;
-    std::cout << "dfx = " << dfx << std::endl;
-    std::cout << "dfy = " << dfy << std::endl;
 
     for(const auto & f : fromVertexPairings)
     {
         basePtImages.push_back(f*basePt);
     }
+
+    /*
+    std::cout << "Process took " << j << " steps" << std::endl;
+    std::cout << "dfx = " << dfx << std::endl;
+    std::cout << "dfy = " << dfy << std::endl;
     std::cout << "basePt is an " << basePt << std::endl;
     std::cout << "Final diameter = " << H2Point::diameter(basePtImages) << std::endl;
+    */
 
     return H2Polygon(basePtImages);
 }
