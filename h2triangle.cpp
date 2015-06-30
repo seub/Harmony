@@ -164,6 +164,14 @@ H2Point H2Triangle::getVertex(uint index) const
     }
 }
 
+void H2Triangle::getVertices(H2Point &Aout, H2Point &Bout, H2Point &Cout) const
+{
+    Aout = a;
+    Bout = b;
+    Cout = c;
+}
+
+
 
 std::ostream & operator<<(std::ostream &out, const H2Triangle &T)
 {

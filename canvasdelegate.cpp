@@ -90,8 +90,6 @@ void CanvasDelegate::rescale(uint sizeX, uint sizeY)
 
     scaleX = xFactor * scaleX;
     scaleY = yFactor * scaleY;
-
-    enableRedrawBuffer();
 }
 
 void CanvasDelegate::resetView(uint sizeX, uint sizeY)
@@ -239,7 +237,6 @@ void CanvasDelegate::enableRedrawBuffer(bool back, bool top)
     enableRedrawBufferBack = back;
     enableRedrawBufferTop = top;
 }
-
 void CanvasDelegate::drawPoint(const Complex &z, const QColor &color, int width, bool back)
 {
     int x, y;
@@ -262,6 +259,18 @@ void CanvasDelegate::drawPoint(const Complex &z, const QColor &color, int width,
         painterTop->setPen(*penTop);
         painterTop->drawPoint(x,y);
     }
+}
+
+void CanvasDelegate::highlightPoint(const Complex &z, const QColor &color, int width)
+{
+    int x, y;
+    ComplexToPixelCoordinates(x, y, z);
+    painterTop->setPen(Qt::NoPen);
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(color);
+    painterTop->setBrush(brush);
+    painterTop->drawEllipse(x-width, y-width, 2*width, 2*width);
 }
 
 void CanvasDelegate::drawSegment(const Complex &endpoint1, const Complex &endpoint2, const QColor &color, int width, bool back)
@@ -320,17 +329,18 @@ void CanvasDelegate::drawFilledTriangle(const Complex &zA, const Complex &zB, co
     ComplexToPixelCoordinates(xB, yB, zB);
     ComplexToPixelCoordinates(xC, yC, zC);
 
+    QVector<QPoint> triangle;
+    triangle.append(QPoint(xA, yA));
+    triangle.append(QPoint(xB, yB));
+    triangle.append(QPoint(xC, yC));
+
     if (back)
     {
-        QVector<QPoint> triangle;
-        triangle.append(QPoint(xA, yA));
-        triangle.append(QPoint(xB, yB));
-        triangle.append(QPoint(xC, yC));
         painterBack->drawPolygon(QPolygon(triangle));
     }
     else
     {
-        throw(QString("Error in CanvasDelegate::drawFilledTriangle: I'm not supposed to draw a filled figure on the top image"));
+        painterTop->drawPolygon(QPolygon(triangle));
     }
 }
 

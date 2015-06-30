@@ -42,6 +42,13 @@ void H2CanvasDelegate::drawH2Point(const H2Point &p, const QColor &color, int wi
     drawPoint(z, color, width, back);
 }
 
+void H2CanvasDelegate::highlightH2Point(const H2Point &p, const QColor &color, int width)
+{
+    Complex z = (mobius*p).getDiskCoordinate();
+    highlightPoint(z, color, width);
+}
+
+
 void H2CanvasDelegate::drawH2Geodesic(const H2Geodesic &L, const QColor &color, int width, bool back)
 {
     Complex center, endpoint1, endpoint2;
@@ -85,6 +92,20 @@ void H2CanvasDelegate::drawH2Triangle(const H2Triangle &triangle, const QColor &
     {
         drawH2GeodesicArc(side, color, width, back);
     }
+}
+
+void H2CanvasDelegate::highlightStraightH2Triangle(const H2Triangle &triangle, const QColor &color)
+{
+    H2Point A, B, C;
+    (mobius*triangle).getVertices(A, B, C);
+    QBrush brush;
+    brush.setColor(color);
+    brush.setStyle(Qt::SolidPattern);
+    painterTop->setBrush(brush);
+    penTop->setWidth(1);
+    penTop->setColor(color);
+    painterTop->setPen(*penTop);
+    drawFilledTriangle(A.getDiskCoordinate(), B.getDiskCoordinate(), C.getDiskCoordinate(), false);
 }
 
 void H2CanvasDelegate::drawStraightFilledH2Triangle(const H2Triangle &triangle, bool back)

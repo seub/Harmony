@@ -23,6 +23,7 @@ public:
 
 
     H2Point getVertex(uint index) const;
+    void getVertices(H2Point &Aout, H2Point &Bout, H2Point &Cout) const;
     void getSideLengths(double & A, double & B, double & C) const;
     void getAngles(double & angA, double & angleB, double & angleC) const;
 

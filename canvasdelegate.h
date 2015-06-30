@@ -26,11 +26,13 @@ public:
     virtual DelegateType getDelegateType() const {return DelegateType::GENERIC;}
 
 
-protected:
+//protected:
+public:
     CanvasDelegate(uint sizeX, uint sizeY, bool leftCanvas = false, bool rightCanvas = false, ActionHandler *handler = nullptr);
     Complex PixelToComplexCoordinates(int x, int y) const;
 
     virtual void resetView();
+    virtual void redraw(bool back, bool top);
     virtual void redrawBack();
     virtual void redrawTop();
 
@@ -38,7 +40,8 @@ protected:
 
     void mouseShift(int x, int y);
 
-    void drawPoint(const Complex &z, const QColor &color = "black", int width = 3, bool back = true);
+    void drawPoint(const Complex &z, const QColor &color = "black", int width = 1, bool back = true);
+    void highlightPoint(const Complex &z, const QColor &color = "black", int width = 3);
     void drawSegment(const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1, bool back = true);
 
     void drawCircle(const Complex &center, double radius, const QColor &color = "black", int width = 1, bool back = true);
@@ -54,6 +57,9 @@ protected:
     double xMin, yMax;
     double xMinSave, yMaxSave;
     double scaleX, scaleY;
+    uint sizeX, sizeY;
+    double xMax() const;
+    double yMin() const;
 
     uint detectionRadius;
 
@@ -67,7 +73,7 @@ protected:
 
     ActionHandler *const handler;
 
-private:
+//private:
     bool getSendEndRepaint() {return sendEndRepaint;}
     void setSendEndRepaint(bool repeatRepaint) {this->sendEndRepaint = repeatRepaint;}
 
@@ -84,10 +90,7 @@ private:
     virtual void enter() {}
     virtual void leave() {}
 
-    void redraw(bool back, bool top);
     void zoom(double coeff, int centerX, int centerY);
-    double xMax() const;
-    double yMin() const;
 
     bool isInside(const Complex &point) const;
     void rescale(uint sizeX, uint sizeY);
@@ -103,11 +106,8 @@ private:
     bool isAlmostInfiniteRadius(double radius) const;
     static bool liesOnSmallerArc(const Complex &point, const Complex &center, const Complex &endpoint1, const Complex &endpoint2);
 
-
-
     QImage *imageBack, *imageTop;
 
-    uint sizeX, sizeY;
     uint nbArcs, nbStraightArcs, nbAlmostStraightArcs; // For testing
     uint nbBestLineFails, nbBestLineCalls; // For testing
 

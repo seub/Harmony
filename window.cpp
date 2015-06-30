@@ -13,6 +13,7 @@
 #include "outputmenu.h"
 #include "displaymenu.h"
 #include "h2canvasdelegate.h"
+#include "statusbar.h"
 
 
 
@@ -39,12 +40,12 @@ void Window::createWindow(ActionHandler *handler)
     outputMenu = new OutputMenu(this, handler);
     outputMenu->setEnabled(false);
 
-    statusBar= new QStatusBar(this);
+    statusBar= new StatusBar(this);
     statusBar->setSizeGripEnabled(false);
     statusBar->setFixedHeight(25);
     statusBarLabel = new QLabel;
     statusBarLabel->setText("Ready");
-    statusBar->insertWidget(0, statusBarLabel);
+    statusBar->addWidget(statusBarLabel);
     topMenu = new TopMenu(this);
     layout = new QGridLayout;
 
@@ -82,6 +83,7 @@ void Window::createWindow(ActionHandler *handler)
 
 void Window::resizeEvent(QResizeEvent * event)
 {
+
     int deltaWidth = abs(event->size().width() - event->oldSize().width());
     int deltaHeight = abs(event->size().height() - event->oldSize().height());
 

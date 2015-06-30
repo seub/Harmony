@@ -10,6 +10,7 @@
 #include "actionhandler.h"
 #include "window.h"
 #include "fenchelnielsenuser.h"
+#include "canvasdelegatetests.h"
 
 
 
@@ -29,6 +30,20 @@ Canvas::Canvas(FenchelNielsenUser *fenchelNielsenUser) : container(fenchelNielse
     initialize();
 
     delegate = new H2CanvasDelegateLiftedGraph(width(), height());
+}
+
+Canvas::Canvas(CanvasDelegateTests *delegate) : container(nullptr)
+{
+    resize(delegate->sizeX, delegate->sizeY);
+    this->delegate = delegate;
+    initialize();
+}
+
+Canvas::Canvas(CanvasDelegateTests2 *delegate) : container(nullptr)
+{
+    resize(delegate->sizeX, delegate->sizeY);
+    this->delegate = delegate;
+    initialize();
 }
 
 Canvas::~Canvas()
@@ -112,10 +127,12 @@ void Canvas::mousePressEvent(QMouseEvent *mouseEvent)
 
 void Canvas::resizeEvent(QResizeEvent *resizeEvent)
 {
+    //std::cout << "Canvas::resizeEvent()" << std::endl;
+
     QSize newSize = resizeEvent->size();
     delegate->rescale(newSize.width(), newSize.height());
 
-    if (newSize.width()!=newSize.height())
+    if (newSize.width()!=newSize.height() && container!=nullptr)
     {
         container->canvasResized();
     }

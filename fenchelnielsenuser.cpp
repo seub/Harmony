@@ -137,7 +137,7 @@ void FenchelNielsenUser::refresh()
     delegate->setIsGraphEmpty(false);
 
     delegate->refreshRho();
-    delegate->updateGraph(true, false);
+    delegate->updateGraph(true);
     canvas->update();
 }
 

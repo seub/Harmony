@@ -19,23 +19,19 @@ H2CanvasDelegateLiftedGraph::H2CanvasDelegateLiftedGraph(uint sizeX, uint sizeY,
 
     setFilledTriangles(false);
     setShowTranslates(false, false);
+    setIsGraphEmpty(true);
 }
 
 void H2CanvasDelegateLiftedGraph::initializeColors(const QColor &graphColor)
 {
-    QColor graphTranslatesBase("lightgrey");
-    QColor graphSidesTranslatesBase(90, 90, 90);
-    int r0, g0, b0, r1, g1, b1;
-
     this->graphColor = graphColor;
 
-    graphColor.getRgb(&r1, &g1, &b1);
+    int h, s, l;
+    graphColor.getHsl(&h, &s, &l);
 
-    graphTranslatesBase.getRgb(&r0, &g0, &b0);
-    graphTranslatesColor = QColor(g(r0, r1), g(g0, g1), g(b0, b1));
-
-    graphSidesTranslatesBase.getRgb(&r0, &g0, &b0);
-    graphSidesTranslatesColor = QColor(g(r0, r1), g(g0, g1), g(b0, b1));
+    highlightColor.setHsl((h+180)%360, s, l);
+    graphColor2.setHsl((h+90)%360, s, l);
+    graphSidesTranslatesColor.setHsl(h, weightedSum(s, 0, 0.75), l);
 }
 
 void H2CanvasDelegateLiftedGraph::resetView()
@@ -77,28 +73,17 @@ void H2CanvasDelegateLiftedGraph::setGraphPointer(LiftedGraphFunctionTriangulate
 void H2CanvasDelegateLiftedGraph::setIsGraphEmpty(bool isGraphEmpty)
 {
     this->isGraphEmpty = isGraphEmpty;
-    enableRedrawBuffer();
 }
 
 void H2CanvasDelegateLiftedGraph::setIsRhoEmpty(bool isRhoEmpty)
 {
     this->isRhoEmpty = isRhoEmpty;
-    enableRedrawBuffer();
 }
 
 void H2CanvasDelegateLiftedGraph::resetHighlighted()
 {
     isTriangleHighlighted = false;
-    arePointsHighlightedBlue = false;
-    arePointsHighlightedGreen = false;
-    arePointsHighlightedRed = false;
     enableRedrawBuffer(enableRedrawBufferBack, true);
-}
-
-void H2CanvasDelegateLiftedGraph::getGraphIndexHighlighted(bool &highlighted, uint &graphIndexHighted) const
-{
-    highlighted = arePointsHighlightedRed;
-    graphIndexHighted = this->graphIndexHighlighted;
 }
 
 void H2CanvasDelegateLiftedGraph::getGraphTriangleIndicesHighlighted(bool &highlighted, uint &index1, uint &index2, uint &index3) const
@@ -143,6 +128,10 @@ void H2CanvasDelegateLiftedGraph::redrawGraph()
 
 void H2CanvasDelegateLiftedGraph::redrawNonFilledGraph()
 {
+    int h, s, l;
+    graphColor.getHsl(&h, &s, &l);
+    QColor graphTranslatesColor(QColor::fromHsl(h, weightedSum(s, 0, 0.5), l));
+
     if (showTranslatesAroundVertices)
     {
         penBack->setColor(graphTranslatesColor);
@@ -231,105 +220,41 @@ void H2CanvasDelegateLiftedGraph::redrawNonFilledGraph()
 void H2CanvasDelegateLiftedGraph::redrawFilledGraph()
 {
     painterBack->setPen(Qt::NoPen);
-    QBrush *brush = new QBrush;
-
-    brush->setStyle(Qt::SolidPattern);
-
-    int r0, g0, b0, r, g, b;
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
 
     if (showTranslatesAroundVertices)
     {
-        if (rightCanvas)
+        for (uint i=0; i!=graphTrianglesTranslatesAroundVertices.size(); ++i)
         {
-            graphTranslatesColor.getRgb(&r0, &g0, &b0);
-
-            for (uint i=0; i!=graphTrianglesTranslatesAroundVertices.size(); ++i)
-            {
-                r = f(r0, graphTrianglesWeights[i % graphTriangles.size()]);
-                g = f(g0, graphTrianglesWeights[i % graphTriangles.size()]);
-                b = f(b0, graphTrianglesWeights[i % graphTriangles.size()]);
-                brush->setColor(QColor(r, g, b));
-                painterBack->setPen(QColor(r, g, b));
-                painterBack->setBrush(*brush);
-                drawStraightFilledH2Triangle(graphTrianglesTranslatesAroundVertices[i]);
-            }
-        }
-        else
-        {
-            brush->setColor(graphTranslatesColor);
-            painterBack->setPen(graphTranslatesColor);
-            painterBack->setBrush(*brush);
-
-            for (const auto & graphTriangleTranslate : graphTrianglesTranslatesAroundVertices)
-            {
-                drawStraightFilledH2Triangle(graphTriangleTranslate);
-            }
+            painterBack->setPen(graphTrianglesTranslatesColors[i % graphTriangles.size()]);
+            brush.setColor(graphTrianglesTranslatesColors[i % graphTriangles.size()]);
+            painterBack->setBrush(brush);
+            drawStraightFilledH2Triangle(graphTrianglesTranslatesAroundVertices[i]);
         }
     }
 
     if (showTranslatesAroundVertex)
     {
-        if (rightCanvas)
+        for (uint i=0; i!=graphTrianglesTranslatesAroundVertex.size(); ++i)
         {
-            graphTranslatesColor.getRgb(&r0, &g0, &b0);
-
-            for (uint i=0; i!=graphTrianglesTranslatesAroundVertex.size(); ++i)
-            {
-                r = f(r0, graphTrianglesWeights[i % graphTriangles.size()]);
-                g = f(g0, graphTrianglesWeights[i % graphTriangles.size()]);
-                b = f(b0, graphTrianglesWeights[i % graphTriangles.size()]);
-                brush->setColor(QColor(r, g, b));
-                painterBack->setPen(QColor(r, g, b));
-                painterBack->setBrush(*brush);
-                drawStraightFilledH2Triangle(graphTrianglesTranslatesAroundVertex[i]);
-            }
-        }
-        else
-        {
-            brush->setColor(graphTranslatesColor);
-            painterBack->setPen(graphTranslatesColor);
-            painterBack->setBrush(*brush);
-
-            for (const auto & graphTriangleTranslate : graphTrianglesTranslatesAroundVertex)
-            {
-                drawStraightFilledH2Triangle(graphTriangleTranslate);
-            }
+            painterBack->setPen(graphTrianglesTranslatesColors[i % graphTriangles.size()]);
+            brush.setColor(graphTrianglesTranslatesColors[i % graphTriangles.size()]);
+            painterBack->setBrush(brush);
+            drawStraightFilledH2Triangle(graphTrianglesTranslatesAroundVertex[i]);
         }
 
     }
 
-    if (rightCanvas)
+    for (uint i=0; i!=graphTriangles.size(); ++i)
     {
-        graphColor.getRgb(&r0, &g0, &b0);
-
-        for (uint i=0; i!=graphTriangles.size(); ++i)
-        {
-            r = f(r0, graphTrianglesWeights[i]);
-            g = f(g0, graphTrianglesWeights[i]);
-            b = f(b0, graphTrianglesWeights[i]);
-
-            brush->setColor(QColor(r, g, b));
-            painterBack->setPen(QColor(r, g, b));
-            painterBack->setBrush(*brush);
-            drawStraightFilledH2Triangle(graphTriangles[i]);
-        }
-    }
-    else
-    {
-        brush->setColor(graphColor);
-        painterBack->setPen(graphColor);
-        painterBack->setBrush(*brush);
-
-        for (const auto & graphTriangle : graphTriangles)
-        {
-            drawStraightFilledH2Triangle(graphTriangle);
-        }
+        brush.setColor(graphTrianglesColors[i]);
+        painterBack->setPen(graphTrianglesColors[i]);
+        painterBack->setBrush(brush);
+        drawStraightFilledH2Triangle(graphTriangles[i]);
     }
 
     painterBack->setBrush(Qt::NoBrush);
-    delete brush;
-
-
     penBack->setColor(graphSidesTranslatesColor);
     penBack->setWidth(1);
     painterBack->setPen(*penBack);
@@ -353,80 +278,26 @@ void H2CanvasDelegateLiftedGraph::redrawFilledGraph()
     resetPenBack = true;
 }
 
-
 void H2CanvasDelegateLiftedGraph::redrawTop()
 {
     H2CanvasDelegate::redrawTop();
 
     if (isTriangleHighlighted)
     {
-        drawH2Triangle(triangleHighlighted, "red", 2, false);
-    }
-
-    if (arePointsHighlightedRed)
-    {
-        for (const auto &p : pointsHighlightedRed)
+        if (filledTriangles)
         {
-            drawH2Point(p, "red", 8, false);
-        }
-    }
-
-    if (arePointsHighlightedGreen)
-    {
-        for (const auto &p : pointsHighlightedGreen)
-        {
-            drawH2Point(p, "green", 5, false);
-        }
-    }
-    if (arePointsHighlightedBlue)
-    {
-        for (const auto &p : pointsHighlightedBlue)
-        {
-            drawH2Point(p, "blue", 5, false);
-        }
-    }
-}
-
-void H2CanvasDelegateLiftedGraph::decideHighlightingGraphPoints(bool highlighted, bool &update, uint graphIndexHighlighted)
-{
-    if (((highlighted==false) && (arePointsHighlightedRed==false)) || ((highlighted == arePointsHighlightedRed) && (graphIndexHighlighted == this->graphIndexHighlighted)))
-    {
-        update = false;
-    }
-    else
-    {
-        if (highlighted)
-        {
-            this->graphIndexHighlighted = graphIndexHighlighted;
-
-            arePointsHighlightedRed = true;
-            pointsHighlightedRed = {graph->getValue(graphIndexHighlighted)};
-
-            arePointsHighlightedBlue = true;
-            pointsHighlightedBlue = graph->getNeighborsValues(graphIndexHighlighted);
-
-            if (graph->isBoundaryPoint(graphIndexHighlighted))
-            {
-                arePointsHighlightedGreen = true;
-                pointsHighlightedGreen = graph->getNeighborsValuesKicked(graphIndexHighlighted);
-                pointsHighlightedRed = graph-> getPartnersValues(graphIndexHighlighted);
-                pointsHighlightedRed.push_back(graph->getValue(graphIndexHighlighted));
-            }
-            else
-            {
-                arePointsHighlightedGreen = false;
-            }
+            highlightStraightH2Triangle(triangleHighlighted, highlightColor);
         }
         else
         {
-            arePointsHighlightedBlue = false;
-            arePointsHighlightedGreen = false;
-            arePointsHighlightedRed = false;
+            drawH2Triangle(triangleHighlighted, highlightColor, 2, false);
         }
-        update = true;
-        enableRedrawBuffer(enableRedrawBufferBack, true);
     }
+
+    enableRedrawBufferTop = true;
 }
+
+
 
 void H2CanvasDelegateLiftedGraph::decideHighlightingTriangle(bool highlighted, bool &update, uint triangleGraphIndex1, uint triangleGraphIndex2, uint triangleGraphIndex3)
 {
@@ -448,9 +319,6 @@ void H2CanvasDelegateLiftedGraph::decideHighlightingTriangle(bool highlighted, b
         else
         {
             isTriangleHighlighted = false;
-            arePointsHighlightedRed = false;
-            arePointsHighlightedGreen = false;
-            arePointsHighlightedBlue = false;
         }
         update = true;
         enableRedrawBuffer(enableRedrawBufferBack, true);
@@ -459,31 +327,20 @@ void H2CanvasDelegateLiftedGraph::decideHighlightingTriangle(bool highlighted, b
 
 void H2CanvasDelegateLiftedGraph::decideHighlighting(const H2Point &pointUnderMouse)
 {
-    bool update1 = false, update2 = false;
+    bool update = false;
     if (!isGraphEmpty)
     {
         uint index1, index2, index3;
         H2Triangle triangle;
         if (graph->triangleContaining(pointUnderMouse, triangle, index1, index2, index3))
         {
-            decideHighlightingTriangle(true, update1, index1, index2, index3);
-            uint vertexIndex;
-            double detectionRadiusSquared = detectionRadius/scaleX;
-            detectionRadiusSquared *= detectionRadiusSquared;
-            if ((mobius*triangle).isVertexCloseInDiskModel(mobius*pointUnderMouse, detectionRadiusSquared, vertexIndex))
-            {
-                decideHighlightingGraphPoints(true, update2, triangleGraphIndex1*(vertexIndex == 0) + triangleGraphIndex2*(vertexIndex == 1) + triangleGraphIndex3*(vertexIndex == 2));
-            }
-            else
-            {
-                decideHighlightingGraphPoints(false, update2, 0);
-            }
+            decideHighlightingTriangle(true, update, index1, index2, index3);
         }
         else
         {
-            decideHighlightingTriangle(false, update1, 0, 0, 0);
+            decideHighlightingTriangle(false, update, 0, 0, 0);
         }
-        if (update1 || update2)
+        if (update)
         {
             enableRedrawBuffer(enableRedrawBufferBack, true);
             if (leftCanvas)
@@ -503,50 +360,40 @@ void H2CanvasDelegateLiftedGraph::setShowTranslates(bool showTranslatesAroundVer
 {
     this->showTranslatesAroundVertex = showTranslatesAroundVertex;
     this->showTranslatesAroundVertices = showTranslatesAroundAllVertices;
-    enableRedrawBuffer();
 }
-
-
-const std::vector<double> & H2CanvasDelegateLiftedGraph::getGraphTrianglesReferenceAreas() const
-{
-    return graphTrianglesReferenceAreas;
-}
-
-void H2CanvasDelegateLiftedGraph::setGraphTrianglesReferenceAreas(const std::vector<double> &graphTrianglesReferenceAreas)
-{
-    this->graphTrianglesReferenceAreas = graphTrianglesReferenceAreas;
-}
-
 
 void H2CanvasDelegateLiftedGraph::setFilledTriangles(bool filledTriangles)
 {
     this->filledTriangles = filledTriangles;
-    enableRedrawBuffer();
 }
 
-void H2CanvasDelegateLiftedGraph::getShowTranslates(bool &aroundVertexOut, bool &aroundVerticesOut)
+void H2CanvasDelegateLiftedGraph::setTwoColor(bool twoColors)
 {
-    aroundVertexOut = showTranslatesAroundVertex;
-    aroundVerticesOut = showTranslatesAroundVertices;
+    this->twoColors = twoColors;
 }
 
+void H2CanvasDelegateLiftedGraph::setGraphColor(const QColor &color)
+{
+    graphColor = color;
+    initializeColors(color);
+}
 
-void H2CanvasDelegateLiftedGraph::updateGraph(bool refreshSidesTranslates, bool refreshFullTranslates)
+void H2CanvasDelegateLiftedGraph::updateGraph(bool refreshSidesTranslates)
 {
     if (!isGraphEmpty)
     {
         if (filledTriangles)
         {
-            updateFilledGraph(refreshSidesTranslates, refreshFullTranslates);
+            updateFilledGraph(refreshSidesTranslates);
         }
         else
         {
-            updateNonFilledGraph(refreshSidesTranslates, refreshFullTranslates);
+            updateNonFilledGraph(refreshSidesTranslates);
         }
     }
 }
 
-void H2CanvasDelegateLiftedGraph::updateNonFilledGraph(bool refreshSidesTranslates, bool refreshFullTranslates)
+void H2CanvasDelegateLiftedGraph::updateNonFilledGraph(bool refreshSidesTranslates)
 {    
     if (!rightCanvas)
     {
@@ -592,7 +439,7 @@ void H2CanvasDelegateLiftedGraph::updateNonFilledGraph(bool refreshSidesTranslat
         }
     }
 
-    if (showTranslatesAroundVertex && refreshFullTranslates)
+    if (showTranslatesAroundVertex)
     {
         std::vector<H2GeodesicArc> arcsTranslates;
         graphArcsTranslatesAroundVertex.clear();
@@ -605,7 +452,7 @@ void H2CanvasDelegateLiftedGraph::updateNonFilledGraph(bool refreshSidesTranslat
         }
     }
 
-    if (showTranslatesAroundVertices && refreshFullTranslates)
+    if (showTranslatesAroundVertices)
     {
         std::vector<H2GeodesicArc> arcsTranslates;
         graphArcsTranslatesAroundVertices.clear();
@@ -617,41 +464,13 @@ void H2CanvasDelegateLiftedGraph::updateNonFilledGraph(bool refreshSidesTranslat
             graphArcsTranslatesAroundVertices.insert(graphArcsTranslatesAroundVertices.end(), arcsTranslates.begin(), arcsTranslates.end());
         }
     }
-
-    enableRedrawBuffer(true, true);
 }
 
 
-void H2CanvasDelegateLiftedGraph::updateFilledGraph(bool refreshSidesTranslates, bool refreshFullTranslates)
+void H2CanvasDelegateLiftedGraph::updateFilledGraph(bool refreshSidesTranslates)
 {
     graphSides = H2Polygon(graph->getBoundary()).getSides();
     graphTriangles = graph->getAllH2Triangles();
-
-
-    if (leftCanvas)
-    {
-        graphTrianglesReferenceAreas.clear();
-        graphTrianglesReferenceAreas.reserve(graphTriangles.size());
-
-        for (const auto &triangle : graphTriangles)
-        {
-            graphTrianglesReferenceAreas.push_back(triangle.area());
-        }
-
-        handler->processMessage(ActionHandlerMessage::TRIANGLES_REFERENCE_AREAS);
-    }
-
-
-    if (rightCanvas)
-    {
-        graphTrianglesWeights.clear();
-        graphTrianglesWeights.reserve(graphTriangles.size());
-
-        for (uint i=0; i<graphTriangles.size(); ++i)
-        {
-            graphTrianglesWeights.push_back(graphTriangles[i].area()/graphTrianglesReferenceAreas[i]);
-        }
-    }
 
     if (refreshSidesTranslates)
     {
@@ -666,7 +485,7 @@ void H2CanvasDelegateLiftedGraph::updateFilledGraph(bool refreshSidesTranslates,
         }
     }
 
-    if (showTranslatesAroundVertex && refreshFullTranslates)
+    if (showTranslatesAroundVertex)
     {
         std::vector<H2Triangle> triangleTranslates;
         graphTrianglesTranslatesAroundVertex.clear();
@@ -679,7 +498,7 @@ void H2CanvasDelegateLiftedGraph::updateFilledGraph(bool refreshSidesTranslates,
         }
     }
 
-    if (showTranslatesAroundVertices && refreshFullTranslates)
+    if (showTranslatesAroundVertices)
     {
         std::vector<H2Triangle> triangleTranslates;
         graphTrianglesTranslatesAroundVertices.clear();
@@ -692,8 +511,111 @@ void H2CanvasDelegateLiftedGraph::updateFilledGraph(bool refreshSidesTranslates,
         }
     }
 
-    enableRedrawBuffer(true, true);
+    updateTrianglesWeights();
+    updateTrianglesColors();
+    if (showTranslatesAroundVertex || showTranslatesAroundVertices)
+    {
+        updateTrianglesTranslatesColors();
+    }
 }
+
+void H2CanvasDelegateLiftedGraph::updateTrianglesWeights()
+{
+    if (leftCanvas)
+    {
+        graphTrianglesReferenceAreas->clear();
+        graphTrianglesReferenceAreas->reserve(graphTriangles.size());
+
+        for (const auto &triangle : graphTriangles)
+        {
+            graphTrianglesReferenceAreas->push_back(triangle.area());
+        }
+    }
+}
+
+void H2CanvasDelegateLiftedGraph::updateTrianglesColors()
+{
+    if (leftCanvas)
+    {
+        if (twoColors)
+        {
+            graphTrianglesReferenceColors->clear();
+            graphTrianglesReferenceColors->reserve(graphTriangles.size());
+
+            H2Point firstTriangleVertex;
+            std::vector<double> distancesToVertex, distancesToVertices;
+
+            int r0, g0, b0, r1, g1, b1;
+            graphColor.getRgb(&r0, &g0, &b0);
+            graphColor2.getRgb(&r1, &g1, &b1);
+
+            std::vector<H2Point> vertices = graph->getFirstVertexOrbit();
+
+            for (const auto &triangle : graphTriangles)
+            {
+                firstTriangleVertex = triangle.getVertex(0);
+                distancesToVertices.clear();
+                for (const auto &vertex : vertices)
+                {
+                    distancesToVertices.push_back(H2Point::distance(firstTriangleVertex, vertex));
+                }
+                distancesToVertex.push_back(*std::min_element(distancesToVertices.begin(), distancesToVertices.end()));
+            }
+
+            double maxDistance = *std::max_element(distancesToVertex.begin(), distancesToVertex.end());
+            double t;
+            for (const auto &distance : distancesToVertex)
+            {
+                t = pow(distance/maxDistance, 0.7);
+                graphTrianglesReferenceColors->push_back(QColor(weightedSum(r0, r1, t), weightedSum(g0, g1, t), weightedSum(b0, b1, t)));
+            }
+        }
+        else
+        {
+            graphTrianglesReferenceColors->resize(graphTriangles.size());
+            std::fill(graphTrianglesReferenceColors->begin(), graphTrianglesReferenceColors->end(), graphColor);
+        }
+
+        graphTrianglesColors = *graphTrianglesReferenceColors;
+    }
+
+    if (rightCanvas)
+    {
+        QColor referenceColor;
+        double t;
+
+        int r1, g1, b1;
+        graphTrianglesColors.clear();
+        graphTrianglesColors.reserve(graphTriangles.size());
+        for (uint i=0; i!=graphTriangles.size(); ++i)
+        {
+            referenceColor = graphTrianglesReferenceColors->at(i);
+            referenceColor.getRgb(&r1, &g1, &b1);
+
+            t = graphTriangles[i].area()/(*graphTrianglesReferenceAreas)[i];
+            r1 = rescaleReals(r1, t);
+            g1 = rescaleReals(g1, t);
+            b1 = rescaleReals(b1, t);
+
+            graphTrianglesColors.push_back(QColor(r1, g1, b1));
+        }
+    }
+}
+
+void H2CanvasDelegateLiftedGraph::updateTrianglesTranslatesColors()
+{
+    graphTrianglesTranslatesColors.clear();
+    graphTrianglesTranslatesColors.reserve(graphTrianglesColors.size());
+
+    for (const auto &color : graphTrianglesColors)
+    {
+        int h, s, l;
+        color.getHsl(&h, &s, &l);
+        graphTrianglesTranslatesColors.push_back(QColor::fromHsl(h, weightedSum(s, 0, 0.5), l));
+    }
+}
+
+
 
 void H2CanvasDelegateLiftedGraph::refreshRho()
 {
@@ -721,16 +643,15 @@ void H2CanvasDelegateLiftedGraph::refreshRho()
     translationsAroundVertices = rho->getSidePairingsNormalizedAroundVertices();
 }
 
-int H2CanvasDelegateLiftedGraph::f(int X0, const double &x)
+int H2CanvasDelegateLiftedGraph::rescaleReals(int X0, const double &x)
 {
     double x0 = X0/255.0;
     double y = x<1 ? x*x0 : (x0+x-1)/x;
     return Tools::intRound(255.0*y);
 }
 
-int H2CanvasDelegateLiftedGraph::g(int x0, int x1)
+int H2CanvasDelegateLiftedGraph::weightedSum(int x0, int x1, double t)
 {
-    return Tools::intRound((4.0*x0 + 1.0*x1)/5.0);
+    assert((t>=0) && (t<=1));
+    return Tools::intRound((t*x0 + (1-t)*x1));
 }
-
-

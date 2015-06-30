@@ -17,6 +17,8 @@ public:
     double updateSupDelta();
     void reset();
 
+    Point getValue(uint index) const {return newValues.at(index);}
+
 private:
     void refreshNeighborsValuesKicked();
     void updateValues();

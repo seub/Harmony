@@ -9,7 +9,7 @@
 class QGridLayout; class QStatusBar; class QLabel;
 
 class Canvas; class InputMenu; class OutputMenu; class TopMenu; class DisplayMenu;
-class ActionHandler;
+class ActionHandler; class StatusBar;
 
 class Window : public QWidget, public CanvasContainer
 {
@@ -21,7 +21,6 @@ class Window : public QWidget, public CanvasContainer
 
 public:
     Window(ActionHandler *handler = nullptr);
-    Window() = delete;
     Window(const Window &) = delete;
     Window & operator =(Window) = delete;
 
@@ -43,7 +42,7 @@ private:
     InputMenu *inputMenu;
     DisplayMenu *displayMenu;
     OutputMenu *outputMenu;
-    QStatusBar *statusBar;
+    StatusBar *statusBar;
     QLabel *statusBarLabel;
     TopMenu *topMenu;
 };

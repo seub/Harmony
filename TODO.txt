@@ -10,17 +10,13 @@ add rotations to mobiusing
 add shift (only keys ?)
 add zoom keys
 
-utiliser des arrays au lieu de vectors débiles±
+utiliser des arrays au lieu de vectors débiles
 
 construire le mesh et la fonction dans un thread?
 
-faire le super update
-pour trouver le bon lambda, observer expérimentalement comment varient les deltas.
+renommer window en mainwindow?
 
-ajouter le point highlighted quand il est sur lr bord
-
-faire un dégradé de couleur dès le départ
-
+In order to avoid status bar messages messing up with the layout, write my own layout?
 
 
 ******************************** IMPROVE CODE ********************************
@@ -53,8 +49,10 @@ foutre des auto partout
 For the record, after going to lift graph, speed (release build) was multiplied by approximately 2.
 
 Optimisation :
--faire un truc semblable à super_compute_radii for CP. en tout cas envsiager de revenir à une méthode de flot où on choisit le pas.
 - utiliser le profiler
+- essayer une super accélération à la circle packings (voir tests.cpp)
+- utiliser le résultat pour un mesh depth inférieur.
+
 
 
 

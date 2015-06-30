@@ -65,7 +65,10 @@ SOURCES += main.cpp \
     discreteheatflowiterator.cpp \
     discreteheatflowfactory.cpp \
     h2discreteflowfactorythread.cpp \
-    h2canvasdelegateliftedgraph.cpp
+    h2canvasdelegateliftedgraph.cpp \
+    statusbar.cpp \
+    canvasdelegatetests.cpp \
+    tests.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -111,7 +114,9 @@ HEADERS += \
     discreteheatflowiterator.h \
     discreteheatflowfactory.h \
     h2discreteflowfactorythread.h \
-    h2canvasdelegateliftedgraph.h
+    h2canvasdelegateliftedgraph.h \
+    statusbar.h \
+    canvasdelegatetests.h
 
 OTHER_FILES += \
     TODO.txt

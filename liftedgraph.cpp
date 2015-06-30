@@ -52,6 +52,11 @@ uint LiftedGraph::getNbPoints() const
     return nbPoints;
 }
 
+uint LiftedGraph::getNbBoundaryPoints() const
+{
+    return nbBoundaryPoints;
+}
+
 bool LiftedGraph::isBoundaryPoint(uint index) const
 {
     assert(index < nbPoints);
