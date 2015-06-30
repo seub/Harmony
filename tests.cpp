@@ -16,27 +16,27 @@ void runTests()
     GroupRepresentation<H2Isometry> rhoDomain(Gamma);
     GroupRepresentation<H2Isometry> rhoImage(Gamma);
 
-    std::vector<double> lengths = {2, 2, 2};
-    std::vector<double> twists = {0, 0, 0};
+    std::vector<double> lengths = {1, 3, 2};
+    std::vector<double> twists = {0, -1, 0};
     FenchelNielsenConstructor FN(lengths, twists);
 
     rhoDomain = FN.getRepresentation();
     rhoImage.setNiceRepresentation();
 
-    LiftedGraphFunctionTriangulated<H2Point, H2Isometry> graph(rhoDomain, rhoImage, 3);
+    LiftedGraphFunctionTriangulated<H2Point, H2Isometry> graph(rhoDomain, rhoImage, 4);
     DiscreteHeatFlowIterator<H2Point, H2Isometry> iterator(&graph);
 
     std::vector<H2Point> traject1, traject2, traject3, traject4;
     uint nbPoints = graph.getNbPoints(), nbBoundaryPoints = graph.getNbBoundaryPoints();
-    uint index1 = 0, index2 = nbBoundaryPoints/2, index3 = nbBoundaryPoints+1, index4 = nbBoundaryPoints + (nbPoints - nbBoundaryPoints)/2;
+    uint index1 = 0, index2 = nbBoundaryPoints/3, index3 = nbBoundaryPoints+1, index4 = nbBoundaryPoints + (nbPoints - nbBoundaryPoints)/2;
 
-    uint N = 2000;
+    uint N = 1000;
     traject1.reserve(N);
     traject2.reserve(N);
     traject3.reserve(N);
     traject4.reserve(N);
 
-    iterator.iterate(3000);
+    iterator.iterate(500);
     for (uint i=0; i!=N; ++i)
     {
         iterator.iterate();
@@ -46,7 +46,7 @@ void runTests()
         traject4.push_back(iterator.getValue(index4));
     }
 
-    iterator.iterate(3000);
+    iterator.iterate(2000);
 
     H2Point final1 = iterator.getValue(index1), final2 = iterator.getValue(index2), final3 = iterator.getValue(index3), final4 = iterator.getValue(index4);
     std::vector<double> sequence1, sequence2, sequence3, sequence4;

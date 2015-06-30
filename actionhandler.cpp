@@ -302,9 +302,9 @@ void ActionHandler::colorClicked(int choice)
         rightDelegate->setGraphColor("orange");
         break;
 
-    case DisplayMenu::GREY:
-        leftDelegate->setGraphColor("grey");
-        rightDelegate->setGraphColor(QColor("grey"));
+    case DisplayMenu::GRAY:
+        leftDelegate->setGraphColor(QColor(170, 170, 170));
+        rightDelegate->setGraphColor(QColor(170, 170, 170));
         break;
 
     case DisplayMenu::BLACK:

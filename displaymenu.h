@@ -19,7 +19,7 @@ class DisplayMenu : public QGroupBox
 public:
     enum ShowTranslatesChoice {SHOW_TRANSLATES_DOMAIN, SHOW_TRANSLATES_VERTEX, SHOW_TRANSLATES_VERTICES};
     enum ColoringChoice {COLORING_NONE, COLORING_PLAIN, COLORING_GRADIENT};
-    enum ColorChoice {RED, GREEN, BLUE, LIGHT_BLUE, ORANGE, GREY, BLACK};
+    enum ColorChoice {RED, GREEN, BLUE, LIGHT_BLUE, ORANGE, GRAY, BLACK};
 
     DisplayMenu() = delete;
     DisplayMenu(const DisplayMenu &) = delete;

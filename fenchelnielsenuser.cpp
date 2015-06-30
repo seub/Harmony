@@ -138,7 +138,7 @@ void FenchelNielsenUser::refresh()
 
     delegate->refreshRho();
     delegate->updateGraph(true);
-    canvas->update();
+    canvas->updateRefresh(true, true);
 }
 
 void FenchelNielsenUser::resizeEvent(QResizeEvent * event)

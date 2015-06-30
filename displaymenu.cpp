@@ -49,7 +49,7 @@ void DisplayMenu::createButtons()
     colorComboBox->addItem("Blue", BLUE);
     colorComboBox->addItem("Light blue", LIGHT_BLUE);
     colorComboBox->addItem("Orange", ORANGE);
-    colorComboBox->addItem("Grey", GREY);
+    colorComboBox->addItem("Gray", GRAY);
     colorComboBox->addItem("Black", BLACK);
     colorComboBox->setToolTip("Choose color...");
     connect(colorComboBox, SIGNAL(activated(int)), handler, SLOT(colorClicked(int)));

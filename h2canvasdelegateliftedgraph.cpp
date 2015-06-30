@@ -13,7 +13,7 @@
 H2CanvasDelegateLiftedGraph::H2CanvasDelegateLiftedGraph(uint sizeX, uint sizeY, bool leftCanvas, bool rightCanvas, ActionHandler *handler) :
     H2CanvasDelegate(sizeX, sizeY, leftCanvas, rightCanvas, handler)
 {
-    graphColor = "green";
+    graphColor = "red";
 
     initializeColors(graphColor);
 
