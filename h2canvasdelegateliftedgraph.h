@@ -29,6 +29,7 @@ private:
     void redrawGraph();
     void redrawNonFilledGraph();
     void redrawFilledGraph();
+    void redrawFilledGraph2Colors();
 
     virtual void mouseMove(QMouseEvent * mouseEvent) override;
     virtual void enter() override;
@@ -39,44 +40,41 @@ private:
 
     void setRhoPointer(GroupRepresentation<H2Isometry> *rho);
     void setGraphPointer(LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *graph);
-    void updateGraph(bool refreshSidesTranslates, bool refreshFullTranslates);
-    void updateNonFilledGraph(bool refreshSidesTranslates, bool refreshFullTranslates);
-    void updateFilledGraph(bool refreshSidesTranslates, bool refreshFullTranslates);
+
+    void updateGraph(bool refreshSidesTranslates);
+    void updateNonFilledGraph(bool refreshSidesTranslates);
+    void updateFilledGraph(bool refreshSidesTranslates);
+    void updateTrianglesWeights();
+    void updateTrianglesColors();
+    void updateTrianglesTranslatesColors();
     void refreshRho();
     void setFilledTriangles(bool filledTriangles);
+
+    void setTwoColor(bool twoColors);
+    void setGraphColor(const QColor &color);
     void setShowTranslates(bool showTranslatesAroundVertex, bool showTranslatesAroundVertices);
-    void getShowTranslates(bool &aroundVertexOut, bool &aroundVerticesOut);
-    const std::vector<double> & getGraphTrianglesReferenceAreas() const;
-    void setGraphTrianglesReferenceAreas(const std::vector<double> &graphTrianglesReferenceAreas);
 
-
-    void getGraphIndexHighlighted(bool &highlighted, uint &graphIndexHighted) const;
     void getGraphTriangleIndicesHighlighted(bool &highlighted, uint &index1, uint &index2, uint &index3) const;
     void resetHighlighted();
     void decideHighlighting(const H2Point &pointUnderMouse);
-    void decideHighlightingGraphPoints(bool highlighted, bool &update, uint graphIndexHighlighted);
     void decideHighlightingTriangle(bool highlighted, bool& update, uint triangleGraphIndex1, uint triangleGraphIndex2, uint triangleGraphIndex3);
 
-    static int f(int X0, const double &x);
-    static int g(int x0, int x1);
+    static int rescaleReals(int X0, const double &x);
+    static int weightedSum(int x0, int x1, double t);
 
     bool isTriangleHighlighted;
     uint triangleGraphIndex1, triangleGraphIndex2, triangleGraphIndex3;
     H2Triangle triangleHighlighted;
-    uint graphIndexHighlighted;
-    bool arePointsHighlightedRed;
-    bool arePointsHighlightedGreen;
-    bool arePointsHighlightedBlue;
-    std::vector<H2Point> pointsHighlightedRed;
-    std::vector<H2Point> pointsHighlightedGreen;
-    std::vector<H2Point> pointsHighlightedBlue;
+    QColor highlightColor;
 
     bool showTranslatesAroundVertex, showTranslatesAroundVertices;
-    bool filledTriangles;
+    bool filledTriangles, twoColors;
 
     GroupRepresentation<H2Isometry> *rho;
     bool isRhoEmpty;
     std::vector<H2Geodesic> rhoAxes;
+    std::vector<H2Isometry> translationsAroundVertex;
+    std::vector<H2Isometry> translationsAroundVertices;
 
     LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *graph;
     bool isGraphEmpty;
@@ -87,17 +85,14 @@ private:
     std::vector<H2GeodesicArc> graphLargeSidesTranslates;
     std::vector<H2GeodesicArc> graphArcsTranslatesAroundVertex;
     std::vector<H2GeodesicArc> graphArcsTranslatesAroundVertices;
-    QColor graphColor, graphTranslatesColor, graphSidesTranslatesColor;
+    QColor graphColor, graphColor2, graphSidesTranslatesColor;
 
     std::vector<H2Triangle> graphTriangles;
     std::vector<H2Triangle> graphTrianglesTranslatesAroundVertex;
     std::vector<H2Triangle> graphTrianglesTranslatesAroundVertices;
-    std::vector<double> graphTrianglesReferenceAreas;
-    std::vector<double> graphTrianglesWeights;
-
-
-    std::vector<H2Isometry> translationsAroundVertex;
-    std::vector<H2Isometry> translationsAroundVertices;
+    std::shared_ptr< std::vector<double> > graphTrianglesReferenceAreas;
+    std::shared_ptr< std::vector<QColor> > graphTrianglesReferenceColors;
+    std::vector<QColor> graphTrianglesColors, graphTrianglesTranslatesColors;
 };
 
 #endif // H2LIFTEDGRAPHCANVASDELEGATE_H

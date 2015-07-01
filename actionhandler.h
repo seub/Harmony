@@ -8,7 +8,7 @@
 class MathsContainer; class H2CanvasDelegateLiftedGraph; class EquivariantHarmonicMapsFactory; class Window; class Canvas;
 class InputMenu; class DisplayMenu; class OutputMenu; class Canvas; class TopFactory; class QStatusBar;
 
-enum class ActionHandlerMessage {HIGHLIGHTED_LEFT, HIGHLIGHTED_RIGHT, END_CANVAS_REPAINT, FINISHED_COMPUTING, TRIANGLES_REFERENCE_AREAS};
+enum class ActionHandlerMessage {HIGHLIGHTED_LEFT, HIGHLIGHTED_RIGHT, END_CANVAS_REPAINT, FINISHED_COMPUTING};
 
 class ActionHandler : public QObject
 {
@@ -37,6 +37,7 @@ private slots:
     void resetViewButtonClicked();
     void showTranslatesClicked(int choice);
     void coloringClicked(int choice);
+    void colorClicked(int choice);
 
     void finishedComputing();
 
@@ -66,11 +67,12 @@ private:
     void goBackNormalMode();
 
     void resetStatusBarMessage();
-    void updateCanvasGraph(bool left, bool right, bool updateFullTranslates);
+    void updateCanvasGraph(bool left, bool right);
     static void randomFNcoordinates(uint genus, std::vector<double> &lengthsOut, std::vector<double> &twistsOut);
     void setReadyToCompute();
     void setDisplayMenuReady(bool left);
-    void dealRhosReady();
+    void dealRhoDomainReady();
+    void dealRhoImageReady();
     bool isReadyToCompute() const;
 
 

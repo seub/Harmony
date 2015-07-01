@@ -21,6 +21,7 @@ public:
     virtual ~LiftedGraph() {}
 
     uint getNbPoints() const;
+    uint getNbBoundaryPoints() const;
     bool isBoundaryPoint(uint index) const;
 
 protected:

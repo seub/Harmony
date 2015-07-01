@@ -137,8 +137,8 @@ void FenchelNielsenUser::refresh()
     delegate->setIsGraphEmpty(false);
 
     delegate->refreshRho();
-    delegate->updateGraph(true, false);
-    canvas->update();
+    delegate->updateGraph(true);
+    canvas->updateRefresh(true, true);
 }
 
 void FenchelNielsenUser::resizeEvent(QResizeEvent * event)

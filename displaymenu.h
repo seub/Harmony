@@ -18,7 +18,8 @@ class DisplayMenu : public QGroupBox
 
 public:
     enum ShowTranslatesChoice {SHOW_TRANSLATES_DOMAIN, SHOW_TRANSLATES_VERTEX, SHOW_TRANSLATES_VERTICES};
-    enum ColoringChoice {COLORING_NONE, COLORING_PLAIN};
+    enum ColoringChoice {COLORING_NONE, COLORING_PLAIN, COLORING_GRADIENT};
+    enum ColorChoice {RED, GREEN, BLUE, LIGHT_BLUE, ORANGE, GRAY, BLACK};
 
     DisplayMenu() = delete;
     DisplayMenu(const DisplayMenu &) = delete;
@@ -44,7 +45,7 @@ private:
     QLabel *showTranslatesLabel;
     QComboBox *showTranslatesComboBox;
     QLabel *coloringLabel;
-    QComboBox *coloringComboBox;
+    QComboBox *coloringComboBox, *colorComboBox;
     int vertSpace;
     int buttonHeight;
 

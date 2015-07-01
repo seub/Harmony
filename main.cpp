@@ -4,6 +4,7 @@
 #include "h2point.h"
 #include "fenchelnielsenconstructor.h"
 
+#include "tests.cpp"
 
 int main(int argc, char *argv[])
 {
@@ -37,7 +38,10 @@ int main(int argc, char *argv[])
 
     H2PolygonTriangulater T(&P1);
 */
-
-
+/*
+    QApplication a(argc, argv);
+    runTests();
+    return a.exec();
+*/
     return MainApplication(argc, argv).exec();
 }

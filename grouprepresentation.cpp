@@ -261,12 +261,12 @@ template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain
 
 template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomainOptimization(double epsilon, double stepSize) const
 {
-
     H2Point basePt, basePtEpsilonX, basePtEpsilonY, basePtEpsilonXMinus, basePtEpsilonYMinus;
     std::vector<H2Point> basePtImages, basePtImagesEpsilonX, basePtImagesEpsilonY, basePtImagesEpsilonXMinus, basePtImagesEpsilonYMinus;
     std::vector<H2Isometry> fromVertexPairings;
     fromVertexPairings = evaluateRepresentation(Gamma.getPairingsClosedSurfaceFromVertex());
     Complex previous;
+    H2Polygon output;
 
     basePt.setDiskCoordinate(Complex(0.0,0.0));
     previous = basePt.getDiskCoordinate();
@@ -311,11 +311,12 @@ template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain
 
         dfx = (H2Point::diameter(basePtImagesEpsilonX) - H2Point::diameter(basePtImagesEpsilonXMinus))/(2*epsilon);
         dfy = (H2Point::diameter(basePtImagesEpsilonY) - H2Point::diameter(basePtImagesEpsilonYMinus))/(2*epsilon);
-
+/*
         if(previousNorm < dfx*dfx + dfy*dfy)
         {
             throw(QString("Error in generateFundamentalDomainOptimization: Suggestion of lack of convexity"));
         }
+*/
         previousNorm = dfx*dfx + dfy*dfy;
         previous = basePt.getDiskCoordinate();
         if (norm(previous)>1)
@@ -323,21 +324,16 @@ template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain
             throw(QString("Error in generateFundamentalDomainOptimization: basePt is outside the unit disk"));
         }
     }
-
     for(const auto & f : fromVertexPairings)
     {
         basePtImages.push_back(f*basePt);
     }
-
-    /*
-    std::cout << "Process took " << j << " steps" << std::endl;
-    std::cout << "dfx = " << dfx << std::endl;
-    std::cout << "dfy = " << dfy << std::endl;
-    std::cout << "basePt is an " << basePt << std::endl;
-    std::cout << "Final diameter = " << H2Point::diameter(basePtImages) << std::endl;
-    */
-
-    return H2Polygon(basePtImages);
+    output = H2Polygon(basePtImages);
+    if (!output.isConvex())
+    {
+        throw(QString("Warning in  H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomainOptimization: could not find a convex polygon"));
+    }
+    return output;
 }
 
 template <> DiscreteGroup GroupRepresentation<H2Isometry>::getDiscreteGroup() const

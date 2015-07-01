@@ -19,11 +19,13 @@ protected:
 
     H2Point pixelToH2coordinate(int x, int y) const;
 
-    void drawH2Point(const H2Point &p, const QColor &color = "black", int width = 4, bool back = true);
+    void drawH2Point(const H2Point &p, const QColor &color = "black", int width = 1, bool back = true);
+    void highlightH2Point(const H2Point &p, const QColor &color = "black", int width = 5);
     void drawH2Geodesic(const H2Geodesic &L, const QColor &color = "black", int width = 1, bool back = true);
     void drawH2GeodesicArc(const H2GeodesicArc &L, const QColor &color = "black", int width = 1, bool back = true);
     void drawStraightH2GeodesicArc(const H2GeodesicArc &L, const QColor &color = "black", int width = 1, bool back = true);
     void drawH2Triangle(const H2Triangle &triangle, const QColor &color = "black", int width = 1, bool back = true);
+    void highlightStraightH2Triangle(const H2Triangle &triangle, const QColor &color);
     void drawStraightFilledH2Triangle(const H2Triangle &triangle, bool back = true);
 
 

@@ -31,10 +31,6 @@ LiftedGraph::LiftedGraph(const LiftedGraph &other)
     boundaryPointsPartnersIndices = other.boundaryPointsPartnersIndices;
 }
 
-/*LiftedGraph::LiftedGraph(const LiftedGraph &other, const copyConstructorKey &) : LiftedGraph(other)
-{
-}*/
-
 LiftedGraph* LiftedGraph::cloneCopyConstructImpl() const
 {
     return new LiftedGraph(*this);
@@ -50,6 +46,11 @@ std::unique_ptr<LiftedGraph> LiftedGraph::cloneCopyConstruct() const
 uint LiftedGraph::getNbPoints() const
 {
     return nbPoints;
+}
+
+uint LiftedGraph::getNbBoundaryPoints() const
+{
+    return nbBoundaryPoints;
 }
 
 bool LiftedGraph::isBoundaryPoint(uint index) const
@@ -96,13 +97,6 @@ LiftedGraphFunction<Point, Map>::LiftedGraphFunction(const LiftedGraphFunction<P
     boundaryPointsNeighborsPairingsValues = other.boundaryPointsNeighborsPairingsValues;
     values = other.values;
 }
-
-
-/*template <typename Point, typename Map>
-LiftedGraphFunction<Point, Map>::LiftedGraphFunction(const LiftedGraphFunction<Point, Map> &other, const LiftedGraph::copyConstructorKey &) : LiftedGraphFunction(other)
-{
-
-}*/
 
 template <typename Point, typename Map>
 std::unique_ptr< LiftedGraphFunction<Point, Map> > LiftedGraphFunction<Point, Map>::cloneCopyConstruct() const
@@ -248,13 +242,6 @@ LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(con
     subdivisionsPointsIndicesInValues = other.subdivisionsPointsIndicesInValues;
     triangles = other.triangles;
 }
-
-/*template <typename Point, typename Map>
-LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(const LiftedGraphFunctionTriangulated<Point, Map> &other,
-                                                                             const LiftedGraph::copyConstructorKey &) : LiftedGraphFunctionTriangulated(other)
-{
-
-}*/
 
 template <typename Point, typename Map>
 std::unique_ptr<LiftedGraphFunctionTriangulated<Point, Map> > LiftedGraphFunctionTriangulated<Point, Map>::cloneCopyConstruct() const

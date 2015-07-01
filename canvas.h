@@ -6,7 +6,7 @@
 #include "tools.h"
 #include "canvasdelegate.h"
 
-class ActionHandler; class FenchelNielsenUser; class CanvasContainer; class Window;
+class ActionHandler; class FenchelNielsenUser; class CanvasContainer; class Window; class CanvasDelegateTests; class CanvasDelegateTests2;
 
 class Canvas : public QWidget
 {
@@ -19,6 +19,8 @@ class Canvas : public QWidget
 public:
     Canvas(DelegateType delegateType, Window* window = nullptr, bool leftCanvas = false, bool rightCanvas = false, ActionHandler *handler = nullptr);
     explicit Canvas(FenchelNielsenUser *fenchelNielsenUser);
+    explicit Canvas(CanvasDelegateTests *delegate);
+    explicit Canvas(CanvasDelegateTests2 *delegate);
     Canvas() = delete;
     Canvas(const Canvas &) = delete;
     Canvas & operator=(Canvas) = delete;
