@@ -8,12 +8,11 @@
 #include <QSpinBox>
 #include <QComboBox>
 
-#include "window.h"
-#include "actionhandler.h"
+#include "leftmenu.h"
 
-OutputMenu::OutputMenu(Window *window, ActionHandler *handler) : handler(handler)
+OutputMenu::OutputMenu(LeftMenu *leftMenu)
 {
-    setParent(window);
+    setParent(leftMenu);
     setTitle("Discrete heat flow");
 
     vertSpace = 5;
@@ -25,11 +24,9 @@ OutputMenu::OutputMenu(Window *window, ActionHandler *handler) : handler(handler
 void OutputMenu::createButtons()
 {
     computeButton = new QPushButton(QString("Run flow (%1)").arg(QChar(0x221E)));
-    connect(computeButton, SIGNAL(clicked()), this->handler, SLOT(computeButtonClicked()));
     computeButton->setToolTip("Run the discrete heat flow");
 
     resetButton = new QPushButton(QString("Reset"));
-    connect(resetButton, SIGNAL(clicked()), this->handler, SLOT(outputResetButtonClicked()));
     resetButton->setToolTip("Reset the function to its initialization");
 
     showLiveLabel = new QLabel("Show live ");
@@ -55,12 +52,6 @@ void OutputMenu::createLayout()
     layout->setRowMinimumHeight(4, vertSpace);
     layout->setRowMinimumHeight(5, buttonHeight);
 
-
-
-    layout->setColumnMinimumWidth(0, maxLeftColWidth());
-
-    setLayout(layout);
-
     layout->addWidget(resetButton, 1, 0, 1, 2);
     resetButton->setVisible(true);
     resetButton->setEnabled(false);
@@ -74,14 +65,8 @@ void OutputMenu::createLayout()
     layout->addWidget(showLiveCheckbox, 5, 1, 1, 1);
     showLiveCheckbox->setVisible(true);
     showLiveCheckbox->setChecked(true);
-}
 
-void OutputMenu::resizeEvent(QResizeEvent *)
-{
-    if(height() < maxHeight())
-    {
-        setMinimumHeight(maxHeight());
-    }
+    setLayout(layout);
 }
 
 void OutputMenu::resetMenu()
@@ -111,46 +96,14 @@ void OutputMenu::enableAll()
 void OutputMenu::switchComputeToStopButton()
 {
     computeButton->setText(tr("Stop"));
-    disconnect(computeButton, SIGNAL(clicked()), handler, SLOT(computeButtonClicked()));
-    connect(computeButton, SIGNAL(clicked()), handler, SLOT(stopButtonClicked()));
 }
 
 void OutputMenu::switchStopToComputeButton()
 {
     computeButton->setText(QString("Run flow (%1)").arg(QChar(0x221E)));
-    disconnect(computeButton, SIGNAL(clicked()), handler, SLOT(stopButtonClicked()));
-    connect(computeButton, SIGNAL(clicked()), handler, SLOT(computeButtonClicked()));
 }
 
 void OutputMenu::enableReset()
 {
     resetButton->setEnabled(true);
-}
-
-int OutputMenu::maxLeftColWidth() const
-{
-    int leftMax = showLiveLabel->sizeHint().width();
-
-    return leftMax;
-}
-
-int OutputMenu::maxRightColWidth() const
-{
-    int rightMax = showLiveCheckbox->sizeHint().width();
-
-    return rightMax;
-}
-
-int OutputMenu::maxWidth() const
-{
-    int maxi = maxLeftColWidth() + maxRightColWidth() + layout->horizontalSpacing();
-    maxi = std::max(maxi, computeButton->sizeHint().width());
-    maxi = std::max(maxi, resetButton->sizeHint().width());
-    return maxi + layout->margin() + QStyle::CE_MenuHMargin;
-}
-
-int OutputMenu::maxHeight() const
-{
-    int absurdMargin = 1;
-    return QStyle::CE_HeaderLabel + 3*buttonHeight + 7*vertSpace + absurdMargin;
 }

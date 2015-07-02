@@ -705,6 +705,7 @@ LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(con
     }
 
     std::vector<Point> vertexImages = rhoImage.generateFundamentalDomainOptimization().getVertices();
+    //std::vector<Point> vertexImages = rhoImage.generateFundamentalDomainOptimization().getVertices();
     H2SteinerPolygon SteinerPolygonImage(vertexImages, getSteinerWeights());
     std::vector<Point> polygonVerticesValues = SteinerPolygonImage.getFullPolygon().getVertices();
     this->values.resize(this->nbPoints);

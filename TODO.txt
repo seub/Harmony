@@ -14,6 +14,8 @@ utiliser des arrays au lieu de vectors débiles
 
 construire le mesh et la fonction dans un thread?
 
+réécrire la fonction de jonah et corriger le bug
+
 renommer window en mainwindow?
 
 In order to avoid status bar messages messing up with the layout, write my own layout?

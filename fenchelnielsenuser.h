@@ -4,14 +4,13 @@
 #include <QWidget>
 #include <QGroupBox>
 
-#include "canvascontainer.h"
 #include "liftedgraph.h"
 
 class ActionHandler; class QLabel; class QDoubleSpinBox; class QPushButton; class QGridLayout; class Canvas;
 
 class FNselector; class FNmenu; class H2CanvasDelegateLiftedGraph;
 
-class FenchelNielsenUser : public QWidget, public CanvasContainer
+class FenchelNielsenUser : public QWidget
 {
     Q_OBJECT
 
@@ -23,8 +22,6 @@ public:
     FenchelNielsenUser(const FenchelNielsenUser &) = delete;
     FenchelNielsenUser & operator=(FenchelNielsenUser) = delete;
 
-
-    void resizeEvent(QResizeEvent *event);
     void showEvent(QShowEvent *);
 
 public slots:
@@ -36,9 +33,9 @@ public slots:
 private:
     void createWindow();
     void createDelegatePointers();
-    void canvasResized();
-    int menuWidth() const;
-    void optimalSize(uint &outputWidth, uint &outputHeight) const;
+
+    int canvasMinimumSize() const;
+    QSize optimalSize() const;
 
 
     ActionHandler *handler;
@@ -65,19 +62,10 @@ class FNselector : public QGroupBox
     friend class FenchelNielsenUser;
 
 public:
-    int maxFirstColWidth() const;
-    int maxSecondColWidth() const;
-    int maxThirdColWidth() const;
-    int maxFourthColWidth() const;
-    int maxWidth() const;
-    int maxHeight() const;
-
     void getFNcoordinates(std::vector<double> &lengthsOut, std::vector<double> &twistsOut) const;
 
 private:
     FNselector(FenchelNielsenUser *user, uint nbLengths);
-
-    void resizeEvent(QResizeEvent *);
 
     void createLayout();
     void createButtons();
@@ -100,13 +88,9 @@ class FNmenu : public QGroupBox
     friend class FenchelNielsenUser;
 
 public:
-    int maxWidth() const;
-    int maxHeight() const;
 
 private:
-    FNmenu(FenchelNielsenUser *user, int minWidth = 0);
-
-    void resizeEvent(QResizeEvent *);
+    FNmenu(FenchelNielsenUser *user);
 
     void createLayout();
     void createButtons();

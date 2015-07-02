@@ -26,8 +26,7 @@ public:
     virtual DelegateType getDelegateType() const {return DelegateType::GENERIC;}
 
 
-//protected:
-public:
+protected:
     CanvasDelegate(uint sizeX, uint sizeY, bool leftCanvas = false, bool rightCanvas = false, ActionHandler *handler = nullptr);
     Complex PixelToComplexCoordinates(int x, int y) const;
 
@@ -73,7 +72,7 @@ public:
 
     ActionHandler *const handler;
 
-//private:
+private:
     bool getSendEndRepaint() {return sendEndRepaint;}
     void setSendEndRepaint(bool repeatRepaint) {this->sendEndRepaint = repeatRepaint;}
 
@@ -83,9 +82,9 @@ public:
     void shift(int x, int y);
     void zoom(double coeff);
 
-    virtual void mousePress(QMouseEvent *) {}
-    virtual void mouseMove(QMouseEvent *) {}
-    virtual void mouseRelease(QMouseEvent *) {}
+    virtual void mousePress(int, int, Qt::MouseButton, Qt::MouseButtons) {}
+    virtual void mouseMove(int, int, Qt::MouseButton, Qt::MouseButtons) {}
+    virtual void mouseRelease(int, int, Qt::MouseButton, Qt::MouseButtons) {}
     virtual void keyPress(QKeyEvent *keyEvent);
     virtual void enter() {}
     virtual void leave() {}

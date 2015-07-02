@@ -6,7 +6,7 @@
 #include "tools.h"
 #include "canvasdelegate.h"
 
-class ActionHandler; class FenchelNielsenUser; class CanvasContainer; class Window; class CanvasDelegateTests; class CanvasDelegateTests2;
+class ActionHandler; class FenchelNielsenUser; class Window; class CanvasDelegateTests; class CanvasDelegateTests2;
 
 class Canvas : public QWidget
 {
@@ -34,7 +34,7 @@ private:
 
     void updateRefresh(bool back, bool top);
     void paintEvent(QPaintEvent *event) override;
-    void resizeEvent(QResizeEvent *resizeEvent) override;
+    void resizeEvent(QResizeEvent *) override;
     void moveEvent(QMoveEvent *) override;
     void mousePressEvent(QMouseEvent *mouseEvent) override;
     void mouseMoveEvent(QMouseEvent *mouseEvent) override;
@@ -47,7 +47,12 @@ private:
     void initialize();
     void rescale();
 
-    CanvasContainer *const container;
+    int imageFirstCornerX() const;
+    int imageFirstCornerY() const;
+    int imageMaxSize() const;
+
+    bool mouseEventOverImage(QMouseEvent *mouseEvent, int &xOut, int &yOut) const;
+
     CanvasDelegate *delegate;
 };
 

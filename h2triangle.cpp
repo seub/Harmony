@@ -63,10 +63,7 @@ bool H2Triangle::contains(const H2Point &point) const
 
 void H2Triangle::getAsPolygon(H2Polygon & outputPolygon) const
 {
-    outputPolygon.clearVertices();
-    outputPolygon.addVertex(a);
-    outputPolygon.addVertex(b);
-    outputPolygon.addVertex(c);
+    outputPolygon.setVertices({a, b, c});
 }
 
 void H2Triangle::getAngles(double &angleA, double &angleB, double &angleC) const

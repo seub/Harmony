@@ -4,6 +4,7 @@
 #include <QImage>
 #include <QWheelEvent>
 #include <QDebug>
+#include <QApplication>
 
 #include "h2canvasdelegate.h"
 #include "h2canvasdelegateliftedgraph.h"
@@ -14,32 +15,33 @@
 
 
 
-Canvas::Canvas(DelegateType delegateType, Window *window, bool leftCanvas, bool rightCanvas, ActionHandler *handler) :
-    container(window)
+Canvas::Canvas(DelegateType delegateType, Window *window, bool leftCanvas, bool rightCanvas, ActionHandler *handler)
 {
     setParent(window);
     initialize();
-
+    
     delegate = nullptr;
     changeDelegate(delegateType, leftCanvas, rightCanvas, handler);
 }
 
-Canvas::Canvas(FenchelNielsenUser *fenchelNielsenUser) : container(fenchelNielsenUser)
+Canvas::Canvas(FenchelNielsenUser *fenchelNielsenUser)
 {
     setParent(fenchelNielsenUser);
     initialize();
-
-    delegate = new H2CanvasDelegateLiftedGraph(width(), height());
+    
+    int size = std::min(width(), height());
+    
+    delegate = new H2CanvasDelegateLiftedGraph(size, size);
 }
 
-Canvas::Canvas(CanvasDelegateTests *delegate) : container(nullptr)
+Canvas::Canvas(CanvasDelegateTests *delegate)
 {
     resize(delegate->sizeX, delegate->sizeY);
     this->delegate = delegate;
     initialize();
 }
 
-Canvas::Canvas(CanvasDelegateTests2 *delegate) : container(nullptr)
+Canvas::Canvas(CanvasDelegateTests2 *delegate)
 {
     resize(delegate->sizeX, delegate->sizeY);
     this->delegate = delegate;
@@ -58,39 +60,40 @@ DelegateType Canvas::getDelegateType() const
 
 void Canvas::initialize()
 {
-    setBackgroundRole(QPalette::Base);
-    setAutoFillBackground(true);
+    //setBackgroundRole(QPalette::Base);
+    //setAutoFillBackground(true);
     setFocusPolicy(Qt::WheelFocus);
     setMouseTracking(true);
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setEnabled(true);
 }
 
 void Canvas::changeDelegate(DelegateType delegateType, bool leftCanvas, bool rightCanvas, ActionHandler *handler)
 {
     delete delegate;
-
+    
+    int size = std::min(width(), height());
+    
     switch(delegateType)
     {
     case DelegateType::GENERIC:
-        delegate = new CanvasDelegate(width(), height(), leftCanvas, rightCanvas, handler);
+        delegate = new CanvasDelegate(size, size, leftCanvas, rightCanvas, handler);
         break;
-
+        
     case DelegateType::H2DELEGATE:
-        delegate = new H2CanvasDelegate(width(), height(), leftCanvas, rightCanvas, handler);
+        delegate = new H2CanvasDelegate(size, size, leftCanvas, rightCanvas, handler);
         break;
-
+        
     case DelegateType::H2DELEGATE_GRAPH:
-        delegate = new H2CanvasDelegateLiftedGraph(width(), height(), leftCanvas, rightCanvas, handler);
+        delegate = new H2CanvasDelegateLiftedGraph(size, size, leftCanvas, rightCanvas, handler);
         break;
-
+        
     case DelegateType::H3DELEGATE:
         break;
-
+        
     default:
         throw(QString("ERROR in Canvas::changeDelegate: delegate type undefined"));
     }
-
+    
     update();
 }
 
@@ -100,43 +103,80 @@ void Canvas::updateRefresh(bool back, bool top)
     update();
 }
 
+int Canvas::imageFirstCornerX() const
+{
+    return width() > height() ? (width()-height())/2 : 0;
+}
+
+int Canvas::imageFirstCornerY() const
+{
+    return height() > width() ? (height()-width())/2 : 0;
+}
+
+int Canvas::imageMaxSize() const
+{
+    return std::min(width(), height());
+}
+
+bool Canvas::mouseEventOverImage(QMouseEvent *mouseEvent, int &xOut, int &yOut) const
+{
+    int x = mouseEvent->x();
+    int y = mouseEvent->y();
+
+    if ((x < imageFirstCornerX()) || (x > imageFirstCornerX() + imageMaxSize()) || (y < imageFirstCornerY()) || (y > imageFirstCornerY() + imageMaxSize()))
+    {
+        return false;
+    }
+    else
+    {
+        xOut = x - imageFirstCornerX();
+        yOut = y - imageFirstCornerY();
+        return true;
+    }
+}
+
 void Canvas::paintEvent(QPaintEvent *event)
 {
     //clock_t t0 = clock();
-
+    
     delegate->redraw(delegate->enableRedrawBufferBack, delegate->enableRedrawBufferTop);
     delegate->enableRedrawBuffer(false, false);
-
+    
+    
+    
+    //Tests
+    int imageSize = delegate->getImageBack()->width();
+    if (imageSize != imageMaxSize())
+    {
+        qDebug() << "Error in Canvas::paintEvent: image size doesn't fit canvas size";
+    }
+    
     QPainter canvasPainter(this);
     canvasPainter.setClipRegion(event->region());
-    canvasPainter.drawImage(0, 0, *(delegate->getImageBack()));
-    canvasPainter.drawImage(0, 0, *(delegate->getImageTop()));
-
+    canvasPainter.drawImage(imageFirstCornerX(), imageFirstCornerY(), *(delegate->getImageBack()));
+    canvasPainter.drawImage(imageFirstCornerX(), imageFirstCornerY(), *(delegate->getImageTop()));
+    
     if (delegate->getSendEndRepaint())
     {
         delegate->handler->processMessage(ActionHandlerMessage::END_CANVAS_REPAINT);
     }
-
+    
     //qDebug() << "Time spent painting canvas: " << (clock() -t0)*1.0/CLOCKS_PER_SEC;
 }
 
 void Canvas::mousePressEvent(QMouseEvent *mouseEvent)
 {
-    delegate->mousePress(mouseEvent);
+    int x, y;
+    if (mouseEventOverImage(mouseEvent, x, y))
+    {
+        delegate->mousePress(x, y, mouseEvent->button(), mouseEvent->buttons());
+    }
 }
 
-void Canvas::resizeEvent(QResizeEvent *resizeEvent)
+void Canvas::resizeEvent(QResizeEvent *)
 {
-    //std::cout << "Canvas::resizeEvent()" << std::endl;
-
-    QSize newSize = resizeEvent->size();
-    delegate->rescale(newSize.width(), newSize.height());
-
-    if (newSize.width()!=newSize.height() && container!=nullptr)
-    {
-        container->canvasResized();
-    }
-    update();
+    rescale();
+    updateRefresh(true, true);
 }
 
 void Canvas::moveEvent(QMoveEvent *)
@@ -146,14 +186,22 @@ void Canvas::moveEvent(QMoveEvent *)
 
 void Canvas::mouseMoveEvent(QMouseEvent *mouseEvent)
 {
-    delegate->mouseMove(mouseEvent);
-    update();
+    int x, y;
+    if (mouseEventOverImage(mouseEvent, x, y))
+    {
+        delegate->mouseMove(x, y, mouseEvent->button(), mouseEvent->buttons());
+        update();
+    }
 }
 
 void Canvas::mouseReleaseEvent(QMouseEvent *mouseEvent)
 {
-    delegate->mouseRelease(mouseEvent);
-    update();
+    int x, y;
+    if (mouseEventOverImage(mouseEvent, x, y))
+    {
+        delegate->mouseRelease(x, y, mouseEvent->button(), mouseEvent->buttons());
+        update();
+    }
 }
 
 void Canvas::enterEvent(QEvent *)
@@ -182,8 +230,8 @@ void Canvas::keyPressEvent(QKeyEvent *keyEvent)
 
 void Canvas::rescale()
 {
-    //delegate->rescale(width(), height());
-    delegate->rescale(width(), width());
+    int size = std::min(width(), height());
+    delegate->rescale(size, size);
     update();
 }
 

@@ -3,7 +3,7 @@
 
 #include <QStatusBar>
 
-class Window;
+class Window; class QLabel;
 
 class StatusBar : public QStatusBar
 {
@@ -12,7 +12,8 @@ class StatusBar : public QStatusBar
 public:
     StatusBar(Window *window);
 
-    void resizeEvent(QResizeEvent *);
+private:
+    QLabel *label;
 };
 
 #endif // STATUSBAR_H

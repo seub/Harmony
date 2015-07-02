@@ -1,13 +1,14 @@
 #include "statusbar.h"
 
-#include <QResizeEvent>
+#include <QLabel>
 
 #include "window.h"
 
 StatusBar::StatusBar(Window *window) : QStatusBar(window)
-{
-}
-
-void StatusBar::resizeEvent(QResizeEvent *)
-{
+{    
+    setSizeGripEnabled(false);
+    setFixedHeight(25);
+    label = new QLabel;
+    label->setText("Ready");
+    addWidget(label);
 }

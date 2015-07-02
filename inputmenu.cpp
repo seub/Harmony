@@ -8,12 +8,11 @@
 #include <QPushButton>
 #include <QComboBox>
 
-#include "actionhandler.h"
-#include "window.h"
+#include "leftmenu.h"
 
-InputMenu::InputMenu(Window *window, ActionHandler *handler) : handler(handler)
+InputMenu::InputMenu(LeftMenu *leftMenu)
 {
-    setParent(window);
+    setParent(leftMenu);
     setTitle("Input");
 
     vertSpace = 5;
@@ -30,7 +29,6 @@ void InputMenu::createButtons()
     genusSpinBox->setRange(2, 6);
     genusSpinBox->setValue(2);
     genusSpinBox->setToolTip("Set genus of the surface");
-    connect(genusSpinBox, SIGNAL(valueChanged(int)), handler, SLOT(genusClicked(int)));
 
     setRhoDomainComboBox = new QComboBox;
     setRhoDomainComboBox->addItem(QString("Set %1 domain...").arg(QChar(961)), SET_RHO_CHOOSE);
@@ -38,7 +36,6 @@ void InputMenu::createButtons()
     setRhoDomainComboBox->addItem(QString("Token %1nice%2 %3").arg(QChar(8220)).arg(QChar(8221)).arg(QChar(961)), SET_RHO_NICE);
     setRhoDomainComboBox->addItem("Fenchel-Nielsen...", SET_RHO_FN);
     setRhoDomainComboBox->setToolTip("Set domain representation...");
-    connect(setRhoDomainComboBox, SIGNAL(activated(int)), handler, SLOT(setRhoDomainClicked(int)));
 
     setRhoImageComboBox = new QComboBox;
     setRhoImageComboBox->addItem(QString("Set %1 image...").arg(QChar(961)), SET_RHO_CHOOSE);
@@ -46,7 +43,6 @@ void InputMenu::createButtons()
     setRhoImageComboBox->addItem(QString("Token %1nice%2 %3").arg(QChar(8220)).arg(QChar(8221)).arg(QChar(961)), SET_RHO_NICE);
     setRhoImageComboBox->addItem("Fenchel-Nielsen...", SET_RHO_FN);
     setRhoImageComboBox->setToolTip("Set image representation...");
-    connect(setRhoImageComboBox, SIGNAL(activated(int)), handler, SLOT(setRhoImageClicked(int)));
 
     meshDepthLabel = new QLabel("Mesh depth: ");
 
@@ -54,7 +50,6 @@ void InputMenu::createButtons()
     meshDepthSpinBox->setRange(0, 6);
     meshDepthSpinBox->setValue(4);
     meshDepthSpinBox->setToolTip("Choose depth of the mesh");
-    connect(meshDepthSpinBox, SIGNAL(valueChanged(int)), handler, SLOT(meshDepthClicked(int)));
 
     buttonHeight = setRhoDomainComboBox->sizeHint().height();
     genusLabel->setFixedHeight(buttonHeight);
@@ -88,10 +83,6 @@ void InputMenu::createLayout()
     layout->setRowMinimumHeight(6, 4*vertSpace);
     layout->setRowMinimumHeight(7, buttonHeight);
 
-    layout->setColumnMinimumWidth(0, maxLeftColWidth());
-
-    setLayout(layout);
-
     layout->addWidget(genusLabel, 1, 0, 1, 1, Qt::AlignRight);
     genusLabel->setVisible(true);
     genusLabel->setEnabled(true);
@@ -116,33 +107,7 @@ void InputMenu::createLayout()
     meshDepthSpinBox->setVisible(true);
     meshDepthSpinBox->setEnabled(true);
 
-}
-
-int InputMenu::maxLeftColWidth() const
-{
-    int leftMax = std::max(genusLabel->sizeHint().width(), meshDepthLabel->sizeHint().width());
-    return leftMax;
-}
-
-int InputMenu::maxRightColWidth() const
-{
-    int rightMax = std::max(genusSpinBox->sizeHint().width(), genusSpinBox->sizeHint().width());
-    return rightMax;
-}
-
-int InputMenu::maxWidth() const
-{
-    int maxi = maxLeftColWidth() + maxRightColWidth() + layout->horizontalSpacing();
-    maxi = std::max(maxi, setRhoDomainComboBox->sizeHint().width());
-    maxi = std::max(maxi, setRhoImageComboBox->sizeHint().width());
-    return QStyle::CE_MenuHMargin + maxi + layout->margin();
-}
-
-
-int InputMenu::maxHeight() const
-{
-    int absurdMargin = 1;
-    return QStyle::CE_HeaderLabel + absurdMargin + 4*buttonHeight + 10*vertSpace;
+    setLayout(layout);
 }
 
 int InputMenu::getGenus() const
@@ -153,12 +118,4 @@ int InputMenu::getGenus() const
 int InputMenu::getMeshDepth() const
 {
     return meshDepthSpinBox->value();
-}
-
-void InputMenu::resizeEvent(QResizeEvent *)
-{
-    if(height() < maxHeight())
-    {
-        setMinimumHeight(maxHeight());
-    }
 }

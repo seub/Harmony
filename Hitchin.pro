@@ -59,7 +59,6 @@ SOURCES += main.cpp \
     topfactory.cpp \
     displaymenu.cpp \
     fenchelnielsenuser.cpp \
-    canvascontainer.cpp \
     liftedgraph.cpp \
     triangularsubdivision.cpp \
     discreteheatflowiterator.cpp \
@@ -68,7 +67,9 @@ SOURCES += main.cpp \
     h2canvasdelegateliftedgraph.cpp \
     statusbar.cpp \
     canvasdelegatetests.cpp \
-    tests.cpp
+    tests.cpp \
+    mainwindowlayout.cpp \
+    leftmenu.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -108,7 +109,6 @@ HEADERS += \
     topfactory.h \
     displaymenu.h \
     fenchelnielsenuser.h \
-    canvascontainer.h \
     liftedgraph.h \
     triangularsubdivision.h \
     discreteheatflowiterator.h \
@@ -116,7 +116,9 @@ HEADERS += \
     h2discreteflowfactorythread.h \
     h2canvasdelegateliftedgraph.h \
     statusbar.h \
-    canvasdelegatetests.h
+    canvasdelegatetests.h \
+    mainwindowlayout.h \
+    leftmenu.h
 
 OTHER_FILES += \
     TODO.txt

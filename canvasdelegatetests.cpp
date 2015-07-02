@@ -54,9 +54,9 @@ void CanvasDelegateTests::addSequence(const std::vector<double> sequence, const 
 }
 
 
-void CanvasDelegateTests::redraw(bool, bool)
+void CanvasDelegateTests::redraw(bool back, bool top)
 {
-    imageBack->fill("white");
+    CanvasDelegate::redraw(back, top);
     plotSequences();
 }
 
@@ -85,10 +85,8 @@ void CanvasDelegateTests2::addSequence(const std::vector<H2Point> sequence, cons
 }
 
 
-void CanvasDelegateTests2::redraw(bool, bool)
+void CanvasDelegateTests2::redraw(bool back, bool top)
 {
-    imageBack->fill("white");
-    drawCircle(0,1);
-
+    H2CanvasDelegate::redraw(back, top);
     plotSequences();
 }

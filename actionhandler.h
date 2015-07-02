@@ -54,6 +54,7 @@ private:
     void setFactory(TopFactory *topFactory);
     void inputReset();
     void resetDelegatePointers();
+    void connectMenusSignals();
 
     void setRhoNiceDomain();
     void setRhoNiceImage();
