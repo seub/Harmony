@@ -8,10 +8,10 @@
 
 int main(int argc, char *argv[])
 {
-
+/*
     std::cout << std::endl;
 
-/*
+
     TopologicalSurface S(2,0);
     DiscreteGroup Gamma(S);
     GroupRepresentation<H2Isometry> rho(Gamma);
@@ -26,18 +26,13 @@ int main(int argc, char *argv[])
     rho = F.getRepresentation();
 
 
-    clock_t start,end;
-    start = clock();
     H2Polygon P1 = rho.generateFundamentalDomainOptimization();
-    end = clock();
-    std::cout << (end - start)*1.0/CLOCKS_PER_SEC << " seconds for generateFundmentalDomainOptimization" << std::endl;
-    start = clock();
-    H2Polygon P2 = rho.generateFundamentalDomain(30);
-    end = clock();
-    std::cout << (end - start)*1.0/CLOCKS_PER_SEC << " seconds for generateFundmentalDomain" << std::endl;
+    //H2Polygon P2 = rho.generateFundamentalDomain(30);
 
     H2PolygonTriangulater T(&P1);
+
 */
+
 /*
     QApplication a(argc, argv);
     runTests();

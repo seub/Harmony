@@ -442,11 +442,11 @@ void H2PolygonTriangulater::triangulate()
     sortTriangles();
     completeCutsAndSides();
 
-
     // Improving the triangulation by searching for flips:
     while (attemptFlip()) {}
     sortTriangles();
     completeCutsAndSides();
+
 }
 
 std::vector<H2Triangle> H2PolygonTriangulater::getTriangles() const
@@ -701,7 +701,7 @@ bool H2PolygonTriangulater::attemptFlip()
         quadrilateralIndices.push_back(sharedIndex2);
         quadrilateralIndices.push_back(unsharedIndex2);
 
-        if (testQuadrilateralForFlipAngles(quadrilateralIndices) && !sameSide(unsharedIndex1,unsharedIndex2))
+        if (testQuadrilateralForFlipLengths(quadrilateralIndices) && !sameSide(unsharedIndex1,unsharedIndex2))
         {
             getCutsFromTriangle(leftTriangleIndex,l1,l2,l3);
             getCutsFromTriangle(rightTriangleIndex,k1,k2,k3);
