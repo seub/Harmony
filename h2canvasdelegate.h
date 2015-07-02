@@ -37,9 +37,9 @@ protected:
 
     H2Isometry mobius;
 
-    virtual void mousePress (QMouseEvent * mouseEvent) override;
-    virtual void mouseMove(QMouseEvent * mouseEvent) override;
-    virtual void mouseRelease(QMouseEvent *) override;
+    virtual void mousePress (int x, int y, Qt::MouseButton button, Qt::MouseButtons buttons) override;
+    virtual void mouseMove(int x, int y, Qt::MouseButton button, Qt::MouseButtons buttons) override;
+    virtual void mouseRelease(int x, int y, Qt::MouseButton button, Qt::MouseButtons buttons) override;
 
 private:
     bool mobiusing;

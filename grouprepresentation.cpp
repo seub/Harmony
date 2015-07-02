@@ -137,10 +137,10 @@ template<> GroupRepresentation<SL2CMatrix> GroupRepresentation<SL2CMatrix>::bar(
 
 template<> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain(const H2Point &basePoint) const
 {
-    H2Polygon res;
+    H2Polygon out;
     if (Gamma.isClosedSurfaceGroup())
     {
-        res.addVertex(basePoint);
+        out.addVertex(basePoint);
         uint genus = generatorImages.size()/2;
         H2Isometry f;
         f.setIdentity();
@@ -148,27 +148,27 @@ template<> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain(
         for (uint i = 0; i != genus; ++i)
         {
             f = f*generatorImages[2*i];
-            res.addVertex(f*basePoint);
+            out.addVertex(f*basePoint);
             f = f*generatorImages[2*i+1];
-            res.addVertex(f*basePoint);
+            out.addVertex(f*basePoint);
             f = f*generatorImages[2*i].inverse();
-            res.addVertex(f*basePoint);
+            out.addVertex(f*basePoint);
             f = f*generatorImages[2*i+1].inverse();
-            res.addVertex(f*basePoint);
+            out.addVertex(f*basePoint);
         }
-        res.removeLastVertex();
+        out.removeLastVertex();
     }
     else
     {
         throw(QString("Error in GroupRepresentation<H2Isometry>::generateFundamentalDomain(const H2Point &basePoint): not a closed surface group representation"));
     }
 
-    if (!res.isConvex())
+    if (!out.isConvex())
     {
-        qDebug() << "WARNING in GroupRepresentation<H2Isometry>::generateFundamentalDomain(const H2Point &basePoint): polygon is not convex";
+        //qDebug() << "WARNING in GroupRepresentation<H2Isometry>::generateFundamentalDomain(const H2Point &basePoint): polygon is not convex";
     }
 
-    return res;
+    return out;
 }
 
 template <> void GroupRepresentation<H2Isometry>::generateFundamentalDomain(const H2Point &basePoint, H2Polygon &polygon) const
@@ -202,62 +202,6 @@ template <> void GroupRepresentation<H2Isometry>::generateFundamentalDomain(cons
     polygon.setVertices(newVertices);
 }
 
-template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain(uint tilingSize) const
-{
-    //clock_t start, end;
-    //start = clock();
-
-    double step = 1.0/tilingSize;
-
-    H2Point p;
-    H2Polygon polygon, bestPolygon;
-    polygon.vertices.resize(2*generatorImages.size());
-    double currentNorm, bestNorm = 1/0.0;
-    bool bestNormSet = false;
-    Complex z;
-
-    double x = -1.0, y = -1.0;
-    for(uint i=1; i != 2*tilingSize; ++i)
-    {
-        x += step;
-        y = -1.0;
-        for (uint j=1; j != 2*tilingSize; ++j)
-        {
-            y += step;
-            z = Complex(x,y);
-            if (norm(z) < 1.0)
-            {
-                p.setDiskCoordinate(Complex(x, y));
-                generateFundamentalDomain(p, polygon);
-                if (polygon.isConvex())
-                {
-                    currentNorm = polygon.norm4();
-                    if (!bestNormSet)
-                    {
-                        bestNorm = currentNorm;
-                        bestNormSet = true;
-                    }
-                    if (currentNorm < bestNorm)
-                    {
-                        bestNorm = currentNorm;
-                        bestPolygon = polygon;
-                    }
-                }
-            }
-        }
-    }
-
-    if (!bestNormSet)
-    {
-        qDebug() << "Warning in  H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain(uint): could not find a convex polygon";
-        p.setDiskCoordinate(0.0);
-        generateFundamentalDomain(p, bestPolygon);
-    }
-
-    //end = clock();
-    //qDebug() << (end - start)*1.0/CLOCKS_PER_SEC << " time spent in (stupid) GroupRepresentation<H2Isometry>::generateFundamentalDomain(uint tilingSize)";
-    return bestPolygon;
-}
 
 template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomainOptimization(double epsilon, double stepSize) const
 {
@@ -324,16 +268,31 @@ template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain
             throw(QString("Error in generateFundamentalDomainOptimization: basePt is outside the unit disk"));
         }
     }
+<<<<<<< HEAD
+=======
+
+    /*std::cout << "Process took " << j << " steps" << std::endl;
+    std::cout << "dfx = " << dfx << std::endl;
+    std::cout << "dfy = " << dfy << std::endl;*/
+
+>>>>>>> 3e9f089c4beb64617a59d3d11f291e763dc2ae91
     for(const auto & f : fromVertexPairings)
     {
         basePtImages.push_back(f*basePt);
     }
+<<<<<<< HEAD
     output = H2Polygon(basePtImages);
     if (!output.isConvex())
     {
         throw(QString("Warning in  H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomainOptimization: could not find a convex polygon"));
     }
     return output;
+=======
+    /*std::cout << "basePt is an " << basePt << std::endl;
+    std::cout << "Final diameter = " << H2Point::diameter(basePtImages) << std::endl;*/
+
+    return H2Polygon(basePtImages);
+>>>>>>> 3e9f089c4beb64617a59d3d11f291e763dc2ae91
 }
 
 template <> DiscreteGroup GroupRepresentation<H2Isometry>::getDiscreteGroup() const

@@ -7,13 +7,13 @@
 
 class QGridLayout; class QLabel; class QCheckBox; class QPushButton; class QSpinBox; class QComboBox;
 
-class Window; class ActionHandler;
+class LeftMenu;
 
 class OutputMenu : public QGroupBox
 {
     Q_OBJECT
 
-    friend class Window;
+    friend class LeftMenu;
     friend class ActionHandler;
 
 public:
@@ -21,14 +21,8 @@ public:
     OutputMenu(const OutputMenu &) = delete;
     OutputMenu & operator=(OutputMenu) = delete;
 
-    int maxLeftColWidth() const;
-    int maxRightColWidth() const;
-    int maxWidth() const;
-    int maxHeight() const;
-
 private:
-    OutputMenu(Window *window, ActionHandler *handler);
-    void resizeEvent(QResizeEvent *event);
+    OutputMenu(LeftMenu *leftMenu);
     void resetMenu();
 
     void createLayout();
@@ -40,8 +34,6 @@ private:
 
     void switchComputeToStopButton();
     void switchStopToComputeButton();
-
-    ActionHandler *handler;
 
     QGridLayout *layout;
     QPushButton *resetButton, *computeButton;

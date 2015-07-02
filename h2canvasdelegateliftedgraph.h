@@ -31,7 +31,7 @@ private:
     void redrawFilledGraph();
     void redrawFilledGraph2Colors();
 
-    virtual void mouseMove(QMouseEvent * mouseEvent) override;
+    virtual void mouseMove(int x, int y, Qt::MouseButton button, Qt::MouseButtons buttons) override;
     virtual void enter() override;
     virtual void leave() override;
 
@@ -44,13 +44,13 @@ private:
     void updateGraph(bool refreshSidesTranslates);
     void updateNonFilledGraph(bool refreshSidesTranslates);
     void updateFilledGraph(bool refreshSidesTranslates);
-    void updateTrianglesWeights();
+    void updateDomainTrianglesAreas();
+    void updateTriangleWeights();
     void updateTrianglesColors();
     void updateTrianglesTranslatesColors();
     void refreshRho();
     void setFilledTriangles(bool filledTriangles);
 
-    void setTwoColor(bool twoColors);
     void setGraphColor(const QColor &color);
     void setShowTranslates(bool showTranslatesAroundVertex, bool showTranslatesAroundVertices);
 
@@ -68,7 +68,7 @@ private:
     QColor highlightColor;
 
     bool showTranslatesAroundVertex, showTranslatesAroundVertices;
-    bool filledTriangles, twoColors;
+    bool filledTriangles;
 
     GroupRepresentation<H2Isometry> *rho;
     bool isRhoEmpty;
@@ -85,13 +85,13 @@ private:
     std::vector<H2GeodesicArc> graphLargeSidesTranslates;
     std::vector<H2GeodesicArc> graphArcsTranslatesAroundVertex;
     std::vector<H2GeodesicArc> graphArcsTranslatesAroundVertices;
-    QColor graphColor, graphColor2, graphSidesTranslatesColor;
+    QColor graphColor, graphTranslatesColor, graphSidesTranslatesColor;
 
     std::vector<H2Triangle> graphTriangles;
     std::vector<H2Triangle> graphTrianglesTranslatesAroundVertex;
     std::vector<H2Triangle> graphTrianglesTranslatesAroundVertices;
-    std::shared_ptr< std::vector<double> > graphTrianglesReferenceAreas;
-    std::shared_ptr< std::vector<QColor> > graphTrianglesReferenceColors;
+    std::shared_ptr< std::vector<double> > domainTrianglesAreas;
+    std::vector<double> weights;
     std::vector<QColor> graphTrianglesColors, graphTrianglesTranslatesColors;
 };
 

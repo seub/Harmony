@@ -7,38 +7,30 @@
 
 class QGridLayout; class QComboBox; class QLabel; class QPushButton;
 
-class Window; class ActionHandler;
+class LeftMenu;
 
 class DisplayMenu : public QGroupBox
 {
     Q_OBJECT
 
-    friend class Window;
+    friend class LeftMenu;
     friend class ActionHandler;
 
 public:
     enum ShowTranslatesChoice {SHOW_TRANSLATES_DOMAIN, SHOW_TRANSLATES_VERTEX, SHOW_TRANSLATES_VERTICES};
-    enum ColoringChoice {COLORING_NONE, COLORING_PLAIN, COLORING_GRADIENT};
+    enum ColoringChoice {COLORING_NONE, COLORING_PLAIN};
     enum ColorChoice {RED, GREEN, BLUE, LIGHT_BLUE, ORANGE, GRAY, BLACK};
 
     DisplayMenu() = delete;
     DisplayMenu(const DisplayMenu &) = delete;
     DisplayMenu& operator=(DisplayMenu) = delete;
 
-    int maxLeftColWidth() const;
-    int maxRightColWidth() const;
-    int maxWidth() const;
-    int maxHeight() const;
-
 private:
-    DisplayMenu(Window *window, ActionHandler *handler);
-    void resizeEvent(QResizeEvent *);
+    DisplayMenu(LeftMenu *leftMenu);
 
     void createLayout();
     void createButtons();
     void setReady(bool left);
-
-    ActionHandler *handler;
 
     QGridLayout *layout;
     QPushButton *resetViewButton;

@@ -20,7 +20,6 @@ MainApplication::MainApplication(int &argc, char **argv) : QApplication(argc, ar
         handler.resetDelegatePointers();
 
         window->show();
-        window->canvasResized();
         window->setEnabled(true);
         window->setFocus();
     }

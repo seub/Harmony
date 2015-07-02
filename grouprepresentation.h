@@ -38,7 +38,6 @@ public:
 
     //Specialization to GroupRepresentation<H2ISometry>
     H2Polygon generateFundamentalDomain(const H2Point & basePoint) const;
-    H2Polygon generateFundamentalDomain(uint tilingSize = 50) const;
     H2Polygon generateFundamentalDomainOptimization(double epsilon = .01, double stepSize = .01) const;
 
     std::vector<H2Isometry> getSidePairingsForNormalizedFundamentalDomain() const;

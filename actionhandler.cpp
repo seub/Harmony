@@ -7,6 +7,8 @@
 #include <QGridLayout>
 #include <QStatusBar>
 #include <QColor>
+#include <QPushButton>
+#include <QSpinBox>
 
 #include "topfactory.h"
 #include "h2canvasdelegateliftedgraph.h"
@@ -16,6 +18,7 @@
 #include "outputmenu.h"
 #include "inputmenu.h"
 #include "displaymenu.h"
+#include "leftmenu.h"
 #include "fenchelnielsenuser.h"
 #include "discreteheatflowfactory.h"
 #include "statusbar.h"
@@ -42,12 +45,30 @@ void ActionHandler::resetBooleans()
 void ActionHandler::setWindow(Window *window)
 {
     this->window = window;
-    inputMenu = window->inputMenu;
-    displayMenu = window->displayMenu;
-    outputMenu = window->outputMenu;
+    inputMenu = window->leftMenu->inputMenu;
+    displayMenu = window->leftMenu->displayMenu;
+    outputMenu = window->leftMenu->outputMenu;
     leftCanvas = window->leftCanvas;
     rightCanvas = window->rightCanvas;
     statusBar = window->statusBar;
+
+    connectMenusSignals();
+}
+
+void ActionHandler::connectMenusSignals()
+{
+    connect(inputMenu->genusSpinBox, SIGNAL(valueChanged(int)), this, SLOT(genusClicked(int)));
+    connect(inputMenu->setRhoDomainComboBox, SIGNAL(activated(int)), this, SLOT(setRhoDomainClicked(int)));
+    connect(inputMenu->setRhoImageComboBox, SIGNAL(activated(int)), this, SLOT(setRhoImageClicked(int)));
+    connect(inputMenu->meshDepthSpinBox, SIGNAL(valueChanged(int)), this, SLOT(meshDepthClicked(int)));
+
+    connect(displayMenu->resetViewButton, SIGNAL(clicked()), this, SLOT(resetViewButtonClicked()));
+    connect(displayMenu->showTranslatesComboBox, SIGNAL(activated(int)), this, SLOT(showTranslatesClicked(int)));
+    connect(displayMenu->coloringComboBox, SIGNAL(activated(int)), this, SLOT(coloringClicked(int)));
+    connect(displayMenu->colorComboBox, SIGNAL(activated(int)), this, SLOT(colorClicked(int)));
+
+    connect(outputMenu->computeButton, SIGNAL(clicked()), this, SLOT(computeButtonClicked()));
+    connect(outputMenu->resetButton, SIGNAL(clicked()), this, SLOT(outputResetButtonClicked()));
 }
 
 void ActionHandler::setContainer(MathsContainer *mathsContainer)
@@ -66,10 +87,8 @@ void ActionHandler::resetDelegatePointers()
     rightDelegate->setRhoPointer(&(mathsContainer->H2RhoImage));
     rightDelegate->setGraphPointer(&(mathsContainer->H2ImageFunction));
 
-    leftDelegate->graphTrianglesReferenceAreas = std::make_shared< std::vector<double> >();
-    rightDelegate->graphTrianglesReferenceAreas = leftDelegate->graphTrianglesReferenceAreas;
-    leftDelegate->graphTrianglesReferenceColors = std::make_shared< std::vector<QColor> >();
-    rightDelegate->graphTrianglesReferenceColors = leftDelegate->graphTrianglesReferenceColors;
+    leftDelegate->domainTrianglesAreas = std::make_shared< std::vector<double> >();
+    rightDelegate->domainTrianglesAreas = leftDelegate->domainTrianglesAreas;
     
     leftCanvas->updateRefresh(true, true);
     rightCanvas->updateRefresh(true, true);
@@ -151,6 +170,10 @@ void ActionHandler::computeButtonClicked()
     outputMenu->disableAllButStop();
     outputMenu->switchComputeToStopButton();
     outputMenu->update();
+
+    disconnect(outputMenu->computeButton, SIGNAL(clicked()), this, SLOT(computeButtonClicked()));
+    connect(outputMenu->computeButton, SIGNAL(clicked()), this, SLOT(stopButtonClicked()));
+
     isShowingLive = outputMenu->showLiveCheckbox->checkState();
     topFactory->runH2Flow();
     if (isShowingLive)
@@ -247,24 +270,13 @@ void ActionHandler::coloringClicked(int choice)
     {
     case DisplayMenu::COLORING_NONE:
         leftDelegate->setFilledTriangles(false);
-        leftDelegate->setTwoColor(false);
         rightDelegate->setFilledTriangles(false);
-        rightDelegate->setTwoColor(false);
         break;
         
     case DisplayMenu::COLORING_PLAIN:
         //leftDelegate->setFilledTriangles(true);
         leftDelegate->setFilledTriangles(true);
-        leftDelegate->setTwoColor(false);
         rightDelegate->setFilledTriangles(true);
-        rightDelegate->setTwoColor(false);
-        break;
-
-    case DisplayMenu::COLORING_GRADIENT:
-        leftDelegate->setFilledTriangles(true);
-        leftDelegate->setTwoColor(true);
-        rightDelegate->setFilledTriangles(true);
-        rightDelegate->setTwoColor(true);
         break;
         
     default:
@@ -424,8 +436,7 @@ void ActionHandler::errorMessageForSetRhoNice()
     
     QGridLayout* layout = dynamic_cast<QGridLayout*>(messageBox.layout());
     layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
-    
-    messageBox.setAttribute(Qt::WA_DeleteOnClose);
+
     messageBox.exec();
     
 }
@@ -522,8 +533,8 @@ void ActionHandler::dealRhoDomainReady()
         leftDelegate->refreshRho();
         leftDelegate->setIsGraphEmpty(false);
         leftCanvas->setEnabled(true);
-        updateCanvasGraph(true, false);
-    }
+    }    
+    updateCanvasGraph(true, false);
     dealRhoImageReady();
 }
 
@@ -537,8 +548,6 @@ void ActionHandler::dealRhoImageReady()
             rightDelegate->refreshRho();
             rightDelegate->setIsGraphEmpty(false);
             rightCanvas->setEnabled(true);
-
-            updateCanvasGraph(false, true);
             setDisplayMenuReady(true);
             outputMenu->setEnabled(true);
             outputMenu->resetMenu();
@@ -569,7 +578,8 @@ void ActionHandler::dealRhoImageReady()
             rightDelegate->refreshRho();
         }
         rightDelegate->setIsGraphEmpty(true);
-    }
+    }    
+    updateCanvasGraph(false, true);
 }
 
 void ActionHandler::setDisplayMenuReady(bool left)
@@ -649,6 +659,9 @@ void ActionHandler::finishedComputing()
     inputMenu->setEnabled(true);
     displayMenu->setEnabled(true);
     outputMenu->switchStopToComputeButton();
+    disconnect(outputMenu->computeButton, SIGNAL(clicked()), this, SLOT(stopButtonClicked()));
+    connect(outputMenu->computeButton, SIGNAL(clicked()), this, SLOT(computeButtonClicked()));
+
     outputMenu->enableAll();
     rightDelegate->setShowTranslates(showTranslatesAroundVertex, showTranslatesAroundVertices);
     rightDelegate->setSendEndRepaint(false);

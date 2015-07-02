@@ -7,13 +7,13 @@
 
 class QGridLayout; class QComboBox; class QLabel; class QSpinBox;
 
-class Window; class ActionHandler;
+class LeftMenu;
 
 class InputMenu : public QGroupBox
 {
     Q_OBJECT
 
-    friend class Window;
+    friend class LeftMenu;
     friend class ActionHandler;
 
 public:
@@ -23,22 +23,15 @@ public:
     InputMenu(const InputMenu &) = delete;
     InputMenu & operator=(InputMenu) = delete;
 
-    int maxLeftColWidth() const;
-    int maxRightColWidth() const;
-    int maxWidth() const;
-    int maxHeight() const;
     int getGenus() const;
     int getMeshDepth() const;
 
 private:
-    InputMenu(Window *window, ActionHandler *handler);
-    void resizeEvent(QResizeEvent *);
+    InputMenu(LeftMenu *leftMenu);
 
     void createLayout();
     void createButtons();
     void resetRhos();
-
-    ActionHandler *handler;
 
     QGridLayout *layout;
     QComboBox *setRhoDomainComboBox, *setRhoImageComboBox;

@@ -4,14 +4,13 @@
 #include <QWidget>
 
 #include "tools.h"
-#include "canvascontainer.h"
 
-class QGridLayout; class QStatusBar; class QLabel;
+class QGridLayout;
 
-class Canvas; class InputMenu; class OutputMenu; class TopMenu; class DisplayMenu;
+class Canvas; class LeftMenu; class TopMenu;
 class ActionHandler; class StatusBar;
 
-class Window : public QWidget, public CanvasContainer
+class Window : public QWidget
 {
     Q_OBJECT
 
@@ -24,27 +23,22 @@ public:
     Window(const Window &) = delete;
     Window & operator =(Window) = delete;
 
-    void resizeEvent(QResizeEvent *event);
-signals:
-
-public slots:
-
 private:
     void createWindow(ActionHandler *handler = nullptr);
-    void enableCanvasesUpdates(bool b);
-    void canvasResized();
-    int menuWidth() const;
-    void optimalSize(uint &outputWidth, uint &outputHeight) const;
+    void enableCanvasesUpdates(bool enable);
+    int canvasMinimumSize() const;
+    QSize optimalSize() const;
+
+    void resizeEvent(QResizeEvent *);
 
     Canvas *leftCanvas;
     Canvas *rightCanvas;
     QGridLayout *layout;
-    InputMenu *inputMenu;
-    DisplayMenu *displayMenu;
-    OutputMenu *outputMenu;
+    LeftMenu *leftMenu;
     StatusBar *statusBar;
-    QLabel *statusBarLabel;
     TopMenu *topMenu;
+
+    bool verticalCanvases;
 };
 
 #endif // WINDOW_H

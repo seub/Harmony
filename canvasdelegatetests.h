@@ -15,7 +15,7 @@ public:
 
 private:
     void rescaleForPlottingSequences();
-    void redraw(bool, bool);
+    void redraw(bool back, bool top);
 
     
     std::vector< std::vector<double> > sequences;
@@ -31,7 +31,7 @@ public:
     void addSequence(const std::vector<H2Point> sequence, const QColor &color);
 
 private:
-    void redraw(bool, bool);
+    void redraw(bool back, bool top);
 
     std::vector< std::vector<H2Point> > sequences;
     std::vector<QColor> sequencesColors;

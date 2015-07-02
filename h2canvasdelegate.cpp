@@ -130,12 +130,12 @@ void H2CanvasDelegate::redrawTop()
 }
 
 
-void H2CanvasDelegate::mousePress(QMouseEvent *mouseEvent)
+void H2CanvasDelegate::mousePress(int x, int y, Qt::MouseButton button, Qt::MouseButtons)
 {
-    if(mouseEvent->button()== Qt::LeftButton)
+    if(button== Qt::LeftButton)
     {
-        this->mouseX = mouseEvent->x();
-        this->mouseY = mouseEvent->y();
+        this->mouseX = x;
+        this->mouseY = y;
         if (QApplication::keyboardModifiers() == Qt::ShiftModifier)
         {
             xMinSave = xMin;
@@ -152,17 +152,17 @@ void H2CanvasDelegate::mousePress(QMouseEvent *mouseEvent)
     }
 }
 
-void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
+void H2CanvasDelegate::mouseMove(int x, int y, Qt::MouseButton, Qt::MouseButtons buttons)
 {
-    if (mouseEvent->buttons() == Qt::LeftButton)
+    if (buttons == Qt::LeftButton)
     {
         if (QApplication::keyboardModifiers() == Qt::ShiftModifier)
         {
-            mouseShift(mouseEvent->x(), mouseEvent->y());
+            mouseShift(x, y);
         }
         else if (mobiusing)
         {
-            Complex mouseNew(PixelToComplexCoordinates(mouseEvent->x(), mouseEvent->y()));
+            Complex mouseNew(PixelToComplexCoordinates(x, y));
             if (norm(mouseNew)< 1.0)
             {
                 H2Isometry mobiusChange;
@@ -176,7 +176,7 @@ void H2CanvasDelegate::mouseMove(QMouseEvent *mouseEvent)
     }
 }
 
-void H2CanvasDelegate::mouseRelease(QMouseEvent *)
+void H2CanvasDelegate::mouseRelease(int, int, Qt::MouseButton, Qt::MouseButtons)
 {
     mobiusing = false;
 }
