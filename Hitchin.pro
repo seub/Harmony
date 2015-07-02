@@ -68,7 +68,6 @@ SOURCES += main.cpp \
     statusbar.cpp \
     canvasdelegatetests.cpp \
     tests.cpp \
-    mainwindowlayout.cpp \
     leftmenu.cpp
 
 HEADERS += \
@@ -117,7 +116,6 @@ HEADERS += \
     h2canvasdelegateliftedgraph.h \
     statusbar.h \
     canvasdelegatetests.h \
-    mainwindowlayout.h \
     leftmenu.h
 
 OTHER_FILES += \
