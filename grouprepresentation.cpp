@@ -268,31 +268,15 @@ template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain
             throw(QString("Error in generateFundamentalDomainOptimization: basePt is outside the unit disk"));
         }
     }
-<<<<<<< HEAD
-=======
-
-    /*std::cout << "Process took " << j << " steps" << std::endl;
-    std::cout << "dfx = " << dfx << std::endl;
-    std::cout << "dfy = " << dfy << std::endl;*/
-
->>>>>>> 3e9f089c4beb64617a59d3d11f291e763dc2ae91
     for(const auto & f : fromVertexPairings)
     {
         basePtImages.push_back(f*basePt);
     }
-<<<<<<< HEAD
-    output = H2Polygon(basePtImages);
-    if (!output.isConvex())
-    {
-        throw(QString("Warning in  H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomainOptimization: could not find a convex polygon"));
-    }
-    return output;
-=======
+
     /*std::cout << "basePt is an " << basePt << std::endl;
     std::cout << "Final diameter = " << H2Point::diameter(basePtImages) << std::endl;*/
 
     return H2Polygon(basePtImages);
->>>>>>> 3e9f089c4beb64617a59d3d11f291e763dc2ae91
 }
 
 template <> DiscreteGroup GroupRepresentation<H2Isometry>::getDiscreteGroup() const
