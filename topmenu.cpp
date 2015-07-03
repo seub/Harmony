@@ -1,8 +1,8 @@
 #include "topmenu.h"
 
-#include "window.h"
+#include "mainwindow.h"
 
-TopMenu::TopMenu(Window * window) : window(window)
+TopMenu::TopMenu(MainWindow * window) : window(window)
 {
     setParent(window);
 }

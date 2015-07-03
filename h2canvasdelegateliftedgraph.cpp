@@ -623,7 +623,6 @@ void H2CanvasDelegateLiftedGraph::refreshRho()
     translationsAroundVertex = rho->getPairingsAroundVertex();
     Tools::pop_front(translationsAroundVertex);
     translationsAroundVertices = rho->getPairingsAroundVertices();
-    Tools::pop_front(translationsAroundVertices);
 }
 
 int H2CanvasDelegateLiftedGraph::rescaleReals(int X0, const double &x)

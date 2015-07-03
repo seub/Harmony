@@ -8,7 +8,7 @@ MainApplication::MainApplication(int &argc, char **argv) : QApplication(argc, ar
 
     try
     {
-        window = new Window(&(this->handler));
+        window = new MainWindow(&(this->handler));
         connect(window, SIGNAL(destroyed()), this, SLOT(quit()));
         window->setAttribute(Qt::WA_DeleteOnClose, true);
         handler.setWindow(window);

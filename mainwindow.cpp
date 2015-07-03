@@ -1,4 +1,4 @@
-#include "window.h"
+#include "mainwindow.h"
 
 #include <QStatusBar>
 #include <QGridLayout>
@@ -14,7 +14,7 @@
 
 
 
-Window::Window(ActionHandler *handler)
+MainWindow::MainWindow(ActionHandler *handler)
 {
     setWindowTitle(tr("Equivariant Harmonic Maps"));
 
@@ -26,7 +26,7 @@ Window::Window(ActionHandler *handler)
     setAttribute(Qt::WA_DeleteOnClose);
 }
 
-void Window::createWindow(ActionHandler *handler)
+void MainWindow::createWindow(ActionHandler *handler)
 {    
 
 
@@ -64,7 +64,7 @@ void Window::createWindow(ActionHandler *handler)
     move(QApplication::desktop()->screen()->rect().center() - rect().center());
 }
 
-void Window::enableCanvasesUpdates(bool enable)
+void MainWindow::enableCanvasesUpdates(bool enable)
 {
     leftCanvas->setUpdatesEnabled(enable);
     rightCanvas->setUpdatesEnabled(enable);
@@ -75,12 +75,12 @@ void Window::enableCanvasesUpdates(bool enable)
     }
 }
 
-int Window::canvasMinimumSize() const
+int MainWindow::canvasMinimumSize() const
 {
     return leftMenu->sizeHint().width();
 }
 
-QSize Window::optimalSize() const
+QSize MainWindow::optimalSize() const
 {
     int screenWidth = QApplication::desktop()->width();
     int screenHeight = QApplication::desktop()->height();
@@ -95,7 +95,7 @@ QSize Window::optimalSize() const
     return QSize(complementaryWidth + 2*canvasOptimalSize, complementaryHeight + canvasOptimalSize);
 }
 
-void Window::resizeEvent(QResizeEvent *)
+void MainWindow::resizeEvent(QResizeEvent *)
 {
     int complementaryWidthH = 2*layout->margin() + 2*layout->horizontalSpacing() + leftMenu->sizeHint().width();
     int complementaryHeightV = 2*layout->margin() + 3*layout->verticalSpacing() + topMenu->sizeHint().height() + statusBar->height();

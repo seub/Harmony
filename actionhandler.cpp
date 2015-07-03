@@ -13,7 +13,7 @@
 #include "topfactory.h"
 #include "h2canvasdelegateliftedgraph.h"
 #include "mathscontainer.h"
-#include "window.h"
+#include "mainwindow.h"
 #include "canvas.h"
 #include "outputmenu.h"
 #include "inputmenu.h"
@@ -42,7 +42,7 @@ void ActionHandler::resetBooleans()
     expectingFNimage = false;
 }
 
-void ActionHandler::setWindow(Window *window)
+void ActionHandler::setWindow(MainWindow *window)
 {
     this->window = window;
     inputMenu = window->leftMenu->inputMenu;

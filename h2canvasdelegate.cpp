@@ -134,8 +134,7 @@ void H2CanvasDelegate::mousePress(int x, int y, Qt::MouseButton button, Qt::Mous
 {
     if(button== Qt::LeftButton)
     {
-        this->mouseX = x;
-        this->mouseY = y;
+        pointSave = PixelToComplexCoordinates(x, y);
         if (QApplication::keyboardModifiers() == Qt::ShiftModifier)
         {
             xMinSave = xMin;
@@ -143,17 +142,20 @@ void H2CanvasDelegate::mousePress(int x, int y, Qt::MouseButton button, Qt::Mous
         }
         else
         {
-            if (norm(PixelToComplexCoordinates(mouseX, mouseY)) < 1.0)
+            if (norm(pointSave) < 1.0)
             {
                 mobiusing = true;
-                savedMobius = mobius;
+                mobiusSave = mobius;
             }
         }
     }
 }
 
-void H2CanvasDelegate::mouseMove(int x, int y, Qt::MouseButton, Qt::MouseButtons buttons)
+void H2CanvasDelegate::mouseMove(int x, int y, Qt::MouseButton button, Qt::MouseButtons buttons)
 {
+    CanvasDelegate::mouseMove(x, y, button, buttons);
+
+
     if (buttons == Qt::LeftButton)
     {
         if (QApplication::keyboardModifiers() == Qt::ShiftModifier)
@@ -162,14 +164,30 @@ void H2CanvasDelegate::mouseMove(int x, int y, Qt::MouseButton, Qt::MouseButtons
         }
         else if (mobiusing)
         {
-            Complex mouseNew(PixelToComplexCoordinates(x, y));
-            if (norm(mouseNew)< 1.0)
+            Complex pointUnderMouse(PixelToComplexCoordinates(x, y));
+            if (norm(pointUnderMouse)< 1.0)
             {
                 H2Isometry mobiusChange;
-                Complex mouseOld(PixelToComplexCoordinates(this->mouseX,this->mouseY));
+                mobiusChange.setIdentity();
 
-                mobiusChange.setByMappingPointInDiskModelNormalized(mouseOld, mouseNew);
-                mobius = mobiusChange*savedMobius;
+                if (QApplication::keyboardModifiers() == Qt::ControlModifier)
+                {
+                    Complex u = (pointUnderMouse - pointSave);
+                    if (imag(u)*imag(u) > 0)
+                    {
+                        u = u/std::abs(u);
+                        Complex v = u - norm(pointSave);
+                        mobiusChange.setDiskCoordinates(conj(u)*v*v/norm(v), -pointSave*(1.0-u)/v);
+                    }
+                }
+                else
+                {
+                    if (norm(pointUnderMouse - pointSave) > 0)
+                    {
+                        mobiusChange.setByMappingPointInDiskModelNormalized(pointSave, pointUnderMouse);
+                    }
+                }
+                mobius = mobiusChange*mobiusSave;
             }
         }
         enableRedrawBuffer();
@@ -179,6 +197,47 @@ void H2CanvasDelegate::mouseMove(int x, int y, Qt::MouseButton, Qt::MouseButtons
 void H2CanvasDelegate::mouseRelease(int, int, Qt::MouseButton, Qt::MouseButtons)
 {
     mobiusing = false;
+}
+
+
+void H2CanvasDelegate::keyPress(QKeyEvent *keyEvent)
+{
+    CanvasDelegate::keyPress(keyEvent);
+
+    switch(keyEvent->key())
+    {
+
+    case Qt::Key_Control :
+        if (mobiusing && (norm(PixelToComplexCoordinates(mouseX, mouseY)) < 1.0))
+        {
+            pointSave = PixelToComplexCoordinates(mouseX, mouseY);
+            mobiusSave = mobius;
+        }
+        break;
+
+    case Qt::Key_Shift :
+        mouseXSave = mouseX;
+        mouseYSave = mouseY;
+        xMinSave = xMin;
+        yMaxSave = yMax;
+    }
+}
+
+void H2CanvasDelegate::keyRelease(QKeyEvent *keyEvent)
+{
+    CanvasDelegate::keyRelease(keyEvent);
+
+    switch(keyEvent->key())
+    {
+
+    case Qt::Key_Control :
+        if (mobiusing && (norm(PixelToComplexCoordinates(mouseX, mouseY)) < 1.0))
+        {
+            pointSave = PixelToComplexCoordinates(mouseX, mouseY);
+            mobiusSave = mobius;
+        }
+        break;
+    }
 }
 
 void H2CanvasDelegate::enter()

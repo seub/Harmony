@@ -7,9 +7,9 @@
 #include "mathscontainer.h"
 #include "actionhandler.h"
 #include "topfactory.h"
-#include "window.h"
+#include "mainwindow.h"
 
-class Window;
+class MainWindow;
 
 class MainApplication : public QApplication
 {
@@ -23,7 +23,7 @@ public:
     virtual bool notify(QObject *receiver, QEvent *sender);
 
 private:
-    Window *window;
+    MainWindow *window;
     bool errorCaught;
     MathsContainer mathsContainer;
     ActionHandler handler;

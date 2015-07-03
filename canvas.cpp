@@ -9,13 +9,13 @@
 #include "h2canvasdelegate.h"
 #include "h2canvasdelegateliftedgraph.h"
 #include "actionhandler.h"
-#include "window.h"
+#include "mainwindow.h"
 #include "fenchelnielsenuser.h"
 #include "canvasdelegatetests.h"
 
 
 
-Canvas::Canvas(DelegateType delegateType, Window *window, bool leftCanvas, bool rightCanvas, ActionHandler *handler)
+Canvas::Canvas(DelegateType delegateType, MainWindow *window, bool leftCanvas, bool rightCanvas, ActionHandler *handler)
 {
     setParent(window);
     initialize();
@@ -225,6 +225,12 @@ void Canvas::wheelEvent(QWheelEvent *wheelEvent)
 void Canvas::keyPressEvent(QKeyEvent *keyEvent)
 {
     delegate->keyPress(keyEvent);
+    update();
+}
+
+void Canvas::keyReleaseEvent(QKeyEvent *keyEvent)
+{
+    delegate->keyRelease(keyEvent);
     update();
 }
 

@@ -158,6 +158,12 @@ Complex CanvasDelegate::PixelToComplexCoordinates(int x, int y) const
     return Complex(a,b);
 }
 
+void CanvasDelegate::mouseMove(int x, int y, Qt::MouseButton, Qt::MouseButtons)
+{
+    this->mouseX = x;
+    this->mouseY = y;
+}
+
 void CanvasDelegate::keyPress(QKeyEvent *keyEvent)
 {
     switch(keyEvent->key())
@@ -220,8 +226,8 @@ void CanvasDelegate::zoom(double coeff, int centerX, int centerY)
 
 void CanvasDelegate::mouseShift(int x, int y)
 {
-    xMin = xMinSave + (mouseX - x)/scaleX;
-    yMax = yMaxSave - (mouseY - y)/scaleY;
+    xMin = xMinSave + (mouseXSave - x)/scaleX;
+    yMax = yMaxSave - (mouseYSave - y)/scaleY;
     enableRedrawBuffer();
 }
 

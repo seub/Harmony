@@ -181,7 +181,7 @@ H2Point FundamentalDomainGenerator::lineSearch(const H2Point &x0, const Complex 
 
 H2Point FundamentalDomainGenerator::optimalStepGradientDescent(const H2Point &x0) const
 {
-    clock_t start = clock();
+    //clock_t start = clock();
 
     H2Point xk = x0, previous = x0;
 
@@ -210,12 +210,12 @@ H2Point FundamentalDomainGenerator::optimalStepGradientDescent(const H2Point &x0
     {
         qDebug() << "Warning in FundamentalDomainGenerator::optimalStepGradientDescent: optimalStepGradientDescent failed, final error: " << error;
     }
-    else
+    /*else
     {
         std::cout << "Success of optimalStepGradientDescent in " << counter << " iterations" << std::endl;
     }
 
-    std::cout<< "Time elapsed: " << (clock()-start)*1.0/CLOCKS_PER_SEC << std::endl;
+    std::cout<< "Time elapsed: " << (clock()-start)*1.0/CLOCKS_PER_SEC << std::endl;*/
 
     return xk;
 }

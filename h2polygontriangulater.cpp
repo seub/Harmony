@@ -6,11 +6,8 @@
 H2PolygonTriangulater::H2PolygonTriangulater(const H2Polygon * const polygon) : polygon(polygon)
 {
     orientation = polygon->isPositivelyOriented();
+    maxNbFlips = 1000;
     triangulate();
-    /*qDebug() << "min angle = " << minTriangleAngle();
-    std::vector<double> polygonAngles = polygon->getPositiveInteriorAngles();
-    double minPolygonAngle = *std::min_element(polygonAngles.begin(), polygonAngles.end());
-    qDebug() << "min angle in polygon = " << minPolygonAngle;*/
 }
 
 
@@ -259,6 +256,19 @@ void TriangulationTriangle::getVertices(uint &i1, uint &i2, uint &i3) const
     i3 = vertexIndex3;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 bool H2PolygonTriangulater::isSideTriangle(uint triangleIndex) const
 {
     uint i,j,k,N=fullPolygon.nbVertices();
@@ -428,7 +438,6 @@ void H2PolygonTriangulater::completeCutsAndSides()
 void H2PolygonTriangulater::triangulate()
 {
     createSteinerPoints();
-    //createSteinerPointsDetailed();
 
     std::vector<uint> indices;
     uint i, N = fullPolygon.nbVertices();
@@ -439,12 +448,13 @@ void H2PolygonTriangulater::triangulate()
     }
 
     triangulateSubpolygon(indices);
+
     sortTriangles();
     completeCutsAndSides();
 
+    uint counter = 0;
+    while (attemptFlip() && counter!=maxNbFlips) {++counter;}
 
-    // Improving the triangulation by searching for flips:
-    while (attemptFlip()) {}
     sortTriangles();
     completeCutsAndSides();
 }
@@ -602,32 +612,6 @@ void H2PolygonTriangulater::createSteinerPoints()
     fullPolygon = steinerPolygon.getFullPolygon();
 }
 
-void H2PolygonTriangulater:: createSteinerPointsDetailed()
-{
-    std::vector<uint> nbSteinerPoints;
-    std::vector<H2GeodesicArc> sides = polygon->getSides();
-    std::vector<double> sideDistances, sideLengths;
-    for (const auto & side : sides)
-    {
-        for (const auto & otherSide : sides)
-        {
-            if (!H2GeodesicArc::shareEndpoint(side,otherSide))
-            {
-                sideDistances.push_back(H2Geodesic::distanceGeodesics(side.getGeodesic(),otherSide.getGeodesic()));
-            }
-        }
-        sideLengths.push_back(side.length());
-    }
-    double minDistance;
-    minDistance = *std::min_element(sideDistances.begin(),sideDistances.end());
-    for (const auto & sideLength : sideLengths)
-    {
-        nbSteinerPoints.push_back(Tools::intRound(2*sideLength/minDistance)-1);
-    }
-    steinerPolygon = H2SteinerPolygon(polygon->getVertices(), nbSteinerPoints);
-    fullPolygon = steinerPolygon.getFullPolygon();
-}
-
 bool H2PolygonTriangulater::sameSide(uint fullIndex1, uint fullIndex2) const
 {
     return steinerPolygon.lieOnSameActualSide(fullIndex1, fullIndex2);
@@ -635,81 +619,80 @@ bool H2PolygonTriangulater::sameSide(uint fullIndex1, uint fullIndex2) const
 
 bool H2PolygonTriangulater::testQuadrilateralForFlipAngles(const std::vector<uint> &quadrilateralIndices) const
 {
-    //assert quadrilateralIndices.size()==4
-    double minAngle1, minAngle2;
-    minAngle1 = minAngleOfCutInSubpolygon(quadrilateralIndices,0,2);
-    minAngle2 = minAngleOfCutInSubpolygon(quadrilateralIndices,1,3);
-    return minAngle1 < minAngle2;
+    assert(quadrilateralIndices.size() == 4);
+    return minAngleOfCutInSubpolygon(quadrilateralIndices, 1, 3) > minAngleOfCutInSubpolygon(quadrilateralIndices, 0, 2);
 }
 
 bool H2PolygonTriangulater::testQuadrilateralForFlipLengths(const std::vector<uint> &quadrilateralIndices) const
 {
-    //assert quadrilateralIndices.size()==4
-    double diagonalLength1, diagonalLength2;
+    assert(quadrilateralIndices.size() == 4);
+
     H2Point p0, p1, p2, p3;
     p0 = fullPolygon.getVertex(quadrilateralIndices[0]);
     p1 = fullPolygon.getVertex(quadrilateralIndices[1]);
     p2 = fullPolygon.getVertex(quadrilateralIndices[2]);
     p3 = fullPolygon.getVertex(quadrilateralIndices[3]);
-    diagonalLength1 = H2Point::distance(p0,p2);
-    diagonalLength2 = H2Point::distance(p1,p3);
-    return diagonalLength2 < diagonalLength1;
+
+    return H2Point::distance(p1, p3) < H2Point::distance(p0, p2);
 }
 
 bool H2PolygonTriangulater::attemptFlip()
 {
-    // assert polygon is triangulated
-    TriangulationTriangle T1,T2;
-    TriangulationCut newCut;
-    uint sharedIndex1, sharedIndex2, unsharedIndex1, unsharedIndex2, leftTriangleIndex, rightTriangleIndex, l=0;
-    bool output=0;
+    TriangulationTriangle leftTriangle, rightTriangle;
+
+    uint sharedIndex1, sharedIndex2, unsharedIndexLeft, unsharedIndexRight, leftTriangleIndex, rightTriangleIndex;
+    bool out = false;
+
     std::vector<uint> quadrilateralIndices;
     quadrilateralIndices.reserve(4);
-    uint l1,l2,l3,k1,k2,k3;
-    bool rightTriangleCheats=0;
 
-    while (!output && l<cuts.size())
+    uint l1, l2, l3, k1, k2, k3;
+    bool rightTriangleCheats = false;
+
+    uint cutIndex=0;
+    while (!out && cutIndex<cuts.size())
     {
 
         quadrilateralIndices.clear();
-        sharedIndex1 = cuts[l].vertexIndex1;
-        sharedIndex2 = cuts[l].vertexIndex2;
-        leftTriangleIndex = cuts[l].leftTriangleIndex;
-        rightTriangleIndex = cuts[l].rightTriangleIndex;
-        T1 = triangles[leftTriangleIndex];
-        T2 = triangles[rightTriangleIndex];
-        T1.getVertices(sharedIndex1,unsharedIndex1,sharedIndex2);
-        T2.getVertices(l1,l2,l3);
+        sharedIndex1 = cuts[cutIndex].vertexIndex1;
+        sharedIndex2 = cuts[cutIndex].vertexIndex2;
+        leftTriangleIndex = cuts[cutIndex].leftTriangleIndex;
+        rightTriangleIndex = cuts[cutIndex].rightTriangleIndex;
+        leftTriangle = triangles[leftTriangleIndex];
+        rightTriangle = triangles[rightTriangleIndex];
+        leftTriangle.getVertices(sharedIndex1, unsharedIndexLeft, sharedIndex2);
+        rightTriangle.getVertices(l1, l2, l3);
 
-        if (l1==cuts[l].vertexIndex1)
+        if (l1==cuts[cutIndex].vertexIndex1)
         {
-            rightTriangleCheats = 0;
-            T2.getVertices(sharedIndex1,sharedIndex2,unsharedIndex2);
+            rightTriangleCheats = false;
+            rightTriangle.getVertices(sharedIndex1, sharedIndex2, unsharedIndexRight);
         }
-        else if (l2==cuts[l].vertexIndex1)
+        else if (l2==cuts[cutIndex].vertexIndex1)
         {
-            rightTriangleCheats = 1;
-            T2.getVertices(unsharedIndex2,sharedIndex1,sharedIndex2);
+            rightTriangleCheats = true;
+            rightTriangle.getVertices(unsharedIndexRight, sharedIndex1, sharedIndex2);
         }
-        else if (l1!=cuts[l].vertexIndex1 && l2!=cuts[l].vertexIndex1)
+        else
         {
-            std::cout << "ERROR in attemptFlip: A triangle abutting a cut doesn't have vertices compatible with the desired cut" << std::endl;
+            throw(QString("ERROR in H2PolygonTriangulater::testQuadrilateralForFlipLengths: A triangle abutting a cut doesn't have vertices compatible with the desired cut"));
         }
 
         quadrilateralIndices.push_back(sharedIndex1);
-        quadrilateralIndices.push_back(unsharedIndex1);
+        quadrilateralIndices.push_back(unsharedIndexLeft);
         quadrilateralIndices.push_back(sharedIndex2);
-        quadrilateralIndices.push_back(unsharedIndex2);
+        quadrilateralIndices.push_back(unsharedIndexRight);
 
-        if (testQuadrilateralForFlipAngles(quadrilateralIndices) && !sameSide(unsharedIndex1,unsharedIndex2))
+        if (testQuadrilateralForFlipAngles(quadrilateralIndices) && !sameSide(unsharedIndexLeft,unsharedIndexRight))
         {
-            getCutsFromTriangle(leftTriangleIndex,l1,l2,l3);
-            getCutsFromTriangle(rightTriangleIndex,k1,k2,k3);
+            getCutsFromTriangle(leftTriangleIndex, l1, l2, l3);
+            getCutsFromTriangle(rightTriangleIndex, k1, k2, k3);
 
             if (l1 < cuts.size())
             {
                 cuts[l1].rightTriangleIndex = rightTriangleIndex;
-            } else
+            }
+            else
             {
                 sideTrianglesIndices[sharedIndex1] = rightTriangleIndex;
                 sideTrianglesBoundarySideIndices[sharedIndex1] = 0;
@@ -717,20 +700,22 @@ bool H2PolygonTriangulater::attemptFlip()
             if (l3 < cuts.size())
             {
                 cuts[l3].rightTriangleIndex = leftTriangleIndex;
-            } else
+            }
+            else
             {
-                sideTrianglesIndices[unsharedIndex1] = leftTriangleIndex;
-                sideTrianglesBoundarySideIndices[unsharedIndex1] = 0;
+                sideTrianglesIndices[unsharedIndexLeft] = leftTriangleIndex;
+                sideTrianglesBoundarySideIndices[unsharedIndexLeft] = 0;
             }
             if (!rightTriangleCheats)
             {
                 if (k2 < cuts.size())
                 {
                     cuts[k2].leftTriangleIndex = rightTriangleIndex;
-                } else
+                }
+                else
                 {
-                    sideTrianglesIndices[unsharedIndex2] = rightTriangleIndex;
-                    sideTrianglesBoundarySideIndices[unsharedIndex2] = 2;
+                    sideTrianglesIndices[unsharedIndexRight] = rightTriangleIndex;
+                    sideTrianglesBoundarySideIndices[unsharedIndexRight] = 2;
                 }
                 if (k3 < cuts.size())
                 {
@@ -738,17 +723,19 @@ bool H2PolygonTriangulater::attemptFlip()
                 } else
                 {
                     sideTrianglesIndices[sharedIndex2] = leftTriangleIndex;
-                    sideTrianglesBoundarySideIndices[unsharedIndex2] = 1;
+                    sideTrianglesBoundarySideIndices[unsharedIndexRight] = 1;
                 }
-            } else
+            }
+            else
             {
                 if (k1 < cuts.size())
                 {
                     cuts[k1].rightTriangleIndex = rightTriangleIndex;
-                } else
+                }
+                else
                 {
-                    sideTrianglesIndices[unsharedIndex2] = rightTriangleIndex;
-                    sideTrianglesBoundarySideIndices[unsharedIndex2] = 0;
+                    sideTrianglesIndices[unsharedIndexRight] = rightTriangleIndex;
+                    sideTrianglesBoundarySideIndices[unsharedIndexRight] = 0;
                 }
                 if (k2 < cuts.size())
                 {
@@ -756,28 +743,30 @@ bool H2PolygonTriangulater::attemptFlip()
                 } else
                 {
                     sideTrianglesIndices[sharedIndex2] = leftTriangleIndex;
-                    sideTrianglesBoundarySideIndices[unsharedIndex2] = 2;
+                    sideTrianglesBoundarySideIndices[unsharedIndexRight] = 2;
                 }
             }
             if (!rightTriangleCheats)
             {
-                triangles[leftTriangleIndex] = TriangulationTriangle(unsharedIndex1,sharedIndex2,unsharedIndex2);
-                triangles[rightTriangleIndex] = TriangulationTriangle(sharedIndex1,unsharedIndex1,unsharedIndex2);
-            } else
+                triangles[leftTriangleIndex] = TriangulationTriangle(unsharedIndexLeft,sharedIndex2,unsharedIndexRight);
+                triangles[rightTriangleIndex] = TriangulationTriangle(sharedIndex1,unsharedIndexLeft,unsharedIndexRight);
+            }
+            else
             {
-                triangles[leftTriangleIndex] = TriangulationTriangle(unsharedIndex2,unsharedIndex1,sharedIndex2);
-                triangles[rightTriangleIndex] = TriangulationTriangle(unsharedIndex2,sharedIndex1,unsharedIndex1);
+                triangles[leftTriangleIndex] = TriangulationTriangle(unsharedIndexRight,unsharedIndexLeft,sharedIndex2);
+                triangles[rightTriangleIndex] = TriangulationTriangle(unsharedIndexRight,sharedIndex1,unsharedIndexLeft);
             }
             if (!rightTriangleCheats)
             {
-                cuts[l] = TriangulationCut(unsharedIndex1,unsharedIndex2,leftTriangleIndex,rightTriangleIndex);
-            } else
+                cuts[cutIndex] = TriangulationCut(unsharedIndexLeft,unsharedIndexRight,leftTriangleIndex,rightTriangleIndex);
+            }
+            else
             {
-                cuts[l] = TriangulationCut(unsharedIndex2,unsharedIndex1,rightTriangleIndex,leftTriangleIndex);
+                cuts[cutIndex] = TriangulationCut(unsharedIndexRight,unsharedIndexLeft,rightTriangleIndex,leftTriangleIndex);
             }
             return true;
         }
-        ++l;
+        ++cutIndex;
     }
     return false;
 }

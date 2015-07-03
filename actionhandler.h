@@ -5,7 +5,7 @@
 
 #include "tools.h"
 
-class MathsContainer; class H2CanvasDelegateLiftedGraph; class EquivariantHarmonicMapsFactory; class Window; class Canvas;
+class MathsContainer; class H2CanvasDelegateLiftedGraph; class EquivariantHarmonicMapsFactory; class MainWindow; class Canvas;
 class InputMenu; class DisplayMenu; class OutputMenu; class Canvas; class TopFactory; class QStatusBar;
 
 enum class ActionHandlerMessage {HIGHLIGHTED_LEFT, HIGHLIGHTED_RIGHT, END_CANVAS_REPAINT, FINISHED_COMPUTING};
@@ -49,7 +49,7 @@ private:
     ActionHandler();
     void resetBooleans();
 
-    void setWindow(Window *window);
+    void setWindow(MainWindow *window);
     void setContainer(MathsContainer *mathsContainer);
     void setFactory(TopFactory *topFactory);
     void inputReset();
@@ -77,7 +77,7 @@ private:
     bool isReadyToCompute() const;
 
 
-    Window *window;
+    MainWindow *window;
     Canvas *leftCanvas, *rightCanvas;
     H2CanvasDelegateLiftedGraph *leftDelegate, *rightDelegate;
     InputMenu *inputMenu;
