@@ -30,8 +30,8 @@ void H2CanvasDelegateLiftedGraph::initializeColors(const QColor &graphColor)
     graphColor.getRgb(&r, &g, &b);
     graphColor.getHsl(&h, &s, &l);
 
-    highlightColor.setHsl((h+180)%360, s, l);
-    graphSidesTranslatesColor.setRgb(weightedSum(r, 50, 0.3),  weightedSum(g, 50, 0.3), weightedSum(b, 50, 0.3));
+    highlightColor = ((h!=-1) && ((h<120) || (h>300))) ? "blue" : "red";
+    graphSidesTranslatesColor.setRgb(weightedSum(r, 50, 0.6),  weightedSum(g, 50, 0.6), weightedSum(b, 50, 0.6));
     graphTranslatesColor.setRgb(weightedSum(r, 200, 0.3),  weightedSum(g, 200, 0.3), weightedSum(b, 200, 0.3));
 }
 
