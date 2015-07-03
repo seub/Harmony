@@ -68,7 +68,8 @@ SOURCES += main.cpp \
     statusbar.cpp \
     canvasdelegatetests.cpp \
     tests.cpp \
-    leftmenu.cpp
+    leftmenu.cpp \
+    fundamentaldomaingenerator.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -116,7 +117,8 @@ HEADERS += \
     h2canvasdelegateliftedgraph.h \
     statusbar.h \
     canvasdelegatetests.h \
-    leftmenu.h
+    leftmenu.h \
+    fundamentaldomaingenerator.h
 
 OTHER_FILES += \
     TODO.txt

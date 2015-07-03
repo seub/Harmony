@@ -25,10 +25,10 @@ public:
     std::vector<Word> getWordsOfNonRepeatingLettersLengthLessThan(uint n) const;
     std::vector<Word> getWordsOfNonRepeatingLettersLengthEqualTo(uint n) const;
 
-    std::vector<Word> getPairingsClosedSurfaceFromVertex() const;
-    std::vector<Word> getPairingsClosedSurfaceToVertex() const;
-    std::vector<Word> getSidePairingsClosedSurface() const;
-    std::vector<Word> getPairingsClosedSurfaceAroundVertices() const;
+    std::vector<Word> getSidePairings() const;
+    std::vector<Word> getPairingsFromVertex() const;
+    std::vector<Word> getPairingsAroundVertex() const;
+    std::vector<Word> getPairingsAroundVertices() const;
 
     std::string getWordAsString(const Word & w) const;
     std::string getLetterAsString(const letter & l) const;
@@ -41,7 +41,7 @@ public:
                                                const DiscreteGroup & Gamma2, const generatorName &a1inverse);
 
     static DiscreteGroup HNNextensionOverInverse(const DiscreteGroup & Gamma, const generatorName &a, const generatorName &ainverse,
-                                                   const generatorName & newGeneratorName);
+                                                 const generatorName & newGeneratorName);
 
 private:
     void reset();

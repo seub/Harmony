@@ -23,11 +23,6 @@ Complex H2Point::getKleinCoordinate() const
     return 2.0*z / (1.0 + norm(z));
 }
 
-Complex H2Point::getHyperboloidProjection() const
-{
-    return 2.0*z / (1.0 - norm(z));
-}
-
 void H2Point::getHyperboloidCoordinate(double &x, double &y, double &z) const
 {
     double s = 1.0 - norm(this->z);
@@ -35,6 +30,12 @@ void H2Point::getHyperboloidCoordinate(double &x, double &y, double &z) const
     x = (2.0*real(this->z) / s);
     y = (2.0*imag(this->z) / s);
 }
+
+Complex H2Point::getHyperboloidProjection() const
+{
+    return 2.0*z / (1.0 - norm(z));
+}
+
 
 void H2Point::setUpperHalfPlaneCoordinate(Complex z)
 {
@@ -57,42 +58,6 @@ void H2Point::setKleinCoordinate(Complex z)
     this->z = z / (1.0 + sqrt(1.0 - norm(z)));
 }
 
-H2Point H2Point::pushPointHorizonalEpsilon(double epsilon) const
-{
-    H2Point output;
-    H2Isometry A;
-    A.setDiskCoordinates(1,-getDiskCoordinate());
-    output.setDiskCoordinate(Complex(epsilon,0.0));
-    return A*output;
-}
-
-H2Point H2Point::pushPointHorizontalMinusEpsilon(double epsilon) const
-{
-    H2Point output;
-    H2Isometry A;
-    A.setDiskCoordinates(1,-getDiskCoordinate());
-    output.setDiskCoordinate(Complex(-epsilon,0.0));
-    return A*output;
-}
-
-H2Point H2Point::pushPointVerticalEpsilon(double epsilon) const
-{
-    H2Point output;
-    H2Isometry A;
-    A.setDiskCoordinates(1,-getDiskCoordinate());
-    output.setDiskCoordinate(Complex(0.0,epsilon));
-    return A*output;
-}
-
-H2Point H2Point::pushPointVerticalMinusEpsilon(double epsilon) const
-{
-    H2Point output;
-    H2Isometry A;
-    A.setDiskCoordinates(1,-getDiskCoordinate());
-    output.setDiskCoordinate(Complex(0.0,-epsilon));
-    return A*output;
-}
-
 double H2Point::distance(const H2Point & p1, const H2Point & p2)
 {
     double s;
@@ -112,6 +77,19 @@ H2Point H2Point::midpoint(const H2Point &p1, const H2Point &p2)
     H2Point res;
     res.setDiskCoordinate((w2 + p1.z)/(1.0 + conj(p1.z)*w2));
     return res;
+}
+
+H2Point H2Point::exponentialMap(const H2Point &p0, const Complex &u, const double &t)
+{
+    assert(norm(u)>0);
+
+    Complex z1 = tanh(t/2)*u/std::abs(u);
+    // NB: When translating to the origin via the map (z -z0)/(1 - bar(z0) z), u is only scaled by a positive factor.
+    Complex z0 = p0.getDiskCoordinate();
+    Complex z2 = (z1 + z0)/(1.0 + conj(z0)*z1);
+    H2Point out;
+    out.setDiskCoordinate(z2);
+    return out;
 }
 
 H2Point H2Point::proportionalPoint(const H2Point &p1, const H2Point &p2, const double &s)
@@ -372,19 +350,18 @@ bool operator ==(H2Point & p1, H2Point & p2)
 
 H2Point H2Point::centroid(const std::vector<H2Point> &points, const std::vector<double> &weights)
 {
-    // Check sum of weights
-
     if (points.size() != weights.size())
     {
         throw(QString("Error in  H2Point::centroid: number of points does not match number of weights"));
     }
 
-    std::vector<double> X,Y,Z;
-    double a,b,c,xout=0.0,yout=0.0,zout=0.0;
+    std::vector<double> X, Y, Z;
+    double a, b, c, xOut=0.0, yOut=0.0, zOut=0.0;
     H2Point out;
     X.reserve(points.size());
     Y.reserve(points.size());
     Z.reserve(points.size());
+
     for(const auto & p: points)
     {
         p.getHyperboloidCoordinate(a,b,c);
@@ -395,29 +372,16 @@ H2Point H2Point::centroid(const std::vector<H2Point> &points, const std::vector<
 
     for(unsigned int j=0; j<points.size(); ++j)
     {
-        xout += weights[j]*X[j];
-        yout += weights[j]*Y[j];
-        zout += weights[j]*Z[j];
+        xOut += weights[j]*X[j];
+        yOut += weights[j]*Y[j];
+        zOut += weights[j]*Z[j];
     }
-    double s = 1/ sqrt(zout*zout - xout*xout - yout*yout);
-    xout = s*xout;
-    yout = s*yout;
-    out.setHyperboloidProjection(Complex(xout,yout));
-    return out;
-}
 
-double H2Point::diameter(const std::vector<H2Point> &points)
-{
-    std::vector<double> distances;
-    distances.reserve(points.size()*points.size());
-    for (const auto & point1 : points)
-    {
-        for (const auto & point2 : points)
-        {
-            distances.push_back(distance(point1,point2));
-        }
-    }
-    return *std::max_element(distances.begin(),distances.end());
+    double s = 1/ sqrt(zOut*zOut - xOut*xOut - yOut*yOut);
+    xOut = s*xOut;
+    yOut = s*yOut;
+    out.setHyperboloidProjection(Complex(xOut,yOut));
+    return out;
 }
 
 bool H2Point::compareAngles(const H2Point &p1, const H2Point &p2)

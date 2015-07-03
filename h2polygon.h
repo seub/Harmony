@@ -31,6 +31,9 @@ public:
     bool isConvex() const;
     double diameter() const;
 
+    std::vector<double> getInteriorAngles() const;
+    double smallestAngle() const;
+
     H2GeodesicArc getSide(uint index) const;
     std::vector<H2GeodesicArc> getSides() const;
     std::vector<H2Geodesic> getCompletedSides() const;

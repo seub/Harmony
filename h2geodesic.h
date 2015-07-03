@@ -61,8 +61,6 @@ public:
 
     std::vector<H2Point> getEvenSubdivision(uint nbCuts) const;
 
-    void getExtremalCoordinatesInHyperboloidProjection(double & xMin, double & xMax, double & yMin, double & yMax);
-
     H2Geodesic getGeodesic() const;
     bool isLineSegmentInDiskModel() const;
     void getEndpointsInDiskModel(Complex &output1, Complex &output2) const;

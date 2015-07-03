@@ -11,15 +11,18 @@ int main(int argc, char *argv[])
     //return a.exec();
 
 
-    /*std::vector<double> lengths = {1, 0.3, 3, 0.8, 2, 2.5};
-    std::vector<double> twists = {-1, 1, 0, 0, 1, -0.5};
+    //std::vector<double> lengths = {1, 0.3, 3, 0.8, 2, 2.5};
+    //std::vector<double> twists = {-1, 1, 0, 0, 1, -0.5};
 
     //std::vector<double> lengths = {2, 2, 2};
     //std::vector<double> twists = {0, 0, 0};
 
-    GroupRepresentation<H2Isometry> rho = FenchelNielsenConstructor(lengths, twists).getRepresentation();
+    //GroupRepresentation<H2Isometry> rho = FenchelNielsenConstructor(lengths, twists).getRepresentation();
 
-    int N = 50;
+
+    //rho.setNiceRepresentation();
+
+    /*int N = 50;
     double x, y, f;
     H2Point p;
     H2Polygon P;
@@ -63,7 +66,8 @@ int main(int argc, char *argv[])
 
 
     std::cout << "min F = " << *std::min_element(pointsF.begin(), pointsF.end()) << std::endl;
-    std::cout << "max F = " << *std::max_element(pointsF.begin(), pointsF.end()) << std::endl;
-    return 0;*/
+    std::cout << "max F = " << *std::max_element(pointsF.begin(), pointsF.end()) << std::endl;*/
+    //return 0;
+
     return MainApplication(argc, argv).exec();
 }

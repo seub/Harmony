@@ -309,6 +309,45 @@ double H2Polygon::diameter() const
     return *std::max_element(distances.begin(), distances.end());
 }
 
+std::vector<double> H2Polygon::getInteriorAngles() const
+{
+    uint N = nbVertices();
+    assert(N > 2);
+
+    std::vector<double> out;
+    out.reserve(vertices.size());
+
+    bool positivelyOriented = isPositivelyOriented();
+    double angle;
+
+    H2Point previous, current, next;
+    previous = vertices.back();
+    current = vertices.front();
+
+    for (uint i=1; i!=N; ++i)
+    {
+        next = vertices[i];
+        angle = positivelyOriented ? H2Point::angle(next, current, previous) : H2Point::angle(previous, current, next);
+        assert(angle >= 0);
+        out.push_back(angle);
+        previous = current;
+        current = next;
+    }
+
+    next = vertices.front();
+    angle = positivelyOriented ? H2Point::angle(next, current, previous) : H2Point::angle(previous, current, next);
+    assert(angle >= 0);
+    out.push_back(angle);
+
+    return out;
+}
+
+double H2Polygon::smallestAngle() const
+{
+    std::vector<double> angles = getInteriorAngles();
+    return *std::min_element(angles.begin(), angles.end());
+}
+
 std::ostream & operator<<(std::ostream & out, const H2Polygon &P)
 {
     out << "H2Polygon with " << P.nbVertices() << " vertices: " << std::endl;

@@ -224,67 +224,75 @@ std::vector<Word> DiscreteGroup::getCusps() const
     return cusps;
 }
 
-std::vector<Word> DiscreteGroup::getPairingsClosedSurfaceFromVertex() const
+std::vector<Word> DiscreteGroup::getPairingsFromVertex() const
 {
     assert(isClosedSurfaceGroup());
 
-    std::vector<Word> res;
+    std::vector<Word> out;
     uint genus = generators.size()/2;
-    res.reserve(4*genus);
+    out.reserve(4*genus);
     Word store;
-    res.push_back(store);
-    for(uint j=0; j!=genus; ++j)
+    out.push_back(store);
+
+    uint j;
+    for(j=0; j+1!=genus; ++j)
     {
         store=store*Word({letter(2*j,1)});
-        res.push_back(store);
+        out.push_back(store);
         store=store*Word({letter(2*j+1,1)});
-        res.push_back(store);
+        out.push_back(store);
         store=store*Word({letter(2*j,-1)});
-        res.push_back(store);
+        out.push_back(store);
         store=store*Word({letter(2*j+1,-1)});
-        res.push_back(store);
+        out.push_back(store);
     }
-    res.pop_back();
-    return res;
+
+    store=store*Word({letter(2*j,1)});
+    out.push_back(store);
+    store=store*Word({letter(2*j+1,1)});
+    out.push_back(store);
+    store=store*Word({letter(2*j,-1)});
+    out.push_back(store);
+
+    return out;
 }
 
-std::vector<Word> DiscreteGroup::getPairingsClosedSurfaceToVertex() const
+std::vector<Word> DiscreteGroup::getPairingsAroundVertex() const
 {
-    assert(isClosedSurfaceGroup());
-    std::vector<Word> output;
-    uint genus = generators.size()/2;
-    output.reserve(4*genus);
+    std::vector<Word> pairingsFromVertex = getPairingsFromVertex();
+    std::vector<Word> out;
+    out.reserve(pairingsFromVertex.size());
 
-    for (const auto & w : getPairingsClosedSurfaceFromVertex())
+    for (const auto & w : pairingsFromVertex)
     {
-        output.push_back(w.inverse());
+        out.push_back(w.inverse());
     }
-    return output;
+    return out;
 }
 
-std::vector<Word> DiscreteGroup::getSidePairingsClosedSurface() const
+std::vector<Word> DiscreteGroup::getSidePairings() const
 {
     assert(isClosedSurfaceGroup());
 
-    std::vector<Word> res;
+    std::vector<Word> out;
     uint genus = generators.size()/2;
-    res.resize(4*genus);
+    out.resize(4*genus);
     Word store, extra;
     for (uint i=0; i!=genus; ++i)
     {
         extra = store*Word({letter(2*i,1),letter(2*i+1,1),letter(2*i,-1)})*store.inverse();
-        res[4*i] = extra;
-        res[4*i + 2] = extra.inverse();
+        out[4*i] = extra;
+        out[4*i + 2] = extra.inverse();
         extra = store*Word({letter(2*i,1),letter(2*i+1,1),
                             letter(2*i,-1), letter(2*i+1,-1), letter(2*i,-1)})*store.inverse();
-        res[4*i + 1] = extra;
-        res[4*i + 3] = extra.inverse();
+        out[4*i + 1] = extra;
+        out[4*i + 3] = extra.inverse();
         store = store*Word({letter(2*i,1), letter(2*i+1,1), letter(2*i,-1), letter(2*i+1,-1)});
     }
-    return res;
+    return out;
 }
 
-std::vector<Word> DiscreteGroup::getPairingsClosedSurfaceAroundVertices() const
+std::vector<Word> DiscreteGroup::getPairingsAroundVertices() const
 {
     assert(isClosedSurfaceGroup());
 
@@ -294,8 +302,8 @@ std::vector<Word> DiscreteGroup::getPairingsClosedSurfaceAroundVertices() const
     fromVertex.reserve(4*genus);
     temp1.reserve(4*genus-1);
     temp2.reserve(4*genus);
-    toVertex = getPairingsClosedSurfaceToVertex();
-    fromVertex = getPairingsClosedSurfaceFromVertex();
+    toVertex = getPairingsAroundVertex();
+    fromVertex = getPairingsFromVertex();
     uint j=0;
     for (const auto & w : fromVertex)
     {
