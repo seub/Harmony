@@ -89,7 +89,7 @@ private:
     TopFactory *topFactory;
 
     bool isShowingLive;
-    bool showTranslatesAroundVertex, showTranslatesAroundVertices;
+    bool showTranslatesAroundVertex, showTranslatesAroundVertices, showTranslatesAroundVerticesStar;
     bool isRhoDomainSet, isRhoImageSet;
     bool expectingFNdomain, expectingFNimage;
 };

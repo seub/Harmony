@@ -17,7 +17,7 @@ class DisplayMenu : public QGroupBox
     friend class ActionHandler;
 
 public:
-    enum ShowTranslatesChoice {SHOW_TRANSLATES_DOMAIN, SHOW_TRANSLATES_VERTEX, SHOW_TRANSLATES_VERTICES};
+    enum ShowTranslatesChoice {SHOW_TRANSLATES_DOMAIN, SHOW_TRANSLATES_VERTEX, SHOW_TRANSLATES_VERTICES, SHOW_TRANSLATES_VERTICES_STAR};
     enum ColoringChoice {COLORING_NONE, COLORING_PLAIN};
     enum ColorChoice {RED, GREEN, BLUE, LIGHT_BLUE, ORANGE, GRAY, BLACK};
 

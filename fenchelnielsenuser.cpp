@@ -95,8 +95,8 @@ void FenchelNielsenUser::createDelegatePointers()
     delegate = static_cast<H2CanvasDelegateLiftedGraph*>(canvas->delegate);
     delegate->setRhoPointer(&(this->rho));
     delegate->setGraphPointer(&(this->graph));
-    delegate->graphSidesTranslatesColor = "grey";
-    delegate->setShowTranslates(false, false);
+    delegate->graphSidesTranslatesColor = "gray";
+    delegate->setShowTranslates(false, false, false);
 }
 
 

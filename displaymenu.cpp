@@ -29,6 +29,7 @@ void DisplayMenu::createButtons()
     showTranslatesComboBox->addItem("Fund. domain boundary", SHOW_TRANSLATES_DOMAIN);
     showTranslatesComboBox->addItem("Around a vertex", SHOW_TRANSLATES_VERTEX);
     showTranslatesComboBox->addItem("Around all vertices", SHOW_TRANSLATES_VERTICES);
+    showTranslatesComboBox->addItem("Around all vertices*", SHOW_TRANSLATES_VERTICES_STAR);
     showTranslatesComboBox->setToolTip("Show mesh translates under the domain representation...");
 
     coloringLabel = new QLabel("Choose coloring: ");
