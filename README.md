@@ -1,4 +1,4 @@
 Hitchin
 =======
 
-Computes the Hitchin map
+Computes equivariant harmonic maps
