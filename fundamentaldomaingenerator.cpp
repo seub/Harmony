@@ -185,17 +185,16 @@ H2Point FundamentalDomainGenerator::optimalStepGradientDescent(const H2Point &x0
 
     H2Point xk = x0, previous = x0;
 
-    double error = 1 + tol;
+    double error = 1.0 + tol;
     uint counter = 0;
     Complex z, gradFk;
-    double g, gradLength;
+    double gradLength;
 
     while((error>tol) && (counter!=maxIterations))
     {
         z = previous.getDiskCoordinate();
-        g = 4/((1 - norm(z))*(1 - norm(z)));
         gradFk = gradF(previous);
-        gradLength = sqrt(g*norm(gradFk));
+        gradLength =  (2.0/(1.0 - norm(z)))*std::abs(gradFk);
         if (gradLength < tol)
         {
             break;
@@ -203,7 +202,7 @@ H2Point FundamentalDomainGenerator::optimalStepGradientDescent(const H2Point &x0
         xk = lineSearch(previous, -gradFk, gradLength);
         error = H2Point::distance(xk, previous);
         previous = xk;
-        ++ counter;
+        ++counter;
     }
 
     if (counter==maxIterations)
