@@ -1,5 +1,5 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include <QWidget>
 
@@ -10,7 +10,7 @@ class QGridLayout;
 class Canvas; class LeftMenu; class TopMenu;
 class ActionHandler; class StatusBar;
 
-class Window : public QWidget
+class MainWindow : public QWidget
 {
     Q_OBJECT
 
@@ -19,9 +19,9 @@ class Window : public QWidget
     friend class Canvas;
 
 public:
-    Window(ActionHandler *handler = nullptr);
-    Window(const Window &) = delete;
-    Window & operator =(Window) = delete;
+    MainWindow(ActionHandler *handler = nullptr);
+    MainWindow(const MainWindow &) = delete;
+    MainWindow & operator =(MainWindow) = delete;
 
 private:
     void createWindow(ActionHandler *handler = nullptr);
@@ -41,4 +41,4 @@ private:
     bool verticalCanvases;
 };
 
-#endif // WINDOW_H
+#endif // MAINWINDOW_H

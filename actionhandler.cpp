@@ -13,7 +13,7 @@
 #include "topfactory.h"
 #include "h2canvasdelegateliftedgraph.h"
 #include "mathscontainer.h"
-#include "window.h"
+#include "mainwindow.h"
 #include "canvas.h"
 #include "outputmenu.h"
 #include "inputmenu.h"
@@ -37,12 +37,13 @@ void ActionHandler::resetBooleans()
     
     showTranslatesAroundVertex = false;
     showTranslatesAroundVertices = false;
+    showTranslatesAroundVerticesStar = false;
     
     expectingFNdomain = false;
     expectingFNimage = false;
 }
 
-void ActionHandler::setWindow(Window *window)
+void ActionHandler::setWindow(MainWindow *window)
 {
     this->window = window;
     inputMenu = window->leftMenu->inputMenu;
@@ -179,7 +180,7 @@ void ActionHandler::computeButtonClicked()
     if (isShowingLive)
     {
         rightDelegate->setSendEndRepaint(true);
-        rightDelegate->setShowTranslates(false, false);
+        rightDelegate->setShowTranslates(false, false, false);
         rightCanvas->update();
     }
 }
@@ -203,35 +204,45 @@ void ActionHandler::resetViewButtonClicked()
 
 void ActionHandler::showTranslatesClicked(int choice)
 {
-    bool aroundVertexOld = showTranslatesAroundVertex, aroundVerticesOld = showTranslatesAroundVertices;
-    bool aroundVertexNew, aroundVerticesNew;
+    bool aroundVertexOld = showTranslatesAroundVertex, aroundVerticesOld = showTranslatesAroundVertices, aroundVerticesStarOld = showTranslatesAroundVerticesStar;
+    bool aroundVertexNew, aroundVerticesNew, aroundVerticesStarNew;
     
     switch(choice)
     {
     case DisplayMenu::SHOW_TRANSLATES_DOMAIN:
         aroundVertexNew = false;
         aroundVerticesNew = false;
+        aroundVerticesStarNew = false;
         break;
         
     case DisplayMenu::SHOW_TRANSLATES_VERTEX:
         aroundVertexNew = true;
         aroundVerticesNew = false;
+        aroundVerticesStarNew = false;
         break;
         
     case DisplayMenu::SHOW_TRANSLATES_VERTICES:
         aroundVertexNew = false;
         aroundVerticesNew = true;
+        aroundVerticesStarNew = false;
+        break;
+
+    case DisplayMenu::SHOW_TRANSLATES_VERTICES_STAR:
+        aroundVertexNew = false;
+        aroundVerticesNew = true;
+        aroundVerticesStarNew = true;
         break;
         
     default:
         throw(QString("Error in ActionHandler::showTranslatesClicked: not supposed to land here"));
     }
     
-    if ((aroundVertexNew != aroundVertexOld) || (aroundVerticesNew != aroundVerticesOld))
+    if ((aroundVertexNew != aroundVertexOld) || (aroundVerticesNew != aroundVerticesOld) || (aroundVerticesStarNew != aroundVerticesStarOld))
     {
         showTranslatesAroundVertex = aroundVertexNew;
         showTranslatesAroundVertices = aroundVerticesNew;
-        leftDelegate->setShowTranslates(aroundVertexNew, aroundVerticesNew);
+        showTranslatesAroundVerticesStar = aroundVerticesStarNew;
+        leftDelegate->setShowTranslates(aroundVertexNew, aroundVerticesNew, aroundVerticesStarNew);
         if (isRhoDomainSet)
         {
             updateCanvasGraph(true, false);
@@ -256,7 +267,7 @@ void ActionHandler::showTranslatesClicked(int choice)
                                         arg(QString::number(nbMeshpoints)).arg(QString::number(nbTranslations)), 7000);
         }
         
-        rightDelegate->setShowTranslates(aroundVertexNew, aroundVerticesNew);
+        rightDelegate->setShowTranslates(aroundVertexNew, aroundVerticesNew, aroundVerticesStarNew);
         if (isReadyToCompute())
         {
             updateCanvasGraph(false, true);
@@ -663,7 +674,7 @@ void ActionHandler::finishedComputing()
     connect(outputMenu->computeButton, SIGNAL(clicked()), this, SLOT(computeButtonClicked()));
 
     outputMenu->enableAll();
-    rightDelegate->setShowTranslates(showTranslatesAroundVertex, showTranslatesAroundVertices);
+    rightDelegate->setShowTranslates(showTranslatesAroundVertex, showTranslatesAroundVertices, showTranslatesAroundVerticesStar);
     rightDelegate->setSendEndRepaint(false);
     updateCanvasGraph(false, true);
 }

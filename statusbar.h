@@ -3,14 +3,14 @@
 
 #include <QStatusBar>
 
-class Window; class QLabel;
+class MainWindow; class QLabel;
 
 class StatusBar : public QStatusBar
 {
     Q_OBJECT
 
 public:
-    StatusBar(Window *window);
+    StatusBar(MainWindow *window);
 
 private:
     QLabel *label;

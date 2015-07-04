@@ -3,16 +3,16 @@
 
 #include <QMenuBar>
 
-class Window;
+class MainWindow;
 
 class TopMenu : public QMenuBar
 {
     Q_OBJECT
 
-    friend class Window;
+    friend class MainWindow;
 
 public:
-    explicit TopMenu(Window *window);
+    explicit TopMenu(MainWindow *window);
     TopMenu() = delete;
     TopMenu(const TopMenu &) = delete;
     TopMenu & operator=(TopMenu) = delete;
@@ -23,7 +23,7 @@ public slots:
 
 
 private:
-    Window* window;
+    MainWindow* window;
 };
 
 #endif // TOPMENU_H

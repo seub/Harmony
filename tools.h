@@ -116,6 +116,12 @@ template <typename T> int sign(T val)
     return (T(0) < val) - (val < T(0));
 }
 
+template<typename T> void pop_front(std::vector<T> &vector)
+{
+    assert(!vector.empty());
+    vector.erase(vector.begin());
+}
+
 }
 
 std::ostream & operator<<(std::ostream &out, const Complex &z);
@@ -152,15 +158,6 @@ template<typename T, typename F> std::vector<T> operator*(const F & f, std::vect
     return V;
 }
 
-/*
-template<typename T, typename F> std::vector<T> operator*(std::vector<T> V, const F & f)
-{
-    for (auto &v : V)
-    {
-        v = v*f;
-    }
-    return V;
-}*/
 
 
 #endif // TOOLS_H

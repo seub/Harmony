@@ -40,10 +40,13 @@ protected:
     virtual void mousePress (int x, int y, Qt::MouseButton button, Qt::MouseButtons buttons) override;
     virtual void mouseMove(int x, int y, Qt::MouseButton button, Qt::MouseButtons buttons) override;
     virtual void mouseRelease(int x, int y, Qt::MouseButton button, Qt::MouseButtons buttons) override;
+    virtual void keyPress(QKeyEvent *keyEvent) override;
+    virtual void keyRelease(QKeyEvent *keyEvent) override;
 
 private:
     bool mobiusing;
-    H2Isometry savedMobius;
+    H2Isometry mobiusSave;
+    Complex pointSave;
 };
 
 

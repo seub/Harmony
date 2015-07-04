@@ -84,7 +84,6 @@ private:
     double minTriangleSide() const;
 
     void createSteinerPoints();
-    void createSteinerPointsDetailed();
 
     bool sameSide(uint fullIndex1, uint fullIndex2) const;
 
@@ -104,6 +103,8 @@ private:
     std::vector<uint> sideTrianglesBoundarySideIndices;
     H2SteinerPolygon steinerPolygon;
     H2Polygon fullPolygon;
+
+    uint maxNbFlips;
 
 };
 

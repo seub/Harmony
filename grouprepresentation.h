@@ -37,16 +37,13 @@ public:
     GroupRepresentation<SL2CMatrix> bar() const;
 
     //Specialization to GroupRepresentation<H2ISometry>
-    H2Polygon generateFundamentalDomain(const H2Point & basePoint) const;
-    H2Polygon generateFundamentalDomainOptimization(double epsilon = .01, double stepSize = .01) const;
+    std::vector<H2Isometry> getSidePairings() const;
+    std::vector<H2Isometry> getPairingsFromVertex() const;
+    std::vector<H2Isometry> getPairingsAroundVertex() const;
+    std::vector<H2Isometry> getPairingsAroundVertices() const;
 
-    std::vector<H2Isometry> getSidePairingsForNormalizedFundamentalDomain() const;
-    std::vector<H2Isometry> getSidePairingsNormalizedToDepth(uint n) const;
-    std::vector<H2Isometry> getSidePairingsNormalizedAroundVertex() const;
-    std::vector<H2Isometry> getSidePairingsNormalizedAroundVertices() const;
-    std::vector<H2Isometry> getSidePairingsNormalizedAroundVerticesToDepth(uint n);
-
-
+    H2Polygon getFundamentalDomain(const H2Point &firstVertex) const;
+    H2Polygon getOptimalFundamentalDomain() const;
 
     void setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
                                                 double length1, double length2, double length3, generatorName normalized);
@@ -75,8 +72,6 @@ public:
 private:
     DiscreteGroup Gamma;
     std::vector<T> generatorImages;
-
-    void generateFundamentalDomain(const H2Point &basePoint, H2Polygon &polygon) const;
 
     static bool checkCompatibilityOfFNcoordinates(const std::vector<double> & lengths, const std::vector<double> & twists);
 

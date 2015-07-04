@@ -35,6 +35,14 @@ protected:
     virtual void redrawBack();
     virtual void redrawTop();
 
+    virtual void mousePress(int, int, Qt::MouseButton, Qt::MouseButtons) {}
+    virtual void mouseMove(int x, int y, Qt::MouseButton, Qt::MouseButtons);
+    virtual void mouseRelease(int, int, Qt::MouseButton, Qt::MouseButtons) {}
+    virtual void keyPress(QKeyEvent *keyEvent);
+    virtual void keyRelease(QKeyEvent *) {}
+    virtual void enter() {}
+    virtual void leave() {}
+
     void enableRedrawBuffer(bool back = true, bool top = true);
 
     void mouseShift(int x, int y);
@@ -51,7 +59,7 @@ protected:
                         const Complex &endpoint1, const Complex &endpoint2, const QColor &color = "black", int width = 1, bool back = true);
 
 
-    int mouseX, mouseY;
+    int mouseXSave, mouseYSave, mouseX, mouseY;
 
     double xMin, yMax;
     double xMinSave, yMaxSave;
@@ -81,13 +89,6 @@ private:
 
     void shift(int x, int y);
     void zoom(double coeff);
-
-    virtual void mousePress(int, int, Qt::MouseButton, Qt::MouseButtons) {}
-    virtual void mouseMove(int, int, Qt::MouseButton, Qt::MouseButtons) {}
-    virtual void mouseRelease(int, int, Qt::MouseButton, Qt::MouseButtons) {}
-    virtual void keyPress(QKeyEvent *keyEvent);
-    virtual void enter() {}
-    virtual void leave() {}
 
     void zoom(double coeff, int centerX, int centerY);
 

@@ -56,7 +56,6 @@ public:
     static H2Isometry findConjugatorForGluing(const H2Isometry & f1, const H2Isometry & f1left,
                                      const H2Isometry & f2, const H2Isometry &f2left, double twistNormalized);
 
-
     void setByMappingPointToOrigin(const H2Point & p);
     void setTranslationAxisAndLength(const H2Geodesic & axis, double length);
     void setByMappingPointInDiskModelNormalized(const Complex & zIn, const Complex & zOut);

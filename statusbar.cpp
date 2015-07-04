@@ -2,9 +2,9 @@
 
 #include <QLabel>
 
-#include "window.h"
+#include "mainwindow.h"
 
-StatusBar::StatusBar(Window *window) : QStatusBar(window)
+StatusBar::StatusBar(MainWindow *window) : QStatusBar(window)
 {    
     setSizeGripEnabled(false);
     setFixedHeight(25);

@@ -7,13 +7,13 @@
 
 class QVBoxLayout;
 
-class Window; class InputMenu; class DisplayMenu; class OutputMenu;
+class MainWindow; class InputMenu; class DisplayMenu; class OutputMenu;
 
 class LeftMenu : public QWidget
 {
     Q_OBJECT
 
-    friend class Window;
+    friend class MainWindow;
     friend class ActionHandler;
 
 public:
@@ -22,7 +22,7 @@ public:
     LeftMenu & operator=(LeftMenu) = delete;
 
 private:
-    explicit LeftMenu(Window *window);
+    explicit LeftMenu(MainWindow *window);
 
     void createSubMenus();
 

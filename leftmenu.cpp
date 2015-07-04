@@ -2,12 +2,12 @@
 
 #include <QVBoxLayout>
 
-#include "window.h"
+#include "mainwindow.h"
 #include "inputmenu.h"
 #include "displaymenu.h"
 #include "outputmenu.h"
 
-LeftMenu::LeftMenu(Window *window)
+LeftMenu::LeftMenu(MainWindow *window)
 {
     setParent(window);
     createSubMenus();

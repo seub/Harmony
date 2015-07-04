@@ -52,7 +52,7 @@ private:
     void setFilledTriangles(bool filledTriangles);
 
     void setGraphColor(const QColor &color);
-    void setShowTranslates(bool showTranslatesAroundVertex, bool showTranslatesAroundVertices);
+    void setShowTranslates(bool showTranslatesAroundVertex, bool showTranslatesAroundVertices, bool showTranslatesAroundVerticesStar);
 
     void getGraphTriangleIndicesHighlighted(bool &highlighted, uint &index1, uint &index2, uint &index3) const;
     void resetHighlighted();
@@ -67,7 +67,7 @@ private:
     H2Triangle triangleHighlighted;
     QColor highlightColor;
 
-    bool showTranslatesAroundVertex, showTranslatesAroundVertices;
+    bool showTranslatesAroundVertex, showTranslatesAroundVertices, showTranslatesAroundVerticesStar;
     bool filledTriangles;
 
     GroupRepresentation<H2Isometry> *rho;

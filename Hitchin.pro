@@ -49,7 +49,6 @@ SOURCES += main.cpp \
     h2meshconstructor.cpp \
     h2meshpoint.cpp \
     word.cpp \
-    window.cpp \
     topmenu.cpp \
     inputmenu.cpp \
     outputmenu.cpp \
@@ -68,7 +67,9 @@ SOURCES += main.cpp \
     statusbar.cpp \
     canvasdelegatetests.cpp \
     tests.cpp \
-    leftmenu.cpp
+    leftmenu.cpp \
+    fundamentaldomaingenerator.cpp \
+    mainwindow.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -98,7 +99,6 @@ HEADERS += \
     h2meshconstructor.h \
     h2meshpoint.h \
     word.h \
-    window.h \
     topmenu.h \
     inputmenu.h \
     outputmenu.h \
@@ -116,7 +116,9 @@ HEADERS += \
     h2canvasdelegateliftedgraph.h \
     statusbar.h \
     canvasdelegatetests.h \
-    leftmenu.h
+    leftmenu.h \
+    fundamentaldomaingenerator.h \
+    mainwindow.h
 
 OTHER_FILES += \
     TODO.txt

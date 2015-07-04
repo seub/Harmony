@@ -4,12 +4,9 @@
 #include "h2point.h"
 #include "fenchelnielsenconstructor.h"
 
-#include "fenchelnielsenconstructor.h"
-
-//#include "tests.cpp"
-
 int main(int argc, char *argv[])
 {
+<<<<<<< HEAD
     //QApplication a(argc, argv);
     //runTests();
     //return a.exec();
@@ -70,5 +67,7 @@ int main(int argc, char *argv[])
     std::cout << "max F = " << *std::max_element(pointsF.begin(), pointsF.end()) << std::endl;
     return 0;*/
 
+=======
+>>>>>>> ddef4dec805edffad41304c6ad0d1c5ed086bde8
     return MainApplication(argc, argv).exec();
 }

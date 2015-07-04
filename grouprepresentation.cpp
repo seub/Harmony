@@ -1,5 +1,6 @@
 #include "grouprepresentation.h"
 #include "topologicalsurface.h"
+#include "fundamentaldomaingenerator.h"
 
 template<typename T> GroupRepresentation<T>::GroupRepresentation()
 {
@@ -135,76 +136,19 @@ template<> GroupRepresentation<SL2CMatrix> GroupRepresentation<SL2CMatrix>::bar(
     return r;
 }
 
-template<> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain(const H2Point &basePoint) const
+template <> DiscreteGroup GroupRepresentation<H2Isometry>::getDiscreteGroup() const
 {
-    H2Polygon out;
-    if (Gamma.isClosedSurfaceGroup())
-    {
-        out.addVertex(basePoint);
-        uint genus = generatorImages.size()/2;
-        H2Isometry f;
-        f.setIdentity();
-
-        for (uint i = 0; i != genus; ++i)
-        {
-            f = f*generatorImages[2*i];
-            out.addVertex(f*basePoint);
-            f = f*generatorImages[2*i+1];
-            out.addVertex(f*basePoint);
-            f = f*generatorImages[2*i].inverse();
-            out.addVertex(f*basePoint);
-            f = f*generatorImages[2*i+1].inverse();
-            out.addVertex(f*basePoint);
-        }
-        out.removeLastVertex();
-    }
-    else
-    {
-        throw(QString("Error in GroupRepresentation<H2Isometry>::generateFundamentalDomain(const H2Point &basePoint): not a closed surface group representation"));
-    }
-
-    if (!out.isConvex())
-    {
-        //qDebug() << "WARNING in GroupRepresentation<H2Isometry>::generateFundamentalDomain(const H2Point &basePoint): polygon is not convex";
-    }
-
-    return out;
+    return Gamma;
 }
 
-template <> void GroupRepresentation<H2Isometry>::generateFundamentalDomain(const H2Point &basePoint, H2Polygon &polygon) const
+template <> std::vector<H2Isometry> GroupRepresentation<H2Isometry>::getSidePairings() const
 {
-    std::vector<H2Point> newVertices(polygon.nbVertices());
-
-    newVertices[0] = basePoint;
-    uint genus = generatorImages.size()/2;
-    H2Isometry f(1);
-
-    uint i, k=0;
-    for (i = 0; i+1<genus; ++i)
-    {
-        f = f*generatorImages[2*i];
-        newVertices[++k] = f*basePoint;
-        f = f*generatorImages[2*i+1];
-        newVertices[++k] = f*basePoint;
-        f = f*generatorImages[2*i].inverse();
-        newVertices[++k] = f*basePoint;
-        f = f*generatorImages[2*i+1].inverse();
-        newVertices[++k] = f*basePoint;
-    }
-
-    f = f*generatorImages[2*i];
-    newVertices[++k] = f*basePoint;
-    f = f*generatorImages[2*i+1];
-    newVertices[++k] = f*basePoint;
-    f = f*generatorImages[2*i].inverse();
-    newVertices[++k] = f*basePoint;
-
-    polygon.setVertices(newVertices);
+    return evaluateRepresentation(Gamma.getSidePairings());
 }
 
-
-template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomainOptimization(double epsilon, double stepSize) const
+template <> std::vector<H2Isometry> GroupRepresentation<H2Isometry>::getPairingsFromVertex() const
 {
+<<<<<<< HEAD
     H2Point basePt, basePtEpsilonX, basePtEpsilonY, basePtEpsilonXMinus, basePtEpsilonYMinus;
     std::vector<H2Point> basePtImages, basePtImagesEpsilonX, basePtImagesEpsilonY, basePtImagesEpsilonXMinus, basePtImagesEpsilonYMinus;
     std::vector<H2Isometry> fromVertexPairings;
@@ -277,148 +221,42 @@ template <> H2Polygon GroupRepresentation<H2Isometry>::generateFundamentalDomain
     std::cout << "Final diameter = " << H2Point::diameter(basePtImages) << std::endl;*/
 
     return H2Polygon(basePtImages);
+=======
+    return evaluateRepresentation(Gamma.getPairingsFromVertex());
+>>>>>>> ddef4dec805edffad41304c6ad0d1c5ed086bde8
 }
 
-template <> DiscreteGroup GroupRepresentation<H2Isometry>::getDiscreteGroup() const
+template <> std::vector<H2Isometry> GroupRepresentation<H2Isometry>::getPairingsAroundVertex() const
 {
-    return Gamma;
+    return evaluateRepresentation(Gamma.getPairingsAroundVertex());
 }
 
-template <> std::vector<H2Isometry> GroupRepresentation<H2Isometry>::getSidePairingsForNormalizedFundamentalDomain() const
+template <> std::vector<H2Isometry> GroupRepresentation<H2Isometry>::getPairingsAroundVertices() const
 {
-    return evaluateRepresentation(Gamma.getSidePairingsClosedSurface());
+    return evaluateRepresentation(Gamma.getPairingsAroundVertices());
 }
 
-template <> std::vector<H2Isometry> GroupRepresentation<H2Isometry>::getSidePairingsNormalizedToDepth(uint n) const
+
+template <> H2Polygon GroupRepresentation<H2Isometry>::getFundamentalDomain(const H2Point &firstVertex) const
 {
-    uint genus = generatorImages.size()/2;
-    std::vector<H2Isometry> output;
-    output.reserve(Tools::exponentiation(4*genus,n));
-    if (n<=0)
-    {
-        throw(QString("Error in GroupRepresentation<H2Isometry>::getSidePairingsNormalizedToDepth: Side pairings of 'negative'' depth"));
-    }
-    if (n==1)
-    {
-        output = getSidePairingsForNormalizedFundamentalDomain();
-        return output;
-    }
-    std::vector<H2Isometry> previous = getSidePairingsNormalizedToDepth(n-1);
-    output = previous;
+    std::vector<H2Isometry> pairingsFromVertex = getPairingsFromVertex();
+    std::vector<H2Point> vertices;
+    vertices.reserve(pairingsFromVertex.size());
 
-    for (const auto &f : previous)
+    for (const auto &pairing : pairingsFromVertex)
     {
-        for (const auto &g : previous)
-        {
-            output.push_back(f*g);
-        }
+        vertices.push_back(pairing*firstVertex);
     }
-    return output;
+
+    return H2Polygon(vertices);
 }
 
-template <> std::vector<H2Isometry> GroupRepresentation<H2Isometry>::getSidePairingsNormalizedAroundVertex() const
+template <> H2Polygon GroupRepresentation<H2Isometry>::getOptimalFundamentalDomain() const
 {
-    uint genus = generatorImages.size()/2;
-    std::vector<H2Isometry> output;
-    output.reserve(4*genus-1);
-    std::vector<Word> temp = Gamma.getPairingsClosedSurfaceToVertex();
-    temp.erase(temp.begin());
-    for (const auto & w : temp)
-    {
-        output.push_back(evaluateRepresentation(w));
-    }
-    return output;
+    return FundamentalDomainGenerator(*this).getOptimalFundamentalDomain();
 }
 
-template <> std::vector<H2Isometry> GroupRepresentation<H2Isometry>::getSidePairingsNormalizedAroundVertices() const
-{
-    uint genus = generatorImages.size()/2;
-    std::vector<H2Isometry> output;
-    output.reserve(16*genus*genus-4*genus);
-    std::vector<Word> temp = Gamma.getPairingsClosedSurfaceAroundVertices();
 
-    for (const auto & w : temp)
-    {
-        output.push_back(evaluateRepresentation(w));
-    }
-    return output;
-}
-
-template <> std::vector<H2Isometry> GroupRepresentation<H2Isometry>::getSidePairingsNormalizedAroundVerticesToDepth(uint n)
-{
-    uint genus = generatorImages.size()/2;
-    std::vector<H2Isometry> output,aroundVertices,shortWords,store;
-    aroundVertices = getSidePairingsNormalizedAroundVertices();
-    store.reserve(aroundVertices.size());
-    output.reserve(Tools::exponentiation(4*genus,n));
-    output = aroundVertices;
-    std::vector<Word> Words = (Gamma.getWordsOfNonRepeatingLettersLengthLessThan(n));
-    shortWords = evaluateRepresentation(Words);
-    for (const auto & shortWord : shortWords)
-    {
-        store = shortWord*aroundVertices;
-        output.insert(output.end(), store.begin(),store.end());
-    }
-    return output;
-}
-
-template <> void GroupRepresentation<H2Isometry>::setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
-                                                                                         double length1, double length2, double length3,
-                                                                                         generatorName normalized)
-{
-    if (length1 < 0 || length2 < 0 || length3 < 0)
-    {
-        throw(QString("ERROR in GroupRepresentation<H2Isometry>::setNormalizedPairOfPantsRepresentation: you gave me a negative length (seriously?)"));
-    }
-    if (normalized == c3)
-    {
-        length1 *= 0.5;
-        length2 *= 0.5;
-        length3 *= 0.5;
-        Gamma.setPairOfPants(c1, c2, c3);
-        double C1, C2, C3, S2, S3;
-        C1 = cosh(length1);
-        C2 = cosh(length2);
-        C3 = cosh(length3);
-        S2 = sinh(length2);
-        S3 = sinh(length3);
-
-        double a, b, c, d;
-        a = (-C1*S3 + C1*C3 + C2)/S3;
-        b = (-(C1 + C2*C3 - S2*S3)*(C3 + S3))/S3;
-        c = ((C1 + C2*C3 + S2*S3)*(C3 - S3))/S3;
-        d = (-C1*S3 -C1*C3 - C2)/S3;
-        H2Isometry f1(SL2RMatrix(a, b, c, d));
-
-        a = (-C2*S3 + C2*C3 + C1)/S3;
-        b = (-C1 - C2*C3 + S2*S3)/S3;
-        c = (C1 + C2*C3 + S2*S3)/S3;
-        d = (-C2*S3 -C2*C3 - C1)/S3;
-        H2Isometry f2(SL2RMatrix(a, b, c, d));
-
-        a = -C3 -S3;
-        b = 0;
-        c = 0;
-        d =-C3 +S3;
-        H2Isometry f3(SL2RMatrix(a, b, c, d));
-
-        generatorImages = {f1, f2, f3};
-    }
-    else if (normalized == c1)
-    {
-        setNormalizedPairOfPantsRepresentation(c2, c3, c1, length2, length3, length1, c1);
-        rotateGenerators(1);
-    }
-    else if (normalized == c2)
-    {
-        setNormalizedPairOfPantsRepresentation(c3, c1, c2, length3, length1, length2, c2);
-        rotateGenerators(2);
-    }
-    else
-    {
-        throw(QString("ERROR in GroupRepresentation<H2Isometry>::setNormalizedPairOfPantsRepresentation: Normalizer has to be one of the generators!"));
-    }
-}
 
 
 template <> void GroupRepresentation<H2Isometry>::setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
@@ -475,6 +313,13 @@ template <> void GroupRepresentation<H2Isometry>::setNormalizedPairOfPantsRepres
     {
         throw(QString("ERROR in GroupRepresentation<H2Isometry>::setNormalizedPairOfPantsRepresentation: Normalizer has to be one of the generators!"));
     }
+}
+
+template <> void GroupRepresentation<H2Isometry>::setNormalizedPairOfPantsRepresentation(generatorName c1, generatorName c2, generatorName c3,
+                                                                                         double length1, double length2, double length3,
+                                                                                         generatorName normalized)
+{
+    setNormalizedPairOfPantsRepresentation(c1, c2, c3, cosh(length1/2), cosh(length2/2), cosh(length3/2), sinh(length1/2), sinh(length2/2), sinh(length3/2), normalized);
 }
 
 template <> void GroupRepresentation<H2Isometry>::setNiceRepresentation()

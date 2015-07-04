@@ -6,18 +6,18 @@
 #include "tools.h"
 #include "canvasdelegate.h"
 
-class ActionHandler; class FenchelNielsenUser; class Window; class CanvasDelegateTests; class CanvasDelegateTests2;
+class ActionHandler; class FenchelNielsenUser; class MainWindow; class CanvasDelegateTests; class CanvasDelegateTests2;
 
 class Canvas : public QWidget
 {
     Q_OBJECT
 
-    friend class Window;
+    friend class MainWindow;
     friend class FenchelNielsenUser;
     friend class ActionHandler;
 
 public:
-    Canvas(DelegateType delegateType, Window* window = nullptr, bool leftCanvas = false, bool rightCanvas = false, ActionHandler *handler = nullptr);
+    Canvas(DelegateType delegateType, MainWindow* window = nullptr, bool leftCanvas = false, bool rightCanvas = false, ActionHandler *handler = nullptr);
     explicit Canvas(FenchelNielsenUser *fenchelNielsenUser);
     explicit Canvas(CanvasDelegateTests *delegate);
     explicit Canvas(CanvasDelegateTests2 *delegate);
@@ -41,6 +41,7 @@ private:
     void mouseReleaseEvent(QMouseEvent *mouseEvent) override;
     void wheelEvent(QWheelEvent *wheelEvent) override;
     void keyPressEvent(QKeyEvent *keyEvent) override;
+    void keyReleaseEvent(QKeyEvent *keyEvent) override;
     void enterEvent(QEvent *) override;
     void leaveEvent(QEvent *) override;
 

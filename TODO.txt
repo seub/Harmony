@@ -1,24 +1,10 @@
 ******************************** PILE ********************************
 
+Change the code of the mesh constructor so there is no need to rearrange the order after for building the graph (yuck)
+Rewrite triangulater with flips?
 
-change the code of the mesh constructor so I don't have to rearrange the order after for building the graph (yuck)
 
-rewrite generatepolygon
-rewrite triangulater with flips
-
-add rotations to mobiusing
-add shift (only keys ?)
-add zoom keys
-
-utiliser des arrays au lieu de vectors débiles
-
-construire le mesh et la fonction dans un thread?
-
-réécrire la fonction de jonah et corriger le bug
-
-renommer window en mainwindow?
-
-In order to avoid status bar messages messing up with the layout, write my own layout?
+construct mesh and graphes in thread?
 
 
 ******************************** IMPROVE CODE ********************************
@@ -27,10 +13,14 @@ assert vs throw
 track down code duplication
 move semantics http://stackoverflow.com/questions/3106110/what-are-move-semantics
 hunt memory leaks, test with valgrind
-foutre des auto partout
+use auto
+
+use C++ arrays instead of vectors in some places? Eg: std::vector< std::vector<Point> > getTrianglesUp() : could this be a std::vector<Point[3]> or something?
 
 
 ******************************** BUGS: ********************************
+
+Program should handle when a nonconvex fundamental domain is given, at the moment it will just crash (or not) when constructing the mesh.
 
 
 ************************* FUTURE PLANS ***************************
@@ -40,23 +30,25 @@ foutre des auto partout
 2. Think about equivariance: Explain the picture of the (almost) harmonic map from a rho to its Dehn twist.
 3. Improve choice of steiner points and cuts
 4. Improve choice of fundamental domain (try dirichlet?)
-5. Think about automating in a totally different way: Fix a weighted graph that triangulates the surface ahead of time (relations on weights?), and use the algorithm to embed it "harmonically" on the surface.
+5. Think about automating in a totally different way: Fix a weighted graph that triangulates the surface ahead of time (relations on weights?),
+and use the algorithm to embed it "harmonically" on the surface.
 6. H3 and SL(2,C)-character variety?
 7. Slices of the character variety and pictures?
 8. Hopf differential? Energy?
 
+9. Do youtube video!
+10. Improve triangulations by adding points to the cuts?
+
 
 ************************* OPTIMIZATION ***************************
 
-For the record, after going to lift graph, speed (release build) was multiplied by approximately 2.
 
-Optimisation :
-- utiliser le profiler
-- essayer une super accélération à la circle packings (voir tests.cpp)
-- utiliser le résultat pour un mesh depth inférieur.
-
+Optimization of heat flow:
+- use profiler
+- try acceleration à la circle packings (see tests.cpp)
+- use heat flow on lower depth mesh
 
 
+************************* NB ***************************
 
-J'ai réussi à faire les calculs, Nicolas avait raison : le centroïde minimise la somme pondérée des cosinus hyperboliques des distances
-(pas de facteur 2, pas de carré, exactement ch(distance)))
+Nicolas was right: the centroïd (projection of Euclidean center of mass in Minkowski space on the hyperboloid) precisely minimizes the weighted sum of hyperbolic cosines of the distances
