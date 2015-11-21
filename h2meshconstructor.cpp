@@ -1,7 +1,7 @@
 #include "h2meshconstructor.h"
 #include "triangularsubdivision.h"
-#include <Eigen/Dense>
-#include <Eigen/LU>
+//#include <Eigen/Dense>
+//#include <Eigen/LU>
 
 
 
@@ -585,7 +585,7 @@ void H2MeshConstructor::createNaiveWeights()
     }
 }
 
-void H2MeshConstructor::createQuadraticWeights()
+/*void H2MeshConstructor::createQuadraticWeights()
 {
     uint i=0;
     H2Point basept;
@@ -605,7 +605,7 @@ void H2MeshConstructor::createQuadraticWeights()
         meshPoint->weight = 0.0;
         ++i;
     }
-}
+}*/
 
 std::vector<uint> H2MeshConstructor::meshPointsIndicesAlongSide(uint side) const
 {

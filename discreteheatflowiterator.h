@@ -39,4 +39,31 @@ private:
     std::vector<double> errors;
 };
 
+
+template <typename Point, typename Map> class LiftedGraphFunctionTriangulated; template <typename Map> class GroupRepresentation;
+
+/*template <typename Point, typename Map> class DiscreteHeatFlowIteratorRecursiveDepth
+{
+public:
+    DiscreteHeatFlowIteratorRecursiveDepth(const GroupRepresentation<Map> &rhoDomain, const GroupRepresentation<Map> &rhoImage, uint depth);
+
+    bool run();
+
+private:
+    GroupRepresentation<Map> rhoDomain, rhoImage;
+    uint depth;
+
+    double tol, subTol;
+
+    std::vector< LiftedGraphFunctionTriangulated<Point, Map> > domainFunctions, imageFunctions;
+
+    bool stop;
+};*/
+
+
+
+
+
+
+
 #endif // DISCRETEHEATFLOWITERATOR_H

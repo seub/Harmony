@@ -125,6 +125,20 @@ double DiscreteHeatFlowIterator<Point, Map>::updateSupDelta()
 
 
 
+/*
+template <typename Map, typename Point>
+DiscreteHeatFlowIteratorRecursiveDepth<Point, Map>::DiscreteHeatFlowIteratorRecursiveDepth(const GroupRepresentation<Map> &rhoDomain, const GroupRepresentation<Map> &rhoImage, uint depth) :
+    rhoDomain(rhoDomain), rhoImage(rhoImage), depth(depth)
+{
+}
+
+template <typename Map, typename Point>
+bool DiscreteHeatFlowIteratorRecursiveDepth<Point, Map>::run()
+{
+    return (!stop);
+}*/
+
 
 
 template class DiscreteHeatFlowIterator<H2Point, H2Isometry>;
+//template class DiscreteHeatFlowIteratorRecursiveDepth<H2Point, H2Isometry>;

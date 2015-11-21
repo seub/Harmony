@@ -681,8 +681,7 @@ LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::LiftedGraphFunctionTriangu
 }
 
 template <typename Point, typename Map>
-LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(const LiftedGraphFunctionTriangulated<H2Point, H2Isometry> &domainFunction,
-                                                                             const GroupRepresentation<Map> &rhoImage)
+void LiftedGraphFunctionTriangulated<Point, Map>::constructUninitialized(const LiftedGraphFunctionTriangulated<H2Point, H2Isometry> &domainFunction, const GroupRepresentation<Map> &rhoImage)
 {
     this->Gamma = domainFunction.Gamma;
     this->nbBoundaryPoints = domainFunction.nbBoundaryPoints;
@@ -705,6 +704,7 @@ LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(con
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     std::vector<Point> vertexImages = rhoImage.generateFundamentalDomainOptimization().getVertices();
     //std::vector<Point> vertexImages = rhoImage.generateFundamentalDomainOptimization().getVertices();
 
@@ -713,8 +713,24 @@ LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(con
 >>>>>>> ddef4dec805edffad41304c6ad0d1c5ed086bde8
     H2SteinerPolygon SteinerPolygonImage(vertexImages, getSteinerWeights());
     std::vector<Point> polygonVerticesValues = SteinerPolygonImage.getFullPolygon().getVertices();
+=======
+>>>>>>> 993414ba3494b4e34b432649fc40b440417bbd83
     this->values.resize(this->nbPoints);
-    initializePiecewiseLinear(polygonVerticesValues);
+}
+
+template <typename Point, typename Map>
+LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(const LiftedGraphFunctionTriangulated<H2Point, H2Isometry> &domainFunction,
+                                                                             const GroupRepresentation<Map> &rhoImage, bool initializePL)
+{
+    constructUninitialized(domainFunction, rhoImage);
+
+    if (initializePL)
+    {
+        std::vector<Point> vertexImages = rhoImage.getOptimalFundamentalDomain().getVertices();
+        H2SteinerPolygon SteinerPolygonImage(vertexImages, getSteinerWeights());
+        std::vector<Point> polygonVerticesValues = SteinerPolygonImage.getFullPolygon().getVertices();
+        initializePiecewiseLinear(polygonVerticesValues);
+    }
 }
 
 

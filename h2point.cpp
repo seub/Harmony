@@ -1,6 +1,6 @@
 #include "h2point.h"
 #include "h2isometry.h"
-#include <Eigen/Dense>
+//#include <Eigen/Dense>
 
 H2Point::H2Point()
 {
@@ -216,7 +216,7 @@ void H2Point::computeNaiveWeights(const std::vector<H2Point> &neighbors, std::ve
     }
 }
 
-void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
+/*void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
 {
     if (neighbors.size() != 6)
     {
@@ -272,64 +272,7 @@ void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std
     {
         outputWeights.push_back(out(j));
     }
-
-
-    //Tests
-    /*int counter=0;
-    qDebug() << "List of weights: ";
-    for(int j=0; j<6; ++j)
-    {
-        if (out(j)<0.0)
-        {
-            ++counter;
-        }
-        qDebug() << out(j);
-    }
-    qDebug() << "Number of negative weights:" << counter;
-
-
-    sum=0.0;
-    for(int j=0; j<6; ++j)
-    {
-        sum += out(j)*neighborsInTangentSpaceX[j];
-    }
-    qDebug() << "A mesh point has weighted sum of X coordinates " << sum;
-
-    sum=0.0;
-    for(int j=0; j<6; ++j)
-    {
-        sum += out(j)*neighborsInTangentSpaceY[j];
-    }
-    qDebug() << "A mesh point has weighted sum of Y coordinates " << sum;
-
-    sum=0.0;
-    for(int j=0; j<6; ++j)
-    {
-        sum += out(j)*neighborsInTangentSpaceX[j]*neighborsInTangentSpaceY[j];
-    }
-    qDebug() << "A mesh point has weighted sum of X*Y coordinates " << sum;
-
-    sum=0.0;
-    for(int j=0; j<6; ++j)
-    {
-        sum += out(j)*neighborsInTangentSpaceX[j]*neighborsInTangentSpaceX[j];
-    }
-    qDebug() << "A mesh point has weighted sum of X^2 coordinates " << sum-(epsilon*epsilon/4.0);
-
-    sum=0.0;
-    for(int j=0; j<6; ++j)
-    {
-        sum += out(j)*neighborsInTangentSpaceY[j]*neighborsInTangentSpaceY[j];
-    }
-    qDebug() << "A mesh point has weighted sum of Y^2 coordinates " << sum-(epsilon*epsilon/4.0);
-
-    sum = 0.0;
-    for (auto neighborWeight : outputWeights)
-    {
-        sum += neighborWeight;
-    }
-    qDebug() << "sum of weights = " << sum;*/
-}
+}*/
 
 
 
