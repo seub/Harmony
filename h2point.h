@@ -35,7 +35,7 @@ public:
 
     void computeAffineWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
     void computeNaiveWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
-    void computeQuadraticWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
+    //void computeQuadraticWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
 
     bool compareAngles(const H2Point &p1, const H2Point &p2);
 private:

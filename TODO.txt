@@ -6,6 +6,8 @@ Rewrite triangulater with flips?
 
 construct mesh and graphes in thread?
 
+Edit doc.
+
 
 ******************************** IMPROVE CODE ********************************
 
@@ -21,6 +23,8 @@ use C++ arrays instead of vectors in some places? Eg: std::vector< std::vector<P
 ******************************** BUGS: ********************************
 
 Program should handle when a nonconvex fundamental domain is given, at the moment it will just crash (or not) when constructing the mesh.
+
+More generally, get the exception handling ready to work (catch errors in MainApplication)
 
 
 ************************* FUTURE PLANS ***************************
@@ -46,9 +50,3 @@ and use the algorithm to embed it "harmonically" on the surface.
 Optimization of heat flow:
 - use profiler
 - try acceleration à la circle packings (see tests.cpp)
-- use heat flow on lower depth mesh
-
-
-************************* NB ***************************
-
-Nicolas was right: the centroïd (projection of Euclidean center of mass in Minkowski space on the hyperboloid) precisely minimizes the weighted sum of hyperbolic cosines of the distances

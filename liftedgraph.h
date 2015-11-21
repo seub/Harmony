@@ -100,7 +100,7 @@ public:
     std::vector<Point> getFirstVertexOrbit() const;
     double getMinEdgeLengthForRegularTriangulation() const;
 
-    LiftedGraphFunctionTriangulated(const LiftedGraphFunctionTriangulated<H2Point, H2Isometry> &domainFunction, const GroupRepresentation<Map> &rhoImage);
+    LiftedGraphFunctionTriangulated(const LiftedGraphFunctionTriangulated<H2Point, H2Isometry> &domainFunction, const GroupRepresentation<Map> &rhoImage, bool initializePL = true);
     LiftedGraphFunctionTriangulated(const GroupRepresentation<H2Isometry> &rhoDomain, const GroupRepresentation<Map> &rhoImage, uint depth);
 
     // Specialization to Point = H2Point, Map = H2Isometry
@@ -115,6 +115,7 @@ private:
     virtual LiftedGraph *cloneCopyConstructImpl() const override;
     virtual void cloneCopyAssignImpl(const LiftedGraph *other) override;
 
+    void constructUninitialized(const LiftedGraphFunctionTriangulated<H2Point, H2Isometry> &domainFunction, const GroupRepresentation<Map> &rhoImage);
     void initializePiecewiseLinear(const std::vector<Point> &polygonVerticesValues);
     void refreshValuesFromSubdivisions();
     void refreshSubdivisionsFromValues();

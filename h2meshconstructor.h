@@ -37,7 +37,7 @@ private:
     void reorganizeNeighbors();
     void createPiecewiseAffineWeights();
     void createNaiveWeights();
-    void createQuadraticWeights();
+    //void createQuadraticWeights();
 
     bool runTests() const;
     bool checkNumberOfMeshPoints() const;

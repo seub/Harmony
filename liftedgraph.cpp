@@ -681,8 +681,7 @@ LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::LiftedGraphFunctionTriangu
 }
 
 template <typename Point, typename Map>
-LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(const LiftedGraphFunctionTriangulated<H2Point, H2Isometry> &domainFunction,
-                                                                             const GroupRepresentation<Map> &rhoImage)
+void LiftedGraphFunctionTriangulated<Point, Map>::constructUninitialized(const LiftedGraphFunctionTriangulated<H2Point, H2Isometry> &domainFunction, const GroupRepresentation<Map> &rhoImage)
 {
     this->Gamma = domainFunction.Gamma;
     this->nbBoundaryPoints = domainFunction.nbBoundaryPoints;
@@ -704,11 +703,22 @@ LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(con
         subdivisions.push_back(TriangularSubdivision<Point>(depth));
     }
 
-    std::vector<Point> vertexImages = rhoImage.getOptimalFundamentalDomain().getVertices();
-    H2SteinerPolygon SteinerPolygonImage(vertexImages, getSteinerWeights());
-    std::vector<Point> polygonVerticesValues = SteinerPolygonImage.getFullPolygon().getVertices();
     this->values.resize(this->nbPoints);
-    initializePiecewiseLinear(polygonVerticesValues);
+}
+
+template <typename Point, typename Map>
+LiftedGraphFunctionTriangulated<Point, Map>::LiftedGraphFunctionTriangulated(const LiftedGraphFunctionTriangulated<H2Point, H2Isometry> &domainFunction,
+                                                                             const GroupRepresentation<Map> &rhoImage, bool initializePL)
+{
+    constructUninitialized(domainFunction, rhoImage);
+
+    if (initializePL)
+    {
+        std::vector<Point> vertexImages = rhoImage.getOptimalFundamentalDomain().getVertices();
+        H2SteinerPolygon SteinerPolygonImage(vertexImages, getSteinerWeights());
+        std::vector<Point> polygonVerticesValues = SteinerPolygonImage.getFullPolygon().getVertices();
+        initializePiecewiseLinear(polygonVerticesValues);
+    }
 }
 
 
