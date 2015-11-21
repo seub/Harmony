@@ -73,7 +73,8 @@ SOURCES += main.cpp \
     leftmenu.cpp \
     fundamentaldomaingenerator.cpp \
     mainwindow.cpp \
-    h2tangentvector.cpp
+    h2tangentvector.cpp \
+    discretegradientflow.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -123,7 +124,8 @@ HEADERS += \
     leftmenu.h \
     fundamentaldomaingenerator.h \
     mainwindow.h \
-    h2tangentvector.h
+    h2tangentvector.h \
+    discretegradientflow.h
 
 OTHER_FILES += \
     TODO.txt

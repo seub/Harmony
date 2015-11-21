@@ -38,6 +38,7 @@ private:
     void createPiecewiseAffineWeights();
     void createNaiveWeights();
     //void createQuadraticWeights();
+    void createEnergyWeights();
 
     bool runTests() const;
     bool checkNumberOfMeshPoints() const;

@@ -202,7 +202,8 @@ void DiscreteHeatFlowFactory<Point, Map>::resetInitial()
         throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::resetInit: Factory not ready to reset initial"));
     }
     imageFunction->cloneCopyAssign(initialImageFunction.get());
-    iterator.reset(new DiscreteHeatFlowIterator<Point, Map>(initialImageFunction.get()));
+    //iterator.reset(new DiscreteHeatFlowIterator<Point, Map>(initialImageFunction.get()));
+    iterator.reset(new DiscreteGradientFlow<Point, Map>(initialImageFunction.get()));
 }
 
 template<typename Point, typename Map>

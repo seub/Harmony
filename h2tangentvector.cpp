@@ -19,6 +19,11 @@ H2TangentVector::H2TangentVector(const H2Point &from, const H2Point &to)
     vector = distance*u*(1.0-norm(fromZ))/(2.0*std::abs(u));
 }
 
+H2TangentVector::H2TangentVector(const H2Point &root) : root(root)
+{
+    vector = Complex(0.0,0.0);
+}
+
 H2Point H2TangentVector::exponentiate() const
 {
     double t=length();

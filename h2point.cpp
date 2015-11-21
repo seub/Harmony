@@ -1,5 +1,6 @@
 #include "h2point.h"
 #include "h2isometry.h"
+#include "h2tangentvector.h"
 //#include <Eigen/Dense>
 
 H2Point::H2Point()
@@ -127,6 +128,15 @@ double H2Point::tanHalfAngle(const H2Point &previous, const H2Point &point, cons
     return (1-x)/y;
 }
 
+double H2Point::absCotangentAngle(const H2Point &previous, const H2Point &point, const H2Point &next)
+{
+    Complex u = (previous.z - point.z) / (1.0 - conj(point.z)*previous.z);
+    Complex v = (next.z - point.z) / (1.0 - conj(point.z)*next.z);
+    Complex zed = v*conj(u) / std::abs(v*conj(u));
+    double x = real(zed), y = imag(zed);
+    return x/y;
+}
+
 void H2Point::computeAffineWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
 {
     H2Point previous, current, next;
@@ -223,6 +233,41 @@ void H2Point::computeNaiveWeights(const std::vector<H2Point> &neighbors, std::ve
     }
 }
 
+void H2Point::computeEnergyWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
+{
+    //assume the neighbors are in cyclic order
+    H2Point previous, current, next;
+
+    outputWeights.clear();
+    previous = neighbors.back();
+    current = neighbors.front();
+    next = neighbors[1];
+
+    double cot1,cot2;
+    for(std::vector<H2Point>::size_type j=1; j+1<neighbors.size(); ++j)
+    {
+        cot1 = absCotangentAngle(current,previous,*this);
+        cot2 = absCotangentAngle(*this,next,current);
+        outputWeights.push_back(cot1+cot2);
+
+        previous = current;
+        current = next;
+        next = neighbors[j+1];
+    }
+
+    cot1 = absCotangentAngle(current,previous,*this);
+    cot2 = absCotangentAngle(*this,next,current);
+    outputWeights.push_back(cot1+cot2);
+
+    previous = current;
+    current = next;
+    next = neighbors.front();
+    cot1 = absCotangentAngle(current,previous,*this);
+    cot2 = absCotangentAngle(*this,next,current);
+    outputWeights.push_back(cot1+cot2);
+}
+
+
 /*void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
 {
     if (neighbors.size() != 6)
@@ -283,10 +328,6 @@ void H2Point::computeNaiveWeights(const std::vector<H2Point> &neighbors, std::ve
 
 
 
-
-
-
-
 std::ostream & operator<<(std::ostream & out, const H2Point &p)
 {
     out << "H2Point with disk coordinate " << p.z;
@@ -332,6 +373,16 @@ H2Point H2Point::centroid(const std::vector<H2Point> &points, const std::vector<
     yOut = s*yOut;
     out.setHyperboloidProjection(Complex(xOut,yOut));
     return out;
+}
+
+void H2Point::weightedLogSum(const std::vector<H2Point> &points, const std::vector<double> &weights, H2TangentVector &output)
+{
+    assert (points.size() == weights.size());
+    output = H2TangentVector(*this);
+    for (uint i=0; i<points.size(); ++i)
+    {
+        output = output + weights[i]*H2TangentVector(*this,points[i]);
+    }
 }
 
 bool H2Point::compareAngles(const H2Point &p1, const H2Point &p2)

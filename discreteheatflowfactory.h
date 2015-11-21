@@ -5,7 +5,8 @@
 
 #include "tools.h"
 #include "grouprepresentation.h"
-#include "discreteheatflowiterator.h"
+//#include "discreteheatflowiterator.h"
+#include "discretegradientflow.h"
 #include "liftedgraph.h"
 
 template <typename Point, typename Map> class LiftedGraphFunctionTriangulated; class H2DiscreteFlowFactoryThread;
@@ -62,7 +63,8 @@ private:
     LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *domainFunction;
     std::unique_ptr<LiftedGraphFunctionTriangulated<Point, Map> > initialImageFunction;
     LiftedGraphFunctionTriangulated<Point, Map> *imageFunction;
-    std::unique_ptr<DiscreteHeatFlowIterator<Point, Map> > iterator;
+    //std::unique_ptr<DiscreteHeatFlowIterator<Point, Map> > iterator;
+    std::unique_ptr<DiscreteGradientFlow<Point, Map> > iterator;
     uint nbIterations;
     double minDomainEdgeLength, supError, tolerance;
 

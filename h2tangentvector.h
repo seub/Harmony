@@ -15,6 +15,7 @@ public:
     H2TangentVector();
     H2TangentVector(const H2Point & root, const Complex & vector);
     H2TangentVector(const H2Point & from, const H2Point & to);
+    H2TangentVector(const H2Point & root);
     H2Point getRoot() const;
     Complex getVector() const;
     H2Point exponentiate() const;

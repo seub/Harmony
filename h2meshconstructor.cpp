@@ -27,7 +27,8 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
 
     reorganizeNeighbors();
 
-    createPiecewiseAffineWeights();
+    //createPiecewiseAffineWeights();
+    createEnergyWeights();
 
     createMeshExteriorIndices();
 
@@ -580,6 +581,21 @@ void H2MeshConstructor::createNaiveWeights()
         neighbors = mesh->getKickedH2Neighbors(i);
         basept = mesh->getH2Point(i);
         basept.computeNaiveWeights(neighbors,meshPoint->neighborsWeights);
+        meshPoint->weight = 0.0;
+        ++i;
+    }
+}
+
+void H2MeshConstructor::createEnergyWeights()
+{
+    uint i=0;
+    H2Point basept;
+    std::vector<H2Point> neighbors;
+    for(const auto & meshPoint : mesh->meshPoints)
+    {
+        neighbors = mesh->getKickedH2Neighbors(i);
+        basept = mesh->getH2Point(i);
+        basept.computeEnergyWeights(neighbors,meshPoint->neighborsWeights);
         meshPoint->weight = 0.0;
         ++i;
     }
