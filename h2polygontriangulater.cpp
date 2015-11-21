@@ -452,14 +452,9 @@ void H2PolygonTriangulater::triangulate()
     sortTriangles();
     completeCutsAndSides();
 
-<<<<<<< HEAD
-    // Improving the triangulation by searching for flips:
-    while (attemptFlip()) {}
-=======
     uint counter = 0;
     while (attemptFlip() && counter!=maxNbFlips) {++counter;}
 
->>>>>>> ddef4dec805edffad41304c6ad0d1c5ed086bde8
     sortTriangles();
     completeCutsAndSides();
 
@@ -618,35 +613,6 @@ void H2PolygonTriangulater::createSteinerPoints()
     fullPolygon = steinerPolygon.getFullPolygon();
 }
 
-<<<<<<< HEAD
-void H2PolygonTriangulater:: createSteinerPointsDetailed()
-{
-    std::vector<uint> nbSteinerPoints;
-    std::vector<H2GeodesicArc> sides = polygon->getSides();
-    std::vector<double> sideDistances, sideLengths;
-    for (const auto & side : sides)
-    {
-        for (const auto & otherSide : sides)
-        {
-            if (!H2GeodesicArc::shareEndpoint(side,otherSide))
-            {
-                sideDistances.push_back(H2GeodesicArc::distanceGeodesicArcs(side,otherSide));
-            }
-        }
-        sideLengths.push_back(side.length());
-    }
-    double minDistance;
-    minDistance = *std::min_element(sideDistances.begin(),sideDistances.end());
-    for (const auto & sideLength : sideLengths)
-    {
-        nbSteinerPoints.push_back(Tools::intRound(2*sideLength/minDistance)-1);
-    }
-    steinerPolygon = H2SteinerPolygon(polygon->getVertices(), nbSteinerPoints);
-    fullPolygon = steinerPolygon.getFullPolygon();
-}
-
-=======
->>>>>>> ddef4dec805edffad41304c6ad0d1c5ed086bde8
 bool H2PolygonTriangulater::sameSide(uint fullIndex1, uint fullIndex2) const
 {
     return steinerPolygon.lieOnSameActualSide(fullIndex1, fullIndex2);
@@ -710,11 +676,7 @@ bool H2PolygonTriangulater::attemptFlip()
         }
         else
         {
-<<<<<<< HEAD
-            throw(QString("ERROR in H2PolygonTriangulater::attemptFlip: A triangle abutting a cut doesn't have vertices compatible with the desired cut"));
-=======
             throw(QString("ERROR in H2PolygonTriangulater::testQuadrilateralForFlipLengths: A triangle abutting a cut doesn't have vertices compatible with the desired cut"));
->>>>>>> ddef4dec805edffad41304c6ad0d1c5ed086bde8
         }
 
         quadrilateralIndices.push_back(sharedIndex1);
@@ -722,11 +684,10 @@ bool H2PolygonTriangulater::attemptFlip()
         quadrilateralIndices.push_back(sharedIndex2);
         quadrilateralIndices.push_back(unsharedIndexRight);
 
-<<<<<<< HEAD
-        if (testQuadrilateralForFlipLengths(quadrilateralIndices) && !sameSide(unsharedIndex1,unsharedIndex2))
-=======
+
+        //if (testQuadrilateralForFlipLengths(quadrilateralIndices) && !sameSide(unsharedIndex1,unsharedIndex2))
+
         if (testQuadrilateralForFlipAngles(quadrilateralIndices) && !sameSide(unsharedIndexLeft,unsharedIndexRight))
->>>>>>> ddef4dec805edffad41304c6ad0d1c5ed086bde8
         {
             getCutsFromTriangle(leftTriangleIndex, l1, l2, l3);
             getCutsFromTriangle(rightTriangleIndex, k1, k2, k3);
