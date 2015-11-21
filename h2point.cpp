@@ -79,6 +79,13 @@ H2Point H2Point::midpoint(const H2Point &p1, const H2Point &p2)
     return res;
 }
 
+H2Point H2Point::fromDiskCoordinate(const Complex & z)
+{
+    H2Point out;
+    out.setDiskCoordinate(z);
+    return out;
+}
+
 H2Point H2Point::exponentialMap(const H2Point &p0, const Complex &u, const double &t)
 {
     assert(norm(u)>0);

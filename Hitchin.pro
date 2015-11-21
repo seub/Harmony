@@ -72,7 +72,8 @@ SOURCES += main.cpp \
     tests.cpp \
     leftmenu.cpp \
     fundamentaldomaingenerator.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    h2tangentvector.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -121,7 +122,8 @@ HEADERS += \
     canvasdelegatetests.h \
     leftmenu.h \
     fundamentaldomaingenerator.h \
-    mainwindow.h
+    mainwindow.h \
+    h2tangentvector.h
 
 OTHER_FILES += \
     TODO.txt

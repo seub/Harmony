@@ -2,7 +2,6 @@
 #define H2POINT_H
 
 #include "tools.h"
-#include <tuple>
 
 class H2Point
 {
@@ -31,6 +30,7 @@ public:
 
     static H2Point proportionalPoint(const H2Point & p1, const H2Point & p2, const double & s);
     static H2Point exponentialMap(const H2Point &p0, const Complex &u, const double &t);
+    static H2Point fromDiskCoordinate(const Complex &z);
     // p0 is the base point, u is a tangent oriented direction (its norm does not matter) represented by a complex number in the disk model, t is the length of the tangent vector
 
     void computeAffineWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
