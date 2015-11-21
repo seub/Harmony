@@ -8,6 +8,7 @@
 # unix:QMAKE_CXXFLAGS_RELEASE -= -O1
 # unix:QMAKE_CXXFLAGS_RELEASE -= -O2
 # unix:QMAKE_CXXFLAGS_RELEASE *= -O3
+
 QMAKE_MAC_SDK = macosx10.11
 
 QT += core \
