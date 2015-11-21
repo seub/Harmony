@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/images">
+        <file alias="icon.png">images/icon.png</file>
+    </qresource>
+    <qresource prefix="/doc">
+        <file alias="gpl.txt">doc/gpl.txt</file>
+    </qresource>
+</RCC>
