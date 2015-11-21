@@ -10,10 +10,11 @@ int main(int argc, char *argv[])
 
 //    return MainApplication(argc, argv).exec();
     H2Point ptA,ptB;
-    ptA.setDiskCoordinate(Complex(0.0,0.0));
-    ptB.setDiskCoordinate(Complex(0.5,0.0));
+    ptA.setDiskCoordinate(Complex(0.2,0.1));
+    ptB.setDiskCoordinate(Complex(0.6,0.1));
 
     H2TangentVector vector(ptA,ptB);
+    std::cout << vector << std::endl;
     std::cout << vector.exponentiate() << " is the same as " << ptB << "?" << std::endl;
 
 

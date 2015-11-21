@@ -15,8 +15,8 @@ H2TangentVector::H2TangentVector(const H2Point &from, const H2Point &to)
     toZ = to.getDiskCoordinate();
     Complex u = (toZ - fromZ)/(1.0 - conj(fromZ)*toZ);
     double distance = H2Point::distance(from,to);
-    vector = distance*u/std::abs(u);
     root = from;
+    vector = distance*u*(1.0-norm(fromZ))/(2.0*std::abs(u));
 }
 
 H2Point H2TangentVector::exponentiate() const
@@ -40,8 +40,24 @@ H2Point H2TangentVector::getRoot() const
     return root;
 }
 
-std::ostream & operator<<(std::ostream & out, const H2TangentVector &p)
+Complex H2TangentVector::getVector() const
 {
-    out << "H2TangentVector with disk coordinate " << p;
+    return vector;
+}
+
+std::ostream & operator<<(std::ostream & out, const H2TangentVector & vec)
+{
+    out << "H2TangentVector has root " << vec.getRoot() << " and tangent vector " << vec.getVector();
     return out;
+}
+
+H2TangentVector operator*(const double & scale, const H2TangentVector & vec)
+{
+    return H2TangentVector(vec.root,scale*vec.vector);
+}
+
+H2TangentVector operator+(const H2TangentVector & v1, const H2TangentVector & v2)
+{
+    assert (v1.root == v2.root);
+    return H2TangentVector(v1.root,v1.vector+v2.vector);
 }
