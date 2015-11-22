@@ -1,4 +1,5 @@
 #include "h2tangentvector.h"
+#include "h2isometry.h"
 
 H2TangentVector::H2TangentVector()
 {
@@ -38,9 +39,37 @@ H2Point H2TangentVector::exponentiate() const
     return H2Point::fromDiskCoordinate(z2);
 }
 
+H2TangentVector H2TangentVector::parallelTransport(const double &t)
+{
+    H2Point y0 = root;
+    H2Point yt = (t*(*this)).exponentiate();
+    H2Isometry f;
+    f.setDiskCoordinates(Complex(1.0,0.0), y0.getDiskCoordinate());
+
+    H2TangentVector u(f*yt, ((1.0 - norm((f*yt).getDiskCoordinate()))/2.0) * ((f*(*this)).vector));
+
+    return (f.inverse())*u;
+}
+
+
+
 double H2TangentVector::length() const
 {
     return (2.0/(1.0- norm(root.getDiskCoordinate())))*std::abs(vector);
+}
+
+double H2TangentVector::lengthSquared() const
+{
+    double d = (1.0- norm(root.getDiskCoordinate()));
+    return (4.0/(d*d))*norm(vector);
+}
+
+
+double H2TangentVector::scalProd(const H2TangentVector &v1, const H2TangentVector &v2)
+{
+    assert(v1.root == v2.root);
+    double d = (1.0- norm(v1.root.getDiskCoordinate()));
+    return (4.0/(d*d))*real(v1.vector*conj(v2.vector));
 }
 
 H2Point H2TangentVector::getRoot() const
@@ -59,17 +88,42 @@ std::ostream & operator<<(std::ostream & out, const H2TangentVector & vec)
     return out;
 }
 
-H2TangentVector operator*(const double & scale, const H2TangentVector & vec)
+H2TangentVector operator*(const double &t, const H2TangentVector &v)
 {
-    return H2TangentVector(vec.root,scale*vec.vector);
+    return H2TangentVector(v.root,t*v.vector);
+}
+
+H2TangentVector operator*(const H2Isometry &f, const H2TangentVector &v)
+{
+    Complex u, a;
+    f.getDiskCoordinates(u, a);
+    Complex z = v.root.getDiskCoordinate();
+    Complex df = u*(1 - norm(a))/((1.0 - conj(a)*z)*(1.0 - conj(a)*z));
+    return H2TangentVector(f*v.root, df*v.vector);
 }
 
 H2TangentVector operator+(const H2TangentVector & v1, const H2TangentVector & v2)
 {
     if (!(v1.root == v2.root))
     {
-    std::cout << "v1.root = " << v1.root << ", v2.root = " << v2.root << std::endl;
+        std::cout << "v1.root = " << v1.root << ", v2.root = " << v2.root << std::endl;
     }
     //assert (v1.root == v2.root);
     return H2TangentVector(v1.root,v1.vector+v2.vector);
+}
+
+H2Point H2TangentVector::exponentiate(const H2TangentVector &v)
+{
+    return v.exponentiate();
+}
+
+std::vector<H2Point> H2TangentVector::exponentiate(const std::vector<H2TangentVector> &V)
+{
+    std::vector<H2Point> out;
+    out.reserve(V.size());
+    for (const auto &v : V)
+    {
+        out.push_back(v.exponentiate());
+    }
+    return out;
 }

@@ -2,8 +2,11 @@
 #define DISCRETEGRADIENTFLOW_H
 
 #include "tools.h"
+#include "h2tangentvector.h"
+
 
 template <typename Point, typename Map> class LiftedGraphFunction;
+//class H2TangentVector;
 
 template <typename Point, typename Map> class DiscreteGradientFlow
 {
@@ -11,7 +14,7 @@ public:
     DiscreteGradientFlow(const LiftedGraphFunction<Point, Map> *initialFunction);
 
     void iterate();
-    void iterate(uint nbIterations);
+
     void getOutputFunction(LiftedGraphFunction<Point, Map> *outputFunction);
     double updateSupDelta();
     void reset();
@@ -20,8 +23,16 @@ public:
 
 private:
     void refreshNeighborsValuesKicked();
-    void updateValues();
+    void constantStepUpdateValues();
+    void optimalStepUpdateValues();
     void refreshOutput();
+    void computeGradient();
+
+    std::vector<H2TangentVector> computeEnergyGradient(std::vector<H2Point> &values);
+    double computeEnergyHessian(const std::vector<H2TangentVector> &V);
+
+
+    void lineSearch();
 
     const uint nbBoundaryPoints;
     const uint nbPoints;
@@ -30,11 +41,12 @@ private:
     const std::vector< std::vector<Map> > boundaryPointsNeighborsPairingsValues;
 
     std::vector<Point> initialValues, oldValues, newValues;
+    std::vector<H2TangentVector> gradient;
     std::vector< std::vector<Point> > oldNeighborsValuesKicked, newNeighborsValuesKicked;
 
     const std::unique_ptr<LiftedGraphFunction<Point, Map> > outputFunction;
 
-    double stepSize;
+    double constantStep, optimalStep;
     double supDelta;
     std::vector<double> errors;
 };
