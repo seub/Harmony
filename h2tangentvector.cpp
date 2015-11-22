@@ -32,11 +32,6 @@ H2Point H2TangentVector::exponentiate() const
     Complex z0 = root.getDiskCoordinate();
     Complex z2 = (z1 + z0)/(1.0 + conj(z0)*z1);
 
-    if (!(norm(z2)<1.0))
-    {
-        std::cout << "Problem: exponentiate of " << *this << " is:" << std::endl;
-        std::cout << H2Point::fromDiskCoordinate(z2) << " which has norm " << norm(z2) << std::endl;
-    }
     assert (norm(z2)<1.0);
 
 
