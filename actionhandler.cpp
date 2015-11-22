@@ -69,6 +69,7 @@ void ActionHandler::connectMenusSignals()
     connect(displayMenu->colorComboBox, SIGNAL(activated(int)), this, SLOT(colorClicked(int)));
 
     connect(outputMenu->computeButton, SIGNAL(clicked()), this, SLOT(computeButtonClicked()));
+    connect(outputMenu->iterateButton, SIGNAL(clicked()), this, SLOT(iterateButtonClicked()));
     connect(outputMenu->resetButton, SIGNAL(clicked()), this, SLOT(outputResetButtonClicked()));
 }
 
@@ -183,6 +184,18 @@ void ActionHandler::computeButtonClicked()
         rightDelegate->setShowTranslates(false, false, false);
         rightCanvas->update();
     }
+}
+
+void ActionHandler::iterateButtonClicked()
+{
+    leftCanvas->setEnabled(false);
+    rightCanvas->setEnabled(false);
+    inputMenu->setEnabled(false);
+    displayMenu->setEnabled(false);
+    outputMenu->disableAllButStop();
+    outputMenu->update();
+
+    topFactory->iterateH2Flow(outputMenu->iterateSpinBox->value());
 }
 
 void ActionHandler::outputResetButtonClicked()

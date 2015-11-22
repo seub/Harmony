@@ -39,6 +39,7 @@ public:
     double getTolerance() const;
 
     void run();
+    void iterate(uint N);
     void stopRunning();
     uint getNbIterations() const {return nbIterations;}
 

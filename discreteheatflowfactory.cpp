@@ -262,6 +262,29 @@ void DiscreteHeatFlowFactory<Point, Map>::run()
 }
 
 template<typename Point, typename Map>
+void DiscreteHeatFlowFactory<Point, Map>::iterate(uint N)
+{
+    stop = false;
+    nbIterations = 0;
+    while(!stop && nbIterations<N)
+    {
+        iterator->iterate();
+        ++nbIterations;
+
+        if ((nbIterations % 8)==0)
+        {
+            updateSupError();
+            if (supError < tolerance)
+            {
+                break;
+            }
+        }
+    }
+    updateSupError();
+    refreshImageFunction();
+}
+
+template<typename Point, typename Map>
 void DiscreteHeatFlowFactory<Point, Map>::stopRunning()
 {
     stop = true;

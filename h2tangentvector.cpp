@@ -32,6 +32,15 @@ H2Point H2TangentVector::exponentiate() const
     // NB: When translating to the origin via the map (z -z0)/(1 - bar(z0) z), 'vector' is only scaled by a positive factor.
     Complex z0 = root.getDiskCoordinate();
     Complex z2 = (z1 + z0)/(1.0 + conj(z0)*z1);
+
+    if (!(norm(z2)<1.0))
+    {
+        std::cout << "Problem: exponentiate of " << *this << " is:" << std::endl;
+        std::cout << H2Point::fromDiskCoordinate(z2) << " which has norm " << norm(z2) << std::endl;
+    }
+    assert (norm(z2)<1.0);
+
+
     return H2Point::fromDiskCoordinate(z2);
 }
 
@@ -63,6 +72,10 @@ H2TangentVector operator*(const double & scale, const H2TangentVector & vec)
 
 H2TangentVector operator+(const H2TangentVector & v1, const H2TangentVector & v2)
 {
-    assert (v1.root == v2.root);
+    if (!(v1.root == v2.root))
+    {
+    std::cout << "v1.root = " << v1.root << ", v2.root = " << v2.root << std::endl;
+    }
+    //assert (v1.root == v2.root);
     return H2TangentVector(v1.root,v1.vector+v2.vector);
 }

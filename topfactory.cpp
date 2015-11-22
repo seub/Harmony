@@ -77,6 +77,13 @@ void TopFactory::runH2Flow()
     h2factory.start();
 }
 
+void TopFactory::iterateH2Flow(uint N)
+{
+    startTimers();
+    h2factory.iterate(N);
+    finishedComputing();
+}
+
 void TopFactory::stopH2Flow()
 {
     h2factory.stopRunning();

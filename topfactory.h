@@ -38,6 +38,7 @@ public:
 
     void resetH2Flow();
     void runH2Flow();
+    void iterateH2Flow(uint N);
     void stopH2Flow();
 
     uint getNbIterations() const;

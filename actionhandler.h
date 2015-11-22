@@ -32,6 +32,7 @@ private slots:
 
     void outputResetButtonClicked();
     void computeButtonClicked();
+    void iterateButtonClicked();
     void stopButtonClicked();
 
     void resetViewButtonClicked();

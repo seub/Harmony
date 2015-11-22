@@ -36,8 +36,9 @@ private:
     void switchStopToComputeButton();
 
     QGridLayout *layout;
-    QPushButton *resetButton, *computeButton;
-    QLabel *showLiveLabel;
+    QPushButton *resetButton, *iterateButton, *computeButton;
+    QLabel *iterateLabel, *showLiveLabel;
+    QSpinBox *iterateSpinBox;
     QCheckBox *showLiveCheckbox;
 
     int vertSpace;

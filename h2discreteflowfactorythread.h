@@ -27,6 +27,7 @@ public:
 
 public slots:
     void run();
+    void iterate(uint N);
     void stopRunning();
 
 private:

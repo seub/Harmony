@@ -16,6 +16,11 @@ void H2DiscreteFlowFactoryThread::run()
     factory.run();
 }
 
+void H2DiscreteFlowFactoryThread::iterate(uint N)
+{
+    factory.iterate(N);
+}
+
 void H2DiscreteFlowFactoryThread::stopRunning()
 {
     factory.stopRunning();
