@@ -4,11 +4,14 @@
 #include "tools.h"
 #include "h2point.h"
 
+class H2Isometry;
+
 class H2TangentVector
 {
     friend std::ostream & operator<<(std::ostream & out, const H2TangentVector &v);
     friend bool operator ==(H2TangentVector &v1, H2TangentVector &v2);
-    friend H2TangentVector operator *(const double & scale, const H2TangentVector & vec);
+    friend H2TangentVector operator *(const double &t, const H2TangentVector &v);
+    friend H2TangentVector operator *(const H2Isometry &f, const H2TangentVector &v);
     friend H2TangentVector operator +(const H2TangentVector & v1, const H2TangentVector & v2);
 
 public:
@@ -19,11 +22,20 @@ public:
     H2Point getRoot() const;
     Complex getVector() const;
     H2Point exponentiate() const;
+    H2TangentVector parallelTransport(const double &t);
     double length() const;
+    double lengthSquared() const;
+
+    static H2Point exponentiate(const H2TangentVector &v);
+    static std::vector<H2Point> exponentiate(const std::vector<H2TangentVector> &V);
+    static double scalProd(const H2TangentVector &v1, const H2TangentVector &v2);
 
 private:
     H2Point root;
     Complex vector;
 };
+
+
+
 
 #endif // H2TANGENTVECTOR_H
