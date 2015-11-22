@@ -128,13 +128,13 @@ double H2Point::tanHalfAngle(const H2Point &previous, const H2Point &point, cons
     return (1-x)/y;
 }
 
-double H2Point::absCotangentAngle(const H2Point &previous, const H2Point &point, const H2Point &next)
+double H2Point::cotangentAngle(const H2Point &previous, const H2Point &point, const H2Point &next)
 {
     Complex u = (previous.z - point.z) / (1.0 - conj(point.z)*previous.z);
     Complex v = (next.z - point.z) / (1.0 - conj(point.z)*next.z);
     Complex zed = v*conj(u) / std::abs(v*conj(u));
     double x = real(zed), y = imag(zed);
-    return x/y;
+    return x/std::abs(y);
 }
 
 void H2Point::computeAffineWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
@@ -246,8 +246,8 @@ void H2Point::computeEnergyWeights(const std::vector<H2Point> &neighbors, std::v
     double cot1,cot2;
     for(std::vector<H2Point>::size_type j=1; j+1<neighbors.size(); ++j)
     {
-        cot1 = absCotangentAngle(current,previous,*this);
-        cot2 = absCotangentAngle(*this,next,current);
+        cot1 = cotangentAngle(current,previous,*this);
+        cot2 = cotangentAngle(*this,next,current);
         outputWeights.push_back(cot1+cot2);
 
         previous = current;
@@ -255,15 +255,15 @@ void H2Point::computeEnergyWeights(const std::vector<H2Point> &neighbors, std::v
         next = neighbors[j+1];
     }
 
-    cot1 = absCotangentAngle(current,previous,*this);
-    cot2 = absCotangentAngle(*this,next,current);
+    cot1 = cotangentAngle(current,previous,*this);
+    cot2 = cotangentAngle(*this,next,current);
     outputWeights.push_back(cot1+cot2);
 
     previous = current;
     current = next;
     next = neighbors.front();
-    cot1 = absCotangentAngle(current,previous,*this);
-    cot2 = absCotangentAngle(*this,next,current);
+    cot1 = cotangentAngle(current,previous,*this);
+    cot2 = cotangentAngle(*this,next,current);
     outputWeights.push_back(cot1+cot2);
 }
 

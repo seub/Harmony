@@ -27,7 +27,6 @@ H2TangentVector::H2TangentVector(const H2Point &root) : root(root)
 H2Point H2TangentVector::exponentiate() const
 {
     double t=length();
-
     Complex z1 = tanh(t/2)*vector/std::abs(vector);
     // NB: When translating to the origin via the map (z -z0)/(1 - bar(z0) z), 'vector' is only scaled by a positive factor.
     Complex z0 = root.getDiskCoordinate();

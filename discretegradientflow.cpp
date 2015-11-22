@@ -11,7 +11,7 @@ DiscreteGradientFlow<Point, Map>::DiscreteGradientFlow(const LiftedGraphFunction
     boundaryPointsNeighborsPairingsValues(initialFunction->boundaryPointsNeighborsPairingsValues), initialValues(initialFunction->getValues()),
     outputFunction(initialFunction->cloneCopyConstruct())
 {
-    stepSize=1;
+    stepSize=0.1;
     reset();
 }
 
@@ -93,7 +93,7 @@ void DiscreteGradientFlow<Point, Map>::updateValues()
 
     for (uint i=0; i!=nbPoints; ++i)
     {
-        oldValues[i].weightedLogSum(newNeighborsValuesKicked[i], neighborsWeights[i],gradient);
+        oldValues[i].weightedLogSum(newNeighborsValuesKicked[i], neighborsWeights[i], gradient);
         newValues[i] = (stepSize*gradient).exponentiate();
     }
 }

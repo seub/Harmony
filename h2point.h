@@ -29,7 +29,7 @@ public:
     static H2Point midpoint(const H2Point & p1, const H2Point & p2);
     static double angle(const H2Point &previous, const H2Point &point, const H2Point &next);
     static double tanHalfAngle(const H2Point &previous, const H2Point &point, const H2Point &next);
-    static double absCotangentAngle(const H2Point &previous, const H2Point &point, const H2Point &next);
+    static double cotangentAngle(const H2Point &previous, const H2Point &point, const H2Point &next);
     static H2Point centroid(const std::vector<H2Point> & points, const std::vector<double> & weights);
 
     static H2Point proportionalPoint(const H2Point & p1, const H2Point & p2, const double & s);
