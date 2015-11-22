@@ -595,7 +595,7 @@ void H2MeshConstructor::createEnergyWeights()
     {
         neighbors = mesh->getKickedH2Neighbors(i);
         basept = mesh->getH2Point(i);
-        basept.computeEnergyWeights(neighbors,meshPoint->neighborsWeights);
+        basept.computeEnergyWeights(neighbors, meshPoint->neighborsWeights);
         meshPoint->weight = 0.0;
         ++i;
     }

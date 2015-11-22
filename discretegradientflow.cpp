@@ -91,11 +91,19 @@ void DiscreteGradientFlow<Point, Map>::updateValues()
     oldValues = newValues;
     H2TangentVector gradient;
 
+    // double length, max = 0;
+
     for (uint i=0; i!=nbPoints; ++i)
     {
         oldValues[i].weightedLogSum(newNeighborsValuesKicked[i], neighborsWeights[i], gradient);
+
+        //length = gradient.length();
+        //max = max > length? max : length;
+
         newValues[i] = (stepSize*gradient).exponentiate();
     }
+
+    // qDebug() << "MAX gradient length = " << max;
 }
 
 template <typename Point, typename Map>
