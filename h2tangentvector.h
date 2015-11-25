@@ -22,7 +22,9 @@ public:
     H2Point getRoot() const;
     Complex getVector() const;
     H2Point exponentiate() const;
+    H2Point exponentiateBetter() const;
     H2TangentVector parallelTransport(const double &t);
+    H2TangentVector parallelTransportBetter(const double &t);
     double length() const;
     double lengthSquared() const;
 

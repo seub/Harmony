@@ -39,6 +39,23 @@ H2Point H2TangentVector::exponentiate() const
     return H2Point::fromDiskCoordinate(z2);
 }
 
+
+H2Point H2TangentVector::exponentiateBetter() const
+{
+    double L,lambda,absZ,absV;
+    Complex z,v,outputV;
+    H2Point output;
+    z = root.getDiskCoordinate();
+    v = vector;
+    absZ = std::abs(z);
+    absV = std::abs(v);
+    L = length();
+    lambda = (((1.0-absZ)*exp(L)) - (1.0+absZ))/(((1.0-absZ)*exp(L)) + (1.0+absZ));
+    outputV = ((z*absV*((lambda*absZ) + 1.0))+(v*(lambda+absZ)))/((absV*(lambda*absZ+1.0))+(v*conj(z)*(lambda+absZ)));
+    output.setDiskCoordinate(outputV);
+    return output;
+}
+
 H2TangentVector H2TangentVector::parallelTransport(const double &t)
 {
     H2Point y0 = root;
@@ -46,7 +63,20 @@ H2TangentVector H2TangentVector::parallelTransport(const double &t)
     H2Isometry f;
     f.setDiskCoordinates(Complex(1.0,0.0), y0.getDiskCoordinate());
 
-    H2TangentVector u(f*yt, ((1.0 - norm((f*yt).getDiskCoordinate()))/2.0) * ((f*(*this)).vector));
+    H2TangentVector u(f*yt, (1.0 - norm((f*yt).getDiskCoordinate())) * ((f*(*this)).vector));
+
+    return (f.inverse())*u;
+}
+
+
+H2TangentVector H2TangentVector::parallelTransportBetter(const double &t)
+{
+    H2Point y0 = root;
+    H2Point yt = (t*(*this)).exponentiateBetter();
+    H2Isometry f;
+    f.setDiskCoordinates(Complex(1.0,0.0), y0.getDiskCoordinate());
+
+    H2TangentVector u(f*yt, (1.0 - norm((f*yt).getDiskCoordinate())) * ((f*(*this)).vector));
 
     return (f.inverse())*u;
 }
