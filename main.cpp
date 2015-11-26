@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
     std::cout << "U has length " << U.length() << std::endl;
 
     H2TangentVector par, parBetter;
-    par = U.parallelTransport(3.8);
-    parBetter = U.parallelTransportBetter(3.8);
+    par = U.parallelTransport(2.5);
+    parBetter = U.parallelTransportBetter(2.5);
 
     std::cout << "U.parallelTransport is " << par << " and has length = " << par.length() << std::endl;
     std::cout << "U.parallelTransportBetter is " << parBetter << " and has length = " << parBetter.length() << std::endl;

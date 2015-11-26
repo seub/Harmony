@@ -77,14 +77,13 @@ H2TangentVector H2TangentVector::parallelTransportBetter(const double &t)
     double L,lambda,absZ,absV;
 
     z = y0.getDiskCoordinate();
-    //a = yt.getDiskCoordinate();
     v = vector;
     absZ = std::abs(z);
     absV = std::abs(v);
     L = t*length();
     lambda = (((1.0-absZ)*exp(L/2.0)) - (1.0+absZ)*exp(-L/2.0))/(((1.0-absZ)*exp(L/2.0)) + (1.0+absZ)*exp(-L/2.0));
 
-    Complex thing,numerator,denominator;
+    Complex thing;
     thing = absV*(lambda*absZ+1.0)+v*conj(z)*(lambda+absZ);
     outV = vector*(norm(v)*(1.0-norm(z))*(1.0-lambda*lambda))/(thing*thing);
 
