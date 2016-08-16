@@ -30,6 +30,7 @@ H2Point H2TangentVector::exponentiate() const
     double t=length();
     Complex z1 = tanh(t/2)*vector/std::abs(vector);
     // NB: When translating to the origin via the map (z -z0)/(1 - bar(z0) z), 'vector' is only scaled by a positive factor.
+
     Complex z0 = root.getDiskCoordinate();
     Complex z2 = (z1 + z0)/(1.0 + conj(z0)*z1);
 
@@ -50,7 +51,8 @@ H2Point H2TangentVector::exponentiateBetter() const
     absZ = std::abs(z);
     absV = std::abs(v);
     L = length();
-    lambda = (((1.0-absZ)*exp(L/2.0)) - (1.0+absZ)*exp(-L/2.0))/(((1.0-absZ)*exp(L/2.0)) + (1.0+absZ)*exp(-L/2.0));;
+    //lambda = (((1.0-absZ)*exp(L/2.0)) - (1.0+absZ)*exp(-L/2.0))/(((1.0-absZ)*exp(L/2.0)) + (1.0+absZ)*exp(-L/2.0));
+    lambda = (((1.0-absZ)*exp(L)) - (1.0+absZ))/(((1.0-absZ)*exp(L)) + (1.0+absZ));
     outputV = ((z*absV*((lambda*absZ) + 1.0))+(v*(lambda+absZ)))/((absV*(lambda*absZ+1.0))+(v*conj(z)*(lambda+absZ)));
     output.setDiskCoordinate(outputV);
     return output;
@@ -88,6 +90,13 @@ H2TangentVector H2TangentVector::parallelTransportBetter(const double &t)
 
     H2TangentVector output(yt,outV);
     return output;
+
+    /*H2Isometry f;
+    f.setDiskCoordinates(Complex(1.0,0.0), y0.getDiskCoordinate());
+
+    H2TangentVector u(f*yt, (1.0 - norm((f*yt).getDiskCoordinate())) * ((f*(*this)).vector));
+
+    return (f.inverse())*u;*/
 }
 
 

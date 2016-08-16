@@ -21,27 +21,18 @@ void DiscreteGradientFlow<Point, Map>::reset()
 
     newValues = initialValues;
     errors.resize(nbPoints);
+    gradient.resize(nbPoints);
 
-    newNeighborsValuesKicked.resize(nbPoints);
-    uint i=0, j;
-    while(i != nbBoundaryPoints)
-    {
-        j=0;
-        for (auto neighborIndex : neighborsIndices[i])
-        {
-            newNeighborsValuesKicked[i].push_back(boundaryPointsNeighborsPairingsValues[i][j]*newValues[neighborIndex]);
-            ++j;
-        }
-        ++i;
-    }
+    neighborsValuesKicked.resize(nbPoints);
+    uint i=0;
+
     while (i != nbPoints)
     {
-        for (auto neighborIndex : neighborsIndices[i])
-        {
-            newNeighborsValuesKicked[i].push_back(newValues[neighborIndex]);
-        }
+        neighborsValuesKicked[i].resize(neighborsIndices[i].size());
         ++i;
     }
+    refreshNeighborsValuesKicked();
+
 }
 
 template <typename Point, typename Map>
@@ -61,14 +52,14 @@ void DiscreteGradientFlow<Point, Map>::refreshOutput()
 template <typename Point, typename Map>
 void DiscreteGradientFlow<Point, Map>::refreshNeighborsValuesKicked()
 {
-    oldNeighborsValuesKicked = newNeighborsValuesKicked;
+//    oldNeighborsValuesKicked = newNeighborsValuesKicked;
     uint i=0, j;
     while(i != nbBoundaryPoints)
     {
         j=0;
         for (auto neighborIndex : neighborsIndices[i])
         {
-            newNeighborsValuesKicked[i][j] = boundaryPointsNeighborsPairingsValues[i][j]*newValues[neighborIndex];
+            neighborsValuesKicked[i][j] = boundaryPointsNeighborsPairingsValues[i][j]*newValues[neighborIndex];
             ++j;
         }
         ++i;
@@ -78,7 +69,7 @@ void DiscreteGradientFlow<Point, Map>::refreshNeighborsValuesKicked()
         j=0;
         for (auto neighborIndex : neighborsIndices[i])
         {
-            newNeighborsValuesKicked[i][j] = newValues[neighborIndex];
+            neighborsValuesKicked[i][j] = newValues[neighborIndex];
             ++j;
         }
         ++i;
@@ -92,6 +83,7 @@ void DiscreteGradientFlow<Point, Map>::constantStepUpdateValues()
 
     computeGradient();
     newValues = H2TangentVector::exponentiate(constantStep*gradient);
+    refreshNeighborsValuesKicked();
 }
 
 
@@ -103,6 +95,7 @@ void DiscreteGradientFlow<Point, Map>::optimalStepUpdateValues()
     computeGradient();
     lineSearch();
     newValues = H2TangentVector::exponentiate(optimalStep*gradient);
+    refreshNeighborsValuesKicked();
 }
 
 
@@ -117,7 +110,7 @@ void DiscreteGradientFlow<Point, Map>::lineSearch()
 template <typename Point, typename Map>
 void DiscreteGradientFlow<Point, Map>::iterate()
 {
-    refreshNeighborsValuesKicked();
+//    refreshNeighborsValuesKicked();
     constantStepUpdateValues();
 }
 
@@ -126,56 +119,12 @@ void DiscreteGradientFlow<Point, Map>::computeGradient()
 {
     for (uint i=0; i!=nbPoints; ++i)
     {
-        oldValues[i].weightedLogSum(newNeighborsValuesKicked[i], neighborsWeights[i], gradient[i]);
+        oldValues[i].weightedLogSum(neighborsValuesKicked[i], neighborsWeights[i], gradient[i]);
     }
 }
 
 
-template <typename Point, typename Map>
-std::vector<H2TangentVector> DiscreteGradientFlow<Point, Map>::computeEnergyGradient(std::vector<H2Point> &values)
-{
-
-    assert(values.size() == nbPoints);
-    std::vector<H2TangentVector> out;
-
-
-    std::vector<std::vector<H2Point>> neighborsValuesKicked = newNeighborsValuesKicked;
-    // Gros porc
-
-    uint i=0, j;
-    while(i != nbBoundaryPoints)
-    {
-        j=0;
-        for (auto neighborIndex : neighborsIndices[i])
-        {
-            neighborsValuesKicked[i][j] = boundaryPointsNeighborsPairingsValues[i][j]*values[neighborIndex];
-            ++j;
-        }
-        ++i;
-    }
-    while (i != nbPoints)
-    {
-        j=0;
-        for (auto neighborIndex : neighborsIndices[i])
-        {
-            neighborsValuesKicked[i][j] = values[neighborIndex];
-            ++j;
-        }
-        ++i;
-    }
-
-
-    out.resize(nbPoints);
-    for (uint i=0; i!=nbPoints; ++i)
-    {
-        values[i].weightedLogSum(neighborsValuesKicked[i], neighborsWeights[i], out[i]);
-    }
-
-    return out;
-}
-
-
-
+/*
 template <typename Point, typename Map>
 double DiscreteGradientFlow<Point, Map>::computeEnergyHessian(const std::vector<H2TangentVector> &V)
 {
@@ -190,7 +139,7 @@ double DiscreteGradientFlow<Point, Map>::computeEnergyHessian(const std::vector<
     }
 
 
-    std::vector<std::vector<H2Point>> neighborsValuesKicked = newNeighborsValuesKicked;
+    std::vector<std::vector<H2Point>> neighborsValuesKicked = neighborsValuesKicked;
     // Gros porc
 
     uint i=0, j;
@@ -238,6 +187,7 @@ double DiscreteGradientFlow<Point, Map>::computeEnergyHessian(const std::vector<
 
     return out;
 }
+*/
 
 
 

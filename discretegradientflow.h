@@ -28,8 +28,7 @@ private:
     void refreshOutput();
     void computeGradient();
 
-    std::vector<H2TangentVector> computeEnergyGradient(std::vector<H2Point> &values);
-    double computeEnergyHessian(const std::vector<H2TangentVector> &V);
+//    double computeEnergyHessian(const std::vector<H2TangentVector> &V);
 
 
     void lineSearch();
@@ -42,7 +41,7 @@ private:
 
     std::vector<Point> initialValues, oldValues, newValues;
     std::vector<H2TangentVector> gradient;
-    std::vector< std::vector<Point> > oldNeighborsValuesKicked, newNeighborsValuesKicked;
+    std::vector< std::vector<Point> > neighborsValuesKicked;
 
     const std::unique_ptr<LiftedGraphFunction<Point, Map> > outputFunction;
 
