@@ -8,9 +8,9 @@
 int main(int argc, char *argv[])
 {
 
-    //return MainApplication(argc, argv).exec();
+    return MainApplication(argc, argv).exec();
 
-    H2TangentVector U(H2Point::fromDiskCoordinate(Complex(0.5,0.3)), Complex(-.01, -.3));
+    /* H2TangentVector U(H2Point::fromDiskCoordinate(Complex(0.5,0.3)), Complex(-.01, -.3));
     H2Point u, uBetter;
     std::cout << "U has length " << U.length() << std::endl;
 
@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     parBetter = U.parallelTransportBetter(40.0);
 
     std::cout << "U.parallelTransport is " << par << " and has length = " << par.length() << std::endl;
-    std::cout << "U.parallelTransportBetter is " << parBetter << " and has length = " << parBetter.length() << std::endl;
+    std::cout << "U.parallelTransportBetter is " << parBetter << " and has length = " << parBetter.length() << std::endl; */
 
 
 
