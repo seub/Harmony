@@ -82,7 +82,7 @@ void DiscreteGradientFlow<Point, Map>::constantStepUpdateValues()
     oldValues = newValues;
 
     computeGradient();
-    newValues = H2TangentVector::exponentiate(constantStep*gradient);
+    newValues = H2TangentVector::exponentiate(-constantStep*gradient);
     refreshNeighborsValuesKicked();
 }
 
@@ -94,7 +94,7 @@ void DiscreteGradientFlow<Point, Map>::optimalStepUpdateValues()
 
     computeGradient();
     lineSearch();
-    newValues = H2TangentVector::exponentiate(optimalStep*gradient);
+    newValues = H2TangentVector::exponentiate(-optimalStep*gradient);
     refreshNeighborsValuesKicked();
 }
 
@@ -117,9 +117,11 @@ void DiscreteGradientFlow<Point, Map>::iterate()
 template <typename Point, typename Map>
 void DiscreteGradientFlow<Point, Map>::computeGradient()
 {
+    H2TangentVector v;
     for (uint i=0; i!=nbPoints; ++i)
     {
-        oldValues[i].weightedLogSum(neighborsValuesKicked[i], neighborsWeights[i], gradient[i]);
+        oldValues[i].weightedLogSum(neighborsValuesKicked[i], neighborsWeights[i], v);
+        gradient[i]=-1.0*v;
     }
 }
 
