@@ -381,23 +381,41 @@ void H2Point::weightedLogSum(const std::vector<H2Point> &points, const std::vect
     assert (points.size() == weights.size());
     output = H2TangentVector(*this);
 
+    std::vector<double> distancesToNeighbors;
+    std::vector<Complex> directionsToNeighbors;
 
-    double d, maxD=0, maxW=0;
+
     for (uint i=0; i<points.size(); ++i)
     {
-        d = H2Point::distance(*this, points[i]);
         output = output + weights[i]*H2TangentVector(*this,points[i]);
-        maxD = (d > maxD) ? d : maxD;
-        maxW = (weights[i] > maxW) ? weights[i] : maxW;
+        distancesToNeighbors.push_back(H2Point::distance(*this, points[i]));
+        directionsToNeighbors.push_back((H2TangentVector(*this,points[i])).getVector());
     }
+
+
+    std::vector<double> affineWeights, energyWeights;
+    this->computeEnergyWeights(points, energyWeights);
+    this->computeAffineWeights(points, affineWeights);
+
+
+    std::cout << std::endl;
+    std::cout << "point =" << *this << std::endl;
 
     std::cout << "weights = " << weights << std::endl;
+    std::cout << "affine weights = " << affineWeights << std::endl;
+    std::cout << "energy weights = " << energyWeights << std::endl;
 
-    double dout = output.length();
-    if (dout>30)
-    {
-        std::cout << "dout = " << dout << ", maxD = " << maxD << ", maxW = " << maxW << std::endl;
-    }
+    std::cout << "distances to neighbors = " << distancesToNeighbors << std::endl;
+    std::cout << "directions to neighbors = " << directionsToNeighbors << std::endl;
+
+    std::cout << "output length = " << output.length() << std::endl;
+    std::cout << "output direction = " << output.getVector() << std::endl;
+
+    H2Point C = centroid(points, affineWeights);
+    H2TangentVector toC(*this, C);
+    std::cout << "distance to centroid = " << toC.length() << std::endl;
+    std::cout << "direction to centroid = " << toC.getVector() << std::endl;
+
 }
 
 bool H2Point::compareAngles(const H2Point &p1, const H2Point &p2)

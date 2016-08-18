@@ -247,7 +247,6 @@ void DiscreteHeatFlowFactory<Point, Map>::run()
     {
         iterator->iterate();
         ++nbIterations;
-        std::cout << "Number of iterations = " << nbIterations << std::endl;
 
         if ((nbIterations % 8)==0)
         {

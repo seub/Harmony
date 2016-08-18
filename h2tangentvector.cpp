@@ -169,12 +169,10 @@ std::vector<H2Point> H2TangentVector::exponentiate(const std::vector<H2TangentVe
 {
     std::vector<H2Point> out;
     out.reserve(V.size());
-    uint i=0;
+
     for (const auto &v : V)
     {
-        std::cout << "i=" << i << ", length=" << v.length() << std::endl;
         out.push_back(v.exponentiate());
-        ++i;
     }
     return out;
 }

@@ -11,7 +11,7 @@ DiscreteGradientFlow<Point, Map>::DiscreteGradientFlow(const LiftedGraphFunction
     boundaryPointsNeighborsPairingsValues(initialFunction->boundaryPointsNeighborsPairingsValues), initialValues(initialFunction->getValues()),
     outputFunction(initialFunction->cloneCopyConstruct())
 {
-    constantStep=0.1;
+    constantStep=0.02;
     reset();
 }
 
@@ -120,7 +120,6 @@ void DiscreteGradientFlow<Point, Map>::computeGradient()
     H2TangentVector v;
     for (uint i=0; i!=nbPoints; ++i)
     {
-        std::cout << "Computing gradient for i=" << i << std::endl;
         oldValues[i].weightedLogSum(neighborsValuesKicked[i], neighborsWeights[i], v);
         gradient[i]=-1.0*v;
     }
