@@ -134,7 +134,8 @@ double H2Point::cotangentAngle(const H2Point &previous, const H2Point &point, co
     Complex v = (next.z - point.z) / (1.0 - conj(point.z)*next.z);
     Complex zed = v*conj(u) / std::abs(v*conj(u));
     double x = real(zed), y = imag(zed);
-    return x/std::abs(y);
+    //return x/std::abs(y);
+    return x/y;
 }
 
 void H2Point::computeAffineWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
@@ -379,9 +380,23 @@ void H2Point::weightedLogSum(const std::vector<H2Point> &points, const std::vect
 {
     assert (points.size() == weights.size());
     output = H2TangentVector(*this);
+
+
+    double d, maxD=0, maxW=0;
     for (uint i=0; i<points.size(); ++i)
     {
+        d = H2Point::distance(*this, points[i]);
         output = output + weights[i]*H2TangentVector(*this,points[i]);
+        maxD = (d > maxD) ? d : maxD;
+        maxW = (weights[i] > maxW) ? weights[i] : maxW;
+    }
+
+    std::cout << "weights = " << weights << std::endl;
+
+    double dout = output.length();
+    if (dout>30)
+    {
+        std::cout << "dout = " << dout << ", maxD = " << maxD << ", maxW = " << maxW << std::endl;
     }
 }
 
