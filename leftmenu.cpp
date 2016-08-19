@@ -1,6 +1,8 @@
 #include "leftmenu.h"
 
 #include <QVBoxLayout>
+#include <QApplication>
+#include <QDesktopWidget>
 
 #include "mainwindow.h"
 #include "inputmenu.h"
@@ -11,7 +13,9 @@ LeftMenu::LeftMenu(MainWindow *window)
 {
     setParent(window);
 
-    vertSpace = 3;
+
+	int screenHeight = QApplication::desktop()->height();
+    vertSpace = Tools::intRound(screenHeight*1.0/360);
     createSubMenus();
 }
 
