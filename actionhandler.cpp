@@ -65,8 +65,13 @@ void ActionHandler::connectMenusSignals()
 
     connect(displayMenu->resetViewButton, SIGNAL(clicked()), this, SLOT(resetViewButtonClicked()));
     connect(displayMenu->showTranslatesComboBox, SIGNAL(activated(int)), this, SLOT(showTranslatesClicked(int)));
-    connect(displayMenu->coloringComboBox, SIGNAL(activated(int)), this, SLOT(coloringClicked(int)));
-    connect(displayMenu->colorComboBox, SIGNAL(activated(int)), this, SLOT(colorClicked(int)));
+    //connect(displayMenu->coloringComboBox, SIGNAL(activated(int)), this, SLOT(coloringClicked(int)));
+    //connect(displayMenu->colorComboBox, SIGNAL(activated(int)), this, SLOT(colorClicked(int)));
+
+    connect(displayMenu->coloringComboBoxLeft, SIGNAL(activated(int)), this, SLOT(coloringClickedLeft(int)));
+    connect(displayMenu->colorComboBoxLeft, SIGNAL(activated(int)), this, SLOT(colorClickedLeft(int)));
+    connect(displayMenu->coloringComboBoxRight, SIGNAL(activated(int)), this, SLOT(coloringClickedRight(int)));
+    connect(displayMenu->colorComboBoxRight, SIGNAL(activated(int)), this, SLOT(colorClickedRight(int)));
 
     connect(outputMenu->computeButton, SIGNAL(clicked()), this, SLOT(computeButtonClicked()));
     connect(outputMenu->iterateButton, SIGNAL(clicked()), this, SLOT(iterateButtonClicked()));
@@ -287,7 +292,7 @@ void ActionHandler::showTranslatesClicked(int choice)
         }
     }
 }
-
+/*
 void ActionHandler::coloringClicked(int choice)
 {
     switch (choice)
@@ -355,6 +360,126 @@ void ActionHandler::colorClicked(int choice)
     }
     updateCanvasGraph(true, true);
 }
+*/
+
+
+void ActionHandler::coloringClickedLeft(int choice)
+{
+    switch (choice)
+    {
+    case DisplayMenu::COLORING_NONE_LEFT:
+        leftDelegate->setFilledTriangles(false);
+        break;
+
+    case DisplayMenu::COLORING_PLAIN_LEFT:
+        leftDelegate->setFilledTriangles(true);
+        break;
+
+    default:
+        throw(QString("Error in ActionHandler::coloringClickedLeft: not supposed to land here"));
+        break;
+    }
+    updateCanvasGraph(true, false);
+}
+
+void ActionHandler::coloringClickedRight(int choice)
+{
+    switch (choice)
+    {
+    case DisplayMenu::COLORING_NONE_RIGHT:
+        rightDelegate->setFilledTriangles(false);
+        break;
+
+    case DisplayMenu::COLORING_PLAIN_RIGHT:
+        rightDelegate->setFilledTriangles(true);
+        break;
+
+    default:
+        throw(QString("Error in ActionHandler::coloringClickedRight: not supposed to land here"));
+        break;
+    }
+    updateCanvasGraph(false, true);
+}
+
+
+void ActionHandler::colorClickedLeft(int choice)
+{
+    switch (choice)
+    {
+    case DisplayMenu::RED_L:
+        leftDelegate->setGraphColor("red");
+        break;
+
+    case DisplayMenu::GREEN_L:
+        leftDelegate->setGraphColor("green");
+        break;
+
+    case DisplayMenu::BLUE_L:
+        leftDelegate->setGraphColor("blue");
+        break;
+
+    case DisplayMenu::LIGHT_BLUE_L:
+        leftDelegate->setGraphColor(QColor(9, 118, 227));
+        break;
+
+    case DisplayMenu::ORANGE_L:
+        leftDelegate->setGraphColor("orange");
+        break;
+
+    case DisplayMenu::GRAY_L:
+        leftDelegate->setGraphColor(QColor(170, 170, 170));
+        break;
+
+    case DisplayMenu::BLACK_L:
+        leftDelegate->setGraphColor("black");
+        break;
+
+    default:
+        throw(QString("Error in ActionHandler::colorClickedLeft: not supposed to land here"));
+        break;
+    }
+    updateCanvasGraph(true, false);
+}
+
+void ActionHandler::colorClickedRight(int choice)
+{
+    switch (choice)
+    {
+    case DisplayMenu::RED_R:
+        rightDelegate->setGraphColor("red");
+        break;
+
+    case DisplayMenu::GREEN_R:
+        rightDelegate->setGraphColor("green");
+        break;
+
+    case DisplayMenu::BLUE_R:
+        rightDelegate->setGraphColor("blue");
+        break;
+
+    case DisplayMenu::LIGHT_BLUE_R:
+        rightDelegate->setGraphColor(QColor(9, 118, 227));
+        break;
+
+    case DisplayMenu::ORANGE_R:
+        rightDelegate->setGraphColor("orange");
+        break;
+
+    case DisplayMenu::GRAY_R:
+        rightDelegate->setGraphColor(QColor(170, 170, 170));
+        break;
+
+    case DisplayMenu::BLACK_R:
+        rightDelegate->setGraphColor("black");
+        break;
+
+    default:
+        throw(QString("Error in ActionHandler::colorClickedRight: not supposed to land here"));
+        break;
+    }
+    updateCanvasGraph(false, true);
+}
+
 
 void ActionHandler::setRhoDomainClicked(int choice)
 {

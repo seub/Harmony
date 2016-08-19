@@ -375,6 +375,11 @@ void LiftedGraphFunctionTriangulated<Point, Map>::refreshSubdivisionsFromValues(
 template <typename Point, typename Map>
 void LiftedGraphFunctionTriangulated<Point, Map>::resetValues(const std::vector<Point> &newValues)
 {
+    if (newValues.size()!=this->nbPoints)
+    {
+        std::cout << "newValues has size = " << newValues.size() << std::endl;
+        std::cout << "nbPoints = " << this->nbPoints << std::endl;
+    }
     assert(newValues.size() == this->nbPoints);
     this->values = newValues;
     refreshSubdivisionsFromValues();

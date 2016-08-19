@@ -397,7 +397,7 @@ void H2Point::weightedLogSum(const std::vector<H2Point> &points, const std::vect
     this->computeEnergyWeights(points, energyWeights);
     this->computeAffineWeights(points, affineWeights);
 
-
+/*
     std::cout << std::endl;
     std::cout << "point =" << *this << std::endl;
 
@@ -415,6 +415,7 @@ void H2Point::weightedLogSum(const std::vector<H2Point> &points, const std::vect
     H2TangentVector toC(*this, C);
     std::cout << "distance to centroid = " << toC.length() << std::endl;
     std::cout << "direction to centroid = " << toC.getVector() << std::endl;
+    */
 
 }
 

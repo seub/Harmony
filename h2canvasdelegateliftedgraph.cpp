@@ -459,6 +459,7 @@ void H2CanvasDelegateLiftedGraph::updateGraph(bool refreshSidesTranslates)
 {
     if (!isGraphEmpty)
     {
+        updateDomainTrianglesAreas();
         if (filledTriangles)
         {
             updateFilledGraph(refreshSidesTranslates);
@@ -588,7 +589,7 @@ void H2CanvasDelegateLiftedGraph::updateFilledGraph(bool refreshSidesTranslates)
         }
     }
 
-    updateDomainTrianglesAreas();
+    //updateDomainTrianglesAreas();
     updateTriangleWeights();
     updateTrianglesColors();
 
@@ -603,9 +604,12 @@ void H2CanvasDelegateLiftedGraph::updateDomainTrianglesAreas()
     if (leftCanvas)
     {
         domainTrianglesAreas->clear();
-        domainTrianglesAreas->reserve(graphTriangles.size());
 
-        for (const auto &triangle : graphTriangles)
+        std::vector<H2Triangle> triangles = graph->getAllH2Triangles();
+
+        domainTrianglesAreas->reserve(triangles.size());
+
+        for (const auto &triangle : triangles)
         {
             domainTrianglesAreas->push_back(triangle.area());
         }

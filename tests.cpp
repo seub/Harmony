@@ -6,7 +6,7 @@
 #include "topologicalsurface.h"
 #include "fenchelnielsenconstructor.h"
 #include "liftedgraph.h"
-#include "discreteheatflowiterator.h"
+#include "discreteflowiteratorcentroid.h"
 
 
 void runTests()
@@ -24,7 +24,7 @@ void runTests()
     rhoImage.setNiceRepresentation();
 
     LiftedGraphFunctionTriangulated<H2Point, H2Isometry> graph(rhoDomain, rhoImage, 4);
-    DiscreteHeatFlowIterator<H2Point, H2Isometry> iterator(&graph);
+    DiscreteFlowIteratorCentroid<H2Point, H2Isometry> iterator(&graph);
 
     std::vector<H2Point> traject1, traject2, traject3, traject4;
     uint nbPoints = graph.getNbPoints(), nbBoundaryPoints = graph.getNbBoundaryPoints();

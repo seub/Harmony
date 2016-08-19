@@ -5,11 +5,11 @@
 
 template <typename Point, typename Map> class LiftedGraphFunction;
 
-template <typename Point, typename Map> class DiscreteHeatFlowIterator
+template <typename Point, typename Map> class DiscreteFlowIteratorCentroid
 {
 
 public:
-    DiscreteHeatFlowIterator(const LiftedGraphFunction<Point, Map> *initialFunction);
+    DiscreteFlowIteratorCentroid(const LiftedGraphFunction<Point, Map> *initialFunction);
 
     void iterate();
     void iterate(uint nbIterations);

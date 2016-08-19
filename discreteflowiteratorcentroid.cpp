@@ -1,10 +1,10 @@
-#include "discreteheatflowiterator.h"
+#include "discreteflowiteratorcentroid.h"
 
 #include "liftedgraph.h"
 
 
 template <typename Point, typename Map>
-DiscreteHeatFlowIterator<Point, Map>::DiscreteHeatFlowIterator(const LiftedGraphFunction<Point, Map> *initialFunction) :
+DiscreteFlowIteratorCentroid<Point, Map>::DiscreteFlowIteratorCentroid(const LiftedGraphFunction<Point, Map> *initialFunction) :
     nbBoundaryPoints(initialFunction->nbBoundaryPoints), nbPoints(initialFunction->nbPoints),
     neighborsIndices(initialFunction->neighborsIndices), neighborsWeights(initialFunction->neighborsWeights),
     boundaryPointsNeighborsPairingsValues(initialFunction->boundaryPointsNeighborsPairingsValues), initialValues(initialFunction->getValues()),
@@ -14,7 +14,7 @@ DiscreteHeatFlowIterator<Point, Map>::DiscreteHeatFlowIterator(const LiftedGraph
 }
 
 template <typename Point, typename Map>
-void DiscreteHeatFlowIterator<Point, Map>::reset()
+void DiscreteFlowIteratorCentroid<Point, Map>::reset()
 {
 
     newValues = initialValues;
@@ -43,21 +43,21 @@ void DiscreteHeatFlowIterator<Point, Map>::reset()
 }
 
 template <typename Point, typename Map>
-void DiscreteHeatFlowIterator<Point, Map>::getOutputFunction(LiftedGraphFunction<Point, Map> *outputFunction)
+void DiscreteFlowIteratorCentroid<Point, Map>::getOutputFunction(LiftedGraphFunction<Point, Map> *outputFunction)
 {
     refreshOutput();
     outputFunction->cloneCopyAssign(this->outputFunction.get());
 }
 
 template <typename Point, typename Map>
-void DiscreteHeatFlowIterator<Point, Map>::refreshOutput()
+void DiscreteFlowIteratorCentroid<Point, Map>::refreshOutput()
 {
     outputFunction->resetValues(newValues);
 }
 
 
 template <typename Point, typename Map>
-void DiscreteHeatFlowIterator<Point, Map>::refreshNeighborsValuesKicked()
+void DiscreteFlowIteratorCentroid<Point, Map>::refreshNeighborsValuesKicked()
 {
     oldNeighborsValuesKicked = newNeighborsValuesKicked;
     uint i=0, j;
@@ -84,7 +84,7 @@ void DiscreteHeatFlowIterator<Point, Map>::refreshNeighborsValuesKicked()
 }
 
 template <typename Point, typename Map>
-void DiscreteHeatFlowIterator<Point, Map>::updateValues()
+void DiscreteFlowIteratorCentroid<Point, Map>::updateValues()
 {
     oldValues = newValues;
 
@@ -95,7 +95,7 @@ void DiscreteHeatFlowIterator<Point, Map>::updateValues()
 }
 
 template <typename Point, typename Map>
-void DiscreteHeatFlowIterator<Point, Map>::iterate()
+void DiscreteFlowIteratorCentroid<Point, Map>::iterate()
 {
     refreshNeighborsValuesKicked();
     updateValues();
@@ -103,7 +103,7 @@ void DiscreteHeatFlowIterator<Point, Map>::iterate()
 
 
 template <typename Point, typename Map>
-void DiscreteHeatFlowIterator<Point, Map>::iterate(uint nbIterations)
+void DiscreteFlowIteratorCentroid<Point, Map>::iterate(uint nbIterations)
 {
     for (uint i=0; i!=nbIterations; ++i)
     {
@@ -112,7 +112,7 @@ void DiscreteHeatFlowIterator<Point, Map>::iterate(uint nbIterations)
 }
 
 template <typename Point, typename Map>
-double DiscreteHeatFlowIterator<Point, Map>::updateSupDelta()
+double DiscreteFlowIteratorCentroid<Point, Map>::updateSupDelta()
 {
     for (uint i=0; i!=nbPoints; ++i)
     {
@@ -140,5 +140,5 @@ bool DiscreteHeatFlowIteratorRecursiveDepth<Point, Map>::run()
 
 
 
-template class DiscreteHeatFlowIterator<H2Point, H2Isometry>;
+template class DiscreteFlowIteratorCentroid<H2Point, H2Isometry>;
 //template class DiscreteHeatFlowIteratorRecursiveDepth<H2Point, H2Isometry>;

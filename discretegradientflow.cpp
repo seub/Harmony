@@ -11,7 +11,7 @@ DiscreteGradientFlow<Point, Map>::DiscreteGradientFlow(const LiftedGraphFunction
     boundaryPointsNeighborsPairingsValues(initialFunction->boundaryPointsNeighborsPairingsValues), initialValues(initialFunction->getValues()),
     outputFunction(initialFunction->cloneCopyConstruct())
 {
-    constantStep=0.02;
+    constantStep=0.01;
     reset();
 }
 

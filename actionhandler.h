@@ -37,8 +37,13 @@ private slots:
 
     void resetViewButtonClicked();
     void showTranslatesClicked(int choice);
-    void coloringClicked(int choice);
-    void colorClicked(int choice);
+    //void coloringClicked(int choice);
+    //void colorClicked(int choice);
+
+    void coloringClickedLeft(int choice);
+    void colorClickedLeft(int choice);
+    void coloringClickedRight(int choice);
+    void colorClickedRight(int choice);
 
     void finishedComputing();
 

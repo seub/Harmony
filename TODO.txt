@@ -50,3 +50,13 @@ and use the algorithm to embed it "harmonically" on the surface.
 Optimization of heat flow:
 - use profiler
 - try acceleration à la circle packings (see tests.cpp)
+
+
+
+********************* TOGGLE BETWEEN METHODS **********************
+
+In order to go from "DiscreteGradientFlow method" to "DiscreteHeatFlow method" you must:
+
+1. In discreteheatflowfactory.h: Comment line 68, uncomment line 67
+2. In discreteheatflowfactory.cpp: Comment line 206, uncomment line 205
+3. In h2meshcontructor.cpp: Comment line 31, uncomment line 30
