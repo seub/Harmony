@@ -25,7 +25,7 @@ public:
 
 private:
     OutputMenu(LeftMenu *leftMenu);
-    void resetMenu();
+    void resetMenu(bool fullReset = false);
 
     void createLayout();
     void createButtons();
@@ -34,8 +34,7 @@ private:
     void disableAllButStop();
     void enableReset();
 
-    void enableRunButtons();
-    void disableRunButtons();
+    void enableRunButtons(bool b);
 
     void switchComputeToStopButton();
     void switchStopToComputeButton();

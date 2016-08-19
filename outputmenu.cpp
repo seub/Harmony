@@ -105,20 +105,28 @@ void OutputMenu::createLayout()
     setLayout(layout);
 }
 
-void OutputMenu::resetMenu()
+void OutputMenu::resetMenu(bool fullReset)
 {
     resetButton->setEnabled(false);
 
-    iterateButton->setEnabled(false);
     iterateLabel->setEnabled(true);
     iterateSpinBox->setEnabled(true);
     
     flowComboBox->setEnabled(true);
 
-    computeButton->setEnabled(false);
     showLiveLabel->setEnabled(true);
     showLiveCheckbox->setEnabled(true);
-    //showLiveCheckbox->setChecked(false);
+
+
+	if (fullReset)
+	{
+		    
+		iterateButton->setEnabled(false);
+		computeButton->setEnabled(false);
+		iterateSpinBox->setValue(1);
+		flowComboBox->setCurrentIndex(FLOW_CHOICE);
+		showLiveCheckbox->setChecked(false);
+	}
 }
 
 void OutputMenu::disableAllButStop()
@@ -148,16 +156,10 @@ void OutputMenu::enableAll()
     showLiveCheckbox->setEnabled(true);
 }
 
-void OutputMenu::enableRunButtons()
+void OutputMenu::enableRunButtons(bool b)
 {
-    iterateButton->setEnabled(true);
-    computeButton->setEnabled(true);
-}
-
-void OutputMenu::disableRunButtons()
-{
-    iterateButton->setEnabled(false);
-    computeButton->setEnabled(false);
+    iterateButton->setEnabled(b);
+    computeButton->setEnabled(b);
 }
 
 void OutputMenu::switchComputeToStopButton()

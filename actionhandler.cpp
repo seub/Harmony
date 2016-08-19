@@ -489,15 +489,15 @@ void ActionHandler::flowChoiceClicked(int choice)
     switch(choice)
     {
     case OutputMenu::FLOW_CHOICE:
-        outputMenu->disableRunButtons();
+        outputMenu->enableRunButtons(false);
         break;
 
     case OutputMenu::FLOW_CENTROID:
-        outputMenu->enableRunButtons();
+        outputMenu->enableRunButtons(true);
         break;
 
     case OutputMenu::FLOW_ENERGY_CONSTANT_STEP:
-        outputMenu->enableRunButtons();
+        outputMenu->enableRunButtons(true);
         break;
 
     default:
