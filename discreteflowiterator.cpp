@@ -117,12 +117,14 @@ DiscreteFlowIteratorCentroid<Point, Map>::DiscreteFlowIteratorCentroid(const Lif
 template <typename Point, typename Map>
 void DiscreteFlowIteratorCentroid<Point, Map>::updateValues()
 {
-    oldValues = newValues;
+    this->oldValues = this->newValues;
 
-    for (uint i=0; i!=nbPoints; ++i)
+    for (uint i=0; i!=this->nbPoints; ++i)
     {
-        newValues[i] = H2Point::centroid(neighborsValuesKicked[i], neighborsWeights[i]);
+        this->newValues[i] = H2Point::centroid(this->neighborsValuesKicked[i], this->neighborsWeights[i]);
     }
+
+	this->refreshNeighborsValuesKicked();
 }
 
 
@@ -153,6 +155,7 @@ DiscreteFlowIteratorEnergy<Point, Map>::DiscreteFlowIteratorEnergy(const LiftedG
     DiscreteFlowIterator<Point,Map>(initialFunction)
 {
     constantStep=0.01;
+	reset();
 }
 
 
@@ -160,7 +163,7 @@ template <typename Point, typename Map>
 void DiscreteFlowIteratorEnergy<Point, Map>::reset()
 {
     DiscreteFlowIterator<Point,Map>::reset();
-    gradient.resize(nbPoints);
+    gradient.resize(this->nbPoints);
 }
 
 template <typename Point, typename Map>
@@ -175,23 +178,23 @@ void DiscreteFlowIteratorEnergy<Point, Map>::updateValues()
 template <typename Point, typename Map>
 void DiscreteFlowIteratorEnergy<Point, Map>::constantStepUpdateValues()
 {
-    oldValues = newValues;
+    this->oldValues = this->newValues;
 
     computeGradient();
-    newValues = H2TangentVector::exponentiate(-constantStep*gradient);
-    refreshNeighborsValuesKicked();
+    this->newValues = H2TangentVector::exponentiate(-constantStep*gradient);
+    this->refreshNeighborsValuesKicked();
 }
 
 
 template <typename Point, typename Map>
 void DiscreteFlowIteratorEnergy<Point, Map>::optimalStepUpdateValues()
 {
-    oldValues = newValues;
+    this->oldValues = this->newValues;
 
     computeGradient();
     lineSearch();
-    newValues = H2TangentVector::exponentiate(-optimalStep*gradient);
-    refreshNeighborsValuesKicked();
+    this->newValues = H2TangentVector::exponentiate(-optimalStep*gradient);
+    this->refreshNeighborsValuesKicked();
 }
 
 
@@ -207,9 +210,9 @@ template <typename Point, typename Map>
 void DiscreteFlowIteratorEnergy<Point, Map>::computeGradient()
 {
     H2TangentVector v;
-    for (uint i=0; i!=nbPoints; ++i)
+    for (uint i=0; i!=this->nbPoints; ++i)
     {
-        oldValues[i].weightedLogSum(neighborsValuesKicked[i], neighborsWeights[i], v);
+        this->oldValues[i].weightedLogSum(this->neighborsValuesKicked[i], this->neighborsWeights[i], v);
         gradient[i]=-1.0*v;
     }
 }

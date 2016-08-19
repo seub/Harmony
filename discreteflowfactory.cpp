@@ -202,8 +202,8 @@ void DiscreteFlowFactory<Point, Map>::resetInitial()
         throw(QString("Error in DiscreteFlowFactory<Point, Map>::resetInit: Factory not ready to reset initial"));
     }
     imageFunction->cloneCopyAssign(initialImageFunction.get());
-    //iterator.reset(new DiscreteFlowIteratorCentroid<Point, Map>(initialImageFunction.get()));
-    iterator.reset(new DiscreteFlowIteratorEnergy<Point, Map>(initialImageFunction.get()));
+    iterator.reset(new DiscreteFlowIteratorCentroid<Point, Map>(initialImageFunction.get()));
+    //iterator.reset(new DiscreteFlowIteratorEnergy<Point, Map>(initialImageFunction.get()));
 }
 
 template<typename Point, typename Map>

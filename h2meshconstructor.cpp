@@ -27,8 +27,8 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
 
     reorganizeNeighbors();
 
-    //createPiecewiseAffineWeights();
-    createEnergyWeights();
+    createPiecewiseAffineWeights();
+    //createEnergyWeights();
 
     createMeshExteriorIndices();
 

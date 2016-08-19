@@ -23,7 +23,7 @@ public:
 
 protected:
     void refreshNeighborsValuesKicked();
-    virtual void updateValues();
+    virtual void updateValues() = 0;
     void refreshOutput();
 
     const uint nbBoundaryPoints;
@@ -46,15 +46,16 @@ template <typename Point, typename Map> class DiscreteFlowIteratorCentroid : pub
 
 public:
     DiscreteFlowIteratorCentroid(const LiftedGraphFunction<Point, Map> *initialFunction);
+// Do copy constr etc as in liftedgraph class
 
 private:
     virtual void updateValues() override;
 };
 
 
-template <typename Point, typename Map> class LiftedGraphFunctionTriangulated; template <typename Map> class GroupRepresentation;
+/*template <typename Point, typename Map> class LiftedGraphFunctionTriangulated; template <typename Map> class GroupRepresentation;
 
-/*template <typename Point, typename Map> class DiscreteHeatFlowIteratorRecursiveDepth
+template <typename Point, typename Map> class DiscreteHeatFlowIteratorRecursiveDepth
 {
 public:
     DiscreteHeatFlowIteratorRecursiveDepth(const GroupRepresentation<Map> &rhoDomain, const GroupRepresentation<Map> &rhoImage, uint depth);
