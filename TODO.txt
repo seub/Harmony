@@ -55,7 +55,7 @@ Optimization of heat flow:
 
 ********************* TOGGLE BETWEEN METHODS **********************
 
-In order to go from "DiscreteGradientFlow method" to "DiscreteHeatFlow method" you must:
+In order to go from "DiscreteFlowIteratorEnergy method" to "DiscreteHeatFlow method" you must:
 
 1. In discreteheatflowfactory.h: Comment line 68, uncomment line 67
 2. In discreteheatflowfactory.cpp: Comment line 206, uncomment line 205

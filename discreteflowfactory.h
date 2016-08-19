@@ -1,23 +1,23 @@
-#ifndef DISCRETEHEATFLOWFACTORY_H
-#define DISCRETEHEATFLOWFACTORY_H
+#ifndef DISCRETEFLOWFACTORY_H
+#define DISCRETEFLOWFACTORY_H
 
 #include <QThread>
 
 #include "tools.h"
 #include "grouprepresentation.h"
 #include "discreteflowiteratorcentroid.h"
-#include "discretegradientflow.h"
+#include "discreteflowiteratorenergy.h"
 #include "liftedgraph.h"
 
 template <typename Point, typename Map> class LiftedGraphFunctionTriangulated; class H2DiscreteFlowFactoryThread;
 
-template <typename Point, typename Map> class DiscreteHeatFlowFactory
+template <typename Point, typename Map> class DiscreteFlowFactory
 {
     friend class ActionHandler;
     friend class H2DiscreteFlowFactoryThread;
 
 public:
-    DiscreteHeatFlowFactory(GroupRepresentation<H2Isometry> *rhoDomain,
+    DiscreteFlowFactory(GroupRepresentation<H2Isometry> *rhoDomain,
                             GroupRepresentation<H2Isometry> *rhoImage,
                             LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *domainFunction,
                             LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *imageFunction);
@@ -64,12 +64,12 @@ private:
     LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *domainFunction;
     std::unique_ptr<LiftedGraphFunctionTriangulated<Point, Map> > initialImageFunction;
     LiftedGraphFunctionTriangulated<Point, Map> *imageFunction;
-    std::unique_ptr<DiscreteFlowIteratorCentroid<Point, Map> > iterator;
-    //std::unique_ptr<DiscreteGradientFlow<Point, Map> > iterator;
+    //std::unique_ptr<DiscreteFlowIteratorCentroid<Point, Map> > iterator;
+    std::unique_ptr<DiscreteFlowIteratorEnergy<Point, Map> > iterator;
     uint nbIterations;
     double minDomainEdgeLength, supError, tolerance;
 
     H2DiscreteFlowFactoryThread *thread;
 };
 
-#endif // DISCRETEHEATFLOWFACTORY_H
+#endif // DISCRETEFLOWFACTORY_H

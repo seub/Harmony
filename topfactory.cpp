@@ -2,7 +2,7 @@
 
 #include "actionhandler.h"
 #include "mathscontainer.h"
-#include "discreteheatflowfactory.h"
+#include "discreteflowfactory.h"
 
 TopFactory::TopFactory(MathsContainer * const mathsContainer, ActionHandler * const handler) :
     handler(handler), h2factory(&(mathsContainer->rhoDomain), &(mathsContainer->H2RhoImage), &(mathsContainer->domainFunction), &(mathsContainer->H2ImageFunction))

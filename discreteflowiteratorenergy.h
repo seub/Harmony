@@ -1,5 +1,5 @@
-#ifndef DISCRETEGRADIENTFLOW_H
-#define DISCRETEGRADIENTFLOW_H
+#ifndef DISCRETEFLOWENERGY_H
+#define DISCRETEFLOWENERGY_H
 
 #include "tools.h"
 #include "h2tangentvector.h"
@@ -8,10 +8,10 @@
 template <typename Point, typename Map> class LiftedGraphFunction;
 //class H2TangentVector;
 
-template <typename Point, typename Map> class DiscreteGradientFlow
+template <typename Point, typename Map> class DiscreteFlowIteratorEnergy
 {
 public:
-    DiscreteGradientFlow(const LiftedGraphFunction<Point, Map> *initialFunction);
+    DiscreteFlowIteratorEnergy(const LiftedGraphFunction<Point, Map> *initialFunction);
 
     void iterate();
 
@@ -51,4 +51,4 @@ private:
 };
 
 
-#endif // DISCRETEGRADIENTFLOW_H
+#endif // DISCRETEFLOWENERGY_H

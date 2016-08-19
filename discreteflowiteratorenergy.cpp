@@ -1,11 +1,11 @@
-#include "discretegradientflow.h"
+#include "discreteflowiteratorenergy.h"
 #include "h2tangentvector.h"
 #include "liftedgraph.h"
 
 
 
 template <typename Point, typename Map>
-DiscreteGradientFlow<Point, Map>::DiscreteGradientFlow(const LiftedGraphFunction<Point, Map> *initialFunction) :
+DiscreteFlowIteratorEnergy<Point, Map>::DiscreteFlowIteratorEnergy(const LiftedGraphFunction<Point, Map> *initialFunction) :
     nbBoundaryPoints(initialFunction->nbBoundaryPoints), nbPoints(initialFunction->nbPoints),
     neighborsIndices(initialFunction->neighborsIndices), neighborsWeights(initialFunction->neighborsWeights),
     boundaryPointsNeighborsPairingsValues(initialFunction->boundaryPointsNeighborsPairingsValues), initialValues(initialFunction->getValues()),
@@ -16,7 +16,7 @@ DiscreteGradientFlow<Point, Map>::DiscreteGradientFlow(const LiftedGraphFunction
 }
 
 template <typename Point, typename Map>
-void DiscreteGradientFlow<Point, Map>::reset()
+void DiscreteFlowIteratorEnergy<Point, Map>::reset()
 {
 
     newValues = initialValues;
@@ -36,21 +36,21 @@ void DiscreteGradientFlow<Point, Map>::reset()
 }
 
 template <typename Point, typename Map>
-void DiscreteGradientFlow<Point, Map>::getOutputFunction(LiftedGraphFunction<Point, Map> *outputFunction)
+void DiscreteFlowIteratorEnergy<Point, Map>::getOutputFunction(LiftedGraphFunction<Point, Map> *outputFunction)
 {
     refreshOutput();
     outputFunction->cloneCopyAssign(this->outputFunction.get());
 }
 
 template <typename Point, typename Map>
-void DiscreteGradientFlow<Point, Map>::refreshOutput()
+void DiscreteFlowIteratorEnergy<Point, Map>::refreshOutput()
 {
     outputFunction->resetValues(newValues);
 }
 
 
 template <typename Point, typename Map>
-void DiscreteGradientFlow<Point, Map>::refreshNeighborsValuesKicked()
+void DiscreteFlowIteratorEnergy<Point, Map>::refreshNeighborsValuesKicked()
 {
 //    oldNeighborsValuesKicked = newNeighborsValuesKicked;
     uint i=0, j;
@@ -77,7 +77,7 @@ void DiscreteGradientFlow<Point, Map>::refreshNeighborsValuesKicked()
 }
 
 template <typename Point, typename Map>
-void DiscreteGradientFlow<Point, Map>::constantStepUpdateValues()
+void DiscreteFlowIteratorEnergy<Point, Map>::constantStepUpdateValues()
 {
     oldValues = newValues;
 
@@ -88,7 +88,7 @@ void DiscreteGradientFlow<Point, Map>::constantStepUpdateValues()
 
 
 template <typename Point, typename Map>
-void DiscreteGradientFlow<Point, Map>::optimalStepUpdateValues()
+void DiscreteFlowIteratorEnergy<Point, Map>::optimalStepUpdateValues()
 {
     oldValues = newValues;
 
@@ -100,7 +100,7 @@ void DiscreteGradientFlow<Point, Map>::optimalStepUpdateValues()
 
 
 template <typename Point, typename Map>
-void DiscreteGradientFlow<Point, Map>::lineSearch()
+void DiscreteFlowIteratorEnergy<Point, Map>::lineSearch()
 {
     std::vector<H2Point> yt;
     std::vector<H2TangentVector> dyt;
@@ -108,14 +108,14 @@ void DiscreteGradientFlow<Point, Map>::lineSearch()
 
 
 template <typename Point, typename Map>
-void DiscreteGradientFlow<Point, Map>::iterate()
+void DiscreteFlowIteratorEnergy<Point, Map>::iterate()
 {
 //    refreshNeighborsValuesKicked();
     constantStepUpdateValues();
 }
 
 template <typename Point, typename Map>
-void DiscreteGradientFlow<Point, Map>::computeGradient()
+void DiscreteFlowIteratorEnergy<Point, Map>::computeGradient()
 {
     H2TangentVector v;
     for (uint i=0; i!=nbPoints; ++i)
@@ -128,7 +128,7 @@ void DiscreteGradientFlow<Point, Map>::computeGradient()
 
 /*
 template <typename Point, typename Map>
-double DiscreteGradientFlow<Point, Map>::computeEnergyHessian(const std::vector<H2TangentVector> &V)
+double DiscreteFlowIteratorEnergy<Point, Map>::computeEnergyHessian(const std::vector<H2TangentVector> &V)
 {
 
     assert(V.size() == nbPoints);
@@ -195,7 +195,7 @@ double DiscreteGradientFlow<Point, Map>::computeEnergyHessian(const std::vector<
 
 
 template <typename Point, typename Map>
-double DiscreteGradientFlow<Point, Map>::updateSupDelta()
+double DiscreteFlowIteratorEnergy<Point, Map>::updateSupDelta()
 {
     for (uint i=0; i!=nbPoints; ++i)
     {
@@ -223,4 +223,4 @@ bool DiscreteHeatFlowIteratorRecursiveDepth<Point, Map>::run()
 
 
 
-template class DiscreteGradientFlow<H2Point, H2Isometry>;
+template class DiscreteFlowIteratorEnergy<H2Point, H2Isometry>;

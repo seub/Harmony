@@ -1,10 +1,10 @@
-#include "discreteheatflowfactory.h"
+#include "discreteflowfactory.h"
 
 #include "fenchelnielsenconstructor.h"
 #include "h2discreteflowfactorythread.h"
 
 template<typename Point, typename Map>
-DiscreteHeatFlowFactory<Point, Map>::DiscreteHeatFlowFactory(GroupRepresentation<H2Isometry> *rhoDomain,
+DiscreteFlowFactory<Point, Map>::DiscreteFlowFactory(GroupRepresentation<H2Isometry> *rhoDomain,
                                                              GroupRepresentation<H2Isometry> *rhoImage,
                                                              LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *domainFunction,
                                                              LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *imageFunction) :
@@ -20,7 +20,7 @@ DiscreteHeatFlowFactory<Point, Map>::DiscreteHeatFlowFactory(GroupRepresentation
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::setGenus(uint genus)
+void DiscreteFlowFactory<Point, Map>::setGenus(uint genus)
 {
     this->genus = genus;
     isGenusSet = true;
@@ -29,15 +29,15 @@ void DiscreteHeatFlowFactory<Point, Map>::setGenus(uint genus)
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::setNiceRhoDomain()
+void DiscreteFlowFactory<Point, Map>::setNiceRhoDomain()
 {
     if (!isGenusSet)
     {
-        throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::setNiceRhoDomain(): genus not set"));
+        throw(QString("Error in DiscreteFlowFactory<Point, Map>::setNiceRhoDomain(): genus not set"));
     }
     if (genus != 2)
     {
-        throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::setNiceRhoDomain(): genus needs to be 2 for 'nice' representation"));
+        throw(QString("Error in DiscreteFlowFactory<Point, Map>::setNiceRhoDomain(): genus needs to be 2 for 'nice' representation"));
     }
     rhoDomain->setNiceRepresentation();
     isRhoDomainSet = true;
@@ -45,12 +45,12 @@ void DiscreteHeatFlowFactory<Point, Map>::setNiceRhoDomain()
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::initializeRhoDomain()
+void DiscreteFlowFactory<Point, Map>::initializeRhoDomain()
 {
 
     if (!(isGenusSet && isRhoDomainSet))
     {
-        throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::initializeRhoDomain(): not ready to initialize rho domain"));
+        throw(QString("Error in DiscreteFlowFactory<Point, Map>::initializeRhoDomain(): not ready to initialize rho domain"));
     }
     if (isMeshDepthSet)
     {
@@ -60,11 +60,11 @@ void DiscreteHeatFlowFactory<Point, Map>::initializeRhoDomain()
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::initializeRhoImage()
+void DiscreteFlowFactory<Point, Map>::initializeRhoImage()
 {
     if (!(isGenusSet && isRhoImageSet))
     {
-        throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::initializeRhoImage(): not ready to initialize rho image"));
+        throw(QString("Error in DiscreteFlowFactory<Point, Map>::initializeRhoImage(): not ready to initialize rho image"));
     }
 
     if (isGenusSet && isMeshDepthSet && isRhoDomainSet)
@@ -74,15 +74,15 @@ void DiscreteHeatFlowFactory<Point, Map>::initializeRhoImage()
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::setNiceRhoImage()
+void DiscreteFlowFactory<Point, Map>::setNiceRhoImage()
 {
     if (!(isGenusSet))
     {
-        throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::setNiceRhoImage(): genus not set"));
+        throw(QString("Error in DiscreteFlowFactory<Point, Map>::setNiceRhoImage(): genus not set"));
     }
     if (genus != 2)
     {
-        throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::setNiceRhoImage(): genus needs to be 2"));
+        throw(QString("Error in DiscreteFlowFactory<Point, Map>::setNiceRhoImage(): genus needs to be 2"));
     }
     rhoImage->setNiceRepresentation();
 
@@ -91,7 +91,7 @@ void DiscreteHeatFlowFactory<Point, Map>::setNiceRhoImage()
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::setMeshDepth(uint meshDepth)
+void DiscreteFlowFactory<Point, Map>::setMeshDepth(uint meshDepth)
 {
     this->meshDepth = meshDepth;
     isMeshDepthSet = true;
@@ -102,17 +102,17 @@ void DiscreteHeatFlowFactory<Point, Map>::setMeshDepth(uint meshDepth)
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::setRhoDomain(const std::vector<double> &FNLengths, const std::vector<double> FNTwists)
+void DiscreteFlowFactory<Point, Map>::setRhoDomain(const std::vector<double> &FNLengths, const std::vector<double> FNTwists)
 {
 
 
     if (!isGenusSet)
     {
-        throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::setRhoDomain(): genus has not been set"));
+        throw(QString("Error in DiscreteFlowFactory<Point, Map>::setRhoDomain(): genus has not been set"));
     }
     else if ((3*genus != (3+FNLengths.size())) || (3*genus != (3+FNTwists.size())))
     {
-        throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::setRhoDomain(): genus does not match number of FN coordinates"));
+        throw(QString("Error in DiscreteFlowFactory<Point, Map>::setRhoDomain(): genus does not match number of FN coordinates"));
     }
     FNLengthsDomain = FNLengths;
     FNTwistsDomain = FNTwists;
@@ -125,15 +125,15 @@ void DiscreteHeatFlowFactory<Point, Map>::setRhoDomain(const std::vector<double>
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::setRhoImage(const std::vector<double> &FNLengths, const std::vector<double> FNTwists)
+void DiscreteFlowFactory<Point, Map>::setRhoImage(const std::vector<double> &FNLengths, const std::vector<double> FNTwists)
 {
     if (!isGenusSet)
     {
-        throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::setRhoImage(): genus has not been set"));
+        throw(QString("Error in DiscreteFlowFactory<Point, Map>::setRhoImage(): genus has not been set"));
     }
     else if ((3*genus != (3+FNLengths.size())) || (3*genus != (3+FNTwists.size())))
     {
-        throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::setRhoImage(): genus does not match number of FN coordinates"));
+        throw(QString("Error in DiscreteFlowFactory<Point, Map>::setRhoImage(): genus does not match number of FN coordinates"));
     }
     FNLengthsImage = FNLengths;
     FNTwistsImage = FNTwists;
@@ -145,23 +145,23 @@ void DiscreteHeatFlowFactory<Point, Map>::setRhoImage(const std::vector<double> 
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::resetRhoDomain()
+void DiscreteFlowFactory<Point, Map>::resetRhoDomain()
 {
     isRhoDomainSet = false;
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::resetRhoImage()
+void DiscreteFlowFactory<Point, Map>::resetRhoImage()
 {
     isRhoImageSet = false;
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::initializeDomainFunction()
+void DiscreteFlowFactory<Point, Map>::initializeDomainFunction()
 {
     if (!(isGenusSet && isRhoDomainSet && isMeshDepthSet))
     {
-        throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::initializeDomainFunction(): not ready to initialize domain function"));
+        throw(QString("Error in DiscreteFlowFactory<Point, Map>::initializeDomainFunction(): not ready to initialize domain function"));
     }
 
     // I guess I should define a "clone move" in Lifted Graph for here
@@ -177,11 +177,11 @@ void DiscreteHeatFlowFactory<Point, Map>::initializeDomainFunction()
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::initializeImageFunction()
+void DiscreteFlowFactory<Point, Map>::initializeImageFunction()
 {
     if (!isReady())
     {
-        throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::initializeImageFunction: Factory not ready to image function"));
+        throw(QString("Error in DiscreteFlowFactory<Point, Map>::initializeImageFunction: Factory not ready to image function"));
     }
 
     initialImageFunction.reset(new LiftedGraphFunctionTriangulated<Point, Map>(*domainFunction, *rhoImage));
@@ -189,31 +189,31 @@ void DiscreteHeatFlowFactory<Point, Map>::initializeImageFunction()
 }
 
 template<typename Point, typename Map>
-bool DiscreteHeatFlowFactory<Point, Map>::isReady() const
+bool DiscreteFlowFactory<Point, Map>::isReady() const
 {
     return isGenusSet && isRhoDomainSet && isRhoImageSet && isMeshDepthSet;
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::resetInitial()
+void DiscreteFlowFactory<Point, Map>::resetInitial()
 {
     if (!isReady())
     {
-        throw(QString("Error in DiscreteHeatFlowFactory<Point, Map>::resetInit: Factory not ready to reset initial"));
+        throw(QString("Error in DiscreteFlowFactory<Point, Map>::resetInit: Factory not ready to reset initial"));
     }
     imageFunction->cloneCopyAssign(initialImageFunction.get());
-    iterator.reset(new DiscreteFlowIteratorCentroid<Point, Map>(initialImageFunction.get()));
-    //iterator.reset(new DiscreteGradientFlow<Point, Map>(initialImageFunction.get()));
+    //iterator.reset(new DiscreteFlowIteratorCentroid<Point, Map>(initialImageFunction.get()));
+    iterator.reset(new DiscreteFlowIteratorEnergy<Point, Map>(initialImageFunction.get()));
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::refreshImageFunction()
+void DiscreteFlowFactory<Point, Map>::refreshImageFunction()
 {
     iterator->getOutputFunction(imageFunction);
 }
 
 template <typename Point, typename Map>
-bool DiscreteHeatFlowFactory<Point, Map>::isDomainFunctionInitialized(uint &nbMeshPointsOut)
+bool DiscreteFlowFactory<Point, Map>::isDomainFunctionInitialized(uint &nbMeshPointsOut)
 {
     if (isGenusSet && isRhoDomainSet && isMeshDepthSet)
     {
@@ -227,19 +227,19 @@ bool DiscreteHeatFlowFactory<Point, Map>::isDomainFunctionInitialized(uint &nbMe
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::updateSupError()
+void DiscreteFlowFactory<Point, Map>::updateSupError()
 {
     supError = 2.0*iterator->updateSupDelta()/(minDomainEdgeLength*minDomainEdgeLength);
 }
 
 template<typename Point, typename Map>
-double DiscreteHeatFlowFactory<Point, Map>::getTolerance() const
+double DiscreteFlowFactory<Point, Map>::getTolerance() const
 {
     return tolerance;
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::run()
+void DiscreteFlowFactory<Point, Map>::run()
 {
     stop = false;
     nbIterations = 0;
@@ -262,7 +262,7 @@ void DiscreteHeatFlowFactory<Point, Map>::run()
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::iterate(uint N)
+void DiscreteFlowFactory<Point, Map>::iterate(uint N)
 {
     stop = false;
     nbIterations = 0;
@@ -285,10 +285,10 @@ void DiscreteHeatFlowFactory<Point, Map>::iterate(uint N)
 }
 
 template<typename Point, typename Map>
-void DiscreteHeatFlowFactory<Point, Map>::stopRunning()
+void DiscreteFlowFactory<Point, Map>::stopRunning()
 {
     stop = true;
 }
 
 
-template class DiscreteHeatFlowFactory<H2Point, H2Isometry>;
+template class DiscreteFlowFactory<H2Point, H2Isometry>;

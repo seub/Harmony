@@ -63,7 +63,6 @@ SOURCES += main.cpp \
     fenchelnielsenuser.cpp \
     liftedgraph.cpp \
     triangularsubdivision.cpp \
-    discreteheatflowfactory.cpp \
     h2discreteflowfactorythread.cpp \
     h2canvasdelegateliftedgraph.cpp \
     statusbar.cpp \
@@ -73,8 +72,9 @@ SOURCES += main.cpp \
     fundamentaldomaingenerator.cpp \
     mainwindow.cpp \
     h2tangentvector.cpp \
-    discretegradientflow.cpp \
-    discreteflowiteratorcentroid.cpp
+    discreteflowiteratorcentroid.cpp \
+    discreteflowiteratorenergy.cpp \
+    discreteflowfactory.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -115,7 +115,6 @@ HEADERS += \
     fenchelnielsenuser.h \
     liftedgraph.h \
     triangularsubdivision.h \
-    discreteheatflowfactory.h \
     h2discreteflowfactorythread.h \
     h2canvasdelegateliftedgraph.h \
     statusbar.h \
@@ -124,8 +123,9 @@ HEADERS += \
     fundamentaldomaingenerator.h \
     mainwindow.h \
     h2tangentvector.h \
-    discretegradientflow.h \
-    discreteflowiteratorcentroid.h
+    discreteflowiteratorcentroid.h \
+    discreteflowiteratorenergy.h \
+    discreteflowfactory.h
 
 OTHER_FILES += \
     TODO.txt

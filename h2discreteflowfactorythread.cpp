@@ -1,5 +1,5 @@
 #include "h2discreteflowfactorythread.h"
-#include "discreteheatflowfactory.h"
+#include "discreteflowfactory.h"
 #include "actionhandler.h"
 
 

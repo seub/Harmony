@@ -4,7 +4,7 @@
 #include <QThread>
 
 #include "tools.h"
-#include "discreteheatflowfactory.h"
+#include "discreteflowfactory.h"
 
 class ActionHandler;
 
@@ -31,7 +31,7 @@ public slots:
     void stopRunning();
 
 private:
-    DiscreteHeatFlowFactory<H2Point, H2Isometry> factory;
+    DiscreteFlowFactory<H2Point, H2Isometry> factory;
 };
 
 #endif // H2DISCRETEFLOWFACTORYTHREAD_H

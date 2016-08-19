@@ -20,7 +20,7 @@
 #include "displaymenu.h"
 #include "leftmenu.h"
 #include "fenchelnielsenuser.h"
-#include "discreteheatflowfactory.h"
+#include "discreteflowfactory.h"
 #include "statusbar.h"
 
 
