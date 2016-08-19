@@ -37,8 +37,8 @@ public:
     void decideEmittingMeshCreated();
 
     void resetH2Flow();
-    void runH2Flow();
-    void iterateH2Flow(uint N);
+    void runH2Flow(int flowChoice);
+    void iterateH2Flow(int flowChoice, uint N);
     void stopH2Flow();
 
     uint getNbIterations() const;

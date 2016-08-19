@@ -31,9 +31,11 @@ private slots:
     void meshDepthClicked(int choice);
 
     void outputResetButtonClicked();
+    
     void computeButtonClicked();
     void iterateButtonClicked();
     void stopButtonClicked();
+    
 
     void resetViewButtonClicked();
     void showTranslatesClicked(int choice);
@@ -44,6 +46,7 @@ private slots:
     void colorClickedLeft(int choice);
     void coloringClickedRight(int choice);
     void colorClickedRight(int choice);
+    void flowChoiceClicked(int choice);
 
     void finishedComputing();
 
@@ -70,8 +73,6 @@ private:
     void setRhoFNDomain();
     void setRhoFNImage();
 
-    void goComputeMode();
-    void goBackNormalMode();
 
     void resetStatusBarMessage();
     void updateCanvasGraph(bool left, bool right);

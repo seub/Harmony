@@ -24,6 +24,7 @@ public:
     void updateSupError();
     double getSupError() const;
     double getTolerance() const;
+    void setFlowChoice(int flowChoice);
 
 public slots:
     void run();

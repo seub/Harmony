@@ -16,6 +16,11 @@ void H2DiscreteFlowFactoryThread::run()
     factory.run();
 }
 
+void H2DiscreteFlowFactoryThread::setFlowChoice(int flowChoice)
+{
+    factory.setFlowChoice(flowChoice);
+}
+
 void H2DiscreteFlowFactoryThread::iterate(uint N)
 {
     factory.iterate(N);

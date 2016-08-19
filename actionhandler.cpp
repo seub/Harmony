@@ -76,6 +76,8 @@ void ActionHandler::connectMenusSignals()
     connect(outputMenu->computeButton, SIGNAL(clicked()), this, SLOT(computeButtonClicked()));
     connect(outputMenu->iterateButton, SIGNAL(clicked()), this, SLOT(iterateButtonClicked()));
     connect(outputMenu->resetButton, SIGNAL(clicked()), this, SLOT(outputResetButtonClicked()));
+
+    connect(outputMenu->flowComboBox, SIGNAL(activated(int)), this, SLOT(flowChoiceClicked(int)));
 }
 
 void ActionHandler::setContainer(MathsContainer *mathsContainer)
@@ -182,7 +184,7 @@ void ActionHandler::computeButtonClicked()
     connect(outputMenu->computeButton, SIGNAL(clicked()), this, SLOT(stopButtonClicked()));
 
     isShowingLive = outputMenu->showLiveCheckbox->checkState();
-    topFactory->runH2Flow();
+    topFactory->runH2Flow(outputMenu->flowComboBox->currentIndex());
     if (isShowingLive)
     {
         rightDelegate->setSendEndRepaint(true);
@@ -200,8 +202,9 @@ void ActionHandler::iterateButtonClicked()
     outputMenu->disableAllButStop();
     outputMenu->update();
 
-    topFactory->iterateH2Flow(outputMenu->iterateSpinBox->value());
+    topFactory->iterateH2Flow(outputMenu->flowComboBox->currentIndex(),outputMenu->iterateSpinBox->value());
 }
+
 
 void ActionHandler::outputResetButtonClicked()
 {
@@ -480,6 +483,27 @@ void ActionHandler::colorClickedRight(int choice)
     updateCanvasGraph(false, true);
 }
 
+
+void ActionHandler::flowChoiceClicked(int choice)
+{
+    switch(choice)
+    {
+    case OutputMenu::FLOW_CHOICE:
+        outputMenu->disableRunButtons();
+        break;
+
+    case OutputMenu::FLOW_CENTROID:
+        outputMenu->enableRunButtons();
+        break;
+
+    case OutputMenu::FLOW_ENERGY_CONSTANT_STEP:
+        outputMenu->enableRunButtons();
+        break;
+
+    default:
+        throw(QString("Error in ActionHandler: flowChoice issues."));
+    }
+}
 
 void ActionHandler::setRhoDomainClicked(int choice)
 {

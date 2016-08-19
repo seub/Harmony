@@ -17,6 +17,8 @@ class OutputMenu : public QGroupBox
     friend class ActionHandler;
 
 public:
+    enum FlowChoice {FLOW_CHOICE, FLOW_CENTROID, FLOW_ENERGY_CONSTANT_STEP};
+
     OutputMenu() = delete;
     OutputMenu(const OutputMenu &) = delete;
     OutputMenu & operator=(OutputMenu) = delete;
@@ -32,13 +34,19 @@ private:
     void disableAllButStop();
     void enableReset();
 
+    void enableRunButtons();
+    void disableRunButtons();
+
     void switchComputeToStopButton();
     void switchStopToComputeButton();
 
     QGridLayout *layout;
-    QPushButton *resetButton, *iterateButton, *computeButton;
+    QPushButton *resetButton;
+    QPushButton *iterateButton, *computeButton;
     QLabel *iterateLabel, *showLiveLabel;
     QSpinBox *iterateSpinBox;
+    QComboBox *flowComboBox;
+
     QCheckBox *showLiveCheckbox;
 
     int vertSpace;

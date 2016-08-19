@@ -12,8 +12,8 @@ class DiscreteFlowIterator
 public:
     DiscreteFlowIterator(const LiftedGraphFunction<Point, Map> *initialFunction);
 
-    void iterate();
-    void iterate(uint nbIterations);
+    void iterate(int flowChoice);
+    void iterate(int flowChoice, uint nbIterations);
     void getOutputFunction(LiftedGraphFunction<Point, Map> *outputFunction);
     double updateSupDelta();
     void reset();
@@ -23,7 +23,6 @@ public:
 
 protected:
     void refreshNeighborsValuesKicked();
-    void updateValues();
     void updateValuesCentroid();
     void refreshOutput();
     void updateValuesEnergyConstantStep();

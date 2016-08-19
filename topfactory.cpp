@@ -71,15 +71,17 @@ void TopFactory::resetH2Flow()
     h2factory.factory.resetInitial();
 }
 
-void TopFactory::runH2Flow()
+void TopFactory::runH2Flow(int flowChoice)
 {
     startTimers();
+    h2factory.setFlowChoice(flowChoice);
     h2factory.start();
 }
 
-void TopFactory::iterateH2Flow(uint N)
+void TopFactory::iterateH2Flow(int flowChoice, uint N)
 {
     startTimers();
+    h2factory.setFlowChoice(flowChoice);
     h2factory.iterate(N);
     finishedComputing();
 }

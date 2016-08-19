@@ -237,6 +237,13 @@ double DiscreteFlowFactory<Point, Map>::getTolerance() const
     return tolerance;
 }
 
+
+template<typename Point, typename Map>
+void DiscreteFlowFactory<Point, Map>::setFlowChoice(int flowChoice)
+{
+    this->flowChoice = flowChoice;
+}
+
 template<typename Point, typename Map>
 void DiscreteFlowFactory<Point, Map>::run()
 {
@@ -244,7 +251,7 @@ void DiscreteFlowFactory<Point, Map>::run()
     nbIterations = 0;
     while(!stop)
     {
-        iterator->iterate();
+        iterator->iterate(flowChoice);
         ++nbIterations;
 
         if ((nbIterations % 8)==0)
@@ -267,7 +274,7 @@ void DiscreteFlowFactory<Point, Map>::iterate(uint N)
     nbIterations = 0;
     while(!stop && nbIterations<N)
     {
-        iterator->iterate();
+        iterator->iterate(flowChoice);
         ++nbIterations;
 
         if ((nbIterations % 8)==0)

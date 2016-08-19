@@ -15,7 +15,7 @@ InputMenu::InputMenu(LeftMenu *leftMenu)
     setParent(leftMenu);
     setTitle("Input");
 
-    vertSpace = 5;
+    vertSpace = 3;
 
     createButtons();
     createLayout();

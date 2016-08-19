@@ -1,5 +1,6 @@
 #include "discreteflowiterator.h"
 #include "liftedgraph.h"
+#include "outputmenu.h"
 
 
 template <typename Point, typename Map>
@@ -54,24 +55,40 @@ double DiscreteFlowIterator<Point, Map>::updateSupDelta()
     }
 
     supDelta = *std::max_element(errors.begin(), errors.end());
-    std::cout << "supDelta = " << supDelta << std::endl;
     return supDelta;
 }
 
 template <typename Point, typename Map>
-void DiscreteFlowIterator<Point, Map>::iterate()
+void DiscreteFlowIterator<Point, Map>::iterate(int flowChoice)
 {
-    updateValues();
+    switch(flowChoice)
+    {
+    case OutputMenu::FLOW_CHOICE:
+        std::cout << "WARNING: Began flow without choosing method." << std::endl;
+        break;
+
+    case OutputMenu::FLOW_CENTROID:
+        updateValuesCentroid();
+        break;
+
+    case OutputMenu::FLOW_ENERGY_CONSTANT_STEP:
+        updateValuesEnergyConstantStep();
+        break;
+
+    default:
+        throw(QString("Error in DiscreteFlowIterator: No legal flowChoice made."));
+        break;
+    }
 }
 
 
 
 template <typename Point, typename Map>
-void DiscreteFlowIterator<Point, Map>::iterate(uint nbIterations)
+void DiscreteFlowIterator<Point, Map>::iterate(int flowChoice, uint nbIterations)
 {
     for (uint i=0; i!=nbIterations; ++i)
     {
-        iterate();
+        iterate(flowChoice);
     }
 }
 
@@ -110,16 +127,6 @@ void DiscreteFlowIterator<Point, Map>::refreshNeighborsValuesKicked()
 
 
 
-
-template <typename Point, typename Map>
-void DiscreteFlowIterator<Point, Map>::updateValues()
-{
-    //updateValuesCentroid();
-    updateValuesEnergyConstantStep();
-}
-
-
-
 template <typename Point, typename Map>
 void DiscreteFlowIterator<Point, Map>::updateValuesCentroid()
 {
@@ -127,7 +134,7 @@ void DiscreteFlowIterator<Point, Map>::updateValuesCentroid()
 
     for (uint i=0; i!=this->nbPoints; ++i)
     {
-        this->newValues[i] = H2Point::centroid(this->neighborsValuesKicked[i], this->neighborsWeightsEnergy[i]);
+        this->newValues[i] = H2Point::centroid(this->neighborsValuesKicked[i], this->neighborsWeightsCentroid[i]);
     }
 
 	this->refreshNeighborsValuesKicked();
@@ -195,7 +202,7 @@ void DiscreteFlowIterator<Point, Map>::computeGradient()
     H2TangentVector v;
     for (uint i=0; i!=this->nbPoints; ++i)
     {
-        this->oldValues[i].weightedLogSum(this->neighborsValuesKicked[i], this->neighborsWeightsCentroid[i], v);
+        this->oldValues[i].weightedLogSum(this->neighborsValuesKicked[i], this->neighborsWeightsEnergy[i], v);
         gradient[i]=-1.0*v;
     }
 }

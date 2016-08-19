@@ -8,6 +8,7 @@
 #include "discreteflowiterator.h"
 #include "liftedgraph.h"
 
+
 template <typename Point, typename Map> class LiftedGraphFunctionTriangulated; class H2DiscreteFlowFactoryThread;
 
 template <typename Point, typename Map> class DiscreteFlowFactory
@@ -36,6 +37,8 @@ public:
     double getSupError() const {return supError;}
     void updateSupError();
     double getTolerance() const;
+
+    void setFlowChoice(int flowChoice);
 
     void run();
     void iterate(uint N);
@@ -66,6 +69,8 @@ private:
     std::unique_ptr<DiscreteFlowIterator<Point, Map> > iterator;
     uint nbIterations;
     double minDomainEdgeLength, supError, tolerance;
+
+    int flowChoice;
 
     H2DiscreteFlowFactoryThread *thread;
 };
