@@ -21,6 +21,8 @@ public:
     LeftMenu(const LeftMenu &) = delete;
     LeftMenu & operator=(LeftMenu) = delete;
 
+    int getVertSpace() const {return vertSpace;}
+
 private:
     explicit LeftMenu(MainWindow *window);
 
@@ -30,6 +32,8 @@ private:
     InputMenu *inputMenu;
     DisplayMenu *displayMenu;
     OutputMenu *outputMenu;
+
+    int vertSpace;
 };
 
 #endif // LEFTMENU_H

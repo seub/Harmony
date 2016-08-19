@@ -10,6 +10,8 @@
 LeftMenu::LeftMenu(MainWindow *window)
 {
     setParent(window);
+
+    vertSpace = 3;
     createSubMenus();
 }
 

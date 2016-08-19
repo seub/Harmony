@@ -15,7 +15,7 @@ OutputMenu::OutputMenu(LeftMenu *leftMenu)
     setParent(leftMenu);
     setTitle("Discrete flow");
 
-    vertSpace = 3;
+    vertSpace = leftMenu->getVertSpace();
 
     createButtons();
     createLayout();
@@ -28,7 +28,6 @@ void OutputMenu::createButtons()
 
     computeButton = new QPushButton(QString("Run flow (%1)").arg(QChar(0x221E)));
     computeButton->setToolTip("Run the discrete flow");
-
     flowComboBox = new QComboBox;
     flowComboBox->addItem(QString("Choose flow method..."), FLOW_CHOICE);
     flowComboBox->addItem(QString("Centroid flow"), FLOW_CENTROID);

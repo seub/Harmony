@@ -24,7 +24,6 @@ public:
     //enum ColorChoice {RED, GREEN, BLUE, LIGHT_BLUE, ORANGE, GRAY, BLACK};
     enum ColorChoiceLeft {RED_L, GREEN_L, BLUE_L, LIGHT_BLUE_L, ORANGE_L, GRAY_L, BLACK_L};
     enum ColorChoiceRight {RED_R, GREEN_R, BLUE_R, LIGHT_BLUE_R, ORANGE_R, GRAY_R, BLACK_R};
-    enum FlowChoice {FLOW_ENERGY,FLOW_CENTROID};
 
     DisplayMenu() = delete;
     DisplayMenu(const DisplayMenu &) = delete;
@@ -44,8 +43,6 @@ private:
     QLabel *coloringLabel;
     //QComboBox *coloringComboBox, *colorComboBox;
     QComboBox *coloringComboBoxLeft,*coloringComboBoxRight, *colorComboBoxLeft, *colorComboBoxRight;
-    QLabel *flowLabel;
-    QComboBox *flowBox;
     int vertSpace;
     int buttonHeight;
 

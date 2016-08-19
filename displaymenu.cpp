@@ -13,7 +13,7 @@ DisplayMenu::DisplayMenu(LeftMenu *leftMenu)
     setParent(leftMenu);
     setTitle("Display");
 
-    vertSpace = 3;
+    vertSpace = leftMenu->getVertSpace();
 
     createButtons();
     createLayout();
