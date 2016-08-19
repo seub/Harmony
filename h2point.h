@@ -37,10 +37,9 @@ public:
     static H2Point fromDiskCoordinate(const Complex &z);
     // p0 is the base point, u is a tangent oriented direction (its norm does not matter) represented by a complex number in the disk model, t is the length of the tangent vector
 
-    void computeAffineWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
-    void computeNaiveWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
-    //void computeQuadraticWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
-    void computeEnergyWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
+    void computeWeightsCentroid(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
+    void computeWeightsCentroidNaive(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
+    void computeWeightsEnergy(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const;
 
     bool compareAngles(const H2Point &p1, const H2Point &p2);
 private:

@@ -138,7 +138,7 @@ double H2Point::cotangentAngle(const H2Point &previous, const H2Point &point, co
     return x/y;
 }
 
-void H2Point::computeAffineWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
+void H2Point::computeWeightsCentroid(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
 {
     H2Point previous, current, next;
     std::vector<double> preNeighborWeights;
@@ -187,7 +187,7 @@ void H2Point::computeAffineWeights(const std::vector<H2Point> &neighbors, std::v
     }
 }
 
-void H2Point::computeNaiveWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
+void H2Point::computeWeightsCentroidNaive(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
 {
     H2Point previous, current, next;
     double r, sum;
@@ -234,7 +234,7 @@ void H2Point::computeNaiveWeights(const std::vector<H2Point> &neighbors, std::ve
     }
 }
 
-void H2Point::computeEnergyWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
+void H2Point::computeWeightsEnergy(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
 {
     //assume the neighbors are in cyclic order
     H2Point previous, current, next;
@@ -267,65 +267,6 @@ void H2Point::computeEnergyWeights(const std::vector<H2Point> &neighbors, std::v
     cot2 = cotangentAngle(*this,next,current);
     outputWeights.push_back(cot1+cot2);
 }
-
-
-/*void H2Point::computeQuadraticWeights(const std::vector<H2Point> &neighbors, std::vector<double> &outputWeights) const
-{
-    if (neighbors.size() != 6)
-    {
-        QString errorMessage = QString("Error in H2Point::computeQuadraticWeights: there needs to be 6 neighbors (you gave me %1) ").arg(QString::number(neighbors.size()));
-        throw(errorMessage);
-    }
-
-    std::vector<double> neighborsInTangentSpaceX, neighborsInTangentSpaceY;
-    double d, r, xj, yj;
-    Complex z;
-    using namespace Eigen;
-    MatrixXd m(6,6);
-    VectorXd vec(6), out(6);
-
-
-    H2Isometry A;
-    outputWeights.clear();
-    A.setByMappingPointToOrigin(*this);
-    std::vector<H2Point> translatedNeighbors = A*neighbors;
-
-    double epsilon = -1.0;
-    for(const auto & point : translatedNeighbors)
-    {
-        z = point.getDiskCoordinate();
-        d = std::abs(z);
-        r = log((1.0+d)/(1.0-d));
-        epsilon = ((epsilon < r) && epsilon > 0) ? epsilon : r;
-        neighborsInTangentSpaceX.push_back(r*real(z)/d);
-        neighborsInTangentSpaceY.push_back(r*imag(z)/d);
-    }
-
-
-    epsilon *= 0.1;
-
-    vec(0) = 1; vec(1) = 0; vec(2) = 0; vec(3) = 0;
-    vec(4) = epsilon*epsilon/4.0; vec(5) = epsilon*epsilon/4.0;
-
-    for(uint j=0; j!=6; ++j)
-    {
-        xj = neighborsInTangentSpaceX[j];
-        yj = neighborsInTangentSpaceY[j];
-        m(0,j) = 1;
-        m(1,j) = xj;
-        m(2,j) = yj;
-        m(3,j) = xj*yj;
-        m(4,j) = xj*xj;
-        m(5,j) = yj*yj;
-    }
-
-    out = m.colPivHouseholderQr().solve(vec);
-
-    for(uint j=0; j!=6; ++j)
-    {
-        outputWeights.push_back(out(j));
-    }
-}*/
 
 
 
@@ -394,8 +335,8 @@ void H2Point::weightedLogSum(const std::vector<H2Point> &points, const std::vect
 
 
     std::vector<double> affineWeights, energyWeights;
-    this->computeEnergyWeights(points, energyWeights);
-    this->computeAffineWeights(points, affineWeights);
+    this->computeWeightsEnergy(points, energyWeights);
+    this->computeWeightsCentroid(points, affineWeights);
 
 /*
     std::cout << std::endl;

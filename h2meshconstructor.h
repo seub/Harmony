@@ -33,12 +33,11 @@ private:
     void createExteriorNeighbors();
     void createExteriorVertexNeighbors();
     void createMeshExteriorIndices();
-
     void reorganizeNeighbors();
-    void createPiecewiseAffineWeights();
-    void createNaiveWeights();
-    //void createQuadraticWeights();
-    void createEnergyWeights();
+
+    void createWeightsCentroid();
+    void createWeightsCentroidNaive();
+    void createWeightsEnergy();
 
     bool runTests() const;
     bool checkNumberOfMeshPoints() const;

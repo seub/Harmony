@@ -63,8 +63,7 @@ private:
     LiftedGraphFunctionTriangulated<H2Point, H2Isometry> *domainFunction;
     std::unique_ptr<LiftedGraphFunctionTriangulated<Point, Map> > initialImageFunction;
     LiftedGraphFunctionTriangulated<Point, Map> *imageFunction;
-    std::unique_ptr<DiscreteFlowIteratorCentroid<Point, Map> > iterator;
-    //std::unique_ptr<DiscreteFlowIteratorEnergy<Point, Map> > iterator;
+    std::unique_ptr<DiscreteFlowIterator<Point, Map> > iterator;
     uint nbIterations;
     double minDomainEdgeLength, supError, tolerance;
 

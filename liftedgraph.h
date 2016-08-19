@@ -31,7 +31,6 @@ protected:
     virtual LiftedGraph *cloneCopyConstructImpl() const;
     virtual void cloneCopyAssignImpl(const LiftedGraph *other);
 
-    void resetNeighborsWeights(std::vector< std::vector<double> > &newNeighborsWeights);
 
 
     DiscreteGroup Gamma;
@@ -39,7 +38,7 @@ protected:
     uint nbBoundaryPoints,  nbPoints;
 
     std::vector< std::vector<uint> > neighborsIndices;
-    std::vector< std::vector<double> > neighborsWeights;
+    std::vector< std::vector<double> > neighborsWeightsCentroid,neighborsWeightsEnergy;
 
     std::vector< std::vector<Word> > boundaryPointsNeighborsPairings;
     std::vector< std::vector<uint> > boundaryPointsPartnersIndices;

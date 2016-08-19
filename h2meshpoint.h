@@ -30,8 +30,7 @@ protected:
 
     uint subdivisionIndex, indexInSubdivision;
     std::vector<uint> neighborsIndices;
-    std::vector<double> neighborsWeights;
-    double weight;
+    std::vector<double> neighborsWeightsEnergy,neighborsWeightsCentroid;
     uint index;
 };
 

@@ -9,7 +9,8 @@ void LiftedGraph::cloneCopyAssignImpl(const LiftedGraph *other)
     nbBoundaryPoints = other->nbBoundaryPoints;
     nbPoints = other->nbPoints;
     neighborsIndices = other->neighborsIndices;
-    neighborsWeights = other->neighborsWeights;
+    neighborsWeightsCentroid = other->neighborsWeightsCentroid;
+    neighborsWeightsEnergy = other->neighborsWeightsEnergy;
     boundaryPointsNeighborsPairings = other->boundaryPointsNeighborsPairings;
     boundaryPointsPartnersIndices = other->boundaryPointsPartnersIndices;
 }
@@ -26,7 +27,8 @@ LiftedGraph::LiftedGraph(const LiftedGraph &other)
     nbBoundaryPoints = other.nbBoundaryPoints;
     nbPoints = other.nbPoints;
     neighborsIndices = other.neighborsIndices;
-    neighborsWeights = other.neighborsWeights;
+    neighborsWeightsCentroid = other.neighborsWeightsCentroid;
+    neighborsWeightsEnergy = other.neighborsWeightsEnergy;
     boundaryPointsNeighborsPairings = other.boundaryPointsNeighborsPairings;
     boundaryPointsPartnersIndices = other.boundaryPointsPartnersIndices;
 }
@@ -59,16 +61,6 @@ bool LiftedGraph::isBoundaryPoint(uint index) const
     return (index < nbBoundaryPoints);
 }
 
-void LiftedGraph::resetNeighborsWeights(std::vector<std::vector<double> > &newNeighborsWeights)
-{
-    assert(newNeighborsWeights.size() == nbPoints);
-    assert(neighborsWeights.size() == newNeighborsWeights.size());
-
-    for (uint i=0; i!=nbPoints; ++i)
-    {
-        neighborsWeights[i] = newNeighborsWeights[i];
-    }
-}
 
 
 
@@ -524,7 +516,7 @@ void LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::rearrangeOrderForCons
 {
     std::vector< std::vector<uint> > newNeighborsIndices(nbPoints), newBoundaryPointsPartnersIndices(nbBoundaryPoints), newSubdivisionsPointsIndicesInValues(subdivisions.size());
     std::vector< std::vector<Word> > newBoundaryPointsNeighborsPairings(nbBoundaryPoints);
-    std::vector< std::vector<double> > newNeighborsWeights(nbPoints);
+    std::vector< std::vector<double> > newNeighborsWeightsCentroid(nbPoints),newNeighborsWeightsEnergy(nbPoints);
 
     for (uint i=0; i!=nbPoints; ++i)
     {
@@ -532,7 +524,8 @@ void LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::rearrangeOrderForCons
         {
             newNeighborsIndices[newIndices[i]].push_back(newIndices[neighborIndex]);
         }
-        newNeighborsWeights[newIndices[i]] = this->neighborsWeights[i];
+        newNeighborsWeightsCentroid[newIndices[i]] = this->neighborsWeightsCentroid[i];
+        newNeighborsWeightsEnergy[newIndices[i]] = this->neighborsWeightsEnergy[i];
     }
 
     for (uint i=0; i!=nbBoundaryPoints; ++i)
@@ -554,7 +547,8 @@ void LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::rearrangeOrderForCons
     }
 
     this->neighborsIndices = newNeighborsIndices;
-    this->neighborsWeights = newNeighborsWeights;
+    this->neighborsWeightsCentroid = newNeighborsWeightsCentroid;
+    this->neighborsWeightsEnergy = newNeighborsWeightsEnergy;
     this->boundaryPointsPartnersIndices = newBoundaryPointsPartnersIndices;
     this->boundaryPointsNeighborsPairings = newBoundaryPointsNeighborsPairings;
     this->subdivisionsPointsIndicesInValues = newSubdivisionsPointsIndicesInValues;
@@ -577,31 +571,36 @@ void LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::constructFromH2Mesh(c
 
 
     this->neighborsIndices.clear();
-    this->neighborsWeights.clear();
+    this->neighborsWeightsCentroid.clear();
+    this->neighborsWeightsEnergy.clear();
     this->boundaryPointsNeighborsPairings.clear();
     this->boundaryPointsPartnersIndices.clear();
 
     this->neighborsIndices.reserve(nbPoints);
-    this->neighborsWeights.reserve(nbPoints);
+    this->neighborsWeightsCentroid.reserve(nbPoints);
+    this->neighborsWeightsEnergy.reserve(nbPoints);
     this->boundaryPointsNeighborsPairings.reserve(nbBoundaryPoints);
     this->boundaryPointsPartnersIndices.reserve(nbBoundaryPoints);
 
     for (const auto & meshPoint : mesh.regularPoints)
     {
         neighborsIndices.push_back(meshPoint.neighborsIndices);
-        neighborsWeights.push_back(meshPoint.neighborsWeights);
+        neighborsWeightsCentroid.push_back(meshPoint.neighborsWeightsCentroid);
+        neighborsWeightsEnergy.push_back(meshPoint.neighborsWeightsEnergy);
     }
 
     for (const auto &meshPoint : mesh.cutPoints)
     {
         neighborsIndices.push_back(meshPoint.neighborsIndices);
-        neighborsWeights.push_back(meshPoint.neighborsWeights);
+        neighborsWeightsCentroid.push_back(meshPoint.neighborsWeightsCentroid);
+        neighborsWeightsEnergy.push_back(meshPoint.neighborsWeightsEnergy);
     }
 
     for (const auto &meshPoint : mesh.boundaryPoints)
     {
         neighborsIndices.push_back(meshPoint.neighborsIndices);
-        neighborsWeights.push_back(meshPoint.neighborsWeights);
+        neighborsWeightsCentroid.push_back(meshPoint.neighborsWeightsCentroid);
+        neighborsWeightsEnergy.push_back(meshPoint.neighborsWeightsEnergy);
         this->boundaryPointsNeighborsPairings.push_back(meshPoint.neighborsPairings);
         this->boundaryPointsPartnersIndices.push_back({meshPoint.partnerPointIndex});
     }
@@ -619,7 +618,8 @@ void LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::constructFromH2Mesh(c
     for (const auto &meshPoint : mesh.vertexPoints)
     {
         neighborsIndices.push_back(meshPoint.neighborsIndices);
-        neighborsWeights.push_back(meshPoint.neighborsWeights);
+        neighborsWeightsCentroid.push_back(meshPoint.neighborsWeightsCentroid);
+        neighborsWeightsEnergy.push_back(meshPoint.neighborsWeightsEnergy);
         this->boundaryPointsNeighborsPairings.push_back(meshPoint.neighborsPairings);
 
         partnersIndices.clear();
@@ -637,7 +637,8 @@ void LiftedGraphFunctionTriangulated<H2Point, H2Isometry>::constructFromH2Mesh(c
     for (const auto &meshPoint : mesh.steinerPoints)
     {
         neighborsIndices.push_back(meshPoint.neighborsIndices);
-        neighborsWeights.push_back(meshPoint.neighborsWeights);
+        neighborsWeightsCentroid.push_back(meshPoint.neighborsWeightsCentroid);
+        neighborsWeightsEnergy.push_back(meshPoint.neighborsWeightsEnergy);
         this->boundaryPointsNeighborsPairings.push_back(meshPoint.neighborsPairings);
         this->boundaryPointsPartnersIndices.push_back({meshPoint.partnerPointIndex});
     }
@@ -692,7 +693,8 @@ void LiftedGraphFunctionTriangulated<Point, Map>::constructUninitialized(const L
     this->nbBoundaryPoints = domainFunction.nbBoundaryPoints;
     this->nbPoints = domainFunction.nbPoints;
     this->neighborsIndices = domainFunction.neighborsIndices;
-    this->neighborsWeights = domainFunction.neighborsWeights;
+    this->neighborsWeightsCentroid = domainFunction.neighborsWeightsCentroid;
+    this->neighborsWeightsEnergy = domainFunction.neighborsWeightsEnergy;
     this->boundaryPointsNeighborsPairings = domainFunction.boundaryPointsNeighborsPairings;
     this->boundaryPointsPartnersIndices = domainFunction.boundaryPointsPartnersIndices;
     this->rho = rhoImage;

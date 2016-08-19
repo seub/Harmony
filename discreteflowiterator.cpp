@@ -4,11 +4,16 @@
 
 template <typename Point, typename Map>
 DiscreteFlowIterator<Point, Map>::DiscreteFlowIterator(const LiftedGraphFunction<Point, Map> *initialFunction) :
-    nbBoundaryPoints(initialFunction->nbBoundaryPoints), nbPoints(initialFunction->nbPoints),
-    neighborsIndices(initialFunction->neighborsIndices), neighborsWeights(initialFunction->neighborsWeights),
-    boundaryPointsNeighborsPairingsValues(initialFunction->boundaryPointsNeighborsPairingsValues), initialValues(initialFunction->getValues()),
+    nbBoundaryPoints(initialFunction->nbBoundaryPoints),
+    nbPoints(initialFunction->nbPoints),
+    neighborsIndices(initialFunction->neighborsIndices),
+    neighborsWeightsCentroid(initialFunction->neighborsWeightsCentroid),
+    neighborsWeightsEnergy(initialFunction->neighborsWeightsEnergy),
+    boundaryPointsNeighborsPairingsValues(initialFunction->boundaryPointsNeighborsPairingsValues),
+    initialValues(initialFunction->getValues()),
     outputFunction(initialFunction->cloneCopyConstruct())
 {
+    constantStep=0.01;
     reset();
 }
 
@@ -19,7 +24,7 @@ void DiscreteFlowIterator<Point, Map>::reset()
 
     newValues = initialValues;
     errors.resize(nbPoints);
-
+    gradient.resize(this->nbPoints);
     neighborsValuesKicked.resize(nbPoints);
     uint i=0;
 
@@ -29,6 +34,7 @@ void DiscreteFlowIterator<Point, Map>::reset()
         ++i;
     }
     refreshNeighborsValuesKicked();
+
 
 }
 
@@ -48,6 +54,7 @@ double DiscreteFlowIterator<Point, Map>::updateSupDelta()
     }
 
     supDelta = *std::max_element(errors.begin(), errors.end());
+    std::cout << "supDelta = " << supDelta << std::endl;
     return supDelta;
 }
 
@@ -102,26 +109,25 @@ void DiscreteFlowIterator<Point, Map>::refreshNeighborsValuesKicked()
 
 
 
+
+
 template <typename Point, typename Map>
-DiscreteFlowIteratorCentroid<Point, Map>::DiscreteFlowIteratorCentroid(const LiftedGraphFunction<Point, Map> *initialFunction) :
-    DiscreteFlowIterator<Point,Map>(initialFunction)
+void DiscreteFlowIterator<Point, Map>::updateValues()
 {
+    //updateValuesCentroid();
+    updateValuesEnergyConstantStep();
 }
 
 
 
-
-
-
-
 template <typename Point, typename Map>
-void DiscreteFlowIteratorCentroid<Point, Map>::updateValues()
+void DiscreteFlowIterator<Point, Map>::updateValuesCentroid()
 {
     this->oldValues = this->newValues;
 
     for (uint i=0; i!=this->nbPoints; ++i)
     {
-        this->newValues[i] = H2Point::centroid(this->neighborsValuesKicked[i], this->neighborsWeights[i]);
+        this->newValues[i] = H2Point::centroid(this->neighborsValuesKicked[i], this->neighborsWeightsEnergy[i]);
     }
 
 	this->refreshNeighborsValuesKicked();
@@ -150,33 +156,10 @@ bool DiscreteHeatFlowIteratorRecursiveDepth<Point, Map>::run()
 
 
 
-template <typename Point, typename Map>
-DiscreteFlowIteratorEnergy<Point, Map>::DiscreteFlowIteratorEnergy(const LiftedGraphFunction<Point, Map> *initialFunction) :
-    DiscreteFlowIterator<Point,Map>(initialFunction)
-{
-    constantStep=0.01;
-	reset();
-}
 
 
 template <typename Point, typename Map>
-void DiscreteFlowIteratorEnergy<Point, Map>::reset()
-{
-    DiscreteFlowIterator<Point,Map>::reset();
-    gradient.resize(this->nbPoints);
-}
-
-template <typename Point, typename Map>
-void DiscreteFlowIteratorEnergy<Point, Map>::updateValues()
-{
-    constantStepUpdateValues();
-}
-
-
-
-
-template <typename Point, typename Map>
-void DiscreteFlowIteratorEnergy<Point, Map>::constantStepUpdateValues()
+void DiscreteFlowIterator<Point, Map>::updateValuesEnergyConstantStep()
 {
     this->oldValues = this->newValues;
 
@@ -187,7 +170,7 @@ void DiscreteFlowIteratorEnergy<Point, Map>::constantStepUpdateValues()
 
 
 template <typename Point, typename Map>
-void DiscreteFlowIteratorEnergy<Point, Map>::optimalStepUpdateValues()
+void DiscreteFlowIterator<Point, Map>::updateValuesEnergyOptimalStep()
 {
     this->oldValues = this->newValues;
 
@@ -199,7 +182,7 @@ void DiscreteFlowIteratorEnergy<Point, Map>::optimalStepUpdateValues()
 
 
 template <typename Point, typename Map>
-void DiscreteFlowIteratorEnergy<Point, Map>::lineSearch()
+void DiscreteFlowIterator<Point, Map>::lineSearch()
 {
     std::vector<H2Point> yt;
     std::vector<H2TangentVector> dyt;
@@ -207,12 +190,12 @@ void DiscreteFlowIteratorEnergy<Point, Map>::lineSearch()
 
 
 template <typename Point, typename Map>
-void DiscreteFlowIteratorEnergy<Point, Map>::computeGradient()
+void DiscreteFlowIterator<Point, Map>::computeGradient()
 {
     H2TangentVector v;
     for (uint i=0; i!=this->nbPoints; ++i)
     {
-        this->oldValues[i].weightedLogSum(this->neighborsValuesKicked[i], this->neighborsWeights[i], v);
+        this->oldValues[i].weightedLogSum(this->neighborsValuesKicked[i], this->neighborsWeightsCentroid[i], v);
         gradient[i]=-1.0*v;
     }
 }
@@ -307,7 +290,5 @@ bool DiscreteHeatFlowIteratorRecursiveDepth<Point, Map>::run()
 
 
 template class DiscreteFlowIterator<H2Point, H2Isometry>;
-template class DiscreteFlowIteratorCentroid<H2Point, H2Isometry>;
 //template class DiscreteHeatFlowIteratorRecursiveDepth<H2Point, H2Isometry>;
-template class DiscreteFlowIteratorEnergy<H2Point, H2Isometry>;
 

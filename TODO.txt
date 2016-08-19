@@ -30,7 +30,7 @@ More generally, get the exception handling ready to work (catch errors in MainAp
 ************************* FUTURE PLANS ***************************
 
 0. Don't break keys off in locks.
-1. Are quadratic weights dead?
+1. Are quadratic weights dead? (YES)
 2. Think about equivariance: Explain the picture of the (almost) harmonic map from a rho to its Dehn twist.
 3. Improve choice of steiner points and cuts
 4. Improve choice of fundamental domain (try dirichlet?)

@@ -27,8 +27,8 @@ H2MeshConstructor::H2MeshConstructor(H2Mesh *mesh) :
 
     reorganizeNeighbors();
 
-    createPiecewiseAffineWeights();
-    //createEnergyWeights();
+    createWeightsCentroid();
+    createWeightsEnergy();
 
     createMeshExteriorIndices();
 
@@ -556,7 +556,7 @@ void H2MeshConstructor::reorganizeNeighbors()
     }
 }
 
-void H2MeshConstructor::createPiecewiseAffineWeights()
+void H2MeshConstructor::createWeightsCentroid()
 {
     uint i=0;
     H2Point basept;
@@ -565,13 +565,12 @@ void H2MeshConstructor::createPiecewiseAffineWeights()
     {
         neighbors = mesh->getKickedH2Neighbors(i);
         basept = mesh->getH2Point(i);
-        basept.computeAffineWeights(neighbors,meshPoint->neighborsWeights);
-        meshPoint->weight = 0.0;
+        basept.computeWeightsCentroid(neighbors,meshPoint->neighborsWeightsCentroid);
         ++i;
     }
 }
 
-void H2MeshConstructor::createNaiveWeights()
+void H2MeshConstructor::createWeightsCentroidNaive()
 {
     uint i=0;
     H2Point basept;
@@ -580,13 +579,12 @@ void H2MeshConstructor::createNaiveWeights()
     {
         neighbors = mesh->getKickedH2Neighbors(i);
         basept = mesh->getH2Point(i);
-        basept.computeNaiveWeights(neighbors,meshPoint->neighborsWeights);
-        meshPoint->weight = 0.0;
+        basept.computeWeightsCentroidNaive(neighbors,meshPoint->neighborsWeightsCentroid);
         ++i;
     }
 }
 
-void H2MeshConstructor::createEnergyWeights()
+void H2MeshConstructor::createWeightsEnergy()
 {
     uint i=0;
     H2Point basept;
@@ -595,33 +593,11 @@ void H2MeshConstructor::createEnergyWeights()
     {
         neighbors = mesh->getKickedH2Neighbors(i);
         basept = mesh->getH2Point(i);
-        basept.computeEnergyWeights(neighbors, meshPoint->neighborsWeights);
-        meshPoint->weight = 0.0;
+        basept.computeWeightsEnergy(neighbors, meshPoint->neighborsWeightsEnergy);
         ++i;
     }
 }
 
-/*void H2MeshConstructor::createQuadraticWeights()
-{
-    uint i=0;
-    H2Point basept;
-    std::vector<H2Point> neighbors;
-    for(const auto & meshPoint : mesh->meshPoints)
-    {
-        neighbors = mesh->getKickedH2Neighbors(i);
-        basept = mesh->getH2Point(i);
-        if (meshPoint->isVertexPoint())
-        {
-            basept.computeAffineWeights(neighbors,meshPoint->neighborsWeights);
-        }
-        else
-        {
-            basept.computeQuadraticWeights(neighbors,meshPoint->neighborsWeights);
-        }
-        meshPoint->weight = 0.0;
-        ++i;
-    }
-}*/
 
 std::vector<uint> H2MeshConstructor::meshPointsIndicesAlongSide(uint side) const
 {
