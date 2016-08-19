@@ -8,13 +8,12 @@
 #include "h2isometry.h"
 #include "h2polygontriangulater.h"
 
-class Word; template <typename Point, typename Map> class DiscreteFlowIteratorCentroid;
-template <typename Point, typename Map> class DiscreteFlowIteratorEnergy;
+class Word;
+template <typename Point, typename Map> class DiscreteFlowIterator;
 
 class LiftedGraph
 {
-    friend class DiscreteFlowIteratorCentroid<H2Point, H2Isometry>;
-    friend class DiscreteFlowIteratorEnergy<H2Point, H2Isometry>;
+    friend class DiscreteFlowIterator<H2Point, H2Isometry>;
 
 public:
     LiftedGraph() {}
@@ -50,8 +49,7 @@ protected:
 
 template <typename Point, typename Map> class LiftedGraphFunction : public LiftedGraph
 {
-    friend class DiscreteFlowIteratorCentroid<H2Point, H2Isometry>;
-    friend class DiscreteFlowIteratorEnergy<H2Point, H2Isometry>;
+    friend class DiscreteFlowIterator<H2Point, H2Isometry>;
 
 public:
     LiftedGraphFunction() {}

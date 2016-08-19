@@ -1,27 +1,29 @@
-#ifndef DISCRETEFLOWITERATORCENTROID_H
-#define DISCRETEFLOWITERATORCENTROID_H
+#ifndef DISCRETEFLOWITERATOR_H
+#define DISCRETEFLOWITERATOR_H
 
 #include "tools.h"
+#include "h2tangentvector.h"
 
-template <typename Point, typename Map> class LiftedGraphFunction;
+template<typename Point, typename Map> class LiftedGraphFunction;
 
-template <typename Point, typename Map> class DiscreteFlowIteratorCentroid
+template<typename Point, typename Map>
+class DiscreteFlowIterator
 {
-
 public:
-    DiscreteFlowIteratorCentroid(const LiftedGraphFunction<Point, Map> *initialFunction);
+    DiscreteFlowIterator(const LiftedGraphFunction<Point, Map> *initialFunction);
+    virtual ~DiscreteFlowIterator() {}
 
     void iterate();
     void iterate(uint nbIterations);
     void getOutputFunction(LiftedGraphFunction<Point, Map> *outputFunction);
     double updateSupDelta();
-    void reset();
+    virtual void reset();
 
     Point getValue(uint index) const {return newValues.at(index);}
 
-private:
+protected:
     void refreshNeighborsValuesKicked();
-    void updateValues();
+    virtual void updateValues();
     void refreshOutput();
 
     const uint nbBoundaryPoints;
@@ -31,12 +33,22 @@ private:
     const std::vector< std::vector<Map> > boundaryPointsNeighborsPairingsValues;
 
     std::vector<Point> initialValues, oldValues, newValues;
-    std::vector< std::vector<Point> > oldNeighborsValuesKicked, newNeighborsValuesKicked;
+    std::vector< std::vector<Point> > neighborsValuesKicked;
 
     const std::unique_ptr<LiftedGraphFunction<Point, Map> > outputFunction;
 
     double supDelta;
     std::vector<double> errors;
+};
+
+template <typename Point, typename Map> class DiscreteFlowIteratorCentroid : public DiscreteFlowIterator<Point,Map>
+{
+
+public:
+    DiscreteFlowIteratorCentroid(const LiftedGraphFunction<Point, Map> *initialFunction);
+
+private:
+    virtual void updateValues() override;
 };
 
 
@@ -61,9 +73,25 @@ private:
 };*/
 
 
+template <typename Point, typename Map> class DiscreteFlowIteratorEnergy : public DiscreteFlowIterator<Point,Map>
+{
+public:
+    DiscreteFlowIteratorEnergy(const LiftedGraphFunction<Point, Map> *initialFunction);
+    void reset();
+
+private:
+    virtual void updateValues() override;
+    void constantStepUpdateValues();
+    void optimalStepUpdateValues();
+    void computeGradient();
+
+//    double computeEnergyHessian(const std::vector<H2TangentVector> &V);
 
 
+    void lineSearch();
 
+    std::vector<H2TangentVector> gradient;
+    double constantStep, optimalStep;
+};
 
-
-#endif // DISCRETEFLOWITERATORCENTROID_H
+#endif // DISCRETEFLOWITERATOR_H

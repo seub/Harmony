@@ -5,8 +5,7 @@
 
 #include "tools.h"
 #include "grouprepresentation.h"
-#include "discreteflowiteratorcentroid.h"
-#include "discreteflowiteratorenergy.h"
+#include "discreteflowiterator.h"
 #include "liftedgraph.h"
 
 template <typename Point, typename Map> class LiftedGraphFunctionTriangulated; class H2DiscreteFlowFactoryThread;

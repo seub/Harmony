@@ -6,9 +6,9 @@
 #include "topologicalsurface.h"
 #include "fenchelnielsenconstructor.h"
 #include "liftedgraph.h"
-#include "discreteflowiteratorcentroid.h"
+#include "discreteflowiterator.h"
 
-
+/*
 void runTests()
 {
     DiscreteGroup Gamma(TopologicalSurface(2, 0));
@@ -87,4 +87,4 @@ void runTests()
 
     canvasTest->show();
     canvasTest2->show();
-}
+}*/

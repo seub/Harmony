@@ -72,9 +72,8 @@ SOURCES += main.cpp \
     fundamentaldomaingenerator.cpp \
     mainwindow.cpp \
     h2tangentvector.cpp \
-    discreteflowiteratorcentroid.cpp \
-    discreteflowiteratorenergy.cpp \
-    discreteflowfactory.cpp
+    discreteflowfactory.cpp \
+    discreteflowiterator.cpp
 
 HEADERS += \
     discretegroup.h \
@@ -123,9 +122,8 @@ HEADERS += \
     fundamentaldomaingenerator.h \
     mainwindow.h \
     h2tangentvector.h \
-    discreteflowiteratorcentroid.h \
-    discreteflowiteratorenergy.h \
-    discreteflowfactory.h
+    discreteflowfactory.h \
+    discreteflowiterator.h
 
 OTHER_FILES += \
     TODO.txt
