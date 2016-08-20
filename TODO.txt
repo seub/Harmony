@@ -2,10 +2,7 @@
 
 Change the code of the mesh constructor so there is no need to rearrange the order after for building the graph (yuck)
 Rewrite triangulater with flips?
-
-
 construct mesh and graphes in thread?
-
 Edit doc.
 
 
@@ -16,35 +13,51 @@ track down code duplication
 move semantics http://stackoverflow.com/questions/3106110/what-are-move-semantics
 hunt memory leaks, test with valgrind
 use auto
-
 use C++ arrays instead of vectors in some places? Eg: std::vector< std::vector<Point> > getTrianglesUp() : could this be a std::vector<Point[3]> or something?
 
 
 ******************************** BUGS: ********************************
 
 Program should handle when a nonconvex fundamental domain is given, at the moment it will just crash (or not) when constructing the mesh.
+(still happening?)
 
 More generally, get the exception handling ready to work (catch errors in MainApplication)
 
 
 ************************* FUTURE PLANS ***************************
 
-0. Don't break keys off in locks.
-1. Are quadratic weights dead? (YES)
+0. Meet at least N days per year, where N>>1
+1. Think about discretization of Energy. In particular:
+- should we take into account energy accumulated at vertices (/edges)?
+- what are better weights for the energy?
+- etc
+
+
 2. Think about equivariance: Explain the picture of the (almost) harmonic map from a rho to its Dehn twist.
 3. Improve choice of steiner points and cuts
 4. Improve choice of fundamental domain (try dirichlet?)
-5. Think about automating in a totally different way: Fix a weighted graph that triangulates the surface ahead of time (relations on weights?),
-and use the algorithm to embed it "harmonically" on the surface.
-6. H3 and SL(2,C)-character variety?
-7. Slices of the character variety and pictures?
+6. H3 and SL(2,C)-character variety
+7. Paths in the character variety...
 8. Hopf differential? Energy?
-
 9. Do youtube video!
 10. Improve triangulations by adding points to the cuts?
-
 11. Attempt optimalStep with *different* steps at different mesh points.
 12. Optimization using Newton's method to minimize Energy.
+13. See section PAPER.
+14. Implementation with flat structures in the domain (making triangulation easier)
+
+************************* APPLICATIONS ***************************
+
+Other people:
+- Daniele Alessandrini's idea to test Goldman conjecture (about affine sphere or something)
+- Show a path of harmonic maps when moving between components of the SL2R character variety.
+- Jean-Marc's question about convexity (and the Weil-Petersson metric)
+
+- Asymptotic behavior
+- Mike Wolf shit
+Us:
+- Investigating Hitchin metric
+- minimal surfaces parametrization, (globally minimizing energy) -- "evidence for Labourie's conjecture"
 
 
 ************************* OPTIMIZATION ***************************
@@ -53,13 +66,40 @@ and use the algorithm to embed it "harmonically" on the surface.
 Optimization of heat flow:
 - use profiler
 - try acceleration à la circle packings (see tests.cpp)
+- recursive depth
+- Newton method
+
+
+**************************** PAPER ********************************
+
+1. Imagine possible statements of theorems
+- requires a theoretical understanding of relationship of "discretized energy" to actual energy
+
+2. Pseudocode description of main algorithms:
+- FN coords --> represention
+- representation --> triangulated fundamental domain
+- implementation of mesh
+- energy calculation and gradient flows
+- centroid flow (and difference between Riemannian centers of mass and "hyperbolic centroid")
+
+3. Mathematical background:
+- Higher Teichmuller theory and non-abelian Hodge correspondence
+- numerical methods and gradient flows
+- harmonic maps and equivariance
+
+4. Demonstration:
+- screenshots from program
+- Mike Wolf shit
+- down-to-earth programming stuff (language, # of objects, operating systems)
+
+5. Applications (see APPLICATIONS)
 
 
 
-********************* TOGGLE BETWEEN METHODS **********************
 
-In order to go from "DiscreteFlowIteratorEnergy method" to "DiscreteHeatFlow method" you must:
 
-1. In discreteheatflowfactory.h: Comment line 68, uncomment line 67
-2. In discreteheatflowfactory.cpp: Comment line 206, uncomment line 205
-3. In h2meshcontructor.cpp: Comment line 31, uncomment line 30
+
+
+
+
+
