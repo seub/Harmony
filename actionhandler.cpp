@@ -500,6 +500,10 @@ void ActionHandler::flowChoiceClicked(int choice)
         outputMenu->enableRunButtons(true);
         break;
 
+    case OutputMenu::FLOW_ENERGY_OPTIMAL_STEP:
+        outputMenu->enableRunButtons(true);
+        break;
+
     default:
         throw(QString("Error in ActionHandler: flowChoice issues."));
     }

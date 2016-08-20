@@ -317,7 +317,7 @@ H2Point H2Point::centroid(const std::vector<H2Point> &points, const std::vector<
     return out;
 }
 
-void H2Point::weightedLogSum(const std::vector<H2Point> &points, const std::vector<double> &weights, H2TangentVector &output)
+void H2Point::weightedLogSum(const std::vector<H2Point> &points, const std::vector<double> &weights, H2TangentVector &output) const
 {
     assert (points.size() == weights.size());
     output = H2TangentVector(*this);

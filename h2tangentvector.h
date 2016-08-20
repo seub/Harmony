@@ -24,6 +24,7 @@ public:
     H2Point exponentiate() const;
     H2Point exponentiateBetter() const;
     H2TangentVector parallelTransport(const double &t);
+
     H2TangentVector parallelTransportBetter(const double &t);
     double length() const;
     double lengthSquared() const;
@@ -31,6 +32,9 @@ public:
     static H2Point exponentiate(const H2TangentVector &v);
     static std::vector<H2Point> exponentiate(const std::vector<H2TangentVector> &V);
     static double scalProd(const H2TangentVector &v1, const H2TangentVector &v2);
+    static double scalProd(const std::vector<H2TangentVector> &V1, const std::vector<H2TangentVector> &V2);
+    static H2TangentVector parallelTransport(H2TangentVector v);
+    static std::vector<H2TangentVector> parallelTransport(const std::vector<H2TangentVector> &V);
 
 private:
     H2Point root;

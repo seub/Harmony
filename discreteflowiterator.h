@@ -28,10 +28,12 @@ protected:
     void updateValuesEnergyConstantStep();
     void updateValuesEnergyOptimalStep();
     void computeGradient();
+    
+    std::vector<H2TangentVector> computeEnergyGradient(const std::vector<H2Point> &Y);
 
     void lineSearch();
 
-    //double computeEnergyHessian(const std::vector<H2TangentVector> &V);
+    double computeEnergyHessian(const std::vector<H2TangentVector> &V);
 
     std::vector<H2TangentVector> gradient;
     double constantStep, optimalStep;

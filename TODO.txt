@@ -43,6 +43,8 @@ and use the algorithm to embed it "harmonically" on the surface.
 9. Do youtube video!
 10. Improve triangulations by adding points to the cuts?
 
+11. Attempt optimalStep with *different* steps at different mesh points.
+
 
 ************************* OPTIMIZATION ***************************
 

@@ -75,6 +75,10 @@ void DiscreteFlowIterator<Point, Map>::iterate(int flowChoice)
         updateValuesEnergyConstantStep();
         break;
 
+    case OutputMenu::FLOW_ENERGY_OPTIMAL_STEP:
+        updateValuesEnergyOptimalStep();
+        break;
+
     default:
         throw(QString("Error in DiscreteFlowIterator: No legal flowChoice made."));
         break;
@@ -183,6 +187,7 @@ void DiscreteFlowIterator<Point, Map>::updateValuesEnergyOptimalStep()
 
     computeGradient();
     lineSearch();
+    std::cout << "optimalStep = " << optimalStep << std::endl;
     this->newValues = H2TangentVector::exponentiate(-optimalStep*gradient);
     this->refreshNeighborsValuesKicked();
 }
@@ -193,6 +198,31 @@ void DiscreteFlowIterator<Point, Map>::lineSearch()
 {
     std::vector<H2Point> yt;
     std::vector<H2TangentVector> dyt;
+    
+    double step = 1.0;
+    double dphit,ddphit,t = 0.0;
+
+    uint i = 5;
+    
+    while (i > 0)
+    {
+        std::cout << "Alice" << std::endl;
+        yt = H2TangentVector::exponentiate(-t*gradient);
+        std::cout << "Bob" << std::endl;
+        dyt = H2TangentVector::parallelTransport(-t*gradient);
+        std::cout << "Chris" << std::endl;
+        dphit = H2TangentVector::scalProd(computeEnergyGradient(yt),dyt);
+        std::cout << "t = " << t << std::endl;
+
+        ddphit = computeEnergyHessian(dyt);
+
+
+
+        t = t - step*(dphit/ddphit);
+
+        --i;
+    }
+    optimalStep = t;
 }
 
 
@@ -207,24 +237,16 @@ void DiscreteFlowIterator<Point, Map>::computeGradient()
     }
 }
 
-
-/*
 template <typename Point, typename Map>
-double DiscreteFlowIteratorEnergy<Point, Map>::computeEnergyHessian(const std::vector<H2TangentVector> &V)
+std::vector<H2TangentVector> DiscreteFlowIterator<Point, Map>::computeEnergyGradient(const std::vector<H2Point> &Y)
 {
 
-    assert(V.size() == nbPoints);
+    assert(Y.size() == nbPoints);
+    std::vector<H2TangentVector> out;
+    out.reserve(Y.size());
 
-    std::vector<H2Point> values;
-    values.reserve(nbPoints);
-    for (const auto &v : V)
-    {
-        values.push_back(v.getRoot());
-    }
-
-
-    std::vector<std::vector<H2Point>> neighborsValuesKicked = neighborsValuesKicked;
-    // Gros porc
+    std::vector<std::vector<H2Point>> neighborsYKicked = this->neighborsValuesKicked;
+    // Gros porc: we just need neighborsYKicked and neighborsValuesKicked to have the same dimensions
 
     uint i=0, j;
     while(i != nbBoundaryPoints)
@@ -232,7 +254,7 @@ double DiscreteFlowIteratorEnergy<Point, Map>::computeEnergyHessian(const std::v
         j=0;
         for (auto neighborIndex : neighborsIndices[i])
         {
-            neighborsValuesKicked[i][j] = boundaryPointsNeighborsPairingsValues[i][j]*values[neighborIndex];
+            neighborsYKicked[i][j] = boundaryPointsNeighborsPairingsValues[i][j]*Y[neighborIndex];
             ++j;
         }
         ++i;
@@ -242,7 +264,58 @@ double DiscreteFlowIteratorEnergy<Point, Map>::computeEnergyHessian(const std::v
         j=0;
         for (auto neighborIndex : neighborsIndices[i])
         {
-            neighborsValuesKicked[i][j] = values[neighborIndex];
+            neighborsYKicked[i][j] = Y[neighborIndex];
+            ++j;
+        }
+        ++i;
+    }
+
+    H2TangentVector v;
+    for (uint i=0; i!=this->nbPoints; ++i)
+    {
+        Y[i].weightedLogSum(neighborsYKicked[i], this->neighborsWeightsEnergy[i], v);
+        out.push_back(-1.0*v);
+    }
+
+    return out;
+
+}
+
+
+template <typename Point, typename Map>
+double DiscreteFlowIterator<Point, Map>::computeEnergyHessian(const std::vector<H2TangentVector> &V)
+{
+
+    assert(V.size() == nbPoints);
+
+    std::vector<H2Point> roots;
+    roots.reserve(nbPoints);
+    for (const auto &v : V)
+    {
+        roots.push_back(v.getRoot());
+    }
+
+
+    std::vector<std::vector<H2Point>> neighborsRootsKicked = this->neighborsValuesKicked;
+    // Gros porc: we just need neighborsRootsKicked and neighborsValuesKicked to have the same dimensions
+
+    uint i=0, j;
+    while(i != nbBoundaryPoints)
+    {
+        j=0;
+        for (auto neighborIndex : neighborsIndices[i])
+        {
+            neighborsRootsKicked[i][j] = boundaryPointsNeighborsPairingsValues[i][j]*roots[neighborIndex];
+            ++j;
+        }
+        ++i;
+    }
+    while (i != nbPoints)
+    {
+        j=0;
+        for (auto neighborIndex : neighborsIndices[i])
+        {
+            neighborsRootsKicked[i][j] = roots[neighborIndex];
             ++j;
         }
         ++i;
@@ -256,22 +329,22 @@ double DiscreteFlowIteratorEnergy<Point, Map>::computeEnergyHessian(const std::v
 
     for (v = 0; v!=nbPoints; ++v)
     {
-        xv = values[v];
+        xv = roots[v];
         uv = V[v];
         for (w=0; w!= neighborsIndices[v].size(); ++w)
         {
-            xw = neighborsValuesKicked[v][w];
+            xw = neighborsRootsKicked[v][w];
             xvxw = H2TangentVector(xv, xw);
             d = H2Point::distance(xv, xw);
             D = d/tanh(d);
-            out += neighborsWeights[v][w]*(D*uv.lengthSquared() + (1-D)*(H2TangentVector::scalProd(uv, xvxw))/(d*d));
+            out += neighborsWeightsEnergy[v][w]*(D*uv.lengthSquared() + (1-D)*(H2TangentVector::scalProd(uv, xvxw))/(d*d));
         }
     }
 
 
     return out;
 }
-*/
+
 
 
 

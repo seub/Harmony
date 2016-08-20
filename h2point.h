@@ -23,7 +23,7 @@ public:
     void setDiskCoordinate(Complex z);
     void setHyperboloidProjection(Complex z);
     void setKleinCoordinate(Complex z);
-    void weightedLogSum(const std::vector<H2Point> & points, const std::vector<double> & weights, H2TangentVector & output);
+    void weightedLogSum(const std::vector<H2Point> & points, const std::vector<double> & weights, H2TangentVector & output) const;
 
     static double distance(const H2Point & p1, const H2Point & p2);
     static H2Point midpoint(const H2Point & p1, const H2Point & p2);

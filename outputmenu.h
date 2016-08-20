@@ -17,7 +17,7 @@ class OutputMenu : public QGroupBox
     friend class ActionHandler;
 
 public:
-    enum FlowChoice {FLOW_CHOICE, FLOW_CENTROID, FLOW_ENERGY_CONSTANT_STEP};
+    enum FlowChoice {FLOW_CHOICE, FLOW_CENTROID, FLOW_ENERGY_CONSTANT_STEP, FLOW_ENERGY_OPTIMAL_STEP};
 
     OutputMenu() = delete;
     OutputMenu(const OutputMenu &) = delete;

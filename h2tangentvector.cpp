@@ -120,6 +120,18 @@ double H2TangentVector::scalProd(const H2TangentVector &v1, const H2TangentVecto
     return (4.0/(d*d))*real(v1.vector*conj(v2.vector));
 }
 
+double H2TangentVector::scalProd(const std::vector<H2TangentVector> &V1, const std::vector<H2TangentVector> &V2)
+{
+    assert(V1.size() == V2.size());
+    double out = 0.0;
+    for (uint j=0;j<V1.size();++j)
+    {
+        out += scalProd(V1[j],V2[j]);
+    }
+
+    return out;
+}
+
 H2Point H2TangentVector::getRoot() const
 {
     return root;
@@ -176,3 +188,23 @@ std::vector<H2Point> H2TangentVector::exponentiate(const std::vector<H2TangentVe
     }
     return out;
 }
+
+H2TangentVector H2TangentVector::parallelTransport(H2TangentVector v)
+{
+    return v.parallelTransport(1.0);
+}
+
+std::vector<H2TangentVector> H2TangentVector::parallelTransport(const std::vector<H2TangentVector> &V)
+{
+    std::vector<H2TangentVector> out;
+    out.reserve(V.size());
+    for (const auto & v : V)
+    {
+        out.push_back(H2TangentVector::parallelTransport(v));
+    }
+    return out;
+}
+
+
+
+
