@@ -175,7 +175,7 @@ void DiscreteFlowIterator<Point, Map>::updateValuesEnergyConstantStep()
     this->oldValues = this->newValues;
 
     computeGradient();
-    this->newValues = H2TangentVector::exponentiate(-constantStep*gradient);
+    this->newValues = H2TangentVector::exponentiate(-1.0*constantStep,gradient);
     this->refreshNeighborsValuesKicked();
 }
 
@@ -188,7 +188,7 @@ void DiscreteFlowIterator<Point, Map>::updateValuesEnergyOptimalStep()
     computeGradient();
     lineSearch();
     std::cout << "optimalStep = " << optimalStep << std::endl;
-    this->newValues = H2TangentVector::exponentiate(-optimalStep*gradient);
+    this->newValues = H2TangentVector::exponentiate(-1.0*optimalStep,gradient);
     this->refreshNeighborsValuesKicked();
 }
 
@@ -207,9 +207,9 @@ void DiscreteFlowIterator<Point, Map>::lineSearch()
     while (i > 0)
     {
         std::cout << "Alice" << std::endl;
-        yt = H2TangentVector::exponentiate(-t*gradient);
+        yt = H2TangentVector::exponentiate(-1.0*t,gradient);
         std::cout << "Bob" << std::endl;
-        dyt = H2TangentVector::parallelTransport(-t*gradient);
+        dyt = H2TangentVector::parallelTransport(-1.0*t,gradient);
         std::cout << "Chris" << std::endl;
         dphit = H2TangentVector::scalProd(computeEnergyGradient(yt),dyt);
         std::cout << "t = " << t << std::endl;

@@ -25,7 +25,7 @@ H2TangentVector::H2TangentVector(const H2Point &root) : root(root)
     vector = Complex(0.0,0.0);
 }
 
-H2Point H2TangentVector::exponentiate() const
+H2Point H2TangentVector::exponentiateOld() const
 {
     double t=length();
     Complex z1 = tanh(t/2)*vector/std::abs(vector);
@@ -40,8 +40,12 @@ H2Point H2TangentVector::exponentiate() const
     return H2Point::fromDiskCoordinate(z2);
 }
 
+H2Point H2TangentVector::exponentiate() const
+{
+    return exponentiate(1.0);
+}
 
-H2Point H2TangentVector::exponentiateBetter() const
+H2Point H2TangentVector::exponentiate(const double & t) const
 {
     double L,lambda,absZ,absV;
     Complex z,v,outputV;
@@ -50,18 +54,38 @@ H2Point H2TangentVector::exponentiateBetter() const
     v = vector;
     absZ = std::abs(z);
     absV = std::abs(v);
-    L = length();
+    L = std::abs(t)*length();
+
+    Complex u = t >= 0 ? v/absV : -1.0*v/absV;
     //lambda = (((1.0-absZ)*exp(L/2.0)) - (1.0+absZ)*exp(-L/2.0))/(((1.0-absZ)*exp(L/2.0)) + (1.0+absZ)*exp(-L/2.0));
-    lambda = (((1.0-absZ)*exp(L)) - (1.0+absZ))/(((1.0-absZ)*exp(L)) + (1.0+absZ));
-    outputV = ((z*absV*((lambda*absZ) + 1.0))+(v*(lambda+absZ)))/((absV*(lambda*absZ+1.0))+(v*conj(z)*(lambda+absZ)));
+    lambda = ((1.0-absZ) - ((1.0+absZ)*exp(-1.0*L)))/((1.0-absZ) + ((1.0+absZ)*exp(-1.0*L)));
+    outputV = ((z*((lambda*absZ) + 1.0))+(u*(lambda+absZ)))/((lambda*absZ+1.0)+(u*conj(z)*(lambda+absZ)));
     output.setDiskCoordinate(outputV);
     return output;
 }
 
-H2TangentVector H2TangentVector::parallelTransport(const double &t)
+H2Point H2TangentVector::exponentiate(const double &t, const H2TangentVector &v)
+{
+    return v.exponentiate(t);
+}
+
+std::vector<H2Point> H2TangentVector::exponentiate(const double &t, const std::vector<H2TangentVector> &V)
+{
+    std::vector<H2Point> out;
+    out.reserve(V.size());
+
+    for (const auto & v : V)
+    {
+        out.push_back(v.exponentiate(t));
+    }
+
+    return out;
+}
+
+H2TangentVector H2TangentVector::parallelTransportOld(const double &t) const
 {
     H2Point y0 = root;
-    H2Point yt = (t*(*this)).exponentiate();
+    H2Point yt = exponentiate(t);
     H2Isometry f;
     f.setDiskCoordinates(Complex(1.0,0.0), y0.getDiskCoordinate());
 
@@ -71,32 +95,26 @@ H2TangentVector H2TangentVector::parallelTransport(const double &t)
 }
 
 
-H2TangentVector H2TangentVector::parallelTransportBetter(const double &t)
+H2TangentVector H2TangentVector::parallelTransport(const double &t) const
 {
     H2Point y0 = root;
-    H2Point yt = (t*(*this)).exponentiateBetter();
+    H2Point yt = exponentiate(t);
     Complex z,v,outV;
     double L,absV;
 
     z = y0.getDiskCoordinate();
     v = vector;
     absV = std::abs(v);
-    L = t*length();
+    // Absolute value t?
+    L = std::abs(t)*length();
 
-    Complex thing;
-
-    thing = absV*cosh(L/2)+v*conj(z)*sinh(L/2);
-    outV = vector*norm(v)/(thing*thing);
+    Complex u = t >= 0 ? v/absV : -1.0*v/absV;
+    Complex thing = cosh(L/2)+u*conj(z)*sinh(L/2);
+    outV = v/(thing*thing);
 
     H2TangentVector output(yt,outV);
     return output;
 
-    /*H2Isometry f;
-    f.setDiskCoordinates(Complex(1.0,0.0), y0.getDiskCoordinate());
-
-    H2TangentVector u(f*yt, (1.0 - norm((f*yt).getDiskCoordinate())) * ((f*(*this)).vector));
-
-    return (f.inverse())*u;*/
 }
 
 
@@ -172,35 +190,19 @@ H2TangentVector operator+(const H2TangentVector & v1, const H2TangentVector & v2
     return H2TangentVector(v1.root,v1.vector+v2.vector);
 }
 
-H2Point H2TangentVector::exponentiate(const H2TangentVector &v)
+
+H2TangentVector H2TangentVector::parallelTransport(const double &t, const H2TangentVector &v)
 {
-    return v.exponentiate();
+    return v.parallelTransport(t);
 }
 
-std::vector<H2Point> H2TangentVector::exponentiate(const std::vector<H2TangentVector> &V)
-{
-    std::vector<H2Point> out;
-    out.reserve(V.size());
-
-    for (const auto &v : V)
-    {
-        out.push_back(v.exponentiate());
-    }
-    return out;
-}
-
-H2TangentVector H2TangentVector::parallelTransport(H2TangentVector v)
-{
-    return v.parallelTransport(1.0);
-}
-
-std::vector<H2TangentVector> H2TangentVector::parallelTransport(const std::vector<H2TangentVector> &V)
+std::vector<H2TangentVector> H2TangentVector::parallelTransport(const double &t, const std::vector<H2TangentVector> &V)
 {
     std::vector<H2TangentVector> out;
     out.reserve(V.size());
     for (const auto & v : V)
     {
-        out.push_back(H2TangentVector::parallelTransport(v));
+        out.push_back(v.parallelTransport(t));
     }
     return out;
 }
