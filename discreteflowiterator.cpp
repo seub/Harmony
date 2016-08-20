@@ -141,7 +141,7 @@ void DiscreteFlowIterator<Point, Map>::updateValuesCentroid()
         this->newValues[i] = H2Point::centroid(this->neighborsValuesKicked[i], this->neighborsWeightsCentroid[i]);
     }
 
-	this->refreshNeighborsValuesKicked();
+    this->refreshNeighborsValuesKicked();
 }
 
 
@@ -201,26 +201,35 @@ void DiscreteFlowIterator<Point, Map>::lineSearch()
     
     double step = 1.0;
     double dphit,ddphit,t = 0.0;
+    double error;
 
-    uint i = 5;
+    uint i=0, max = 5;
     
-    while (i > 0)
+    while (i != max)
     {
-        std::cout << "Alice" << std::endl;
-        yt = H2TangentVector::exponentiate(-1.0*t,gradient);
-        std::cout << "Bob" << std::endl;
-        dyt = H2TangentVector::parallelTransport(-1.0*t,gradient);
-        std::cout << "Chris" << std::endl;
+        std::cout << "linesearch iteration i = " << i << std::endl;
+
+
+
+        yt = H2TangentVector::exponentiate(t,-1.0*gradient);
+        dyt = H2TangentVector::parallelTransport(t,-1.0*gradient);
+
         dphit = H2TangentVector::scalProd(computeEnergyGradient(yt),dyt);
-        std::cout << "t = " << t << std::endl;
+
 
         ddphit = computeEnergyHessian(dyt);
+        std::cout << "dphit = " << dphit << std::endl;
+        std::cout << "ddphit = " << ddphit << std::endl;
 
 
 
         t = t - step*(dphit/ddphit);
 
-        --i;
+        error = std::abs(step*dphit/ddphit);
+
+        std::cout << "t = " << t << std::endl;
+
+        ++i;
     }
     optimalStep = t;
 }

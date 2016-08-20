@@ -97,18 +97,18 @@ H2TangentVector H2TangentVector::parallelTransportOld(const double &t) const
 
 H2TangentVector H2TangentVector::parallelTransport(const double &t) const
 {
-    H2Point y0 = root;
     H2Point yt = exponentiate(t);
-    Complex z,v,outV;
+    Complex v,outV;
     double L,absV;
 
-    z = y0.getDiskCoordinate();
+    Complex z = root.getDiskCoordinate();
     v = vector;
     absV = std::abs(v);
     // Absolute value t?
     L = std::abs(t)*length();
 
     Complex u = t >= 0 ? v/absV : -1.0*v/absV;
+    //Complex u = v/absV;
     Complex thing = cosh(L/2)+u*conj(z)*sinh(L/2);
     outV = v/(thing*thing);
 
