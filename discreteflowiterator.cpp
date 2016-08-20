@@ -197,40 +197,33 @@ template <typename Point, typename Map>
 void DiscreteFlowIterator<Point, Map>::lineSearch()
 {
     std::vector<H2Point> yt;
-    std::vector<H2TangentVector> dyt;
+    std::vector<H2TangentVector> v0 = -1.0*gradient, vt;
     
     double step = 1.0;
     double dphit,ddphit,t = 0.0;
-    double error;
+    double maxError = 0.01, error;
 
-    uint i=0, max = 5;
+    uint i=0, maxIterations=5;
     
-    while (i != max)
+    do
     {
-        std::cout << "linesearch iteration i = " << i << std::endl;
+
+        yt = H2TangentVector::exponentiate(t,v0);
+        vt = H2TangentVector::parallelTransport(t,v0);
+
+        dphit = H2TangentVector::scalProd(computeEnergyGradient(yt),vt);
 
 
-
-        yt = H2TangentVector::exponentiate(t,-1.0*gradient);
-        dyt = H2TangentVector::parallelTransport(t,-1.0*gradient);
-
-        dphit = H2TangentVector::scalProd(computeEnergyGradient(yt),dyt);
-
-
-        ddphit = computeEnergyHessian(dyt);
-        std::cout << "dphit = " << dphit << std::endl;
-        std::cout << "ddphit = " << ddphit << std::endl;
-
-
+        ddphit = computeEnergyHessian(vt);
 
         t = t - step*(dphit/ddphit);
 
         error = std::abs(step*dphit/ddphit);
 
-        std::cout << "t = " << t << std::endl;
-
         ++i;
-    }
+
+    } while (i < maxIterations && error > maxError);
+
     optimalStep = t;
 }
 

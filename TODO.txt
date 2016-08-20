@@ -44,6 +44,7 @@ and use the algorithm to embed it "harmonically" on the surface.
 10. Improve triangulations by adding points to the cuts?
 
 11. Attempt optimalStep with *different* steps at different mesh points.
+12. Optimization using Newton's method to minimize Energy.
 
 
 ************************* OPTIMIZATION ***************************

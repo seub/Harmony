@@ -104,11 +104,10 @@ H2TangentVector H2TangentVector::parallelTransport(const double &t) const
     Complex z = root.getDiskCoordinate();
     v = vector;
     absV = std::abs(v);
-    // Absolute value t?
-    L = std::abs(t)*length();
+    // Absolute value t? NO.
+    L = t*length();
 
-    Complex u = t >= 0 ? v/absV : -1.0*v/absV;
-    //Complex u = v/absV;
+    Complex u = v/absV;
     Complex thing = cosh(L/2)+u*conj(z)*sinh(L/2);
     outV = v/(thing*thing);
 

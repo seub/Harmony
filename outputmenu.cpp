@@ -118,6 +118,8 @@ void OutputMenu::resetMenu(bool fullReset)
     showLiveLabel->setEnabled(true);
     showLiveCheckbox->setEnabled(true);
 
+    enableRunButtons(flowComboBox->currentIndex() != FLOW_CHOICE);
+
 
 	if (fullReset)
 	{
