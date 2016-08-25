@@ -49,7 +49,7 @@ More generally, get the exception handling ready to work (catch errors in MainAp
 ************************* APPLICATIONS ***************************
 
 Other people:
-- Daniele Alessandrini's idea to test Goldman conjecture (about affine sphere or something)
+- Daniele Alessandrini's idea to test Goldman conjecture (about affine sphere or something) (the other surface is koszul winberg)
 - Show a path of harmonic maps when moving between components of the SL2R character variety.
 - Jean-Marc's question about convexity (and the Weil-Petersson metric)
 
