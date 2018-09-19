@@ -45,6 +45,9 @@ More generally, get the exception handling ready to work (catch errors in MainAp
 12. Optimization using Newton's method to minimize Energy.
 13. See section PAPER.
 14. Implementation with flat structures in the domain (making triangulation easier)
+15. Implementation with SL(3,R) coordinates in target and Goldman coordinates
+16. Implementation with SO(2,2) -> ADS(3)
+
 
 ************************* APPLICATIONS ***************************
 
