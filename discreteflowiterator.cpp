@@ -14,7 +14,7 @@ DiscreteFlowIterator<Point, Map>::DiscreteFlowIterator(const LiftedGraphFunction
     initialValues(initialFunction->getValues()),
     outputFunction(initialFunction->cloneCopyConstruct())
 {
-    constantStep=0.04;
+    constantStep=0.054;
     reset();
 }
 
@@ -187,7 +187,7 @@ void DiscreteFlowIterator<Point, Map>::updateValuesEnergyOptimalStep()
 
     computeGradient();
     lineSearch();
-    std::cout << "optimalStep = " << optimalStep << std::endl;
+//    std::cout << "optimalStep = " << optimalStep << std::endl;
     this->newValues = H2TangentVector::exponentiate(-1.0*optimalStep,gradient);
     this->refreshNeighborsValuesKicked();
 }
