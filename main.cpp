@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 
 
 
-    return MainApplication(argc, argv).exec();
+/*    return MainApplication(argc, argv).exec(); */
 
     DiscreteGroup Gamma(TopologicalSurface(2, 0));
 
@@ -25,9 +25,8 @@ int main(int argc, char *argv[])
     FenchelNielsenConstructor FN(lengths,twists);
 
 
-    rhoDomain = FN.getRepresentation();
-    rhoImage.setNiceRepresentation();
-
+    rhoDomain.setNiceRepresentation();
+    rhoImage = FN.getRepresentation();
 
     LiftedGraphFunctionTriangulated<H2Point, H2Isometry> graph(rhoDomain, rhoImage, 4);
     DiscreteFlowIterator<H2Point,H2Isometry> iterator(& graph);
@@ -57,7 +56,7 @@ int main(int argc, char *argv[])
         DiscreteFlowIterator<H2Point,H2Isometry> iterator(& graph);
     }
 */
-/*
+
     eps=1.0;
     while(eps > std::pow(10.0,-10))
     {
@@ -68,7 +67,7 @@ int main(int argc, char *argv[])
     }
     std::cout<<"The number of iterations for constant step = "<<N<<std::endl;
     std::cout<<std::endl;
-*/
+
 
 
 /*
