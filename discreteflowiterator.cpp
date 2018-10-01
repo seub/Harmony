@@ -14,7 +14,7 @@ DiscreteFlowIterator<Point, Map>::DiscreteFlowIterator(const LiftedGraphFunction
     initialValues(initialFunction->getValues()),
     outputFunction(initialFunction->cloneCopyConstruct())
 {
-    constantStep=0.01;
+    constantStep=0.04;
     reset();
 }
 
