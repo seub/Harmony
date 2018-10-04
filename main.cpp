@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
         energyError = 1.0;
         N = 0;
 
-        while(eps > std::pow(10.0,-10) && N < maxIterations && energyError > std::pow(10.0,-8))
+        while(eps > std::pow(10.0,-10) && N < maxIterations && energyError > std::pow(10.0,-5))
         {
             iterator.iterate(OutputMenu::FLOW_CENTROID);
             eps = iterator.updateSupDelta();
@@ -50,13 +50,13 @@ int main(int argc, char *argv[])
             N += 1;
         }
         energy = iterator.getEnergy();
-        std::cout<<"With length = "<< lengths[2] <<", iterations (optimal step) = "
+        std::cout<<"With length = "<< lengths[2] <<", iterations (centroid) = "
                 <<N<<", energy = "<<energy<<", energy error ="<<energyError<<std::endl;
         iterator.reset();
         N=0;
         energyError = 1.0;
         eps=1.0;
-        while(eps > std::pow(10.0,-10) && N < maxIterations && energyError > std::pow(10.0,-8))
+        while(eps > std::pow(10.0,-10) && N < maxIterations && energyError > std::pow(10.0,-5))
         {
             iterator.iterate(OutputMenu::FLOW_ENERGY_CONSTANT_STEP);
             eps = iterator.updateSupDelta();
@@ -65,14 +65,14 @@ int main(int argc, char *argv[])
             N += 1;
         }
         energy = iterator.getEnergy();
-        std::cout<<"With length = "<< lengths[2] <<", iterations (optimal step) = "
+        std::cout<<"With length = "<< lengths[2] <<", iterations (constant step) = "
                 <<N<<", energy = "<<energy<<", energy error ="<<energyError<<std::endl;
         iterator.reset();
         N=0;
         energyError = 1.0;
         eps=1.0;
 
-        while(eps > std::pow(10.0,-10) && N < maxIterations && energyError > std::pow(10.0,-8))
+        while(eps > std::pow(10.0,-10) && N < maxIterations && energyError > std::pow(10.0,-5))
         {
             iterator.iterate(OutputMenu::FLOW_ENERGY_OPTIMAL_STEP);
             eps = iterator.updateSupDelta();
