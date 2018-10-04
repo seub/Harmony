@@ -16,6 +16,8 @@ public:
     void iterate(int flowChoice, uint nbIterations);
     void getOutputFunction(LiftedGraphFunction<Point, Map> *outputFunction);
     double updateSupDelta();
+    double getEnergy();
+    double updateEnergyError();
     void reset();
 
 
@@ -28,6 +30,7 @@ protected:
     void updateValuesEnergyConstantStep();
     void updateValuesEnergyOptimalStep();
     void computeGradient();
+
     
     std::vector<H2TangentVector> computeEnergyGradient(const std::vector<H2Point> &Y);
 
@@ -49,7 +52,7 @@ protected:
 
     const std::unique_ptr<LiftedGraphFunction<Point, Map> > outputFunction;
 
-    double supDelta;
+    double supDelta, oldEnergy, newEnergy, energyError;
     std::vector<double> errors;
 };
 

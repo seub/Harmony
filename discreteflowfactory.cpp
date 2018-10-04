@@ -229,6 +229,14 @@ template<typename Point, typename Map>
 void DiscreteFlowFactory<Point, Map>::updateSupError()
 {
     supError = 2.0*iterator->updateSupDelta()/(minDomainEdgeLength*minDomainEdgeLength);
+
+    energyError = iterator->updateEnergyError();
+/*
+    if (energyError > 0.0)
+    {
+        throw(QString("Error in DiscreteFlowFactory<Point, Map>::updateSupError: Energy went up"));
+    }
+*/
 }
 
 template<typename Point, typename Map>

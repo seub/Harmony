@@ -15,6 +15,7 @@ DiscreteFlowIterator<Point, Map>::DiscreteFlowIterator(const LiftedGraphFunction
     outputFunction(initialFunction->cloneCopyConstruct())
 {
     constantStep=0.054;
+    newEnergy=0.0;
     reset();
 }
 
@@ -216,15 +217,55 @@ void DiscreteFlowIterator<Point, Map>::lineSearch()
 
         ddphit = computeEnergyHessian(vt);
 
+
+
         t = t - step*(dphit/ddphit);
 
         error = std::abs(step*dphit/ddphit);
+//        std::cout<<"dphit = "<<dphit<<std::endl;
+//        std::cout<<"ddphit = "<<ddphit<<std::endl;
+//        std::cout<<"error = "<<error<<std::endl;
+//        std::cout<<"t = "<<t<<std::endl;
 
         ++i;
 
     } while (i < maxIterations && error > maxError);
 
     optimalStep = t;
+}
+
+template <typename Point, typename Map>
+double DiscreteFlowIterator<Point, Map>::getEnergy()
+{
+    return newEnergy;
+}
+
+
+
+
+template <typename Point, typename Map>
+double DiscreteFlowIterator<Point, Map>::updateEnergyError()
+{
+    oldEnergy = newEnergy;
+
+    double out=0.0, weight, d;
+    H2Point Xi, neighbor;
+    for (uint i=0; i!=this->nbPoints; ++i)
+    {
+        Xi = this->newValues[i];
+
+        for (uint j=0; j!=(neighborsValuesKicked[i].size()); ++j)
+        {
+            neighbor = this->neighborsValuesKicked[i][j];
+            weight = this->neighborsWeightsEnergy[i][j];
+
+            d = H2Point::distance(Xi,neighbor);
+            out += weight*d*d;
+        }
+    }
+    newEnergy = .5*out;
+    energyError = newEnergy - oldEnergy;
+    return energyError;
 }
 
 
