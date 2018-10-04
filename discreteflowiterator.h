@@ -17,6 +17,7 @@ public:
     void getOutputFunction(LiftedGraphFunction<Point, Map> *outputFunction);
     double updateSupDelta();
     double getEnergy();
+    double updateEnergyError();
     void reset();
 
 
@@ -51,7 +52,7 @@ protected:
 
     const std::unique_ptr<LiftedGraphFunction<Point, Map> > outputFunction;
 
-    double supDelta;
+    double supDelta, oldEnergy, newEnergy, energyError;
     std::vector<double> errors;
 };
 

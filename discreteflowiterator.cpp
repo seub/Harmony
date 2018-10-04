@@ -15,6 +15,7 @@ DiscreteFlowIterator<Point, Map>::DiscreteFlowIterator(const LiftedGraphFunction
     outputFunction(initialFunction->cloneCopyConstruct())
 {
     constantStep=0.054;
+    newEnergy=0.0;
     reset();
 }
 
@@ -233,15 +234,25 @@ void DiscreteFlowIterator<Point, Map>::lineSearch()
     optimalStep = t;
 }
 
-
 template <typename Point, typename Map>
 double DiscreteFlowIterator<Point, Map>::getEnergy()
 {
+    return newEnergy;
+}
+
+
+
+
+template <typename Point, typename Map>
+double DiscreteFlowIterator<Point, Map>::updateEnergyError()
+{
+    oldEnergy = newEnergy;
+
     double out=0.0, weight, d;
     H2Point Xi, neighbor;
     for (uint i=0; i!=this->nbPoints; ++i)
     {
-        Xi = this->oldValues[i];
+        Xi = this->newValues[i];
 
         for (uint j=0; j!=(neighborsValuesKicked[i].size()); ++j)
         {
@@ -252,7 +263,9 @@ double DiscreteFlowIterator<Point, Map>::getEnergy()
             out += weight*d*d;
         }
     }
-    return 0.5*out;
+    newEnergy = .5*out;
+    energyError = newEnergy - oldEnergy;
+    return energyError;
 }
 
 

@@ -28,8 +28,8 @@ int main(int argc, char *argv[])
     double eps = 1.0;
     int N = 0;
 
-    int maxIterations = 20000;
-    double energy;
+    int maxIterations = 12000;
+    double energy, energyError=100.0;
 
     for(uint i=0; i<25; i++)
     {
@@ -38,40 +38,51 @@ int main(int argc, char *argv[])
         LiftedGraphFunctionTriangulated<H2Point, H2Isometry> graph(rhoDomain, rhoImage, 4);
         DiscreteFlowIterator<H2Point,H2Isometry> iterator(& graph);
         eps = 1.0;
+        energyError = 1.0;
         N = 0;
-        while(eps > std::pow(10.0,-10) && N < maxIterations)
+
+        while(eps > std::pow(10.0,-10) && N < maxIterations && energyError > std::pow(10.0,-8))
         {
             iterator.iterate(OutputMenu::FLOW_CENTROID);
             eps = iterator.updateSupDelta();
+            energyError = iterator.updateEnergyError();
+            energyError = std::abs(energyError);
             N += 1;
         }
         energy = iterator.getEnergy();
-        std::cout<<"With length = "<< lengths[2] <<", the number of iterations for centroid = "
-                <<N<<" and terminated with energy = "<<energy<<std::endl;
+        std::cout<<"With length = "<< lengths[2] <<", iterations (optimal step) = "
+                <<N<<", energy = "<<energy<<", energy error ="<<energyError<<std::endl;
         iterator.reset();
         N=0;
+        energyError = 1.0;
         eps=1.0;
-        while(eps > std::pow(10.0,-10) && N < maxIterations)
+        while(eps > std::pow(10.0,-10) && N < maxIterations && energyError > std::pow(10.0,-8))
         {
             iterator.iterate(OutputMenu::FLOW_ENERGY_CONSTANT_STEP);
             eps = iterator.updateSupDelta();
+            energyError = iterator.updateEnergyError();
+            energyError = std::abs(energyError);
             N += 1;
         }
         energy = iterator.getEnergy();
-        std::cout<<"With length = "<< lengths[2] <<", the number of iterations for constant step = "
-                <<N<<" and terminated with energy = "<<energy<<std::endl;
+        std::cout<<"With length = "<< lengths[2] <<", iterations (optimal step) = "
+                <<N<<", energy = "<<energy<<", energy error ="<<energyError<<std::endl;
         iterator.reset();
         N=0;
+        energyError = 1.0;
         eps=1.0;
-        while(eps > std::pow(10.0,-10) && N < maxIterations)
+
+        while(eps > std::pow(10.0,-10) && N < maxIterations && energyError > std::pow(10.0,-8))
         {
             iterator.iterate(OutputMenu::FLOW_ENERGY_OPTIMAL_STEP);
             eps = iterator.updateSupDelta();
+            energyError = iterator.updateEnergyError();
+            energyError = std::abs(energyError);
             N += 1;
         }
         energy = iterator.getEnergy();
-        std::cout<<"With length = "<< lengths[2] <<", the number of iterations for optimal step = "
-                <<N<<" and terminated with energy = "<<energy<<std::endl;
+        std::cout<<"With length = "<< lengths[2] <<", iterations (optimal step) = "
+                <<N<<", energy = "<<energy<<", energy error ="<<energyError<<std::endl;
 
         std::cout<<std::endl;
 

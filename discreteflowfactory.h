@@ -35,6 +35,7 @@ public:
     bool isDomainFunctionInitialized(uint &nbMeshPointsOut);
 
     double getSupError() const {return supError;}
+    double getEnergyError() const {return energyError;}
     void updateSupError();
     double getTolerance() const;
 
@@ -68,7 +69,7 @@ private:
     LiftedGraphFunctionTriangulated<Point, Map> *imageFunction;
     std::unique_ptr<DiscreteFlowIterator<Point, Map> > iterator;
     uint nbIterations;
-    double minDomainEdgeLength, supError, tolerance;
+    double minDomainEdgeLength, supError, energyError, tolerance;
 
     int flowChoice;
 
