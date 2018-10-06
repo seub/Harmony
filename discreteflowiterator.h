@@ -16,9 +16,16 @@ public:
     void iterate(int flowChoice, uint nbIterations);
     void getOutputFunction(LiftedGraphFunction<Point, Map> *outputFunction);
     double updateSupDelta();
-    double getEnergy();
-    double updateEnergyError();
+
+    void updateEnergy();
+    double getEnergy() const;
+    double getEnergyError();
+
     void reset();
+
+//    double lineSearchTest();
+//    void undoIterate();
+//    void updateValuesEnergyGivenStep(const double & step);
 
 
     Point getValue(uint index) const {return newValues.at(index);}
@@ -30,6 +37,8 @@ protected:
     void updateValuesEnergyConstantStep();
     void updateValuesEnergyOptimalStep();
     void computeGradient();
+
+
 
     
     std::vector<H2TangentVector> computeEnergyGradient(const std::vector<H2Point> &Y);

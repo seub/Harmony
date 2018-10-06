@@ -41,9 +41,25 @@ double H2DiscreteFlowFactoryThread::getSupError() const
     return factory.getSupError();
 }
 
+double H2DiscreteFlowFactoryThread::getEnergyError() const
+{
+    return factory.getEnergyError();
+}
+
 void H2DiscreteFlowFactoryThread::updateSupError()
 {
     factory.updateSupError();
+}
+
+void H2DiscreteFlowFactoryThread::updateEnergyError()
+{
+    factory.updateEnergyError();
+}
+
+void H2DiscreteFlowFactoryThread::updateErrors()
+{
+    updateSupError();
+    updateEnergyError();
 }
 
 double H2DiscreteFlowFactoryThread::getTolerance() const

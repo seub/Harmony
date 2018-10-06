@@ -84,6 +84,7 @@ void DiscreteFlowIterator<Point, Map>::iterate(int flowChoice)
         throw(QString("Error in DiscreteFlowIterator: No legal flowChoice made."));
         break;
     }
+//    updateEnergy();
 }
 
 
@@ -181,6 +182,9 @@ void DiscreteFlowIterator<Point, Map>::updateValuesEnergyConstantStep()
 }
 
 
+
+
+
 template <typename Point, typename Map>
 void DiscreteFlowIterator<Point, Map>::updateValuesEnergyOptimalStep()
 {
@@ -200,11 +204,11 @@ void DiscreteFlowIterator<Point, Map>::lineSearch()
     std::vector<H2Point> yt;
     std::vector<H2TangentVector> v0 = -1.0*gradient, vt;
     
-    double step = 1.0;
+    double step = 0.1;
     double dphit,ddphit,t = 0.0;
     double maxError = 0.01, error;
 
-    uint i=0, maxIterations=5;
+    uint i=0, maxIterations=20;
     
     do
     {
@@ -222,11 +226,12 @@ void DiscreteFlowIterator<Point, Map>::lineSearch()
         t = t - step*(dphit/ddphit);
 
         error = std::abs(step*dphit/ddphit);
-//        std::cout<<"dphit = "<<dphit<<std::endl;
-//        std::cout<<"ddphit = "<<ddphit<<std::endl;
-//        std::cout<<"error = "<<error<<std::endl;
-//        std::cout<<"t = "<<t<<std::endl;
-
+/*
+        std::cout<<"dphit = "<<dphit<<std::endl;
+        std::cout<<"ddphit = "<<ddphit<<std::endl;
+        std::cout<<"error = "<<error<<std::endl;
+        std::cout<<"t = "<<t<<std::endl;
+*/
         ++i;
 
     } while (i < maxIterations && error > maxError);
@@ -234,17 +239,82 @@ void DiscreteFlowIterator<Point, Map>::lineSearch()
     optimalStep = t;
 }
 
+
+
+/*
 template <typename Point, typename Map>
-double DiscreteFlowIterator<Point, Map>::getEnergy()
+double DiscreteFlowIterator<Point, Map>::lineSearchTest()
 {
-    return newEnergy;
+    computeGradient();
+
+    std::vector<H2Point> yt;
+    std::vector<H2TangentVector> v0 = -1.0*gradient, vt;
+
+    double step = 1.0;
+    double dphit,ddphit, t = 0.0;
+    double maxError = 0.01, error;
+
+    uint i=0, maxIterations=5;
+
+    do
+    {
+
+        yt = H2TangentVector::exponentiate(t,v0);
+        vt = H2TangentVector::parallelTransport(t,v0);
+
+        dphit = H2TangentVector::scalProd(computeEnergyGradient(yt),vt);
+
+
+        ddphit = computeEnergyHessian(vt);
+
+
+
+        t = t - step*(dphit/ddphit);
+
+        error = std::abs(step*dphit/ddphit);
+
+        std::cout<<"dphit = "<<dphit<<std::endl;
+        std::cout<<"ddphit = "<<ddphit<<std::endl;
+        std::cout<<"error = "<<error<<std::endl;
+        std::cout<<"t = "<<t<<std::endl;
+
+
+        ++i;
+
+    } while (i < maxIterations && error > maxError);
+
+    std::cout<<"optimalStep was = "<<t<<std::endl;
+    return t;
 }
 
 
 
+template <typename Point, typename Map>
+void DiscreteFlowIterator<Point, Map>::updateValuesEnergyGivenStep(const double & step)
+{
+    this->oldValues = this->newValues;
+
+    computeGradient();
+    this->newValues = H2TangentVector::exponentiate(-1.0*step,gradient);
+    this->refreshNeighborsValuesKicked();
+    updateEnergy();
+}
+
+
 
 template <typename Point, typename Map>
-double DiscreteFlowIterator<Point, Map>::updateEnergyError()
+void DiscreteFlowIterator<Point, Map>::undoIterate()
+{
+    this->newValues = this->oldValues;
+    newEnergy = oldEnergy;
+}
+*/
+
+
+
+
+template <typename Point, typename Map>
+void DiscreteFlowIterator<Point, Map>::updateEnergy()
 {
     oldEnergy = newEnergy;
 
@@ -265,6 +335,20 @@ double DiscreteFlowIterator<Point, Map>::updateEnergyError()
     }
     newEnergy = .5*out;
     energyError = newEnergy - oldEnergy;
+}
+
+
+template <typename Point, typename Map>
+double DiscreteFlowIterator<Point, Map>::getEnergy() const
+{
+    return newEnergy;
+}
+
+
+template <typename Point, typename Map>
+double DiscreteFlowIterator<Point, Map>::getEnergyError()
+{
+    updateEnergy();
     return energyError;
 }
 
