@@ -37,6 +37,7 @@ public:
     double getSupError() const {return supError;}
     double getEnergyError() const {return energyError;}
     void updateSupError();
+    void updateEnergyError();
     double getTolerance() const;
 
     void setFlowChoice(int flowChoice);

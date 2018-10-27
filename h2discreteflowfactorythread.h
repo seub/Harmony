@@ -22,6 +22,9 @@ public:
 
     uint getNbIterations() const;
     void updateSupError();
+    void updateEnergyError();
+    void updateErrors();
+    double getEnergyError() const;
     double getSupError() const;
     double getTolerance() const;
     void setFlowChoice(int flowChoice);
