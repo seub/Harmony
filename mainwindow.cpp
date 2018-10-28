@@ -16,7 +16,7 @@
 
 MainWindow::MainWindow(ActionHandler *handler)
 {
-    setWindowTitle(tr("Equivariant Harmonic Maps"));
+    setWindowTitle(tr("Harmony"));
 
 
     //QIcon icon(":/images/icon.png");
