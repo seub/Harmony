@@ -14,7 +14,7 @@ DiscreteFlowIterator<Point, Map>::DiscreteFlowIterator(const LiftedGraphFunction
     initialValues(initialFunction->getValues()),
     outputFunction(initialFunction->cloneCopyConstruct())
 {
-    constantStep=0.054;
+    constantStep=0.04;
     newEnergy=0.0;
     reset();
 }
@@ -238,80 +238,6 @@ void DiscreteFlowIterator<Point, Map>::lineSearch()
 
     optimalStep = t;
 }
-
-
-
-/*
-template <typename Point, typename Map>
-double DiscreteFlowIterator<Point, Map>::lineSearchTest()
-{
-    computeGradient();
-
-    std::vector<H2Point> yt;
-    std::vector<H2TangentVector> v0 = -1.0*gradient, vt;
-
-    double step = 1.0;
-    double dphit,ddphit, t = 0.0;
-    double maxError = 0.01, error;
-
-    uint i=0, maxIterations=5;
-
-    do
-    {
-
-        yt = H2TangentVector::exponentiate(t,v0);
-        vt = H2TangentVector::parallelTransport(t,v0);
-
-        dphit = H2TangentVector::scalProd(computeEnergyGradient(yt),vt);
-
-
-        ddphit = computeEnergyHessian(vt);
-
-
-
-        t = t - step*(dphit/ddphit);
-
-        error = std::abs(step*dphit/ddphit);
-
-        std::cout<<"dphit = "<<dphit<<std::endl;
-        std::cout<<"ddphit = "<<ddphit<<std::endl;
-        std::cout<<"error = "<<error<<std::endl;
-        std::cout<<"t = "<<t<<std::endl;
-
-
-        ++i;
-
-    } while (i < maxIterations && error > maxError);
-
-    std::cout<<"optimalStep was = "<<t<<std::endl;
-    return t;
-}
-
-
-
-template <typename Point, typename Map>
-void DiscreteFlowIterator<Point, Map>::updateValuesEnergyGivenStep(const double & step)
-{
-    this->oldValues = this->newValues;
-
-    computeGradient();
-    this->newValues = H2TangentVector::exponentiate(-1.0*step,gradient);
-    this->refreshNeighborsValuesKicked();
-    updateEnergy();
-}
-
-
-
-template <typename Point, typename Map>
-void DiscreteFlowIterator<Point, Map>::undoIterate()
-{
-    this->newValues = this->oldValues;
-    newEnergy = oldEnergy;
-}
-*/
-
-
-
 
 template <typename Point, typename Map>
 void DiscreteFlowIterator<Point, Map>::updateEnergy()
