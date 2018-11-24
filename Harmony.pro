@@ -15,7 +15,7 @@ QMAKE_CXXFLAGS += -Wno-inconsistent-missing-override
 QT += core \
     widgets \
     opengl
-TARGET = Hitchin
+TARGET = Harmony
 CONFIG += console
 CONFIG -= app_bundle
 CONFIG += c++11
