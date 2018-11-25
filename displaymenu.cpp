@@ -30,7 +30,7 @@ void DisplayMenu::createButtons()
     showTranslatesComboBox->addItem("Around a vertex", SHOW_TRANSLATES_VERTEX);
     showTranslatesComboBox->addItem("Around all vertices", SHOW_TRANSLATES_VERTICES);
     showTranslatesComboBox->addItem("Around all vertices*", SHOW_TRANSLATES_VERTICES_STAR);
-    showTranslatesComboBox->setToolTip("Show mesh translates under the domain representation...");
+    showTranslatesComboBox->setToolTip("Show mesh translates under the left representation...");
 
     coloringLabel = new QLabel("Choose coloring: ");
 /*

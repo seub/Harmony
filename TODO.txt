@@ -5,6 +5,19 @@ Rewrite triangulater with flips?
 construct mesh and graphes in thread?
 Edit doc.
 
+Investigate this:
+Ok so wait 
+can you look at the function
+DiscreteFlowFactory<Point, Map>::run() 
+maybe you wrote an extra "updateSupError" in there?
+do you remember?
+it feels like the second one maybe shouldn't be there
+wait... maybe that's why it drops to zero
+wait no sorry I think I spoke too fast
+no it looks fine
+because when it breaks, it updates once more, and this time it is comparing the new values to the new values, so thinks there is zero error
+
+
 
 ******************************** IMPROVE CODE ********************************
 
@@ -75,25 +88,7 @@ Optimization of heat flow:
 
 **************************** PAPER ********************************
 
-1. Imagine possible statements of theorems
-- requires a theoretical understanding of relationship of "discretized energy" to actual energy
 
-2. Pseudocode description of main algorithms:
-- FN coords --> represention
-- representation --> triangulated fundamental domain
-- implementation of mesh
-- energy calculation and gradient flows
-- centroid flow (and difference between Riemannian centers of mass and "hyperbolic centroid")
-
-3. Mathematical background:
-- Higher Teichmuller theory and non-abelian Hodge correspondence
-- numerical methods and gradient flows
-- harmonic maps and equivariance
-
-4. Demonstration:
-- screenshots from program
-- Mike Wolf shit
-- down-to-earth programming stuff (language, # of objects, operating systems)
 
 5. Applications (see APPLICATIONS)
 

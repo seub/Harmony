@@ -31,14 +31,14 @@ void InputMenu::createButtons()
     genusSpinBox->setToolTip("Set genus of the surface");
 
     setRhoDomainComboBox = new QComboBox;
-    setRhoDomainComboBox->addItem(QString("Set %1 domain...").arg(QChar(961)), SET_RHO_CHOOSE);
+    setRhoDomainComboBox->addItem(QString("Set %1 left...").arg(QChar(961)), SET_RHO_CHOOSE);
     setRhoDomainComboBox->addItem(QString("Token random %1").arg(QChar(961)), SET_RHO_RANDOM);
     setRhoDomainComboBox->addItem(QString("Token %1nice%2 %3").arg(QChar(8220)).arg(QChar(8221)).arg(QChar(961)), SET_RHO_NICE);
     setRhoDomainComboBox->addItem("Fenchel-Nielsen...", SET_RHO_FN);
     setRhoDomainComboBox->setToolTip("Set domain representation...");
 
     setRhoImageComboBox = new QComboBox;
-    setRhoImageComboBox->addItem(QString("Set %1 image...").arg(QChar(961)), SET_RHO_CHOOSE);
+    setRhoImageComboBox->addItem(QString("Set %1 right...").arg(QChar(961)), SET_RHO_CHOOSE);
     setRhoImageComboBox->addItem(QString("Token random %1").arg(QChar(961)), SET_RHO_RANDOM);
     setRhoImageComboBox->addItem(QString("Token %1nice%2 %3").arg(QChar(8220)).arg(QChar(8221)).arg(QChar(961)), SET_RHO_NICE);
     setRhoImageComboBox->addItem("Fenchel-Nielsen...", SET_RHO_FN);
