@@ -30,9 +30,9 @@ void OutputMenu::createButtons()
     computeButton->setToolTip("Run the discrete flow");
     flowComboBox = new QComboBox;
     flowComboBox->addItem(QString("Choose flow method..."), FLOW_CHOICE);
-    flowComboBox->addItem(QString("Centroid flow"), FLOW_CENTROID);
-    flowComboBox->addItem(QString("Energy flow (C)"), FLOW_ENERGY_CONSTANT_STEP);
-    flowComboBox->addItem(QString("Energy flow (O)"), FLOW_ENERGY_OPTIMAL_STEP);
+    flowComboBox->addItem(QString("Cosh-center of mass"), FLOW_CENTROID);
+    flowComboBox->addItem(QString("Discrete heat flow (C)"), FLOW_ENERGY_CONSTANT_STEP);
+    flowComboBox->addItem(QString("Discrete heat flow (O)"), FLOW_ENERGY_OPTIMAL_STEP);
     flowComboBox->setToolTip("Choose flow method");
     
     resetButton = new QPushButton(QString("Reset"));
